@@ -1,0 +1,1 @@
+/Users/yg/workspace/NStack/.claude/skills/github-issue-creator//SKILL.md

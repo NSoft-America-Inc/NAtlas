@@ -1,0 +1,1 @@
+/Users/yg/workspace/NStack/.claude/skills/plan//SKILL.md
