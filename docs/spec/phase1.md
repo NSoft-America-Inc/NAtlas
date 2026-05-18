@@ -16,9 +16,9 @@
 ```typescript
 // Documents
 export interface DocumentFile {
-  path: string
+  path: string                              // content/ 기준 상대경로
   status: 'indexed' | 'modified' | 'new'
-  modified_at: string  // ISO 8601
+  modified_at: string                       // ISO 8601
 }
 
 export interface DocumentsSummary {
@@ -33,16 +33,16 @@ export interface DocumentsResponse {
   summary: DocumentsSummary
 }
 
-// Graphify Status
-export interface GraphifyStatus {
-  python:   { ok: boolean; version: string; bin: string }
-  graphify: { ok: boolean; version: string }
-  llmwiki:  { ok: boolean; file_count: number; error?: string }
+// SwarmVault 상태
+export interface SwarmVaultStatus {
+  python:      { ok: boolean; version: string | null; bin: string | null }
+  swarmvault:  { ok: boolean; version: string | null }
+  llmwiki:     { ok: boolean; file_count: number; error?: string }
 }
 
 // Settings
 export interface Settings {
-  llmwiki_path: string
+  llmwiki_root: string    // LLMWiki 루트 경로 (swarmvault.config.json 있는 곳)
 }
 
 // SSE Log
@@ -74,9 +74,9 @@ export interface LogLine {
 ├───────┬──────────────────────────────────┬──────────────┤
 │ 상태  │ 경로                             │ 수정일       │
 ├───────┼──────────────────────────────────┼──────────────┤
-│  ✅  │ 01-Logs/tasks/2026-05-01-...md    │ 2시간 전     │
-│  🟡  │ 01-Logs/tasks/2026-05-08-...md    │ 방금         │
-│  🔴  │ 02-Resources/decisions/...md      │ 1일 전       │
+│  ✅  │ 01-Logs/archive/memo/dev-a/...    │ 2시간 전     │
+│  🟡  │ 01-Logs/archive/nstack/dev-b/...  │ 방금         │
+│  🔴  │ 01-Logs/archive/timer/dev-a/...   │ 1일 전       │
 ├───────┴──────────────────────────────────┴──────────────┤
 │ 총 42개 │ ✅ 40  🟡 1  🔴 1                              │
 └─────────────────────────────────────────────────────────┘
@@ -91,7 +91,7 @@ Response 200:
 {
   "files": [
     {
-      "path": "01-Logs/tasks/2026-05-01-example.md",
+      "path": "01-Logs/archive/memo/developer-a/memo-i1/order.md",
       "status": "indexed",        // "indexed" | "modified" | "new"
       "modified_at": "2026-05-08T10:00:00"
     }
@@ -103,10 +103,20 @@ Response 500:
 { "error": "LLMWiki 경로를 찾을 수 없습니다" }
 ```
 
-인덱싱 상태 판단 기준:
-- `graphify-out/manifest.json` 내 해당 파일 존재 + 해시 일치 → `indexed`
-- 존재하지만 해시 불일치 → `modified`
-- 없음 → `new`
+**인덱싱 상태 판단 기준** (`state/manifests/*.json` 기반):
+- `state/manifests/` 에서 `repoRelativePath`가 해당 파일과 일치하는 manifest 검색
+  - manifest 있음 + 해시 일치 → `indexed`
+  - manifest 있음 + 해시 불일치 → `modified`
+  - manifest 없음 → `new`
+
+manifest JSON 구조 참고:
+```json
+{
+  "sourceId": "feat-3d3cc488",
+  "repoRelativePath": "content/01-Logs/archive/memo/developer-a/memo-i2-feat-delete/order.md",
+  "sourceHash": "abc123..."
+}
+```
 
 ### 컴포넌트 인터페이스
 
@@ -144,7 +154,7 @@ interface DocumentRowProps {
 const { data, isLoading, isError } = useQuery<DocumentsResponse>({
   queryKey: ['documents'],
   queryFn: api.getDocuments,
-  refetchInterval: 30_000,  // 30초 자동 갱신
+  refetchInterval: 30_000,
 })
 ```
 
@@ -161,34 +171,39 @@ const { data, isLoading, isError } = useQuery<DocumentsResponse>({
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ LLMWiki 경로                                            │
-│ /Users/.../NAtlas/llmwiki/content                       │
-│                                              [▶ 업데이트 실행] │
+│ LLMWiki 루트                                            │
+│ /Users/.../NSoft-LLMWiki                                │
+│                                        [▶ 업데이트 실행] │
 ├─────────────────────────────────────────────────────────┤
 │ 로그                                        [지우기]    │
 │                                                         │
-│ > graphify --update content/                            │
-│ > Scanning 42 files...                                  │
-│ > ✓ Graph updated in 3.2s                               │
+│ > Ingesting: 01-Logs/archive/memo/dev-a/order.md        │
+│ > feat-3d3cc488                                         │
+│ > Compiled 52 source(s), 303 page(s). Changed: 4.       │
+│ > ✅ 완료                                               │
 │                                                         │
 │ [스크롤 영역 - 자동 하단 고정]                            │
 ├─────────────────────────────────────────────────────────┤
-│ 마지막 실행: 2026-05-08 14:32                            │
+│ 마지막 실행: 2026-05-18 14:32                            │
 └─────────────────────────────────────────────────────────┘
 ```
 
 ### API (SSE)
 
 ```
-POST /graphify/update
+POST /swarmvault/update
 
 Response: text/event-stream
-data: {"type": "log",   "message": "Scanning 42 files..."}\n\n
-data: {"type": "log",   "message": "Processing: example.md"}\n\n
-data: {"type": "done",  "message": "Done in 3.2s"}\n\n
+data: {"type": "log",   "message": "Ingesting: 01-Logs/archive/..."}\n\n
+data: {"type": "log",   "message": "feat-3d3cc488"}\n\n
+data: {"type": "log",   "message": "Compiled 52 source(s)..."}\n\n
+data: {"type": "done",  "message": "완료"}\n\n
 // 또는
-data: {"type": "error", "message": "graphify: command not found"}\n\n
+data: {"type": "error", "message": "swarmvault: command not found"}\n\n
 ```
+
+실행 순서: 변경/신규 파일 `swarmvault ingest` (1개씩) → `swarmvault compile`
+모든 명령은 `llmwiki_root` 디렉토리에서 실행 (`cwd=llmwiki_root`).
 
 ### SSE 소비 패턴 (TanStack Query 미사용, Fetch Stream 직접)
 
@@ -198,7 +213,7 @@ const startUpdate = async () => {
   setIsUpdating(true)
   clearLogs()
 
-  const res = await fetch('http://localhost:18420/graphify/update', { method: 'POST' })
+  const res = await fetch('http://localhost:18420/swarmvault/update', { method: 'POST' })
   const reader = res.body!.getReader()
   const decoder = new TextDecoder()
 
@@ -230,31 +245,14 @@ interface LogViewerProps {
   onClear: () => void
 }
 // - ScrollArea (Shadcn) 사용
-// - 새 로그 추가 시 자동 스크롤 하단 (useEffect + ref.scrollIntoView)
-// - type === 'error' → 빨간색 텍스트 (text-destructive)
-// - 최대 500줄 (초과 시 앞에서 제거)
+// - 새 로그 추가 시 자동 스크롤 하단
+// - type === 'error' → text-destructive
+// - 최대 500줄
 
 // (내부) LogLine.tsx
-interface LogLineProps {
-  log: LogLine
-}
-// log.type에 따라 색상 분기:
 // 'log'   → text-muted-foreground
 // 'done'  → text-green-400
 // 'error' → text-destructive
-```
-
-### Zustand store 연동
-
-```typescript
-// store/ui.ts에서 관리
-isUpdating: boolean
-logs: LogLine[]
-lastRunAt: string | null
-setIsUpdating: (v: boolean) => void
-appendLog: (log: LogLine) => void
-clearLogs: () => void
-setLastRunAt: (t: string) => void
 ```
 
 ---
@@ -265,16 +263,16 @@ setLastRunAt: (t: string) => void
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ LLMWiki 경로                                            │
-│ [/Users/.../NAtlas/llmwiki/content         ] [찾기]    │
-│ ✅ 유효한 경로 (42개 파일)                               │
+│ LLMWiki 루트 경로                                       │
+│ [/Users/.../NSoft-LLMWiki              ] [찾기]         │
+│ ✅ 유효한 경로 (swarmvault.config.json 확인됨)           │
 │                                              [저장]     │
 ├─────────────────────────────────────────────────────────┤
 │ 설치 상태 진단                              [다시 진단]  │
 │                                                         │
-│ Python     ✅ python3.12 (3.12.3)                       │
-│ graphify   ✅ 0.9.1                                     │
-│ LLMWiki    ✅ content/ 접근 가능 (42개 파일)             │
+│ Python       ✅ python3.12 (3.12.3)                     │
+│ SwarmVault   ✅ @swarmvaultai/cli 1.x.x                 │
+│ LLMWiki      ✅ content/ 접근 가능 (42개 파일)           │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -282,25 +280,28 @@ setLastRunAt: (t: string) => void
 
 ```
 GET /settings
-Response: { "llmwiki_path": "/Users/.../NAtlas/llmwiki/content" }
+Response: { "llmwiki_root": "/Users/.../NSoft-LLMWiki" }
 
 PUT /settings
-Body:     { "llmwiki_path": "..." }
+Body:     { "llmwiki_root": "..." }
 Response: { "ok": true }
-// 경로 유효하지 않으면: { "error": "경로가 존재하지 않습니다" } 400
+// 유효성 검사: swarmvault.config.json 존재 여부 확인
+// 없으면: { "error": "swarmvault.config.json을 찾을 수 없습니다" } 400
 
-GET /graphify/status
+GET /swarmvault/status
 Response:
 {
-  "python":   { "ok": true,  "version": "3.12.3", "bin": "python3.12" },
-  "graphify": { "ok": true,  "version": "0.9.1" },
-  "llmwiki":  { "ok": true,  "file_count": 42 }
+  "python":     { "ok": true,  "version": "3.12.3", "bin": "python3.12" },
+  "swarmvault": { "ok": true,  "version": "1.x.x" },
+  "llmwiki":    { "ok": true,  "file_count": 42 }
 }
-// 항목 실패 예:
-  "python":   { "ok": false, "version": null, "bin": null }
-  "graphify": { "ok": false, "version": null }
-  "llmwiki":  { "ok": false, "file_count": 0, "error": "경로 없음" }
+// 실패 예:
+  "python":     { "ok": false, "version": null, "bin": null }
+  "swarmvault": { "ok": false, "version": null }
+  "llmwiki":    { "ok": false, "file_count": 0, "error": "경로 없음" }
 ```
+
+**경로 유효성 검사**: `{llmwiki_root}/swarmvault.config.json` 존재 여부로 판단.
 
 ### 컴포넌트 인터페이스
 
@@ -311,23 +312,23 @@ interface PathSettingProps {
   onChange: (path: string) => void
   onSave: () => void
   isSaving: boolean
-  validationMessage?: string   // "✅ 유효한 경로" 또는 에러 메시지
+  validationMessage?: string
 }
 // [찾기] 버튼 → window.electron.openFolderDialog() → onChange 호출
 
 // components/DiagnosticPanel.tsx
 interface DiagnosticPanelProps {
-  status: GraphifyStatus | undefined
+  status: SwarmVaultStatus | undefined
   isLoading: boolean
   onRefresh: () => void
 }
 
 // (내부) DiagnosticItem.tsx
 interface DiagnosticItemProps {
-  label: string                   // "Python", "graphify", "LLMWiki"
+  label: string
   ok: boolean
-  detail: string                  // "python3.12 (3.12.3)" 또는 에러 메시지
-  hint?: string                   // 설치 안내 (ok=false일 때)
+  detail: string
+  hint?: string
 }
 ```
 
@@ -336,8 +337,8 @@ interface DiagnosticItemProps {
 | 항목 | ok=false 힌트 |
 |---|---|
 | Python | `🔴 Python 3.10+ 미설치 — brew install python@3.12` |
-| graphify | `🔴 graphify 미설치 — pip install graphifyy` |
-| LLMWiki 경로 | `🔴 경로가 존재하지 않습니다 — 위에서 경로를 재설정하세요` |
+| SwarmVault | `🔴 SwarmVault 미설치 — npm install -g @swarmvaultai/cli` |
+| LLMWiki 경로 | `🔴 swarmvault.config.json 없음 — LLMWiki 루트 경로를 재설정하세요` |
 
 ---
 
@@ -355,22 +356,27 @@ interface DiagnosticItemProps {
 // 다크모드: 기본 적용 (html class="dark")
 ```
 
-### Zustand store 전체 (`store/ui.ts`)
+### api.ts 전체
 
 ```typescript
-interface UIStore {
-  // 탭
-  currentTab: 'documents' | 'update' | 'settings'
-  setTab: (tab: UIStore['currentTab']) => void
+const BASE = 'http://localhost:18420'
 
-  // Update 탭
-  isUpdating: boolean
-  logs: LogLine[]
-  lastRunAt: string | null
-  setIsUpdating: (v: boolean) => void
-  appendLog: (log: LogLine) => void
-  clearLogs: () => void
-  setLastRunAt: (t: string) => void
+export const api = {
+  getDocuments: (): Promise<DocumentsResponse> =>
+    fetch(`${BASE}/documents`).then(r => r.json()),
+
+  getSwarmVaultStatus: (): Promise<SwarmVaultStatus> =>
+    fetch(`${BASE}/swarmvault/status`).then(r => r.json()),
+
+  getSettings: (): Promise<Settings> =>
+    fetch(`${BASE}/settings`).then(r => r.json()),
+
+  saveSettings: (body: Settings): Promise<{ ok: boolean }> =>
+    fetch(`${BASE}/settings`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(r => r.json()),
 }
 ```
 
@@ -387,38 +393,14 @@ const queryClient = new QueryClient({
 })
 ```
 
-### api.ts 전체
-
-```typescript
-const BASE = 'http://localhost:18420'
-
-export const api = {
-  getDocuments:    (): Promise<DocumentsResponse> =>
-    fetch(`${BASE}/documents`).then(r => r.json()),
-
-  getGraphifyStatus: (): Promise<GraphifyStatus> =>
-    fetch(`${BASE}/graphify/status`).then(r => r.json()),
-
-  getSettings:     (): Promise<Settings> =>
-    fetch(`${BASE}/settings`).then(r => r.json()),
-
-  saveSettings:    (body: Settings): Promise<{ ok: boolean }> =>
-    fetch(`${BASE}/settings`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    }).then(r => r.json()),
-}
-```
-
 ---
 
 ## 완료 기준 (Phase 1)
 
 - [ ] `npm run dev` 실행 시 Electron 앱 정상 기동
-- [ ] Documents 탭 — 파일 목록 + 상태 배지 표시, 30초 자동 갱신
-- [ ] Update 탭 — 버튼 클릭 시 SSE 로그 실시간 표시, 완료/에러 처리
-- [ ] Settings 탭 — 경로 저장 + 설치 상태 진단 표시
+- [ ] Documents 탭 — `state/manifests/` 기반 파일 목록 + 상태 배지, 30초 자동 갱신
+- [ ] Update 탭 — `swarmvault ingest` + `swarmvault compile` SSE 로그 실시간 표시
+- [ ] Settings 탭 — `swarmvault.config.json` 기반 경로 유효성 검사 + 설치 상태 진단
 - [ ] 다크모드 기본 적용
 - [ ] `npx tsc --noEmit` 에러 0개
 - [ ] `npm run build:mac` 성공
