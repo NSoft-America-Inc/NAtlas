@@ -3,7 +3,7 @@
 ## 프로젝트 개요
 
 NAtlas는 NSoft America 전사 지식 탐색기 데스크탑 앱이다.
-LLMWiki 문서 상태 확인, graphify 제어, 위키 브라우저를 하나의 GUI로 제공한다.
+LLMWiki 문서 상태 확인, SwarmVault 제어, 위키 브라우저를 하나의 GUI로 제공한다.
 
 - **대상**: NSoft America 전 직원
 - **플랫폼**: macOS (.dmg) / Windows (.exe)
@@ -65,7 +65,7 @@ NAtlas/
 │   ├── main.py                      # FastAPI 앱 (포트 18420)
 │   ├── routers/
 │   │   ├── documents.py             # GET /documents
-│   │   ├── graphify.py              # GET /graphify/status, POST /graphify/update
+│   │   ├── swarmvault.py            # GET /swarmvault/status, POST /swarmvault/update
 │   │   └── settings.py             # GET/PUT /settings
 │   └── requirements.txt            # fastapi, uvicorn
 │
@@ -100,9 +100,9 @@ const { data, isLoading } = useQuery({
 const { mutate } = useMutation({ mutationFn: api.saveSettings })
 ```
 
-### 2. graphify update — SSE (Fetch Stream 직접, TanStack Query 미사용)
+### 2. SwarmVault update — SSE (Fetch Stream 직접, TanStack Query 미사용)
 ```typescript
-const res = await fetch('http://localhost:18420/graphify/update', { method: 'POST' })
+const res = await fetch('http://localhost:18420/swarmvault/update', { method: 'POST' })
 const reader = res.body!.getReader()
 // → 자세한 패턴: docs/spec/phase1.md Update 탭 참고
 ```

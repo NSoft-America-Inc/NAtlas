@@ -3,7 +3,7 @@
 ## 프로젝트 개요
 - **이름**: NAtlas — NSoft 전사 지식 탐색기 데스크탑 앱
 - **GitHub**: https://github.com/NSoft-America-Inc/NAtlas
-- **목적**: LLMWiki 문서 상태 확인 + graphify 제어 + 위키 브라우저를 GUI 데스크탑 앱으로 제공
+- **목적**: LLMWiki 문서 상태 확인 + SwarmVault 제어 + 위키 브라우저를 GUI 데스크탑 앱으로 제공
 - **현재 Phase**: Phase 1 (MVP) 구현 전 — Documents / Update / Settings 탭
 
 ## 기술스택
@@ -27,14 +27,15 @@
 
 ---
 
-## graphify
+## SwarmVault
 
-This project has a graphify knowledge graph at graphify-out/.
+This project maintains a SwarmVault knowledge base at `llmwiki/`.
 
 Rules:
-- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
-- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
-- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
+- LLMWiki 로컬 경로: `{PROJECT_ROOT}/llmwiki` (NSoft-LLMWiki clone)
+- 코드 수정 후 아카이브: `swarmvault ingest <file>` → `swarmvault compile` (cwd: llmwiki/)
+- LLMWiki 문서 경로: `llmwiki/content/01-Logs/archive/natlas/{GIT_USERNAME}/{slug}/`
+- NAtlas 앱이 *모니터링*하는 LLMWiki 경로는 Settings의 `llmwiki_root`로 별도 설정 (외부 경로)
 
 <!-- nstack-rules -->
 # NStack — Claude Code 표준 규칙
