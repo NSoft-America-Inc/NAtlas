@@ -43,6 +43,12 @@ export const api = {
       return r.json()
     }),
 
-  cloneLLMWiki: (): Promise<Response> =>
-    fetch(`${BASE}/swarmvault/clone`, { method: 'POST' }),
+  getDocumentContent: (path: string): Promise<{ path: string; content: string }> =>
+    fetch(`${BASE}/documents/content?path=${encodeURIComponent(path)}`).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to fetch document')
+      }
+      return r.json()
+    }),
 }

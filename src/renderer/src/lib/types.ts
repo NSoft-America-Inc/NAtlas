@@ -2,7 +2,12 @@
 export interface DocumentFile {
   path: string                              // content/ 기준 상대경로
   status: 'indexed' | 'modified' | 'new'
-  modified_at: string                       // ISO 8601
+  modified_at: string | null               // ISO 8601 (remote는 null)
+  category: string                          // Logs | System | Resources | ...
+  project: string | null                    // 01-Logs 전용
+  user: string | null                       // 01-Logs 전용
+  slug: string | null                       // 01-Logs/archive 전용 (이슈 slug)
+  doc_type: string | null                   // order | report | knowledge
 }
 
 export interface DocumentsSummary {
@@ -26,9 +31,9 @@ export interface SwarmVaultStatus {
 
 // Settings
 export interface Settings {
-  source_mode: 'git' | 'local'   // 기본값: 'git'
-  git_repo_url: string            // Git 모드 전용
-  llmwiki_root: string            // Local 모드 전용 (Git 모드엔 자동 설정됨)
+  source_mode: 'remote' | 'local'
+  github_token: string            // Remote 모드 전용
+  llmwiki_root: string            // Local 모드 전용
 }
 
 // SSE Log
