@@ -26,7 +26,9 @@ export interface SwarmVaultStatus {
 
 // Settings
 export interface Settings {
-  llmwiki_root: string    // LLMWiki 루트 경로 (swarmvault.config.json 있는 곳)
+  source_mode: 'git' | 'local'   // 기본값: 'git'
+  git_repo_url: string            // Git 모드 전용
+  llmwiki_root: string            // Local 모드 전용 (Git 모드엔 자동 설정됨)
 }
 
 // SSE Log

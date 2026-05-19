@@ -42,4 +42,7 @@ export const api = {
       }
       return r.json()
     }),
+
+  cloneLLMWiki: (): Promise<Response> =>
+    fetch(`${BASE}/swarmvault/clone`, { method: 'POST' }),
 }

@@ -5,7 +5,7 @@ import asyncio
 from pathlib import Path
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse, JSONResponse
-from routers.settings import CONFIG_FILE
+from routers.settings import CONFIG_FILE, GIT_MANAGED_DIR, load_settings as load_settings_data
 from routers.documents import get_documents, get_llmwiki_root
 
 router = APIRouter()
@@ -167,3 +167,58 @@ async def post_update():
             yield f"data: {json.dumps({'type': 'error', 'message': f'compile 명령 실행 중 오류 발생: {str(e)}'})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+@router.post("/clone")
+async def post_clone():
+    """Git repo URL로 LLMWiki를 clone 또는 pull (SSE 스트리밍)."""
+    settings = load_settings_data()  # settings.py의 load_settings() 사용
+    git_url = settings.get("git_repo_url", "").strip()
+
+    if not git_url:
+        return JSONResponse(status_code=400, content={"error": "Git repo URL이 설정되지 않았습니다"})
+
+    async def stream():
+        target_dir = GIT_MANAGED_DIR
+
+        if (target_dir / ".git").exists():
+            # 이미 clone됨 → git pull
+            yield f"data: {json.dumps({'type': 'log', 'message': f'기존 clone 감지: {target_dir}'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'message': 'git pull 실행 중...'})}\n\n"
+            cmd = ["git", "pull"]
+            cwd = str(target_dir)
+        else:
+            # 최초 clone
+            yield f"data: {json.dumps({'type': 'log', 'message': f'Git clone: {git_url}'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'message': f'대상 경로: {target_dir}'})}\n\n"
+            target_dir.mkdir(parents=True, exist_ok=True)
+            cmd = ["git", "clone", git_url, str(target_dir)]
+            cwd = str(Path.home())
+
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                *cmd,
+                cwd=cwd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+            )
+
+            # stdout/stderr 스트리밍
+            while True:
+                stdout_line = await proc.stdout.readline()
+                stderr_line = await proc.stderr.readline()
+                if not stdout_line and not stderr_line:
+                    break
+                for line in [stdout_line, stderr_line]:
+                    text = line.decode().strip()
+                    if text:
+                        yield f"data: {json.dumps({'type': 'log', 'message': text})}\n\n"
+
+            await proc.wait()
+            if proc.returncode == 0:
+                yield f"data: {json.dumps({'type': 'done', 'message': '✅ 완료'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'error', 'message': f'git 명령 실패 (exit {proc.returncode})'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream")
