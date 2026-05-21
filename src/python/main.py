@@ -3,6 +3,10 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import documents, swarmvault, settings
+import db
+
+# Initialize SQLite database
+db.init_db()
 
 app = FastAPI(title="NAtlas Sidecar Backend", version="1.0.0")
 

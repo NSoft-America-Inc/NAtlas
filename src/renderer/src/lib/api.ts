@@ -1,4 +1,5 @@
-import { DocumentsResponse, SwarmVaultStatus, Settings } from './types'
+import { DocumentsResponse, SwarmVaultStatus, Settings, SwarmVaultQueryResponse, TaskHistoryItem, BuildLogItem, DashboardStats } from './types'
+
 
 const BASE = 'http://localhost:18420'
 
@@ -51,4 +52,68 @@ export const api = {
       }
       return r.json()
     }),
+
+  querySwarmVault: (question: string): Promise<SwarmVaultQueryResponse> =>
+    fetch(`${BASE}/swarmvault/query`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    }).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || 'SwarmVault 질의 실행 중 오류가 발생했습니다.')
+      }
+      return r.json()
+    }),
+
+  getTaskHistory: (): Promise<TaskHistoryItem[]> =>
+    fetch(`${BASE}/swarmvault/history`).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || '작업 조회 이력을 불러오는 중 오류가 발생했습니다.')
+      }
+      return r.json()
+    }),
+
+  clearTaskHistory: (): Promise<{ ok: boolean; message: string }> =>
+    fetch(`${BASE}/swarmvault/history`, {
+      method: 'DELETE'
+    }).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || '작업 조회 이력을 삭제하는 중 오류가 발생했습니다.')
+      }
+      return r.json()
+    }),
+
+  getBuildLogs: (): Promise<BuildLogItem[]> =>
+    fetch(`${BASE}/swarmvault/build-logs`).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || '동기화 이력을 불러오는 중 오류가 발생했습니다.')
+      }
+      return r.json()
+    }),
+
+  clearBuildLogs: (): Promise<{ ok: boolean; message: string }> =>
+    fetch(`${BASE}/swarmvault/build-logs`, {
+      method: 'DELETE'
+    }).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || '동기화 이력을 삭제하는 중 오류가 발생했습니다.')
+      }
+      return r.json()
+    }),
+
+  getDashboardStats: (): Promise<DashboardStats> =>
+    fetch(`${BASE}/swarmvault/dashboard/stats`).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || '대시보드 통계를 불러오는 중 오류가 발생했습니다.')
+      }
+      return r.json()
+    }),
 }
+
+

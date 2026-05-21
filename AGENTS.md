@@ -165,3 +165,35 @@ cd src/python && python3 main.py --port 18420
 
 - 로컬 경로: `$(git rev-parse --show-toplevel)/llmwiki/content`
 - GitHub: https://github.com/NSoft-America-Inc/NSoft-LLMWiki
+
+---
+
+## 🤖 AI Agent 전용 지침: NStack ➔ NAtlas E2E 지식 파이프라인 강제화
+
+NStack을 통해 AI Agent로 개발을 수행할 때, 지식의 파편화를 막고 NAtlas에서 시각적 일관성을 완벽히 유지하기 위해 다음 규칙을 철저히 준수해야 한다.
+
+### 1. NStack 작업 아티팩트 3종 세트 강제화
+모든 개발 작업(Task)은 `01-Logs/archive/{project}/{user}/{task_slug}` 디렉토리 아래에 **반드시** 세 개의 문서가 한 쌍으로 구성되어야 한다.
+1. **작업지시서 (`order.md`)**: 작업 계획 및 세부 목표 기술.
+2. **완료보고서 (`report.md`)**: 실제 변경 및 구현사항, 테스트 결과 기술.
+3. **위키 문서 (`wiki.md`)**: 해당 태스크에서 획득 및 정제한 전사적 지식 자산 기술.
+
+### 2. 필수 YAML Frontmatter 규격
+`order.md` 및 `report.md`는 NAtlas가 고속으로 파싱하여 화면 및 지식 네트워크 그래프를 그릴 수 있도록 파일 가장 첫 부분에 **반드시** 아래 Frontmatter를 포함해야 한다.
+```yaml
+---
+title: "작업에 대한 구체적이고 한눈에 이해되는 국문 제목"
+issue_url: "https://github.com/NSoft-America-Inc/.../issues/{이슈번호}"
+---
+```
+
+### 3. 무결성 정합성 린터 자가 검증 의무화
+AI 에이전트는 작업을 마친 후 혹은 PR을 올리기 전에, 루트에 구성된 **`verify_nstack_pipeline.py`** 무결성 검증기 스크립트를 반드시 실행하여 어떠한 위반 사례도 없음을 스스로 확인해야 한다.
+```bash
+python3 verify_nstack_pipeline.py
+```
+- 본 검증기에서 에러가 발생한 채로 작업을 마무리하거나 코드를 제출하는 것은 **절대 용납되지 않는다 (UNACCEPTABLE)**.
+
+### 4. [[wiki]] 링크의 일관성 유지
+- 생성되는 지식 wiki 문서 내에서 타 프로젝트나 태스크를 인용할 때는 `[[slug]]` 대괄호 이중 링크 패턴을 필수적으로 활용한다.
+- NAtlas 브라우저는 이 링크들을 파싱하여 네트워크 그래프 간 자성 인력 척력 선으로 시각화하므로, 지식 흐름 간 연계를 세밀하게 구축한다.

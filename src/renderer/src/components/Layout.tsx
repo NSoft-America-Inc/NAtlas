@@ -1,5 +1,5 @@
 import React from 'react'
-import { FileText, RefreshCw, Settings as SettingsIcon, Brain } from 'lucide-react'
+import { FileText, RefreshCw, Settings as SettingsIcon, Brain, BookOpen, Sparkles, BarChart3 } from 'lucide-react'
 import { useUIStore } from '@renderer/store/ui'
 import { Separator } from '@renderer/components/ui/separator'
 
@@ -11,7 +11,10 @@ export function Layout({ children }: LayoutProps) {
   const { activeTab, setActiveTab } = useUIStore()
 
   const tabs = [
+    { id: 'dashboard' as const, label: 'Dashboard', icon: BarChart3 },
     { id: 'documents' as const, label: 'Documents', icon: FileText },
+    { id: 'wiki' as const, label: 'Wiki', icon: BookOpen },
+    { id: 'query' as const, label: 'Query', icon: Sparkles },
     { id: 'update' as const, label: 'Update', icon: RefreshCw },
     { id: 'settings' as const, label: 'Settings', icon: SettingsIcon },
   ]
@@ -71,7 +74,7 @@ export function Layout({ children }: LayoutProps) {
         <div className="px-5 py-4 border-t border-border/40 bg-muted/10">
           <div className="flex flex-col gap-0.5">
             <span className="text-[10px] text-muted-foreground font-medium">NSoft America Inc.</span>
-            <span className="text-[9px] text-muted-foreground/60">Phase 1 MVP v1.0.0</span>
+            <span className="text-[9px] text-muted-foreground/60">Phase 2 v1.1.0</span>
           </div>
         </div>
       </aside>

@@ -5,6 +5,7 @@ import hashlib
 import asyncio
 import urllib.request
 import urllib.error
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -13,6 +14,49 @@ from fastapi.responses import JSONResponse
 from routers.settings import CONFIG_FILE, LLMWIKI_REPO
 
 router = APIRouter()
+
+# ── High Performance Metadata Memory Cache ──
+_DOCS_METADATA_CACHE = {}
+
+def parse_markdown_metadata(content: str) -> dict:
+    """마크다운 본문을 파싱하여 작업 제목(title)과 GitHub 이슈 링크(issue_url)를 추출합니다."""
+    meta = {"title": None, "issue_url": None}
+    if not content:
+        return meta
+
+    # 1. YAML Frontmatter 추출
+    fm_match = re.match(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
+    if fm_match:
+        for line in fm_match.group(1).split("\n"):
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if ":" in line:
+                key, val = line.split(":", 1)
+                k = key.strip().lower()
+                v = val.strip().strip('"').strip("'")
+                if k == "title":
+                    meta["title"] = v
+                elif k == "issue_url":
+                    meta["issue_url"] = v
+
+    # 2. Title Fallback: 첫 H1 헤딩 파싱
+    if not meta["title"]:
+        h1_match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
+        if h1_match:
+            title = h1_match.group(1).strip()
+            # [Order] 혹은 [Report] 태그 정리
+            title = re.sub(r"^\[(Order|Report|Knowledge)\]\s*", "", title)
+            meta["title"] = title
+
+    # 3. Issue URL Fallback: 본문 내 깃허브 이슈 주소 검색
+    if not meta["issue_url"]:
+        issue_match = re.search(r"(https://github\.com/[^/]+/[^/]+/issues/\d+)", content)
+        if issue_match:
+            meta["issue_url"] = issue_match.group(1).strip()
+
+    return meta
+
 
 GITHUB_API = "https://api.github.com"
 LLMWIKI_BRANCH = "main"
@@ -114,23 +158,44 @@ async def get_remote_documents(token: str) -> dict:
     results = await asyncio.gather(*[fetch_manifest_paths(m["sha"]) for m in manifest_blobs])
     indexed_paths = set().union(*results) if results else set()
 
-    # 3. Build files list
-    files_list = []
-    summary = {"total": 0, "indexed": 0, "modified": 0, "new": 0}
+    # 3. 비동기로 누락된 마크다운 내용 페치 및 캐싱 헬퍼
+    async def fetch_and_cache_remote_meta(rel_path: str, sha: str, doc_type: Optional[str]) -> dict:
+        cache_key = f"remote:{rel_path}"
+        # 캐시 히트 체크
+        if cache_key in _DOCS_METADATA_CACHE and _DOCS_METADATA_CACHE[cache_key]["sha"] == sha:
+            return _DOCS_METADATA_CACHE[cache_key]["meta"]
 
-    for item in content_files:
+        # order or report 일 때만 스캔, 나머지는 무시
+        if doc_type not in ("order", "report"):
+            return {"title": None, "issue_url": None}
+
+        try:
+            # 1회 blob 조회
+            blob = await loop.run_in_executor(
+                None, _gh_get, f"/repos/{LLMWIKI_REPO}/git/blobs/{sha}", token
+            )
+            raw_content = base64.b64decode(blob["content"].replace("\n", "")).decode("utf-8")
+            meta = parse_markdown_metadata(raw_content)
+            _DOCS_METADATA_CACHE[cache_key] = {"sha": sha, "meta": meta}
+            return meta
+        except Exception:
+            return {"title": None, "issue_url": None}
+
+    # 4. 파일 리스트 구축 시 병렬 메타데이터 로드
+    async def process_file(item):
         repo_rel = item["path"]             # "content/01-Logs/..."
         rel_path = repo_rel[len("content/"):]   # "01-Logs/..."
         meta = _parse_doc_path(rel_path)
 
         if repo_rel in indexed_paths:
             status = "indexed"
-            summary["indexed"] += 1
         else:
             status = "new"
-            summary["new"] += 1
 
-        files_list.append({
+        # 메타데이터 비동기 페치
+        parsed_meta = await fetch_and_cache_remote_meta(rel_path, item["sha"], meta.get("doc_type"))
+
+        return {
             "path": rel_path,
             "status": status,
             "modified_at": None,
@@ -139,11 +204,21 @@ async def get_remote_documents(token: str) -> dict:
             "user": meta["user"],
             "slug": meta.get("slug"),
             "doc_type": meta.get("doc_type"),
-        })
-        summary["total"] += 1
+            "title": parsed_meta.get("title"),
+            "issue_url": parsed_meta.get("issue_url"),
+        }
+
+    # 성능을 위해 병렬 실행 가동
+    files_list = await asyncio.gather(*[process_file(item) for item in content_files])
+    
+    # 요약 정보 재정렬 및 연산
+    summary = {"total": len(files_list), "indexed": 0, "modified": 0, "new": 0}
+    for f in files_list:
+        summary[f["status"]] += 1
 
     files_list.sort(key=lambda x: x["path"])
     return {"files": files_list, "summary": summary}
+
 
 # ── Local filesystem ─────────────────────────────────────────────────────────
 
@@ -202,6 +277,7 @@ def get_local_documents(llmwiki_root: str) -> dict:
                 mtime = os.path.getmtime(file_path)
                 modified_at = datetime.fromtimestamp(mtime).isoformat()
             except Exception:
+                mtime = 0.0
                 modified_at = datetime.now().isoformat()
 
             md5_val, sha256_val = compute_hashes(file_path)
@@ -216,6 +292,24 @@ def get_local_documents(llmwiki_root: str) -> dict:
                 status = "new"; summary["new"] += 1
 
             meta = _parse_doc_path(rel_path)
+            doc_type = meta.get("doc_type")
+
+            # ── Local High Performance Cache ──
+            cache_key = f"local:{rel_path}"
+            parsed_meta = {"title": None, "issue_url": None}
+
+            if doc_type in ("order", "report"):
+                # 캐시 히트 체크
+                if cache_key in _DOCS_METADATA_CACHE and _DOCS_METADATA_CACHE[cache_key]["mtime"] == mtime:
+                    parsed_meta = _DOCS_METADATA_CACHE[cache_key]["meta"]
+                else:
+                    try:
+                        content = file_path.read_text(encoding="utf-8")
+                        parsed_meta = parse_markdown_metadata(content)
+                        _DOCS_METADATA_CACHE[cache_key] = {"mtime": mtime, "meta": parsed_meta}
+                    except Exception:
+                        pass
+
             files_list.append({
                 "path": rel_path,
                 "status": status,
@@ -224,12 +318,15 @@ def get_local_documents(llmwiki_root: str) -> dict:
                 "project": meta["project"],
                 "user": meta["user"],
                 "slug": meta.get("slug"),
-                "doc_type": meta.get("doc_type"),
+                "doc_type": doc_type,
+                "title": parsed_meta.get("title"),
+                "issue_url": parsed_meta.get("issue_url"),
             })
             summary["total"] += 1
 
     files_list.sort(key=lambda x: x["modified_at"] or "", reverse=True)
     return {"files": files_list, "summary": summary}
+
 
 # ── Routes ───────────────────────────────────────────────────────────────────
 

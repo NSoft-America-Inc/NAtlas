@@ -6,88 +6,97 @@
 
 ## 프롬프트
 
-NAtlas Phase 1 MVP 구현을 시작한다.
+NAtlas 작업을 이어서 진행한다.
 
 ### 프로젝트 개요
 
 - **저장소**: NSoft-America-Inc/NAtlas
-- **기술 스택**: Electron + React + TypeScript + Python FastAPI (electron-vite 기반)
+- **기술 스택**: Electron + React + TypeScript + Python FastAPI (포트 18420, sidecar)
+- **UI**: Shadcn/ui + Tailwind CSS v4
+- **상태**: TanStack Query (서버) + Zustand (UI)
 - **작업 방식**: Claude(계획/검수) + Antigravity(구현)
-- **GitHub**: https://github.com/NSoft-America-Inc/NAtlas
+- **실행**: `npm run dev` (NAtlas/ 루트에서)
 
-### 오늘 완료한 작업
+### 이전 세션에서 완료한 작업
 
 | 이슈 | 작업 | 결과 |
 |---|---|---|
-| #3 | 설계 문서 검토 및 보완 (graphify → SwarmVault 전면 수정) | ✅ 완료 |
+| #4 | Settings 탭 Remote(GitHub Token)/Local 모드 전환 | ✅ 완료 (close 필요) |
+| #5 | Documents 탭 필터/마크다운 뷰어/slug+doc_type 뱃지 | ✅ 완료 (close 필요) |
+| LLMWiki#17 | NSoft-LLMWiki SwarmVault 연동 폴더 구조 재편 | ✅ 완료 |
 
-> **커밋 필요**: AGENTS.md, CLAUDE.md, docs/spec/setup.md 수정됨 (미커밋 상태)
-> ```bash
-> cd /Users/yg/workspace/NAtlas
-> git add AGENTS.md CLAUDE.md docs/spec/setup.md
-> git commit -m "docs: graphify → SwarmVault 전면 수정 #3"
-> ```
-> 커밋 후 이슈 #3 클로즈.
+### 먼저 처리할 것: #4, #5 이슈 close
 
-### 다음 할 작업: #2 + #1 NAtlas Phase 1 구현
+#4, #5 모두 구현 완료·push까지 됐으나 GitHub에서 open 상태.
+완료 코멘트 작성 후 close 처리한다.
 
-**목적**: electron-vite 기반 프로젝트를 초기화하고 Phase 1 MVP (Documents / Update / Settings 3개 탭) 전체를 구현한다.
+### 다음 할 작업: Update 탭 구현 (Phase 1 마지막 탭)
 
-**작업 내용**:
+**목적**: SwarmVault `ingest` + `compile`을 GUI에서 실행하고 실시간 로그를 스트리밍으로 표시한다.
 
-1. **프로젝트 초기화** (`docs/spec/setup.md` 기준)
-   - `npm create @quick-start/electron@latest` → React + TypeScript 선택
-   - 의존성 설치: TanStack Query, Zustand, Shadcn/ui, Lucide React, Tailwind
-   - Python: `src/python/requirements.txt` (fastapi, uvicorn)
+**API**: `POST /swarmvault/update` → SSE 스트리밍
+- 실행 순서: 변경/신규 파일 `swarmvault ingest` (1개씩) → `swarmvault compile`
+- `cwd = llmwiki_root` (Settings에서 설정한 경로)
+- 이미 `src/python/routers/swarmvault.py`에 관련 라우터 일부 존재
 
-2. **Phase 1 구현** (`docs/spec/phase1.md` + `docs/architecture.md` 기준)
-   - `src/renderer/src/lib/types.ts` — 공통 타입
-   - `src/renderer/src/lib/api.ts` — FastAPI 호출 함수
-   - `src/renderer/src/store/ui.ts` — Zustand store
-   - `src/renderer/src/components/Layout.tsx` — 사이드바 + 탭
-   - `src/renderer/src/pages/Documents.tsx` + StatusBadge, DocumentTable
-   - `src/renderer/src/pages/Update.tsx` + LogViewer (SSE)
-   - `src/renderer/src/pages/Settings.tsx` + PathSetting, DiagnosticPanel
-   - `src/python/main.py` — FastAPI 앱
-   - `src/python/routers/documents.py` — GET /documents (manifests 기반)
-   - `src/python/routers/swarmvault.py` — GET /swarmvault/status, POST /swarmvault/update (SSE)
-   - `src/python/routers/settings.py` — GET/PUT /settings
-   - `src/main/index.ts` — sidecar spawn + IPC
-   - `src/preload/index.ts` — contextBridge
+**UI** (`src/renderer/src/pages/Update.tsx`):
+```
+┌──────────────────────────────────────────────────────┐
+│ LLMWiki 루트 경로 표시                               │
+│                              [▶ 업데이트 실행]        │
+├──────────────────────────────────────────────────────┤
+│ 로그                                     [지우기]    │
+│ > Ingesting: 01-Logs/archive/nstack/...              │
+│ > Compiled 52 source(s)...                           │
+│ > ✅ 완료                                            │
+│ [자동 하단 고정 스크롤]                               │
+├──────────────────────────────────────────────────────┤
+│ 마지막 실행: 2026-05-19 21:xx                        │
+└──────────────────────────────────────────────────────┘
+```
 
-**완료 조건** (`docs/spec/phase1.md` 완료 기준):
-- [ ] `npm run dev` 실행 시 Electron 앱 정상 기동
-- [ ] Documents 탭 — `state/manifests/` 기반 파일 목록 + 상태 배지, 30초 자동 갱신
-- [ ] Update 탭 — `swarmvault ingest` + `swarmvault compile` SSE 로그 실시간 표시
-- [ ] Settings 탭 — `swarmvault.config.json` 기반 경로 유효성 검사 + 설치 상태 진단
-- [ ] 다크모드 기본 적용
-- [ ] `npx tsc --noEmit` 에러 0개
-- [ ] `npm run build:mac` 성공
+**SSE 소비 패턴**: TanStack Query 미사용, Fetch Stream 직접 사용
+```typescript
+const res = await fetch('http://localhost:18420/swarmvault/update', { method: 'POST' })
+const reader = res.body!.getReader()
+// line.startsWith('data: ') → JSON.parse(line.slice(6))
+```
+
+**작업 파일**:
+- `src/renderer/src/pages/Update.tsx` (신규)
+- `src/python/routers/swarmvault.py` (POST /swarmvault/update 엔드포인트)
+- `src/renderer/src/lib/types.ts` (LogLine 타입 확인)
+
+**완료 조건**:
+- [ ] Update 탭에서 버튼 클릭 시 SSE 로그 실시간 표시
+- [ ] `swarmvault ingest` → `compile` 순서 실행
+- [ ] 완료/에러 시 상태 표시
+- [ ] Local 모드에서만 활성화 (Remote 모드는 비활성 + 안내 메시지)
+- [ ] `npx tsc --noEmit` 0 errors
 
 ### 전체 이슈 로드맵
 
 ```
-#3 문서 검토/보완 ✅ (커밋 + 클로즈 필요)
-  ↓
-#2 프로젝트 초기화 ← 다음 세션 (최우선, #1과 묶어서 진행)
-  ↓
-#1 Phase 1 MVP 구현
+#1 MVP 전체 ← 상위 이슈
+  ├── #2 프로젝트 초기화 ✅
+  ├── #3 문서 정비 ✅
+  ├── #4 Settings 탭 ✅ (close 필요)
+  ├── #5 Documents 탭 ✅ (close 필요)
+  └── #6 Update 탭 ← 다음 세션 (신규 이슈 생성 후 착수)
 ```
 
 ### 주의 사항
 
-- **미커밋 파일**: AGENTS.md, CLAUDE.md, docs/spec/setup.md — 세션 시작 시 먼저 커밋
-- **src/ 폴더 비어있음**: electron-vite 초기화 전 상태. `package.json` 없음. 초기화 먼저 진행.
-- **Settings의 llmwiki_root**: NAtlas `llmwiki/` 폴더가 아닌, 사용자가 Settings에서 지정하는 **외부** NSoft-LLMWiki 경로 (예: `/Users/.../NSoft-LLMWiki`)
-- **Python sidecar**: `asyncio.create_subprocess_exec` 사용 필수 (`subprocess.run` 금지)
-- **인덱싱 상태 판단**: `state/manifests/*.json`의 `repoRelativePath` + `sourceHash` 필드 기준
+- `swarmvault.py`에 기존 clone 관련 코드가 있음. update 엔드포인트 추가 시 충돌 주의.
+- Remote 모드에서는 Update 탭을 비활성화해야 함 (swarmvault는 로컬 경로 필요).
+- Settings에서 저장된 `source_mode`와 `llmwiki_root`는 `~/.natlas/config.json`에 저장됨.
 
 ### 주요 파일 경로
 
 ```
-/Users/yg/workspace/NAtlas/
-├── AGENTS.md                       # Antigravity 전체 컨텍스트 (가장 중요)
-├── docs/spec/phase1.md             # 타입/API/컴포넌트 상세 스펙
-├── docs/spec/setup.md              # 초기화 커맨드 + 설정 파일
-└── docs/architecture.md            # 레이어 간 통신, Python sidecar
+src/renderer/src/pages/Update.tsx          ← 신규 작성
+src/python/routers/swarmvault.py           ← update 엔드포인트 추가
+src/renderer/src/lib/types.ts              ← LogLine 타입 확인
+src/renderer/src/store/ui.ts               ← 탭 상태 관리
+docs/spec/phase1.md                        ← Update 탭 상세 스펙 참조
 ```

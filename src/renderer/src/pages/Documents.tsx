@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { api } from '@renderer/lib/api'
-import { DocumentFile, DocumentsResponse } from '@renderer/lib/types'
+import { DocumentFile, DocumentsResponse, DocumentsListItem } from '@renderer/lib/types'
 import { StatusBadge } from '@renderer/components/StatusBadge'
 import { useUIStore } from '@renderer/store/ui'
 import { Input } from '@renderer/components/ui/input'
@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@renderer/components/ui/select'
-import { Search, RefreshCw, AlertCircle, X, FileText, Loader2 } from 'lucide-react'
+import { Search, RefreshCw, AlertCircle, X, FileText, Loader2, ChevronDown, ChevronRight } from 'lucide-react'
 
 // ── Markdown Viewer ───────────────────────────────────────────────────────────
 
@@ -87,6 +87,21 @@ export function Documents() {
   const [userFilter, setUserFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState<'all' | 'indexed' | 'modified' | 'new'>('all')
   const [selectedFile, setSelectedFile] = useState<DocumentFile | null>(null)
+  
+  // Accordion toggle status
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups(prev => {
+      const next = new Set(prev)
+      if (next.has(groupId)) {
+        next.delete(groupId)
+      } else {
+        next.add(groupId)
+      }
+      return next
+    })
+  }
 
   const { data, isLoading, isError, error, refetch, isFetching } = useQuery<DocumentsResponse>({
     queryKey: ['documents'],
@@ -115,6 +130,84 @@ export function Documents() {
       return true
     })
   }, [data, categoryFilter, projectFilter, userFilter, statusFilter, searchTerm])
+
+  // Group filtered files by project/user/slug for Logs archive documents
+  const displayItems = useMemo<DocumentsListItem[]>(() => {
+    const groups: Record<string, DocumentFile[]> = {}
+    const result: DocumentsListItem[] = []
+
+    filteredFiles.forEach(file => {
+      if (file.category === 'Logs' && file.slug) {
+        const groupKey = `group:${file.project || ''}:${file.user || ''}:${file.slug}`
+        if (!groups[groupKey]) {
+          groups[groupKey] = []
+        }
+        groups[groupKey].push(file)
+      } else {
+        result.push({
+          id: `single:${file.path}`,
+          type: 'single',
+          file
+        })
+      }
+    })
+
+    // Create group items
+    Object.entries(groups).forEach(([groupKey, files]) => {
+      const parts = groupKey.split(':')
+      const project = parts[1]
+      const user = parts[2]
+      const slug = parts[3]
+
+      // Determine overall status: new > modified > indexed
+      let overallStatus: 'indexed' | 'modified' | 'new' = 'indexed'
+      if (files.some(f => f.status === 'new')) {
+        overallStatus = 'new'
+      } else if (files.some(f => f.status === 'modified')) {
+        overallStatus = 'modified'
+      }
+
+      // Find latest modified_at
+      let latestModifiedAt: string | null = null
+      files.forEach(f => {
+        if (f.modified_at) {
+          if (!latestModifiedAt || f.modified_at > latestModifiedAt) {
+            latestModifiedAt = f.modified_at
+          }
+        }
+      })
+
+      // Sort files within group so that order.md -> report.md -> knowledge.md order is preferred
+      const typeOrder = { order: 1, report: 2, knowledge: 3 }
+      const sortedFiles = [...files].sort((a, b) => {
+        const orderA = a.doc_type ? (typeOrder[a.doc_type] || 99) : 99
+        const orderB = b.doc_type ? (typeOrder[b.doc_type] || 99) : 99
+        return orderA - orderB
+      })
+
+      result.push({
+        id: groupKey,
+        type: 'group',
+        category: 'Logs',
+        project,
+        user,
+        slug,
+        files: sortedFiles,
+        modified_at: latestModifiedAt,
+        status: overallStatus
+      })
+    })
+
+    // Sort all display items by latest modified_at
+    return result.sort((a, b) => {
+      const timeA = a.type === 'group' ? a.modified_at : a.file.modified_at
+      const timeB = b.type === 'group' ? b.modified_at : b.file.modified_at
+      if (!timeA && !timeB) return 0
+      if (!timeA) return 1
+      if (!timeB) return -1
+      return timeB.localeCompare(timeA)
+    })
+  }, [filteredFiles])
 
   const formatTime = (iso: string | null) => {
     if (!iso) return '-'
@@ -255,64 +348,206 @@ export function Documents() {
                   <div key={i} className="h-12 bg-muted/20 animate-pulse rounded-lg" />
                 ))}
               </div>
-            ) : filteredFiles.length === 0 ? (
+            ) : displayItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center border border-dashed border-border rounded-xl m-6">
                 <AlertCircle className="w-8 h-8 text-muted-foreground mb-3" />
                 <p className="text-sm font-semibold">조건에 맞는 파일이 없습니다</p>
               </div>
             ) : (
-              <div className="divide-y divide-border/50">
-                {filteredFiles.map((file) => {
-                  const parts = file.path.split('/')
-                  const filename = parts[parts.length - 1]
-                  const isSelected = selectedFile?.path === file.path
+              <div className="divide-y divide-border/30">
+                {displayItems.map((item) => {
+                  if (item.type === 'single') {
+                    const file = item.file
+                    const parts = file.path.split('/')
+                    const filename = parts[parts.length - 1]
+                    const isSelected = selectedFile?.path === file.path
 
-                  // doc_type 뱃지 색상
-                  const docTypeBadge = file.doc_type
-                    ? {
-                        order:     { bg: 'bg-indigo-500/15',  text: 'text-indigo-300',  label: 'order' },
-                        report:    { bg: 'bg-amber-500/15',   text: 'text-amber-300',   label: 'report' },
-                        knowledge: { bg: 'bg-emerald-500/15', text: 'text-emerald-300', label: 'know' },
-                      }[file.doc_type] ?? { bg: 'bg-muted/30', text: 'text-muted-foreground', label: file.doc_type }
-                    : null
+                    // doc_type 뱃지 색상
+                    const docTypeBadge = file.doc_type
+                      ? {
+                          order:     { bg: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300',  label: 'order' },
+                          report:    { bg: 'bg-amber-500/10 border-amber-500/20 text-amber-300',   label: 'report' },
+                          knowledge: { bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300', label: 'knowledge' },
+                        }[file.doc_type] ?? { bg: 'bg-muted/20 border-border text-muted-foreground', label: file.doc_type }
+                      : null
 
-                  // primary display: slug이 있으면 slug, 없으면 filename
-                  const displayName = file.slug ?? filename
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => setSelectedFile(isSelected ? null : file)}
+                        className={`flex items-center gap-3 px-5 py-3.5 cursor-pointer transition-colors duration-150 select-none ${
+                          isSelected
+                            ? 'bg-indigo-900/20 border-l-2 border-l-indigo-500'
+                            : 'hover:bg-muted/10 border-l-2 border-l-transparent'
+                        }`}
+                      >
+                        <StatusBadge status={file.status} />
 
-                  return (
-                    <div
-                      key={file.path}
-                      onClick={() => setSelectedFile(isSelected ? null : file)}
-                      className={`flex items-center gap-3 px-5 py-3.5 cursor-pointer transition-colors duration-150 select-none ${
-                        isSelected
-                          ? 'bg-indigo-900/25 border-l-2 border-l-indigo-500'
-                          : 'hover:bg-muted/15 border-l-2 border-l-transparent'
-                      }`}
-                    >
-                      <StatusBadge status={file.status} />
-
-                      <div className="flex-1 min-w-0">
-                        {/* Breadcrumb: category > project > user */}
-                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-0.5">
-                          <span className="text-indigo-400/80">{file.category}</span>
-                          {file.project && <><span>/</span><span>{file.project}</span></>}
-                          {file.user && <><span>/</span><span className="truncate max-w-[80px]">{file.user}</span></>}
+                        <div className="flex-1 min-w-0">
+                          {/* Breadcrumb: category */}
+                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-0.5">
+                            <span className="text-indigo-400/80">{file.category}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            {docTypeBadge && (
+                              <span className={`flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wide ${docTypeBadge.bg}`}>
+                                {docTypeBadge.label}
+                              </span>
+                            )}
+                            <p className="text-xs text-slate-200 font-medium truncate">{filename}</p>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          {docTypeBadge && (
-                            <span className={`flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${docTypeBadge.bg} ${docTypeBadge.text}`}>
-                              {docTypeBadge.label}
-                            </span>
-                          )}
-                          <p className="text-xs text-slate-200 font-medium truncate">{displayName}</p>
+
+                        <span className="text-[11px] text-muted-foreground flex-shrink-0">
+                          {formatTime(file.modified_at)}
+                        </span>
+                      </div>
+                    )
+                  } else {
+                    // Group Item Accordion
+                    const isExpanded = expandedGroups.has(item.id)
+                    const orderFile = item.files.find(f => f.doc_type === 'order')
+                    const reportFile = item.files.find(f => f.doc_type === 'report')
+                    const knowledgeFile = item.files.find(f => f.doc_type === 'knowledge')
+
+                    // 요약 미니 대시보드 인디케이터
+                    const getMiniIndicator = (docFile?: DocumentFile, label: string = '') => {
+                      if (!docFile) {
+                        return (
+                          <span className="flex items-center gap-1 text-[9px] text-muted-foreground/30 bg-muted/5 border border-border/10 px-1.5 py-0.5 rounded select-none font-bold uppercase tracking-wider">
+                            <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/20" />
+                            {label}
+                          </span>
+                        )
+                      }
+                      
+                      const colors = {
+                        indexed: { bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400', dot: 'bg-emerald-500' },
+                        modified: { bg: 'bg-amber-500/10 border-amber-500/20 text-amber-400', dot: 'bg-amber-500' },
+                        new: { bg: 'bg-rose-500/10 border-rose-500/20 text-rose-400', dot: 'bg-rose-500' }
+                      }[docFile.status]
+
+                      return (
+                        <span className={`flex items-center gap-1 text-[9px] border px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${colors.bg}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${colors.dot}`} />
+                          {label}
+                        </span>
+                      )
+                    }
+
+                    return (
+                      <div key={item.id} className="border-b border-border/30 bg-card/[0.02]">
+                        {/* Parent Group Row */}
+                        <div
+                          onClick={() => {
+                            toggleGroup(item.id)
+                            if (item.files.length > 0) {
+                              const alreadySelected = item.files.some(f => selectedFile?.path === f.path)
+                              if (!alreadySelected) {
+                                const targetFile = orderFile || item.files[0]
+                                setSelectedFile(targetFile)
+                              }
+                            }
+                          }}
+                          className={`flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-muted/10 transition-all duration-150 select-none ${
+                            isExpanded ? 'bg-muted/5' : ''
+                          }`}
+                        >
+                          <div className="flex-shrink-0 text-muted-foreground transition-transform duration-200">
+                            {isExpanded ? (
+                              <ChevronDown className="w-4 h-4 text-indigo-400" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 hover:text-foreground" />
+                            )}
+                          </div>
+
+                          <StatusBadge status={item.status} />
+
+                          <div className="flex-1 min-w-0">
+                            {/* Breadcrumb: category > project > user */}
+                            <div className="flex items-center gap-1 text-[10px] text-muted-foreground mb-0.5">
+                              <span className="text-indigo-400/80">{item.category}</span>
+                              <span>/</span>
+                              <span>{item.project}</span>
+                              <span>/</span>
+                              <span className="truncate max-w-[80px]">{item.user}</span>
+                            </div>
+                            <p className="text-xs text-foreground font-bold tracking-wide truncate">
+                              {item.slug}
+                            </p>
+                          </div>
+
+                          {/* Mini Dashboard Indicator */}
+                          <div className="hidden sm:flex items-center gap-1.5 mr-2">
+                            {getMiniIndicator(orderFile, 'order')}
+                            {getMiniIndicator(reportFile, 'report')}
+                            {getMiniIndicator(knowledgeFile, 'know')}
+                          </div>
+
+                          <span className="text-[11px] text-muted-foreground flex-shrink-0">
+                            {formatTime(item.modified_at)}
+                          </span>
+                        </div>
+
+                        {/* Collapsible Children Files */}
+                        <div
+                          className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                            isExpanded ? 'max-h-[300px] opacity-100' : 'max-h-0 opacity-0'
+                          }`}
+                        >
+                          <div className="pl-11 pr-5 py-1.5 bg-background/25 space-y-1 relative border-t border-border/5">
+                            {/* Vertical Guide Line */}
+                            <div className="absolute left-6 top-0 bottom-0 w-[1px] bg-border/20" />
+
+                            {item.files.map(childFile => {
+                              const isChildSelected = selectedFile?.path === childFile.path
+                              const childFilename = childFile.path.split('/').pop() ?? childFile.path
+                              
+                              const childDocTypeBadge = childFile.doc_type
+                                ? {
+                                    order:     { bg: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300',  label: 'order' },
+                                    report:    { bg: 'bg-amber-500/10 border-amber-500/20 text-amber-300',   label: 'report' },
+                                    knowledge: { bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300', label: 'knowledge' },
+                                  }[childFile.doc_type] ?? { bg: 'bg-muted/20 border-border text-muted-foreground', label: childFile.doc_type }
+                                : null
+
+                              return (
+                                <div
+                                  key={childFile.path}
+                                  onClick={() => setSelectedFile(isChildSelected ? null : childFile)}
+                                  className={`group/child flex items-center gap-3 px-3 py-1.5 rounded-md cursor-pointer transition-all duration-150 select-none relative ${
+                                    isChildSelected
+                                      ? 'bg-indigo-950/20 border border-indigo-500/30 text-foreground font-semibold'
+                                      : 'hover:bg-muted/5 border border-transparent text-muted-foreground hover:text-foreground'
+                                  }`}
+                                >
+                                  {/* Horizontal Dash line indicator */}
+                                  <div className="absolute -left-[20px] top-[14px] w-[14px] h-[1px] bg-border/20" />
+
+                                  <StatusBadge status={childFile.status} />
+
+                                  <div className="flex-1 min-w-0 flex items-center gap-2">
+                                    {childDocTypeBadge && (
+                                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider flex-shrink-0 ${childDocTypeBadge.bg}`}>
+                                        {childDocTypeBadge.label}
+                                      </span>
+                                    )}
+                                    <span className="text-xs truncate font-mono">
+                                      {childFilename}
+                                    </span>
+                                  </div>
+
+                                  <span className="text-[10px] text-muted-foreground/75 flex-shrink-0">
+                                    {formatTime(childFile.modified_at)}
+                                  </span>
+                                </div>
+                              )
+                            })}
+                          </div>
                         </div>
                       </div>
-
-                      <span className="text-[11px] text-muted-foreground flex-shrink-0">
-                        {formatTime(file.modified_at)}
-                      </span>
-                    </div>
-                  )
+                    )
+                  }
                 })}
               </div>
             )}

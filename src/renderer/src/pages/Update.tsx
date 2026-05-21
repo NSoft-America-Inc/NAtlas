@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@renderer/lib/api'
-import { SwarmVaultStatus, LogLine } from '@renderer/lib/types'
+import { SwarmVaultStatus, LogLine, Settings } from '@renderer/lib/types'
 import { useUIStore } from '@renderer/store/ui'
 import { LogViewer } from '@renderer/components/LogViewer'
 import { Button } from '@renderer/components/ui/button'
@@ -12,12 +12,18 @@ import {
   XCircle,
   Play,
   RotateCw,
+  AlertCircle,
 } from 'lucide-react'
 
 
 export function Update() {
   const queryClient = useQueryClient()
   const { logs, addLog, clearLogs, isUpdating, setIsUpdating } = useUIStore()
+
+  const { data: settings } = useQuery<Settings>({
+    queryKey: ['settings'],
+    queryFn: api.getSettings,
+  })
 
   const { data: status, isLoading: isStatusLoading, refetch: refetchStatus, isFetching: isStatusFetching } = useQuery<SwarmVaultStatus>({
     queryKey: ['swarmvaultStatus'],
@@ -197,13 +203,28 @@ export function Update() {
           <Button
             size="lg"
             onClick={handleUpdate}
-            disabled={isUpdating || !status?.swarmvault.ok || !status?.llmwiki.ok}
+            disabled={isUpdating || !status?.swarmvault.ok || !status?.llmwiki.ok || settings?.source_mode === 'remote'}
             className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-muted/40 text-white font-bold h-11 px-6 shadow-md transition-all duration-300"
           >
             <Play className={`w-4 h-4 mr-2 ${isUpdating ? 'animate-ping' : ''}`} />
             {isUpdating ? '동기화 중...' : '업데이트 실행'}
           </Button>
         </div>
+
+        {settings?.source_mode === 'remote' && (
+          <div className="flex items-start gap-3 p-4 border border-amber-800/40 rounded-xl bg-amber-950/20 text-amber-400 text-xs animate-in fade-in duration-300">
+            <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5" />
+            <div className="space-y-1">
+              <p className="font-bold text-sm text-amber-300">원격(Remote) 모드 활성화됨</p>
+              <p className="text-muted-foreground leading-relaxed">
+                현재 <strong>Remote (GitHub API)</strong> 소스 모드로 연결되어 있습니다. SwarmVault 로컬 인제스트 및 컴파일 명령어는 로컬 파일시스템 접근을 필요로 하므로 Remote 모드에서는 제한됩니다.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                동기화 및 빌드 기능을 이용하시려면 <strong>Settings</strong> 탭에서 <strong>Local Path</strong> 모드로 전환 후 경로를 설정해 주세요.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Live log streaming */}
         <LogViewer logs={logs} onClear={clearLogs} />

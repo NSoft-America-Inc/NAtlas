@@ -2,23 +2,26 @@ import { create } from 'zustand'
 import { LogLine, Settings } from '../lib/types'
 
 interface UIState {
-  activeTab: 'documents' | 'update' | 'settings'
+  activeTab: 'dashboard' | 'documents' | 'update' | 'settings' | 'wiki' | 'query'
   logs: LogLine[]
   isUpdating: boolean
   settings: Settings | null
+  selectedWikiPath: string | null
 
-  setActiveTab: (tab: 'documents' | 'update' | 'settings') => void
+  setActiveTab: (tab: 'dashboard' | 'documents' | 'update' | 'settings' | 'wiki' | 'query') => void
   addLog: (log: LogLine) => void
   clearLogs: () => void
   setIsUpdating: (updating: boolean) => void
   setSettings: (settings: Settings | null) => void
+  setSelectedWikiPath: (path: string | null) => void
 }
 
 export const useUIStore = create<UIState>((set) => ({
-  activeTab: 'documents',
+  activeTab: 'dashboard',
   logs: [],
   isUpdating: false,
   settings: null,
+  selectedWikiPath: null,
 
   setActiveTab: (tab) => set({ activeTab: tab }),
   addLog: (log) => set((state) => {
@@ -32,4 +35,5 @@ export const useUIStore = create<UIState>((set) => ({
   clearLogs: () => set({ logs: [] }),
   setIsUpdating: (updating) => set({ isUpdating: updating }),
   setSettings: (settings) => set({ settings }),
+  setSelectedWikiPath: (path) => set({ selectedWikiPath: path }),
 }))
