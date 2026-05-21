@@ -1,0 +1,28 @@
+# NStack ➔ NAtlas E2E 지식 파이프라인 무결성 정합성 CI
+# 푸시되거나 PR이 제출될 때, 작업지시서/완료보고서/위키 3종 세트 양식이 유효한지 자동으로 검사합니다.
+
+name: NStack Pipeline Integrity CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate-integrity:
+    name: Validate E2E Knowledge Integrity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout NAtlas Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run NStack Pipeline Linter Validator
+        run: |
+          python3 verify_nstack_pipeline.py
