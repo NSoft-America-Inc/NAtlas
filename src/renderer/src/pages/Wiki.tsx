@@ -596,13 +596,18 @@ export function Wiki() {
         const taskTitle = orderFile?.title || null
         const issueUrl = orderFile?.issue_url || taskFiles.find(f => f.issue_url)?.issue_url || null
 
-        // 📁 [이슈번호] 작업 제목 (담당자) 형태로 표시 이름 다듬기
-        let taskLabel = slug
-        if (taskTitle) {
-          taskLabel = `[${slug}] ${taskTitle}`
+        // 타이틀에서 불필요한 접두사 (feat:, fix:, 현재 작업:, [Order] 등) 제거하여 순수 작업내용 추출
+        let cleanTitle = taskTitle;
+        if (cleanTitle) {
+          cleanTitle = cleanTitle.replace(/^(feat|fix|chore|refactor|docs|현재\s*작업)\s*:\s*/i, '');
+          cleanTitle = cleanTitle.replace(/^\[[^\]]+\]\s*/, '');
+          cleanTitle = cleanTitle.trim();
         }
+
+        // 📁 작업내용 (작업자: 담당자) 형태로 표시 이름 다듬기
+        let taskLabel = cleanTitle || slug
         if (developer) {
-          taskLabel = `${taskLabel} (${developer})`
+          taskLabel = `${taskLabel} (작업자: ${developer})`
         }
 
         const docNodes: TreeNode[] = sorted.map(f => {

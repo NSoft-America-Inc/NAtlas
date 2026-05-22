@@ -640,7 +640,7 @@ export function WikiGraph({ files, onSelectFile }: WikiGraphProps) {
         </div>
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#f43f5e] inline-block" />
-          <span>🧠 지식 자산 (knowledge.md)</span>
+          <span>🧠 지식 자산 (wiki.md)</span>
         </div>
         <div className="flex items-center gap-3 mt-1 border-t border-border/30 pt-1.5 text-indigo-400">
           <span className="inline-block border-b border-dashed border-indigo-500/80 w-5 h-0" />

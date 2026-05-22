@@ -46,7 +46,7 @@ def parse_markdown_frontmatter(content: str) -> dict:
     if h1_match:
         # # [Order] 제목 형태 등에서 타이틀 정리
         title = h1_match.group(1).strip()
-        title = re.sub(r"^\[(Order|Report|Knowledge)\]\s*", "", title)
+        title = re.sub(r"^\[(Order|Report|Knowledge|Wiki)\]\s*", "", title)
         metadata["title"] = title
 
     # GitHub 이슈 URL 파싱
@@ -61,25 +61,35 @@ def main():
     print(f"{COLOR_CYAN}  NStack ➔ NAtlas E2E 지식 파이프라인 무결성 정적 린터 검증기{COLOR_RESET}")
     print("=" * 75)
 
+    import argparse
+    parser = argparse.ArgumentParser(description="NStack integrity linter")
+    parser.add_argument("--project", help="Filter check by project name")
+    parser.add_argument("--task", help="Filter check by task slug")
+    args = parser.parse_args()
+
     # 1. LLMWiki content 디렉토리 경로 탐색
     project_root = Path(__file__).parent.resolve()
-    llmwiki_content_dir = project_root / "llmwiki" / "content"
+    llmwiki_content_dir = None
 
-    if not llmwiki_content_dir.exists():
-        # Fallback: settings.json 이나 config.json 로드 시도
-        config_path = Path.home() / ".natlas" / "config.json"
-        if config_path.exists():
-            import json
-            try:
-                with open(config_path, "r", encoding="utf-8") as f:
-                    cfg = json.load(f)
-                    llmwiki_root = cfg.get("llmwiki_root", "")
-                    if llmwiki_root:
-                        llmwiki_content_dir = Path(llmwiki_root) / "content"
-            except Exception:
-                pass
+    # config.json 로드 시도
+    config_path = Path.home() / ".natlas" / "config.json"
+    if config_path.exists():
+        import json
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+                llmwiki_root = cfg.get("llmwiki_root", "")
+                if llmwiki_root:
+                    candidate_dir = Path(llmwiki_root) / "content"
+                    if candidate_dir.exists():
+                        llmwiki_content_dir = candidate_dir
+        except Exception:
+            pass
 
-    if not llmwiki_content_dir.exists():
+    if not llmwiki_content_dir:
+        llmwiki_content_dir = project_root / "llmwiki" / "content"
+
+    if not llmwiki_content_dir or not llmwiki_content_dir.exists():
         print_error(f"LLMWiki 콘텐츠 경로를 찾을 수 없습니다: {llmwiki_content_dir}")
         print("💡 NAtlas Settings에서 로컬 모드의 llmwiki_root가 정확히 설정되어 있는지 확인해주세요.")
         sys.exit(1)
@@ -100,6 +110,8 @@ def main():
     for project_path in archive_dir.iterdir():
         if not project_path.is_dir() or project_path.name.startswith("."):
             continue
+        if args.project and project_path.name != args.project:
+            continue
             
         for user_path in project_path.iterdir():
             if not user_path.is_dir() or user_path.name.startswith("."):
@@ -108,15 +120,17 @@ def main():
             for task_path in user_path.iterdir():
                 if not task_path.is_dir() or task_path.name.startswith("."):
                     continue
+                if args.task and task_path.name != args.task:
+                    continue
                 
                 checked_tasks_count += 1
                 task_slug = task_path.name
                 project_name = project_path.name
                 user_name = user_path.name
                 
-                # 3종 문서 세트 경로 정의
                 order_file = task_path / "order.md"
                 report_file = task_path / "report.md"
+                wiki_file = task_path / "wiki.md"
                 knowledge_file = task_path / "knowledge.md"
                 
                 relative_task_path = task_path.relative_to(llmwiki_content_dir)
@@ -129,9 +143,9 @@ def main():
                     missing_files.append("order.md")
                 if not report_file.exists():
                     missing_files.append("report.md")
-                # knowledge.md는 AI에 의해 생략 가능할 수 있으나 플로우상 강하게 권장하므로 경고 또는 에러 처리
-                if not knowledge_file.exists():
-                    print_warn(f"     └─ 🧠 지식 자산화 문서(knowledge.md)가 아직 생성되지 않았습니다.")
+                # wiki.md (또는 legacy knowledge.md) 존재성 검증
+                if not wiki_file.exists() and not knowledge_file.exists():
+                    print_warn(f"     └─ 🧠 지식 자산화 문서(wiki.md)가 아직 생성되지 않았습니다.")
 
                 if missing_files:
                     errors_found.append({

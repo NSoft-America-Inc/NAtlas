@@ -81,7 +81,7 @@ def main():
     print(f"✅ 모니터링 LLMWiki 경로 확인: {llmwiki_root}")
 
     # 1. NStack 에이전트 문서 생성 시뮬레이션
-    print_header("1. NStack 더미 아티팩트 생성 (Plan -> Report -> Knowledge)")
+    print_header("1. NStack 더미 아티팩트 생성 (Plan -> Report -> Wiki)")
     test_project = "nstack-test"
     test_user = "integration-bot"
     test_slug = "e2e-pipeline-verification"
@@ -91,15 +91,15 @@ def main():
     
     order_content = "# [Order] E2E 통합 테스트 지시\n\n지식 파이프라인 전 과정 검증을 위한 지시서입니다."
     report_content = "# [Report] E2E 통합 테스트 완료 보고\n\n파이프라인 연동 기능 검증 보고를 수록합니다."
-    knowledge_content = "# [Knowledge] 지식 자산화\n\nNAtlas-NStack 연계 해시 분석을 완료한 지식 내역입니다."
+    wiki_content = "# [Wiki] 지식 자산화\n\nNAtlas-NStack 연계 해시 분석을 완료한 지식 내역입니다."
     
     (target_dir / "order.md").write_text(order_content, encoding="utf-8")
     (target_dir / "report.md").write_text(report_content, encoding="utf-8")
-    (target_dir / "knowledge.md").write_text(knowledge_content, encoding="utf-8")
+    (target_dir / "wiki.md").write_text(wiki_content, encoding="utf-8")
     
     print("✅ 더미 문서 3종 적재 성공:")
     print(f"   📂 경로: {target_dir}")
-    print("   📄 order.md, report.md, knowledge.md")
+    print("   📄 order.md, report.md, wiki.md")
 
     # 2. Documents API 검출 확인
     print_header("2. NAtlas Documents API 스캔 및 상태 확인")
@@ -201,7 +201,7 @@ def main():
     try:
         (target_dir / "order.md").unlink()
         (target_dir / "report.md").unlink()
-        (target_dir / "knowledge.md").unlink()
+        (target_dir / "wiki.md").unlink()
         target_dir.rmdir()
         print("✅ E2E 테스트 임시 파일 및 폴더가 성공적으로 제거되었습니다.")
     except Exception as e:

@@ -110,6 +110,8 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 1000,
     height: 750,
+    minWidth: 800,   // macOS 및 Windows에서 창 축소가 안 되는 현상을 방지하기 위해 최소 너비 제한 지정
+    minHeight: 600,  // macOS 및 Windows에서 창 축소가 안 되는 현상을 방지하기 위해 최소 높이 제한 지정
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -121,6 +123,27 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+  })
+
+  // Keyboard Zoom Shortcut Handler (Cmd/Ctrl + +, Cmd/Ctrl + -, Cmd/Ctrl + 0)
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.type === 'keyDown') {
+      const isCmdOrCtrl = process.platform === 'darwin' ? input.meta : input.control
+      if (isCmdOrCtrl) {
+        if (input.key === '-' || input.key === '_') {
+          event.preventDefault()
+          const currentZoom = mainWindow.webContents.getZoomLevel()
+          mainWindow.webContents.setZoomLevel(Math.max(-3, currentZoom - 0.5))
+        } else if (input.key === '=' || input.key === '+') {
+          event.preventDefault()
+          const currentZoom = mainWindow.webContents.getZoomLevel()
+          mainWindow.webContents.setZoomLevel(Math.min(3, currentZoom + 0.5))
+        } else if (input.key === '0') {
+          event.preventDefault()
+          mainWindow.webContents.setZoomLevel(0)
+        }
+      }
+    }
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

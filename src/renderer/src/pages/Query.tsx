@@ -153,7 +153,7 @@ export function Query() {
     setActiveTab('wiki')
   }
 
-  // Get matching order/report/knowledge files from docsData
+  // Get matching order/report/knowledge/wiki files from docsData
   const getTaskFiles = (slug: string) => {
     if (!docsData?.files) return { order: null, report: null, knowledge: null }
     const taskFiles = docsData.files.filter(f => f.slug === slug)
@@ -161,7 +161,7 @@ export function Query() {
     return {
       order: taskFiles.find(f => f.doc_type === 'order') || null,
       report: taskFiles.find(f => f.doc_type === 'report') || null,
-      knowledge: taskFiles.find(f => f.doc_type === 'knowledge' || (!['order', 'report'].includes(f.doc_type || ''))) || null
+      knowledge: taskFiles.find(f => f.doc_type === 'wiki') || taskFiles.find(f => f.doc_type === 'knowledge' || (!['order', 'report'].includes(f.doc_type || ''))) || null
     }
   }
 

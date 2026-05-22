@@ -177,8 +177,8 @@ export function Documents() {
         }
       })
 
-      // Sort files within group so that order.md -> report.md -> knowledge.md order is preferred
-      const typeOrder = { order: 1, report: 2, knowledge: 3 }
+      // Sort files within group so that order.md -> report.md -> wiki.md / knowledge.md order is preferred
+      const typeOrder = { order: 1, report: 2, wiki: 3, knowledge: 4 }
       const sortedFiles = [...files].sort((a, b) => {
         const orderA = a.doc_type ? (typeOrder[a.doc_type] || 99) : 99
         const orderB = b.doc_type ? (typeOrder[b.doc_type] || 99) : 99
