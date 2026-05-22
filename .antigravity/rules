@@ -28,9 +28,13 @@
 - 설정 파일: `~/.natlas/config.json` (고정)
 - 포트: 18420 고정
 
-## 커밋 규칙
+## 커밋 규칙 및 이슈 접두사 동기화
 - 형식: `{type}: {내용} #NAtlas-{이슈번호}`
-- type: `feat` / `fix` / `refactor` / `docs` / `chore`
+- type 및 GitHub 이슈 접두사 매핑:
+  * `feat` -> `[feat] {작업 내용}` (새로운 사용자 기능 추가/개선)
+  * `fix` -> `[fix] {수정 내용}` (오동작/예외 수정 코딩 작업)
+  * `chore` 또는 `docs` -> `[chore] {작업 내용}` (빌드, 의존성, 가이드 문서 개정 등 코딩 외적 작업)
+  * `Sub` -> `[Sub #{부모번호}] {세부 작업}` (부모 이슈에 종속된 세부 태스크)
 - 예: `feat: Documents 탭 파일 목록 API 연동 #NAtlas-1`
 
 ## 테스트
@@ -105,12 +109,15 @@ llmwiki: -
 ### Workflow Enforcement (전역 플로우 통제 관문)
 The execution and assetization flows in `docs/flows/README.md` are **ABSOLUTE**. Do NOT skip any phase.
 
-- **(D) Task Flow Gate (Socratic First)**: 
+- **(D) Task Flow Gate (Socratic First & Hotfix Gateway Hard-lock)**: 
   - Socratic 조율을 통한 지시서 작성 및 사용자 승인 필수. (승인 전 절대 다음 단계 진행 불가)
   - **Hard Link Rule**: 사용자로부터 명시적인 "진행해" 또는 "승인" 발화를 확인하기 전까지는 어떠한 구현 도구(`run_command`, `write_to_file`, `replace_file_content` 등)도 호출해서는 안 된다.
+  - **Plan 필수 강제 규칙 (선등록 이슈 포함)**: 사용자가 대화창 첫 머리에 명시적으로 `/hotfix` 슬래시 명령어를 입력하여 지시하지 않는 한, 아무리 작고 사소한 1줄 리팩토링이나 핫픽스 작업일지라도 반드시 사전 `/plan` 프로세스를 태워 `tasks/orders/` 아래에 정식 작업 지시서(`order.md`)를 생성해 사용자의 사전 승인을 받아야만 한다. **특히 깃허브 이슈가 사전에 이미 선등록(Pre-registered)되어 있는 상태라 할지라도, 실제 구현 및 코딩 작업을 시작하기 직전에는 예외 없이 무조건 `/plan`을 실행하여 작업지시서를 작성하고 승인을 득해야만 한다.** (이러한 우회 행위를 악용하여 계획 단계 없이 개발을 개시하는 일탈은 엄격히 금지된다.)
+  - **Hotfix 예외 게이팅 (/hotfix)**: 오직 사용자가 명시적으로 `/hotfix` 슬래시 명령어를 입력하여 예외 게이트웨이를 활성화해 준 극히 예외적인 상황에서만 사전 승인 대기 단계를 생략하고 소스 편집에 착수할 수 있다. 이 경우에도 구현 직후 `hotfix` 스킬 명세에 의거하여 `order.md`, `report.md`, `wiki.md` 3종 마크다운 문서를 사후 일괄 자동 역생성하고 `verify_nstack_pipeline.py` 검증과 인덱스 테이블 갱신을 100% 자율 완수하여 보고해야 한다.
 - **(B) Issue Gate (Hard Sync)**: 
   - 지시서 승인 이후, 반드시 GitHub 이슈 본문이 최신 지시서 내용과 동기화되었음을 확인해야 한다. 
-  - 이슈 본문에 최신 지시서가 반영되지 않은 상태에서의 구현 실행은 규칙 위반이다.
+  - **선등록 이슈 대응**: 이미 생성되어 있던 이슈가 존재할 경우에는, 지시서 승인 직후 **기존 깃허브 이슈의 본문(Body)을 새로 작성된 작업지시서 내용으로 즉시 업데이트(edit)하여 동기화**해야 한다.
+  - 이슈 본문에 최신 지시서가 반영되지 않은 상태에서의 구현 실행은 규칙 위반이다. (단, 사용자의 `/hotfix` 선언 시에는 예외적으로 사후에 이슈 본문 동기화를 자동 이행)
 - **(C) Investigation Gate**: 구현(E) 중 에러가 발생하거나 QA(G) 실패 시, 자의적으로 코드를 수정(Patch)하지 말고 반드시 디버깅 플로우(`fix:` 서브이슈, 원인 분석)를 거쳐 태스크 플로우(D)로 순환.
 - **(G) Quality Gate**: 구현(E) 완료 후 반드시 정적 분석(0 errors) 및 완료 조건(DoD) 검증 수행.
 - **(H) Assetization Gate (Mandatory)**: 품질 검증(G) 통과 후, 이슈 클로즈 전 반드시 LLMWiki 지식 자산화 플로우 수행 강제.

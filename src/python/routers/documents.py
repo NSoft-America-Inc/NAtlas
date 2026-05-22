@@ -243,10 +243,10 @@ def load_manifests(llmwiki_root):
         try:
             with open(file, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                if "repoRelativePath" in data and "sourceHash" in data:
+                if "repoRelativePath" in data and ("sourceHash" in data or "contentHash" in data):
                     manifests.append({
                         "repoRelativePath": data["repoRelativePath"],
-                        "sourceHash": data["sourceHash"]
+                        "sourceHash": data.get("sourceHash") or data.get("contentHash")
                     })
         except Exception:
             continue

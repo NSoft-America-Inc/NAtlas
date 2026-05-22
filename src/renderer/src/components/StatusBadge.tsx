@@ -1,28 +1,37 @@
-import { Badge } from '@renderer/components/ui/badge'
-
 interface StatusBadgeProps {
   status: 'indexed' | 'modified' | 'new'
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
+  const statusLabels = {
+    indexed: 'indexed',
+    modified: 'modified (re-indexing required)',
+    new: 'new'
+  }
+
+  const tooltipText = statusLabels[status] || ''
+
   switch (status) {
     case 'indexed':
       return (
-        <Badge className="bg-emerald-950/80 text-emerald-400 border-emerald-800/60 hover:bg-emerald-950 shadow-sm transition-all duration-300">
-          ✅ 인덱싱됨
-        </Badge>
+        <div 
+          title={tooltipText}
+          className="w-3.5 h-3.5 flex-shrink-0 rounded-full bg-emerald-500 border border-emerald-400/40 shadow-[0_0_8px_rgba(16,185,129,0.4)] hover:scale-125 hover:shadow-[0_0_12px_rgba(16,185,129,0.7)] transition-all duration-200 cursor-pointer"
+        />
       )
     case 'modified':
       return (
-        <Badge className="bg-amber-950/80 text-amber-400 border-amber-800/60 hover:bg-amber-950 shadow-sm transition-all duration-300">
-          🟡 수정됨
-        </Badge>
+        <div 
+          title={tooltipText}
+          className="w-3.5 h-3.5 flex-shrink-0 rounded-full bg-amber-500 border border-amber-400/40 shadow-[0_0_8px_rgba(245,158,11,0.4)] hover:scale-125 hover:shadow-[0_0_12px_rgba(245,158,11,0.7)] transition-all duration-200 cursor-pointer animate-pulse"
+        />
       )
     case 'new':
       return (
-        <Badge variant="destructive" className="bg-rose-950/80 text-rose-400 border-rose-800/60 hover:bg-rose-950 shadow-sm transition-all duration-300">
-          🔴 미인덱싱
-        </Badge>
+        <div 
+          title={tooltipText}
+          className="w-3.5 h-3.5 flex-shrink-0 rounded-full bg-rose-500 border border-rose-400/40 shadow-[0_0_8px_rgba(244,63,94,0.4)] hover:scale-125 hover:shadow-[0_0_12px_rgba(244,63,94,0.7)] transition-all duration-200 cursor-pointer"
+        />
       )
     default:
       return null
