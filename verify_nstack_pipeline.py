@@ -90,6 +90,10 @@ def main():
         llmwiki_content_dir = project_root / "llmwiki" / "content"
 
     if not llmwiki_content_dir or not llmwiki_content_dir.exists():
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            print_warn(f"LLMWiki 콘텐츠 경로를 찾을 수 없습니다: {llmwiki_content_dir}")
+            print_warn("GitHub Actions CI 환경이므로 검증을 안전하게 스킵합니다.")
+            sys.exit(0)
         print_error(f"LLMWiki 콘텐츠 경로를 찾을 수 없습니다: {llmwiki_content_dir}")
         print("💡 NAtlas Settings에서 로컬 모드의 llmwiki_root가 정확히 설정되어 있는지 확인해주세요.")
         sys.exit(1)
