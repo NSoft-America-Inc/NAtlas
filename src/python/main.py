@@ -24,6 +24,14 @@ app.include_router(documents.router, prefix="/documents", tags=["Documents"])
 app.include_router(swarmvault.router, prefix="/swarmvault", tags=["SwarmVault"])
 app.include_router(settings.router, prefix="/settings", tags=["Settings"])
 
+import asyncio
+from routers.swarmvault import start_smart_scheduler
+
+@app.on_event("startup")
+async def startup_event():
+    # 60초(1분) 간격으로 백그라운드 스마트 인덱싱 기동
+    asyncio.create_task(start_smart_scheduler(60))
+
 @app.get("/health")
 async def health():
     return {"ok": True}

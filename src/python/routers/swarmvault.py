@@ -465,3 +465,88 @@ async def get_dashboard_stats():
             content={"error": f"대시보드 통계 계산 실패: {str(e)}"}
         )
 
+async def start_smart_scheduler(interval_seconds: int = 60):
+    """1분 간격으로 가동하는 스마트 백경 색인 스케줄러"""
+    print(f"[Scheduler] 스마트 백그라운드 인덱싱 스케줄러가 시작되었습니다. (주기: {interval_seconds}초)")
+    while True:
+        try:
+            await asyncio.sleep(interval_seconds)
+            
+            # settings 로드하여 source_mode 검사
+            # local 모드인 경우에만 자동 백그라운드 색인을 수행합니다.
+            llmwiki_root = get_llmwiki_root()
+            if not llmwiki_root:
+                continue
+                
+            cfg = load_settings_data()
+            if cfg.get("source_mode", "remote") != "local":
+                continue
+                
+            # 1. 문서 상태 가볍게 조회
+            docs_res = await get_documents()
+            if not docs_res or "files" not in docs_res:
+                continue
+                
+            files_to_ingest = [
+                f"content/{file['path']}" 
+                for file in docs_res["files"] 
+                if file.get("status") in ("modified", "new")
+            ]
+            
+            if not files_to_ingest:
+                # 변경 파일 없으므로 무거운 서브프로세스 기동 없이 즉시 스킵
+                continue
+                
+            print(f"[Scheduler] 변경 감지! {len(files_to_ingest)}개 파일 자동 색인 작업 시작.")
+            
+            # 2. Ingest 실행
+            success = True
+            for file_rel in files_to_ingest:
+                proc = await asyncio.create_subprocess_exec(
+                    "swarmvault", "ingest", file_rel,
+                    cwd=llmwiki_root,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
+                await proc.wait()
+                if proc.returncode != 0:
+                    db.execute_query(
+                        "INSERT INTO build_logs (action, status, log_message) VALUES (?, ?, ?)",
+                        ('ingest', 'error', f'[Auto] Ingest 실패: {file_rel} (exit {proc.returncode})'),
+                        commit=True
+                    )
+                    success = False
+                    break
+                    
+            if not success:
+                continue
+                
+            # 3. Compile 실행
+            proc = await asyncio.create_subprocess_exec(
+                "swarmvault", "compile",
+                cwd=llmwiki_root,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            await proc.wait()
+            if proc.returncode == 0:
+                print(f"[Scheduler] {len(files_to_ingest)}개 파일 자동 색인 및 컴파일 완수.")
+                db.execute_query(
+                    "INSERT INTO build_logs (action, status, log_message) VALUES (?, ?, ?)",
+                    ('compile', 'done', f'[Auto] 자동 인덱싱 및 컴파일 완수 (대상: {len(files_to_ingest)}개)'),
+                    commit=True
+                )
+            else:
+                db.execute_query(
+                    "INSERT INTO build_logs (action, status, log_message) VALUES (?, ?, ?)",
+                    ('compile', 'error', f'[Auto] Compile 실패 (exit {proc.returncode})'),
+                    commit=True
+                )
+                
+        except asyncio.CancelledError:
+            print("[Scheduler] 스마트 백그라운드 인덱싱 스케줄러가 종료되었습니다.")
+            break
+        except Exception as e:
+            print(f"[Scheduler] 자동 인덱싱 처리 중 에러 발생: {e}")
+
+

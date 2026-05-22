@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@renderer/components/ui/select'
 import { Search, RefreshCw, AlertCircle, X, FileText, Loader2, ChevronDown, ChevronRight } from 'lucide-react'
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@renderer/components/ui/resizable'
 
 // ── Markdown Viewer ───────────────────────────────────────────────────────────
 
@@ -337,10 +338,15 @@ export function Documents() {
       </div>
 
       {/* ── Main: list + viewer ── */}
-      <div className="flex-1 flex overflow-hidden">
+      <ResizablePanelGroup orientation="horizontal" className="flex-1 overflow-hidden">
 
         {/* File list */}
-        <div className={`flex flex-col overflow-hidden transition-all duration-300 ${selectedFile ? 'w-[42%]' : 'w-full'}`}>
+        <ResizablePanel
+          defaultSize={selectedFile ? "42%" : "100%"}
+          minSize={selectedFile ? "30%" : "100%"}
+          maxSize={selectedFile ? "70%" : "100%"}
+          className="flex flex-col overflow-hidden"
+        >
           <div className="flex-1 overflow-y-auto">
             {isLoading ? (
               <div className="p-6 space-y-2">
@@ -552,15 +558,18 @@ export function Documents() {
               </div>
             )}
           </div>
-        </div>
+        </ResizablePanel>
 
         {/* Markdown Viewer */}
         {selectedFile && (
-          <div className="flex-1 overflow-hidden">
-            <MarkdownViewer file={selectedFile} onClose={() => setSelectedFile(null)} />
-          </div>
+          <>
+            <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
+            <ResizablePanel defaultSize="58%" className="overflow-hidden">
+              <MarkdownViewer file={selectedFile} onClose={() => setSelectedFile(null)} />
+            </ResizablePanel>
+          </>
         )}
-      </div>
+      </ResizablePanelGroup>
 
       {/* ── Footer ── */}
       {data?.summary && (

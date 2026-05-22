@@ -5,3 +5,11 @@ out
 .DS_Store
 .eslintcache
 *.log*
+node-compile-cache/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+

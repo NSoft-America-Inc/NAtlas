@@ -2,6 +2,7 @@ import React from 'react'
 import { FileText, RefreshCw, Settings as SettingsIcon, Brain, BookOpen, Sparkles, BarChart3 } from 'lucide-react'
 import { useUIStore } from '@renderer/store/ui'
 import { Separator } from '@renderer/components/ui/separator'
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@renderer/components/ui/resizable'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -25,64 +26,74 @@ export function Layout({ children }: LayoutProps) {
   }, [])
 
   return (
-    <div className="flex w-screen h-screen bg-background text-foreground overflow-hidden">
-      {/* Premium Sidebar */}
-      <aside className="w-[200px] border-r border-border bg-card/45 flex flex-col justify-between select-none">
-        <div>
-          {/* Brand/Logo header */}
-          <div className="flex items-center gap-2.5 px-5 py-6">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary border border-primary/20 shadow-inner">
-              <Brain className="w-4 h-4 animate-pulse text-indigo-400" />
+    <div className="w-screen h-screen bg-background text-foreground overflow-hidden">
+      <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
+        {/* Premium Sidebar */}
+        <ResizablePanel 
+          defaultSize="16%" 
+          minSize="12%" 
+          maxSize="25%" 
+          className="bg-card/45 flex flex-col justify-between select-none h-full"
+        >
+          <div>
+            {/* Brand/Logo header */}
+            <div className="flex items-center gap-2.5 px-5 py-6">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary border border-primary/20 shadow-inner">
+                <Brain className="w-4 h-4 animate-pulse text-indigo-400" />
+              </div>
+              <div className="truncate">
+                <h1 className="text-base font-bold tracking-tight bg-gradient-to-r from-slate-200 via-indigo-200 to-indigo-400 bg-clip-text text-transparent truncate">
+                  NAtlas
+                </h1>
+                <p className="text-[10px] text-muted-foreground tracking-widest uppercase font-medium truncate">
+                  NSoft Sidecar
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-base font-bold tracking-tight bg-gradient-to-r from-slate-200 via-indigo-200 to-indigo-400 bg-clip-text text-transparent">
-                NAtlas
-              </h1>
-              <p className="text-[10px] text-muted-foreground tracking-widest uppercase font-medium">
-                NSoft Sidecar
-              </p>
-            </div>
+
+            <Separator className="bg-border/60 mx-auto w-[calc(100%-2rem)]" />
+
+            {/* Navigation Links */}
+            <nav className="px-3 py-4 space-y-1.5">
+              {tabs.map((tab) => {
+                const Icon = tab.icon
+                const isActive = activeTab === tab.id
+
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 border ${
+                      isActive
+                        ? 'bg-accent/70 text-accent-foreground border-accent-foreground/20 shadow-md shadow-black/30'
+                        : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-muted/40'
+                    }`}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-400' : ''}`} />
+                    <span className="truncate">{tab.label}</span>
+                  </button>
+                )
+              })}
+            </nav>
           </div>
 
-          <Separator className="bg-border/60 mx-4 w-[168px]" />
-
-          {/* Navigation Links */}
-          <nav className="px-3 py-4 space-y-1.5">
-            {tabs.map((tab) => {
-              const Icon = tab.icon
-              const isActive = activeTab === tab.id
-
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 border ${
-                    isActive
-                      ? 'bg-accent/70 text-accent-foreground border-accent-foreground/20 shadow-md shadow-black/30'
-                      : 'text-muted-foreground border-transparent hover:text-foreground hover:bg-muted/40'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-400' : ''}`} />
-                  {tab.label}
-                </button>
-              )
-            })}
-          </nav>
-        </div>
-
-        {/* Footer */}
-        <div className="px-5 py-4 border-t border-border/40 bg-muted/10">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[10px] text-muted-foreground font-medium">NSoft America Inc.</span>
-            <span className="text-[9px] text-muted-foreground/60">Phase 2 v1.1.0</span>
+          {/* Footer */}
+          <div className="px-5 py-4 border-t border-border/40 bg-muted/10">
+            <div className="flex flex-col gap-0.5 truncate">
+              <span className="text-[10px] text-muted-foreground font-medium truncate">NSoft America Inc.</span>
+              <span className="text-[9px] text-muted-foreground/60 truncate">Phase 2 v1.1.0</span>
+            </div>
           </div>
-        </div>
-      </aside>
+        </ResizablePanel>
 
-      {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full bg-background/95 overflow-hidden">
-        {children}
-      </main>
+        {/* Resizable drag line */}
+        <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
+
+        {/* Main Content Area */}
+        <ResizablePanel defaultSize="84%" className="flex flex-col h-full bg-background/95 overflow-hidden">
+          {children}
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   )
 }
