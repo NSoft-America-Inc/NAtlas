@@ -965,242 +965,254 @@ export function Wiki() {
 
       {/* Main Container */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar Panel */}
-        <div className="flex flex-col w-[320px] flex-shrink-0 border-r border-border bg-card/10 overflow-hidden">
-          {/* Quick Search & Faceted Filters */}
-          <div className="p-3 border-b border-border bg-card/30 flex-shrink-0 space-y-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-              <Input
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                placeholder={viewMode === 'project' ? '프로젝트·슬러그·담당자 검색...' : '문서명 및 경로 검색...'}
-                className="pl-8 h-9 text-xs bg-muted/20 border-border focus-visible:ring-indigo-500/50"
-              />
+        <ResizablePanelGroup orientation="horizontal" className="flex-1 overflow-hidden">
+          {/* Sidebar Panel */}
+          <ResizablePanel
+            defaultSize={22}
+            minSize={15}
+            maxSize={35}
+            className="flex flex-col border-r border-border bg-card/10 overflow-hidden h-full"
+          >
+            {/* Quick Search & Faceted Filters */}
+            <div className="p-3 border-b border-border bg-card/30 flex-shrink-0 space-y-2">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                <Input
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  placeholder={viewMode === 'project' ? '프로젝트·슬러그·담당자 검색...' : '문서명 및 경로 검색...'}
+                  className="pl-8 h-9 text-xs bg-muted/20 border-border focus-visible:ring-indigo-500/50"
+                />
+              </div>
+              
+              {/* Faceted Filter Bar */}
+              {data?.files && (
+                <div className="grid grid-cols-4 gap-1.5 pt-0.5">
+                  {/* Project Filter */}
+                  <select
+                    value={projectFilter}
+                    onChange={e => setProjectFilter(e.target.value)}
+                    className="h-7 px-1.5 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer min-w-0"
+                  >
+                    <option value="all" className="bg-[#0d1117] text-slate-300">전체 프로젝트</option>
+                    {projects.map(p => (
+                      <option key={p} value={p} className="bg-[#0d1117] text-slate-300">{p}</option>
+                    ))}
+                  </select>
+
+                  {/* User Filter */}
+                  <select
+                    value={userFilter}
+                    onChange={e => setUserFilter(e.target.value)}
+                    className="h-7 px-1.5 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer min-w-0"
+                  >
+                    <option value="all" className="bg-[#0d1117] text-slate-300">전체 담당자</option>
+                    {users.map(u => (
+                      <option key={u} value={u} className="bg-[#0d1117] text-slate-300">{u}</option>
+                    ))}
+                  </select>
+
+                  {/* Document Type Filter */}
+                  <select
+                    value={docTypeFilter}
+                    onChange={e => setDocTypeFilter(e.target.value)}
+                    className="h-7 px-1.5 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer min-w-0"
+                  >
+                    <option value="all" className="bg-[#0d1117] text-slate-300">모든 문서</option>
+                    <option value="order" className="bg-[#0d1117] text-sky-400">작업계획서</option>
+                    <option value="report" className="bg-[#0d1117] text-emerald-400">완료보고서</option>
+                    <option value="knowledge" className="bg-[#0d1117] text-amber-400">지식문서</option>
+                  </select>
+
+                  {/* Period Filter */}
+                  <select
+                    value={periodFilter}
+                    onChange={e => setPeriodFilter(e.target.value)}
+                    className="h-7 px-1.5 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer min-w-0"
+                  >
+                    <option value="all" className="bg-[#0d1117] text-slate-300">전체 기간</option>
+                    <option value="1week" className="bg-[#0d1117] text-slate-300">최근 1주</option>
+                    <option value="2weeks" className="bg-[#0d1117] text-slate-300">최근 2주</option>
+                    <option value="1month" className="bg-[#0d1117] text-slate-300">최근 1달</option>
+                    <option value="3months" className="bg-[#0d1117] text-slate-300">최근 3달</option>
+                  </select>
+                </div>
+              )}
             </div>
-            
-            {/* Faceted Filter Bar */}
-            {data?.files && (
-              <div className="grid grid-cols-4 gap-1.5 pt-0.5">
-                {/* Project Filter */}
-                <select
-                  value={projectFilter}
-                  onChange={e => setProjectFilter(e.target.value)}
-                  className="h-7 px-1.5 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer min-w-0"
-                >
-                  <option value="all" className="bg-[#0d1117] text-slate-300">전체 프로젝트</option>
-                  {projects.map(p => (
-                    <option key={p} value={p} className="bg-[#0d1117] text-slate-300">{p}</option>
-                  ))}
-                </select>
 
-                {/* User Filter */}
-                <select
-                  value={userFilter}
-                  onChange={e => setUserFilter(e.target.value)}
-                  className="h-7 px-1.5 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer min-w-0"
-                >
-                  <option value="all" className="bg-[#0d1117] text-slate-300">전체 담당자</option>
-                  {users.map(u => (
-                    <option key={u} value={u} className="bg-[#0d1117] text-slate-300">{u}</option>
-                  ))}
-                </select>
-
-                {/* Document Type Filter */}
-                <select
-                  value={docTypeFilter}
-                  onChange={e => setDocTypeFilter(e.target.value)}
-                  className="h-7 px-1.5 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer min-w-0"
-                >
-                  <option value="all" className="bg-[#0d1117] text-slate-300">모든 문서</option>
-                  <option value="order" className="bg-[#0d1117] text-sky-400">작업계획서</option>
-                  <option value="report" className="bg-[#0d1117] text-emerald-400">완료보고서</option>
-                  <option value="knowledge" className="bg-[#0d1117] text-amber-400">지식문서</option>
-                </select>
-
-                {/* Period Filter */}
-                <select
-                  value={periodFilter}
-                  onChange={e => setPeriodFilter(e.target.value)}
-                  className="h-7 px-1.5 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer min-w-0"
-                >
-                  <option value="all" className="bg-[#0d1117] text-slate-300">전체 기간</option>
-                  <option value="1week" className="bg-[#0d1117] text-slate-300">최근 1주</option>
-                  <option value="2weeks" className="bg-[#0d1117] text-slate-300">최근 2주</option>
-                  <option value="1month" className="bg-[#0d1117] text-slate-300">최근 1달</option>
-                  <option value="3months" className="bg-[#0d1117] text-slate-300">최근 3달</option>
-                </select>
-              </div>
-            )}
-          </div>
-
-          {/* Recent Visit Docs */}
-          {recentDocs.length > 0 && !searchTerm && (
-            <div className="p-3 border-b border-border/60 bg-muted/5 flex-shrink-0 space-y-1.5 select-none">
-              <p className="text-[10px] font-bold text-indigo-400 tracking-wider uppercase flex items-center gap-1.5">
-                <History className="w-3.5 h-3.5" />
-                최근 방문 문서
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {recentDocs.map(doc => {
-                  const label = doc.slug || doc.path.split('/').pop() || doc.path
-                  return (
-                    <button
-                      key={doc.path}
-                      onClick={() => handleSelectFile(doc)}
-                      className={`text-[10px] px-2 py-1 rounded bg-muted/30 border border-border hover:bg-indigo-900/10 hover:border-indigo-500/30 transition-all font-mono truncate max-w-[140px] ${
-                        selectedFile?.path === doc.path ? 'bg-indigo-900/20 border-indigo-500/50 text-indigo-300' : 'text-slate-300'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Tree Area */}
-          <div className="flex-1 overflow-y-auto py-2">
-            {isLoading ? (
-              <div className="p-4 space-y-3">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="h-6 bg-muted/20 animate-pulse rounded" />
-                ))}
-              </div>
-            ) : activeTree.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground">
-                <BookOpen className="w-8 h-8 text-muted-foreground/40 mb-2" />
-                <p className="text-xs">
-                  {searchTerm ? '검색 결과가 없습니다.' : '문서가 없거나 인덱싱이 필요합니다.'}
+            {/* Recent Visit Docs */}
+            {recentDocs.length > 0 && !searchTerm && (
+              <div className="p-3 border-b border-border/60 bg-muted/5 flex-shrink-0 space-y-1.5 select-none">
+                <p className="text-[10px] font-bold text-indigo-400 tracking-wider uppercase flex items-center gap-1.5">
+                  <History className="w-3.5 h-3.5" />
+                  최근 방문 문서
                 </p>
-              </div>
-            ) : (
-              <div className="space-y-0.5 pr-2 pb-4">
-                {activeTree.map(node => (
-                  <ActiveTreeItem
-                    key={node.path}
-                    node={node}
-                    level={0}
-                    expandedFolders={expandedFolders}
-                    toggleFolder={toggleFolder}
-                    selectedFile={selectedFile}
-                    onSelectFile={handleSelectFile}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right Content Area */}
-        <ResizablePanelGroup orientation="horizontal" className="flex-1 overflow-hidden bg-[#0a0f1d]">
-          {/* Main Document Viewer or Empty State */}
-          <ResizablePanel defaultSize="60%" minSize="30%" className="h-full overflow-hidden">
-            {selectedFile ? (
-              <WikiViewer
-                file={selectedFile}
-                history={historyData ?? []}
-                onClose={() => setSelectedFile(null)}
-                onWikiLinkClick={handleWikiLinkClick}
-                onSearchHistoryClick={handleSearchHistoryClick}
-              />
-            ) : (
-              /* Beautiful Glassmorphic Empty State */
-              <div className="h-full w-full flex items-center justify-center p-8 bg-[#0b1019] relative overflow-hidden">
-                {/* Background ambient glow */}
-                <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
-
-                <div className="max-w-2xl w-full p-8 border border-border/40 rounded-2xl bg-card/15 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center relative z-10 space-y-6">
-                  {/* Logo / Icon with Pulse */}
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
-                    <div className="w-16 h-16 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 flex items-center justify-center shadow-lg relative z-10">
-                      <Brain className="w-8 h-8 text-indigo-400 animate-pulse" />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-black bg-gradient-to-r from-slate-100 via-indigo-200 to-slate-300 bg-clip-text text-transparent">
-                      NAtlas 전사 지식 브라우저
-                    </h2>
-                    <p className="text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
-                      NAtlas는 NSoft America의 전사 지식 탐색기입니다. SwarmVault 제어, 작업계획서(order), 완료보고서(report), 지식문서(wiki) 간의 연계와 지식 흐름을 하나의 유기적인 인터페이스로 통합 제공합니다.
-                    </p>
-                  </div>
-
-                  {/* Feature Cards Grid */}
-                  <div className="grid grid-cols-2 gap-4 w-full text-left pt-4">
-                    <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-indigo-500/20 hover:bg-indigo-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setViewMode('project')}>
-                      <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
-                        <FolderTree className="w-3.5 h-3.5" />
-                        프로젝트 / 폴더 뷰 탐색
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        좌측 트리 사이드바를 통해 프로젝트 단위 및 실제 물리 폴더 구조(PARA) 단위로 문서를 자유롭게 선택하여 열람할 수 있습니다.
-                      </p>
-                    </div>
-
-                    <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-emerald-500/20 hover:bg-emerald-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setShowGraph(true)}>
-                      <h4 className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                        <Brain className="w-3.5 h-3.5" />
-                        지식 네트워크 그래프
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        문서와 작업 간의 계층적 연계 구조와 `[[wiki]]` 링크를 통한 지식의 흐름을 네트워크 노드 그래프 형태로 시각화하여 탐색을 돕습니다.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="pt-4 flex items-center justify-center gap-3">
-                    <button
-                      onClick={() => setShowGraph(true)}
-                      className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
-                    >
-                      <Brain className="w-4 h-4 animate-bounce" />
-                      지식 네트워크 그래프 탐색 시작
-                    </button>
-                  </div>
+                <div className="flex flex-wrap gap-1">
+                  {recentDocs.map(doc => {
+                    const label = doc.slug || doc.path.split('/').pop() || doc.path
+                    return (
+                      <button
+                        key={doc.path}
+                        onClick={() => handleSelectFile(doc)}
+                        className={`text-[10px] px-2 py-1 rounded bg-muted/30 border border-border hover:bg-indigo-900/10 hover:border-indigo-500/30 transition-all font-mono truncate max-w-[140px] ${
+                          selectedFile?.path === doc.path ? 'bg-indigo-900/20 border-indigo-500/50 text-indigo-300' : 'text-slate-300'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             )}
+
+            {/* Tree Area */}
+            <div className="flex-1 overflow-y-auto py-2">
+              {isLoading ? (
+                <div className="p-4 space-y-3">
+                  {Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="h-6 bg-muted/20 animate-pulse rounded" />
+                  ))}
+                </div>
+              ) : activeTree.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground">
+                  <BookOpen className="w-8 h-8 text-muted-foreground/40 mb-2" />
+                  <p className="text-xs">
+                    {searchTerm ? '검색 결과가 없습니다.' : '문서가 없거나 인덱싱이 필요합니다.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-0.5 pr-2 pb-4">
+                  {activeTree.map(node => (
+                    <ActiveTreeItem
+                      key={node.path}
+                      node={node}
+                      level={0}
+                      expandedFolders={expandedFolders}
+                      toggleFolder={toggleFolder}
+                      selectedFile={selectedFile}
+                      onSelectFile={handleSelectFile}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </ResizablePanel>
 
-          {/* Graph Panel (ResizablePanel, shown when showGraph) */}
-          {showGraph && (
-            <>
-              <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
-              <ResizablePanel defaultSize="40%" minSize="20%" maxSize="70%" className="h-full flex flex-col bg-[#0b0e14]/98">
-                {/* Graph Panel Header */}
-                <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/40 flex-shrink-0">
-                  <div className="flex items-center gap-2">
-                    <Brain className="w-4 h-4 text-indigo-400 animate-pulse" />
-                    <div>
-                      <h3 className="text-xs font-bold text-slate-200">지식 네트워크 그래프</h3>
-                      <p className="text-[10px] text-muted-foreground">프로젝트 클릭 → 태스크 → 문서 순으로 탐색</p>
+          {/* 서브 사이드바와 메인 내용 간의 비율 조정 리사이저 */}
+          <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
+
+          {/* Right Content Area */}
+          <ResizablePanel defaultSize={78} className="h-full overflow-hidden">
+            <ResizablePanelGroup orientation="horizontal" className="h-full w-full bg-[#0a0f1d]">
+              {/* Main Document Viewer or Empty State */}
+              <ResizablePanel defaultSize={60} minSize={30} className="h-full overflow-hidden">
+                {selectedFile ? (
+                  <WikiViewer
+                    file={selectedFile}
+                    history={historyData ?? []}
+                    onClose={() => setSelectedFile(null)}
+                    onWikiLinkClick={handleWikiLinkClick}
+                    onSearchHistoryClick={handleSearchHistoryClick}
+                  />
+                ) : (
+                  /* Beautiful Glassmorphic Empty State */
+                  <div className="h-full w-full flex items-center justify-center p-8 bg-[#0b1019] relative overflow-hidden">
+                    {/* Background ambient glow */}
+                    <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+
+                    <div className="max-w-2xl w-full p-8 border border-border/40 rounded-2xl bg-card/15 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center relative z-10 space-y-6">
+                      {/* Logo / Icon with Pulse */}
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
+                        <div className="w-16 h-16 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 flex items-center justify-center shadow-lg relative z-10">
+                          <Brain className="w-8 h-8 text-indigo-400 animate-pulse" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <h2 className="text-2xl font-black bg-gradient-to-r from-slate-100 via-indigo-200 to-slate-300 bg-clip-text text-transparent">
+                          NAtlas 전사 지식 브라우저
+                        </h2>
+                        <p className="text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
+                          NAtlas는 NSoft America의 전사 지식 탐색기입니다. SwarmVault 제어, 작업계획서(order), 완료보고서(report), 지식문서(wiki) 간의 연계와 지식 흐름을 하나의 유기적인 인터페이스로 통합 제공합니다.
+                        </p>
+                      </div>
+
+                      {/* Feature Cards Grid */}
+                      <div className="grid grid-cols-2 gap-4 w-full text-left pt-4">
+                        <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-indigo-500/20 hover:bg-indigo-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setViewMode('project')}>
+                          <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                            <FolderTree className="w-3.5 h-3.5" />
+                            프로젝트 / 폴더 뷰 탐색
+                          </h4>
+                          <p className="text-[11px] text-muted-foreground leading-relaxed">
+                            좌측 트리 사이드바를 통해 프로젝트 단위 및 실제 물리 폴더 구조(PARA) 단위로 문서를 자유롭게 선택하여 열람할 수 있습니다.
+                          </p>
+                        </div>
+
+                        <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-emerald-500/20 hover:bg-emerald-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setShowGraph(true)}>
+                          <h4 className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+                            <Brain className="w-3.5 h-3.5" />
+                            지식 네트워크 그래프
+                          </h4>
+                          <p className="text-[11px] text-muted-foreground leading-relaxed">
+                            문서와 작업 간의 계층적 연계 구조와 `[[wiki]]` 링크를 통한 지식의 흐름을 네트워크 노드 그래프 형태로 시각화하여 탐색을 돕습니다.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="pt-4 flex items-center justify-center gap-3">
+                        <button
+                          onClick={() => setShowGraph(true)}
+                          className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+                        >
+                          <Brain className="w-4 h-4 animate-bounce" />
+                          지식 네트워크 그래프 탐색 시작
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <button
-                    onClick={() => setShowGraph(false)}
-                    className="p-1.5 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-colors"
-                    title="그래프 닫기"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-                {/* Graph Content */}
-                <div className="flex-1 min-h-0 w-full p-3 bg-[#090d13]">
-                  <WikiGraph
-                    files={data?.files ?? []}
-                    history={historyData ?? []}
-                    onSelectFile={(file) => handleSelectFile(file, true)}
-                  />
-                </div>
+                )}
               </ResizablePanel>
-            </>
-          )}
+
+              {/* Graph Panel (ResizablePanel, shown when showGraph) */}
+              {showGraph && (
+                <>
+                  <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
+                  <ResizablePanel defaultSize={40} minSize={20} maxSize={70} className="h-full flex flex-col bg-[#0b0e14]/98">
+                    {/* Graph Panel Header */}
+                    <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/40 flex-shrink-0">
+                      <div className="flex items-center gap-2">
+                        <Brain className="w-4 h-4 text-indigo-400 animate-pulse" />
+                        <div>
+                          <h3 className="text-xs font-bold text-slate-200">지식 네트워크 그래프</h3>
+                          <p className="text-[10px] text-muted-foreground">프로젝트 클릭 → 태스크 → 문서 순으로 탐색</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowGraph(false)}
+                        className="p-1.5 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-colors"
+                        title="그래프 닫기"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    {/* Graph Content */}
+                    <div className="flex-1 min-h-0 w-full p-3 bg-[#090d13]">
+                      <WikiGraph
+                        files={data?.files ?? []}
+                        history={historyData ?? []}
+                        onSelectFile={(file) => handleSelectFile(file, true)}
+                      />
+                    </div>
+                  </ResizablePanel>
+                </>
+              )}
+            </ResizablePanelGroup>
+          </ResizablePanel>
         </ResizablePanelGroup>
       </div>
     </div>

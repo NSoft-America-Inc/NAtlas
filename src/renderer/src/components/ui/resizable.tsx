@@ -33,8 +33,8 @@ const ResizableHandle = ({
     {...props}
   >
     {withHandle && (
-      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-border">
-        <GripVertical className="h-2.5 w-2.5" />
+      <div className="z-10 flex h-8 w-4.5 items-center justify-center rounded-md border border-border/80 bg-background text-muted-foreground shadow-md absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hover:bg-accent hover:text-accent-foreground hover:scale-105 active:scale-95 transition-all cursor-ew-resize duration-200">
+        <GripVertical className="h-3.5 w-3.5" />
       </div>
     )}
   </ResizablePrimitive.Separator>
