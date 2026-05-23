@@ -1075,9 +1075,11 @@ export function Wiki() {
         <ResizablePanelGroup key={`wiki-main-group-${showGraph}`} orientation="horizontal" className="flex-1 overflow-hidden">
           {/* Sidebar Panel */}
           <ResizablePanel
+            key="wiki-sidebar-panel"
             defaultSize={22}
-            minSize={15}
+            minSize={5}
             maxSize={35}
+            collapsible={false}
             className="flex flex-col border-r border-border bg-card/10 overflow-hidden h-full"
           >
             {/* Quick Search & Faceted Filters */}
