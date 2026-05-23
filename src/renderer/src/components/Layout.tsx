@@ -27,7 +27,7 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="w-screen h-screen bg-background text-foreground overflow-hidden">
-      <ResizablePanelGroup id="app-layout-panel-group" orientation="horizontal" className="h-full w-full">
+      <ResizablePanelGroup id="app-layout-panel-group-v3" orientation="horizontal" className="h-full w-full">
         {/* Premium Sidebar */}
         <ResizablePanel 
           defaultSize="16%" 
