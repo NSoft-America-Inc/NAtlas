@@ -30,9 +30,9 @@ export function Layout({ children }: LayoutProps) {
       <ResizablePanelGroup orientation="horizontal" className="h-full w-full">
         {/* Premium Sidebar */}
         <ResizablePanel 
-          defaultSize="16%" 
-          minSize="12%" 
-          maxSize="25%" 
+          defaultSize={16} 
+          minSize={12} 
+          maxSize={25} 
           className="bg-card/45 flex flex-col justify-between select-none h-full"
         >
           <div>
@@ -90,7 +90,7 @@ export function Layout({ children }: LayoutProps) {
         <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
 
         {/* Main Content Area */}
-        <ResizablePanel defaultSize="84%" className="flex flex-col h-full bg-background/95 overflow-hidden">
+        <ResizablePanel defaultSize={84} className="flex flex-col h-full bg-background/95 overflow-hidden">
           {children}
         </ResizablePanel>
       </ResizablePanelGroup>
