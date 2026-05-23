@@ -542,6 +542,113 @@ export function Wiki() {
     setActiveTab('query')
   }
 
+  const renderMainContent = () => {
+    if (selectedFile) {
+      return (
+        <WikiViewer
+          file={selectedFile}
+          history={historyData ?? []}
+          onClose={() => setSelectedFile(null)}
+          onWikiLinkClick={handleWikiLinkClick}
+          onSearchHistoryClick={handleSearchHistoryClick}
+        />
+      )
+    }
+    return (
+      /* Beautiful Glassmorphic Empty State */
+      <div className="h-full w-full flex items-center justify-center p-8 bg-[#0b1019] relative overflow-hidden">
+        {/* Background ambient glow */}
+        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+
+        <div className="max-w-2xl w-full p-8 border border-border/40 rounded-2xl bg-card/15 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center relative z-10 space-y-6">
+          {/* Logo / Icon with Pulse */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
+            <div className="w-16 h-16 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 flex items-center justify-center shadow-lg relative z-10">
+              <Brain className="w-8 h-8 text-indigo-400 animate-pulse" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-2xl font-black bg-gradient-to-r from-slate-100 via-indigo-200 to-slate-300 bg-clip-text text-transparent">
+              NAtlas 전사 지식 브라우저
+            </h2>
+            <p className="text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
+              NAtlas는 NSoft America의 전사 지식 탐색기입니다. SwarmVault 제어, 작업계획서(order), 완료보고서(report), 지식문서(wiki) 간의 연계와 지식 흐름을 하나의 유기적인 인터페이스로 통합 제공합니다.
+            </p>
+          </div>
+
+          {/* Feature Cards Grid */}
+          <div className="grid grid-cols-2 gap-4 w-full text-left pt-4">
+            <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-indigo-500/20 hover:bg-indigo-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setViewMode('project')}>
+              <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                <FolderTree className="w-3.5 h-3.5" />
+                프로젝트 / 폴더 뷰 탐색
+              </h4>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                좌측 트리 사이드바를 통해 프로젝트 단위 및 실제 물리 폴더 구조(PARA) 단위로 문서를 자유롭게 선택하여 열람할 수 있습니다.
+              </p>
+            </div>
+
+            <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-emerald-500/20 hover:bg-emerald-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setShowGraph(true)}>
+              <h4 className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+                <Brain className="w-3.5 h-3.5" />
+                지식 네트워크 그래프
+              </h4>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                문서와 작업 간의 계층적 연계 구조와 `[[wiki]]` 링크를 통한 지식의 흐름을 네트워크 노드 그래프 형태로 시각화하여 탐색을 돕습니다.
+              </p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="pt-4 flex items-center justify-center gap-3">
+            <button
+              onClick={() => setShowGraph(true)}
+              className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+            >
+              <Brain className="w-4 h-4 animate-bounce" />
+              지식 네트워크 그래프 탐색 시작
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const renderGraphContent = () => {
+    return (
+      <div className="flex flex-col h-full bg-[#0b0e14]/98">
+        {/* Graph Panel Header */}
+        <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/40 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <Brain className="w-4 h-4 text-indigo-400 animate-pulse" />
+            <div>
+              <h3 className="text-xs font-bold text-slate-200">지식 네트워크 그래프</h3>
+              <p className="text-[10px] text-muted-foreground">프로젝트 클릭 → 태스크 → 문서 순으로 탐색</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowGraph(false)}
+            className="p-1.5 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-colors"
+            title="그래프 닫기"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        {/* Graph Content */}
+        <div className="flex-1 min-h-0 w-full p-3 bg-[#090d13]">
+          <WikiGraph
+            files={data?.files ?? []}
+            history={historyData ?? []}
+            onSelectFile={(file) => handleSelectFile(file, true)}
+          />
+        </div>
+      </div>
+    )
+  }
+
   // Load recent documents from localStorage
 
   // Load recent documents from localStorage
@@ -1104,114 +1211,21 @@ export function Wiki() {
 
           {/* Right Content Area */}
           <ResizablePanel defaultSize={78} className="h-full overflow-hidden">
-            <ResizablePanelGroup orientation="horizontal" className="h-full w-full bg-[#0a0f1d]">
-              {/* Main Document Viewer or Empty State */}
-              <ResizablePanel defaultSize={showGraph ? 60 : 100} minSize={30} className="h-full overflow-hidden">
-                {selectedFile ? (
-                  <WikiViewer
-                    file={selectedFile}
-                    history={historyData ?? []}
-                    onClose={() => setSelectedFile(null)}
-                    onWikiLinkClick={handleWikiLinkClick}
-                    onSearchHistoryClick={handleSearchHistoryClick}
-                  />
-                ) : (
-                  /* Beautiful Glassmorphic Empty State */
-                  <div className="h-full w-full flex items-center justify-center p-8 bg-[#0b1019] relative overflow-hidden">
-                    {/* Background ambient glow */}
-                    <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
-
-                    <div className="max-w-2xl w-full p-8 border border-border/40 rounded-2xl bg-card/15 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center relative z-10 space-y-6">
-                      {/* Logo / Icon with Pulse */}
-                      <div className="relative">
-                        <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
-                        <div className="w-16 h-16 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 flex items-center justify-center shadow-lg relative z-10">
-                          <Brain className="w-8 h-8 text-indigo-400 animate-pulse" />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h2 className="text-2xl font-black bg-gradient-to-r from-slate-100 via-indigo-200 to-slate-300 bg-clip-text text-transparent">
-                          NAtlas 전사 지식 브라우저
-                        </h2>
-                        <p className="text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
-                          NAtlas는 NSoft America의 전사 지식 탐색기입니다. SwarmVault 제어, 작업계획서(order), 완료보고서(report), 지식문서(wiki) 간의 연계와 지식 흐름을 하나의 유기적인 인터페이스로 통합 제공합니다.
-                        </p>
-                      </div>
-
-                      {/* Feature Cards Grid */}
-                      <div className="grid grid-cols-2 gap-4 w-full text-left pt-4">
-                        <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-indigo-500/20 hover:bg-indigo-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setViewMode('project')}>
-                          <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
-                            <FolderTree className="w-3.5 h-3.5" />
-                            프로젝트 / 폴더 뷰 탐색
-                          </h4>
-                          <p className="text-[11px] text-muted-foreground leading-relaxed">
-                            좌측 트리 사이드바를 통해 프로젝트 단위 및 실제 물리 폴더 구조(PARA) 단위로 문서를 자유롭게 선택하여 열람할 수 있습니다.
-                          </p>
-                        </div>
-
-                        <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-emerald-500/20 hover:bg-emerald-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setShowGraph(true)}>
-                          <h4 className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                            <Brain className="w-3.5 h-3.5" />
-                            지식 네트워크 그래프
-                          </h4>
-                          <p className="text-[11px] text-muted-foreground leading-relaxed">
-                            문서와 작업 간의 계층적 연계 구조와 `[[wiki]]` 링크를 통한 지식의 흐름을 네트워크 노드 그래프 형태로 시각화하여 탐색을 돕습니다.
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="pt-4 flex items-center justify-center gap-3">
-                        <button
-                          onClick={() => setShowGraph(true)}
-                          className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
-                        >
-                          <Brain className="w-4 h-4 animate-bounce" />
-                          지식 네트워크 그래프 탐색 시작
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </ResizablePanel>
-
-              {/* Graph Panel (ResizablePanel, shown when showGraph) */}
-              {showGraph && (
-                <>
-                  <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
-                  <ResizablePanel defaultSize={40} minSize={20} maxSize={70} className="h-full flex flex-col bg-[#0b0e14]/98">
-                    {/* Graph Panel Header */}
-                    <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/40 flex-shrink-0">
-                      <div className="flex items-center gap-2">
-                        <Brain className="w-4 h-4 text-indigo-400 animate-pulse" />
-                        <div>
-                          <h3 className="text-xs font-bold text-slate-200">지식 네트워크 그래프</h3>
-                          <p className="text-[10px] text-muted-foreground">프로젝트 클릭 → 태스크 → 문서 순으로 탐색</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setShowGraph(false)}
-                        className="p-1.5 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-colors"
-                        title="그래프 닫기"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                    {/* Graph Content */}
-                    <div className="flex-1 min-h-0 w-full p-3 bg-[#090d13]">
-                      <WikiGraph
-                        files={data?.files ?? []}
-                        history={historyData ?? []}
-                        onSelectFile={(file) => handleSelectFile(file, true)}
-                      />
-                    </div>
-                  </ResizablePanel>
-                </>
-              )}
-            </ResizablePanelGroup>
+            {showGraph ? (
+              <ResizablePanelGroup orientation="horizontal" className="h-full w-full bg-[#0a0f1d]">
+                <ResizablePanel defaultSize={60} minSize={30} className="h-full overflow-hidden">
+                  {renderMainContent()}
+                </ResizablePanel>
+                <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
+                <ResizablePanel defaultSize={40} minSize={20} maxSize={70} className="h-full overflow-hidden">
+                  {renderGraphContent()}
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            ) : (
+              <div className="h-full w-full bg-[#0a0f1d] overflow-hidden">
+                {renderMainContent()}
+              </div>
+            )}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>
