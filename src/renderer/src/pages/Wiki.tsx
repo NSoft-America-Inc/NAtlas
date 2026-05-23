@@ -1106,7 +1106,7 @@ export function Wiki() {
           <ResizablePanel defaultSize={78} className="h-full overflow-hidden">
             <ResizablePanelGroup orientation="horizontal" className="h-full w-full bg-[#0a0f1d]">
               {/* Main Document Viewer or Empty State */}
-              <ResizablePanel defaultSize={60} minSize={30} className="h-full overflow-hidden">
+              <ResizablePanel defaultSize={showGraph ? 60 : 100} minSize={30} className="h-full overflow-hidden">
                 {selectedFile ? (
                   <WikiViewer
                     file={selectedFile}
