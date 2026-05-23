@@ -1072,7 +1072,7 @@ export function Wiki() {
 
       {/* Main Container */}
       <div className="flex-1 flex overflow-hidden">
-        <ResizablePanelGroup orientation="horizontal" className="flex-1 overflow-hidden">
+        <ResizablePanelGroup key={`wiki-main-group-${showGraph}`} orientation="horizontal" className="flex-1 overflow-hidden">
           {/* Sidebar Panel */}
           <ResizablePanel
             defaultSize={22}
@@ -1212,7 +1212,7 @@ export function Wiki() {
           {/* Right Content Area */}
           <ResizablePanel defaultSize={78} className="h-full overflow-hidden">
             {showGraph ? (
-              <ResizablePanelGroup orientation="horizontal" className="h-full w-full bg-[#0a0f1d]">
+              <ResizablePanelGroup key="wiki-right-group" orientation="horizontal" className="h-full w-full bg-[#0a0f1d]">
                 <ResizablePanel defaultSize={60} minSize={30} className="h-full overflow-hidden">
                   {renderMainContent()}
                 </ResizablePanel>
