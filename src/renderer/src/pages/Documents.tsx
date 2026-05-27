@@ -68,6 +68,32 @@ function MarkdownViewer({ file, onClose }: { file: DocumentFile; onClose: () => 
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeHighlight]}
+              components={{
+                a: ({ href, children, ...props }) => {
+                  const isExternal = href?.startsWith('http://') || href?.startsWith('https://')
+                  return (
+                    <a
+                      href={href}
+                      onClick={(e) => {
+                        if (isExternal) {
+                          e.preventDefault()
+                          if (window.electron && (window.electron as any).openExternal) {
+                            (window.electron as any).openExternal(href!)
+                          } else {
+                            window.open(href!, '_blank', 'noopener,noreferrer')
+                          }
+                        }
+                      }}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-indigo-400 hover:text-indigo-300 font-semibold underline transition-colors"
+                      {...props}
+                    >
+                      {children}
+                    </a>
+                  )
+                }
+              }}
             >
               {data.content}
             </ReactMarkdown>
@@ -447,13 +473,6 @@ export function Documents() {
                         <div
                           onClick={() => {
                             toggleGroup(item.id)
-                            if (item.files.length > 0) {
-                              const alreadySelected = item.files.some(f => selectedFile?.path === f.path)
-                              if (!alreadySelected) {
-                                const targetFile = orderFile || item.files[0]
-                                setSelectedFile(targetFile)
-                              }
-                            }
                           }}
                           className={`flex items-center gap-3 px-5 py-3.5 cursor-pointer hover:bg-muted/10 transition-all duration-150 select-none ${
                             isExpanded ? 'bg-muted/5' : ''

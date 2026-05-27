@@ -106,8 +106,8 @@ export const api = {
       return r.json()
     }),
 
-  getDashboardStats: (): Promise<DashboardStats> =>
-    fetch(`${BASE}/swarmvault/dashboard/stats`).then(async r => {
+  getDashboardStats: (period: string = '2weeks'): Promise<DashboardStats> =>
+    fetch(`${BASE}/swarmvault/dashboard/stats?period=${period}`).then(async r => {
       if (!r.ok) {
         const errorData = await r.json().catch(() => ({}))
         throw new Error(errorData.error || '대시보드 통계를 불러오는 중 오류가 발생했습니다.')

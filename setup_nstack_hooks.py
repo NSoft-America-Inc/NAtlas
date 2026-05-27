@@ -27,19 +27,40 @@ def setup_git_hooks():
     hook_content = """#!/bin/sh
 # NStack ➔ NAtlas E2E 지식 파이프라인 무결성 Git pre-commit Hook
 
-echo "🔍 [NStack Hook] E2E 지식 파이프라인 무결성을 정밀 검사하고 있습니다..."
-
 # Python3 기동 여부 체크
 if command -v python3 >/dev/null 2>&1; then
-  python3 verify_nstack_pipeline.py
-  EXIT_CODE=$?
-  if [ $EXIT_CODE -ne 0 ]; then
-    echo "==========================================================================="
-    echo "❌ [NStack Hook Error] E2E 지식 파이프라인 검증에 실패했습니다!"
-    echo "👉 3종 문서 세트(order, report, wiki) 누락 또는 Frontmatter 오류를 수정해야 합니다."
-    echo "💡 규칙 상세 내용 및 오류 분석은 위 콘솔 로그를 확인해 주세요."
-    echo "==========================================================================="
-    exit $EXIT_CODE
+  echo "📦 [NStack Hook] 현재 커밋 대상(Staged)인 변경 마크다운 태스크들을 분석 중입니다..."
+  
+  # git diff --cached 를 통해 현재 스테이징된 문서 중 01-Logs/archive/ 경로에 속한 파일들의 고유 태스크 슬러그를 추려냅니다.
+  # (llmwiki/content/ 및 환경에 맞춤 대응)
+  STAGED_TASKS=$(git diff --cached --name-only | grep -E '01-Logs/archive/[^/]+/[^/]+/[^/]+/' | sed -E 's|.*01-Logs/archive/||' | cut -d'/' -f1,2,3 | sort -u)
+  
+  if [ -z "$STAGED_TASKS" ]; then
+    echo "✅ [NStack Hook] 이번 커밋에는 검증 대상인 NStack 아티팩트(order/report/wiki) 변경사항이 없습니다. 지식 린팅 스킵."
+    exit 0
+  fi
+  
+  echo "$STAGED_TASKS" | while read -r task_info; do
+    if [ -n "$task_info" ]; then
+      PROJECT_NAME=$(echo "$task_info" | cut -d'/' -f1)
+      USER_NAME=$(echo "$task_info" | cut -d'/' -f2)
+      TASK_SLUG=$(echo "$task_info" | cut -d'/' -f3)
+      
+      echo "🔍 [NStack Hook] 태스크 정밀 검사 가동 ➔ [Project: $PROJECT_NAME] Task: $TASK_SLUG ($USER_NAME)"
+      python3 verify_nstack_pipeline.py --project "$PROJECT_NAME" --task "$TASK_SLUG"
+      EXIT_CODE=$?
+      if [ $EXIT_CODE -ne 0 ]; then
+        echo "==========================================================================="
+        echo "❌ [NStack Hook Error] '$TASK_SLUG' 태스크의 지식 정합성 검증에 실패했습니다!"
+        echo "👉 'python3 verify_nstack_pipeline.py --project $PROJECT_NAME --task $TASK_SLUG --heal' 명령어로 자동 복구(Auto-Healing)할 수 있습니다."
+        echo "==========================================================================="
+        exit $EXIT_CODE
+      fi
+    fi
+  done
+  EXIT_CODE_LOOP=$?
+  if [ $EXIT_CODE_LOOP -ne 0 ]; then
+    exit $EXIT_CODE_LOOP
   fi
 else
   echo "⚠️ [NStack Hook Warning] 로컬 시스템에 python3 명령어가 존재하지 않아 검증을 통과시킵니다."

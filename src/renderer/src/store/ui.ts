@@ -7,6 +7,7 @@ interface UIState {
   isUpdating: boolean
   settings: Settings | null
   selectedWikiPath: string | null
+  searchQueryText: string | null
 
   setActiveTab: (tab: 'dashboard' | 'documents' | 'update' | 'settings' | 'wiki' | 'query') => void
   addLog: (log: LogLine) => void
@@ -14,6 +15,7 @@ interface UIState {
   setIsUpdating: (updating: boolean) => void
   setSettings: (settings: Settings | null) => void
   setSelectedWikiPath: (path: string | null) => void
+  setSearchQueryText: (text: string | null) => void
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -22,6 +24,7 @@ export const useUIStore = create<UIState>((set) => ({
   isUpdating: false,
   settings: null,
   selectedWikiPath: null,
+  searchQueryText: null,
 
   setActiveTab: (tab) => set({ activeTab: tab }),
   addLog: (log) => set((state) => {
@@ -36,4 +39,5 @@ export const useUIStore = create<UIState>((set) => ({
   setIsUpdating: (updating) => set({ isUpdating: updating }),
   setSettings: (settings) => set({ settings }),
   setSelectedWikiPath: (path) => set({ selectedWikiPath: path }),
+  setSearchQueryText: (text) => set({ searchQueryText: text }),
 }))

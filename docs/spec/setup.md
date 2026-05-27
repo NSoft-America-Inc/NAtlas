@@ -70,6 +70,37 @@ npx shadcn add separator
 npx shadcn add tooltip
 ```
 
+### SwarmVault RAG & MCP 의존성
+
+SwarmVault RAG 지식 탐색 엔진 및 AI 에이전트 연동용 MCP(Model Context Protocol) 서버를 로컬 환경에 설치 및 구성합니다.
+
+```bash
+# SwarmVault CLI 및 MCP 통합 도구 전역(Global) 설치
+npm install -g @swarmvaultai/cli
+```
+
+#### AI 에이전트용 SwarmVault MCP 연동 설정 (`mcp_config.json`)
+
+AI 에이전트(Claude Desktop, Cline, VS Code Cascade 등)가 SwarmVault RAG 도구들을 네이티브 API로 다이렉트 연동할 수 있도록, 에이전트 설정 파일(`mcp_config.json`)에 아래와 같이 실행 블록을 추가해줍니다.
+
+```json
+{
+  "mcpServers": {
+    "swarmvault": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@swarmvaultai/cli@latest",
+        "mcp"
+      ],
+      "env": {
+        "LLMWIKI_ROOT": "/Users/yg/workspace/NAtlas"
+      }
+    }
+  }
+}
+```
+
 ### Python 의존성 (`src/python/requirements.txt`)
 
 ```

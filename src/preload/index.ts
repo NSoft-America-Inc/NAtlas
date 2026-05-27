@@ -8,7 +8,8 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', {
       ...electronAPI,
-      openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog')
+      openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog'),
+      openExternal: (url: string) => ipcRenderer.invoke('open-external', url)
     })
     contextBridge.exposeInMainWorld('api', api)
   } catch (error) {
@@ -18,7 +19,8 @@ if (process.contextIsolated) {
   // @ts-ignore (define in dts)
   window.electron = {
     ...electronAPI,
-    openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog')
+    openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog'),
+    openExternal: (url: string) => ipcRenderer.invoke('open-external', url)
   }
   // @ts-ignore (define in dts)
   window.api = api

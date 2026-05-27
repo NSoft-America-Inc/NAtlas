@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>NStack ➔ NAtlas E2E 지식 파이프라인 - NAtlas GUI 데모시연</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background-color: #030408;
+            --accent-blue: #0ea5e9;
+            --accent-indigo: #6366f1;
+            --accent-purple: #a855f7;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(9, 12, 22, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.06);
+        }
+        
+        body {
+            background-color: var(--background-color) !important;
+            background-image: radial-gradient(rgba(99, 102, 241, 0.05) 1.5px, transparent 1.5px) !important;
+            background-size: 24px 24px !important;
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
+            color: var(--text-main) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .reveal {
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
+            color: var(--text-main) !important;
+        }
+        
+        .reveal .slides {
+            width: 100vw !important;
+            height: 100vh !important;
+            inset: 0 !important;
+            margin: 0 !important;
+            transform: none !important;
+        }
+        
+        .reveal section {
+            width: 100% !important;
+            height: 100% !important;
+            padding: 0 !important;
+            box-sizing: border-box;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+        
+        .slide-counter {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 0.9vw;
+            color: rgba(255, 255, 255, 0.25);
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            z-index: 50;
+        }
+        
+        .slide-subtitle {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            font-size: 0.9vw;
+            color: var(--accent-indigo);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 800;
+            z-index: 50;
+        }
+        
+        .reveal h1, .reveal h2, .reveal h3 {
+            font-weight: 800 !important;
+            text-transform: none !important;
+            margin: 0;
+            padding: 0;
+            word-break: keep-all !important;
+            white-space: normal !important;
+        }
+        
+        .reveal h2 {
+            font-size: 2.3vw !important;
+            line-height: 1.3 !important;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+        
+        .reveal p, .reveal li {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif !important;
+            color: #cbd5e1 !important;
+            line-height: 1.8 !important;
+            font-size: 1.0vw !important; /* Scaled up 1.2x */
+            word-break: keep-all !important;
+            white-space: normal !important;
+        }
+        
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 45px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            box-sizing: border-box;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;    
+            text-align: center;
+        }
+        
+        .glass-panel:hover {
+            border-color: rgba(99, 102, 241, 0.25);
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.05);
+        }
+
+        .split-container-2col {
+            width: 92%;
+            height: 70%;
+            display: flex;
+            gap: 65px; 
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            margin-top: 65px;
+            margin-bottom: 10px;
+        }
+        
+        .col-40 { width: 40%; flex-shrink: 0; }
+        .col-43 { width: 43%; flex-shrink: 0; }
+        .col-45 { width: 45%; flex-shrink: 0; }
+        .col-50 { width: 50%; flex-shrink: 0; }
+        .col-55 { width: 55%; }
+        .col-57 { width: 57%; }
+        .col-60 { width: 60%; }
+
+        .vscode-sim-box {
+            height: 100%;
+            background: #090c12;
+            border: 1.5px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.75);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+        }
+        
+        @keyframes scale-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        @keyframes soft-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        @keyframes laser-glow {
+            0%, 100% { stroke-opacity: 0.3; stroke-width: 1.5; }
+            50% { stroke-opacity: 0.9; stroke-width: 3.5; }
+        }
+        @keyframes rotate-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .slide-master-footer {
+            width: 90%;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 0 25px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        
+        .slide-master-footer span {
+            font-size: 0.8vw;
+            color: rgba(255,255,255,0.2);
+        }
+        
+        .reveal .controls {
+            z-index: 99999 !important;
+            pointer-events: auto !important;
+            color: var(--accent-indigo) !important;
+        }
+        
+        .neon-nav-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(6, 8, 15, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1.5px solid rgba(99, 102, 241, 0.25);
+            border-radius: 50px;
+            padding: 6px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(99, 102, 241, 0.1);
+            z-index: 100000;
+            pointer-events: auto;
+            user-select: none;
+        }
+        
+        .neon-nav-btn {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.85vw;
+            letter-spacing: 0.08em;
+            padding: 6px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid transparent;
+        }
+        
+        .neon-nav-btn-prev:hover {
+            background: rgba(244, 63, 94, 0.12);
+            border-color: rgba(244, 63, 94, 0.4);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
+            transform: scale(1.04);
+        }
+        
+        .neon-nav-btn-next:hover {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+            transform: scale(1.04);
+        }
+        
+        .neon-nav-btn:active {
+            transform: scale(0.96);
+        }
+        
+        .neon-nav-indicator {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85vw;
+            color: var(--accent-indigo);
+            font-weight: 800;
+            min-width: 80px;
+            text-align: center;
+            letter-spacing: 0.05em;
+            border-left: 1px solid rgba(255,255,255,0.06);
+            border-right: 1px solid rgba(255,255,255,0.06);
+            padding: 0 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            
+            <!-- ── [SLIDE 01 / 11] NAtlas 데모 표지 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 01 / 11</div>
+                <div class="slide-subtitle">PART 5 & PART 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <div class="split-container-2col">
+                    <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+                        <div style="position: absolute; width: 180px; height: 180px; background: rgba(99,102,241,0.08); filter: blur(75px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 280px; height: auto; transform: scale(1.15);">
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="100" cy="100" r="60" fill="none" stroke="var(--accent-indigo)" stroke-width="2.5" style="animation: scale-pulse 4s infinite;"/>
+                                <rect x="75" y="80" width="50" height="40" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-indigo)" stroke-width="2" style="filter: drop-shadow(0 0 10px rgba(99,102,241,0.3));"/>
+                                <text x="100" y="105" fill="var(--accent-indigo)" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">GUI DEMO</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-60 glass-panel" style="padding: 45px 50px; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center;">
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 1.0vw; color: var(--accent-indigo); font-weight: 800; letter-spacing: 0.15em;">PART 5 & 6. NAtlas GUI 실물 시연</span>
+                        
+                        <h1 style="font-size: 2.3vw !important; line-height: 1.35 !important; font-weight: 800; background: linear-gradient(135deg, #ffffff 40%, var(--accent-indigo) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            데스크탑 GUI 앱 기동 및<br>실물 아티팩트 지식 시각화
+                        </h1>
+                        
+                        <p style="font-size: 1.0vw; color: var(--text-muted); line-height: 1.6; max-width: 90%; margin: 0 auto;">
+                            Electron + FastAPI 사이드카 아키텍처를 기동하고,<br>
+                            이전 투두/마이그레이션 생성 문서를 로드해 3D 인터랙티브 그래프 지형 탐색
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 02 / 11] Settings 탭 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 02 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas 기동: Settings 탭의 상태 진단</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
+                        <!-- Settings visual with green badge -->
+                        <div style="width: 100%; border: 1.5px solid rgba(16,185,129,0.3); border-radius: 16px; padding: 22px; box-sizing: border-box; background: rgba(16,185,129,0.015); text-align: left;">
+                            <div style="font-size: 0.9vw; font-weight: bold; color: white; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">
+                                <span>⚙️ System Status</span>
+                                <span style="background: rgba(16,185,129,0.2); border: 1px solid #10b981; padding: 2px 8px; border-radius: 20px; font-size: 0.65vw; color: #10b981; animation: soft-blink 1.5s infinite;">CONNECTED</span>
+                            </div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: #cbd5e1; line-height: 1.6;">
+                                <div>Sidecar Binding: localhost:18420</div>
+                                <div>SwarmVault CLI: Ready (v1.0.4)</div>
+                                <div>Active Path: /Workspace/NAtlas/</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            ⚙️ 데스크탑 기동 시의 포트 및 환경 자동 진단
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                NAtlas 데스크탑 GUI가 기동되는 즉시, 백그라운드 FastAPI Sidecar 와의<br>
+                                연결을 자동 확인하고 SwarmVault 인프라 상태를 1초 만에 스마트 스캔합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>FastAPI 18420 포트 자동 진단</strong>:<br>
+                                    사이드카 웹 서버 활성화 여부 및 API 통신 상태 즉시 확인
+                                </li>
+                                <li>
+                                    <strong>로컬 SQLite 및 저장소 경로 관리</strong>:<br>
+                                    마크다운 지식이 저장되어 있는 물리 로컬 경로(llmwiki 등)의 정합성 진단
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 03 / 11] Sidecar 생명주기 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 03 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas 아키텍처: 데스크탑 메인 프로세스와 Python Sidecar 생명주기</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
+                            <!-- Sidecar lifecycle double loop SVG -->
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="20" y="70" width="60" height="60" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-indigo)" stroke-width="2"/>
+                                <text x="50" y="103" fill="var(--accent-indigo)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">Electron Main</text>
+                                
+                                <rect x="120" y="70" width="60" height="60" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-blue)" stroke-width="2"/>
+                                <text x="150" y="103" fill="var(--accent-blue)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">FastAPI Side</text>
+                                
+                                <path d="M 80 90 L 120 90" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                <path d="M 120 110 L 80 110" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                <circle cx="100" cy="100" r="15" fill="rgba(239,68,68,0.15)" stroke="var(--accent-rose)" stroke-width="1.5"/>
+                                <text x="100" y="103" fill="var(--accent-rose)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">18420</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            ⛓️ 포트 충돌 및 크래시 예외 처리를 겸비한 공조 기전
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                Electron 메인 프로세스가 구동되는 즉시, Python FastAPI uvicorn 서버를<br>
+                                로컬 샌드박스로 자동 Spawn하고 포트 충돌 발생 시 중단 없는 kill 우회 처리를 완성합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>충돌 포트 SIGKILL 및 재결합</strong>:<br>
+                                    포트 18420이 이미 점유되어 있을 경우, 이전 좀비 프로세스를 찾아 안전하게 kill 후 재생성
+                                </li>
+                                <li>
+                                    <strong>자동 3회 헬스 체크 및 크래시 복구</strong>:<br>
+                                    FastAPI 프로세스 크래시 시 최대 3회 무중단 자동 복구 기동 지원
+                                </li>
+                                <li>
+                                    <strong>프로세스 우아한 퇴장(Graceful Shutdown)</strong>:<br>
+                                    Electron 앱 종료 감지 즉시 사이드카에 SIGTERM 명령 전달해 포트 해제
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 04 / 11] SSE Ingestion ── -->
+            <section>
+                <div class="slide-counter">SLIDE 04 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Update: SSE 실시간 동기화 (Ingestion & Compile)</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative;">
+                        <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: var(--accent-indigo); font-weight: bold;">[ NAtlas Update LogViewer ]</span>
+                        </div>
+                        
+                        <div style="flex-grow: 1; padding: 22px; font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; text-align: left; line-height: 1.6; color: #cbd5e1; overflow: hidden;">
+                            <div style="color: #64748b;">[SwarmVault] Starting index synchronization...</div>
+                            <div style="color: #38bdf8; margin-top: 5px;">[Ingesting] content/todo-app/order.md ... OK</div>
+                            <div style="color: #38bdf8;">[Ingesting] content/todo-app/report.md ... OK</div>
+                            <div style="color: #38bdf8;">[Ingesting] content/todo-app/wiki.md ... OK</div>
+                            <div style="color: #10b981; font-weight: bold; margin-top: 8px;">[Success] SwarmVault compile completed in 1.45s!</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            ⚡ 실시간 블로킹 없는 컴파일 로그 수혈 스트리밍
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                1단계/2단계 실전 코딩 데모에서 완성한 실물 마크다운 아티팩트 문서들을<br>
+                                NAtlas Update 버튼 클릭 즉시 Server-Sent Events(SSE) 스트리밍으로 동기화 색인합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>SSE 실시간 통신 파이프라인</strong>:<br>
+                                    uvicorn 백엔드가 SwarmVault 컴파일 명령어를 수행하며 터미널 쉘 로그를 블로킹 없이 전송
+                                </li>
+                                <li>
+                                    <strong>React 실시간 뷰어 출력</strong>:<br>
+                                    진행 상황 로그가 LogViewer 에 아름다운 네온 텍스트 애니메이션으로 실시간 스크롤링
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 05 / 11] Update UX & 스케줄러 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 05 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Update UX: SSE 실시간 쉘 로깅과 백그라운드 스마트 스케줄러</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
+                            <!-- Scheduler clock logic SVG -->
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="100" cy="100" r="60" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"/>
+                                <line x1="100" y1="100" x2="100" y2="55" stroke="var(--accent-emerald)" stroke-width="3" style="transform-origin: 100px 100px; animation: rotate-slow 6s linear infinite;"/>
+                                <line x1="100" y1="100" x2="135" y2="100" stroke="var(--accent-emerald)" stroke-width="2" style="transform-origin: 100px 100px; animation: rotate-slow 60s linear infinite;"/>
+                                <rect x="75" y="85" width="50" height="30" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="1.5" style="filter: drop-shadow(0 0 8px rgba(16,185,129,0.25));"/>
+                                <text x="100" y="103" fill="var(--accent-emerald)" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">AUTO 1M</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            ⏰ 사용자 개입을 없앤 백그라운드 무소음 동기화
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                수동 업데이트 시에는 SSE 스트리밍으로 개발자의 시각에 무결함을 입증하고,<br>
+                                평상 시에는 백그라운드에서 주기적(1분)으로 변경 감지 자동 색인을 수행합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>자동 1분 주기 감지 크론(Cron)</strong>:<br>
+                                    SQLite 및 로컬 디렉토리 파일 수정 타임스탬프를 가볍게 비교하여 변경 시에만 고속 벡터라이즈
+                                </li>
+                                <li>
+                                    <strong>극적인 전사적 편리함 구현</strong>:<br>
+                                    문서를 수동으로 삼키는 것을 깜빡하더라도 AI 에이전트와 GUI가 항상 동기화된 최신 이력을 획득
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 06 / 11] Documents 탭 상태 천이 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 06 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Documents: 파일 상태 천이 애니메이션</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative;">
+                        <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: #8b949e;">Documents Explorer</span>
+                        </div>
+                        
+                        <div style="flex-grow: 1; padding: 22px; font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; text-align: left; line-height: 1.7; color: #cbd5e1; overflow: hidden;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <span>📄 todo-app/order.md</span>
+                                <span style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7vw; font-weight: bold; animation: scale-pulse 2s infinite;">indexed</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <span>📄 todo-app/report.md</span>
+                                <span style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7vw; font-weight: bold; animation: scale-pulse 2s infinite;">indexed</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>📄 todo-app/wiki.md</span>
+                                <span style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7vw; font-weight: bold; animation: scale-pulse 2s infinite;">indexed</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🟢 `[new]` 신규 주황색 배지에서 `[indexed]` 에메랄드로의 변환
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                데모에서 커밋되어 새로 생성되었던 미색인 주황색 `[new]` 파일 목록들이,<br>
+                                SwarmVault 컴파일 스캔 완료 후 산뜻하고 화려한 초록색 `[indexed]` 상태 배지로 역동적으로 천이됩니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>직관적인 상태 가시성 보장</strong>:<br>
+                                    어느 파일이 현재 전사 AI 에이전트의 단기 기억(Citations RAG)으로 주입될 수 있는 상태인지 시각 판별
+                                </li>
+                                <li>
+                                    <strong>마이크로 트랜지션 연출</strong>:<br>
+                                    색인 성공 시 배지 컬러가 부드럽게 페이드 아웃/인 되는 고급 마이크로 모션 이식 완료
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 07 / 11] SQLite 로컬 DB 통합 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 07 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">SQLite 로컬 DB 통합: chats를 넘어선 task_history의 메타데이터 파싱</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
+                            <!-- SQLite metadata flow SVG -->
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="25" y="40" width="150" height="40" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-indigo)" stroke-width="1.5"/>
+                                <text x="100" y="65" fill="#ffffff" font-family="monospace" font-size="8.5" font-weight="bold" text-anchor="middle">RAG Citations Path 파싱</text>
+                                
+                                <path d="M 100 80 L 100 120" fill="none" stroke="var(--accent-indigo)" stroke-width="2" style="animation: laser-glow 2s infinite;"/>
+                                <polygon points="100,120 96,112 104,112" fill="var(--accent-indigo)"/>
+                                
+                                <rect x="35" y="120" width="130" height="45" rx="6" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="2" style="filter: drop-shadow(0 0 10px rgba(16,185,129,0.3));"/>
+                                <text x="100" y="140" fill="var(--accent-emerald)" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">SQLite : task_history</text>
+                                <text x="100" y="152" fill="#cbd5e1" font-family="monospace" font-size="7" text-anchor="middle">(project, user, slug 적재)</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            📊 지질학적 지식 출처의 세분화 정밀 영구 파이프라인
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                단순 에이전트와 주고받은 대화 로그 적재 수준에 머무는 것이 아닌,<br>
+                                RAG 결과물 citation에서 지식의 출처(프로젝트, 담당자, 마일스톤)를 SQLite에 정밀 칼분석 적재합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>정밀 정규화 파싱 탑재</strong>:<br>
+                                    `01-Logs/archive/...` 경로에서 `project`, `user_name`, `task_slug`를 원자적으로 추출
+                                </li>
+                                <li>
+                                    <strong>대시보드 통계의 핵심 원천 데이터</strong>:<br>
+                                    개발 마일스톤 기여도, 지식 지형의 성숙도 판별을 위한 통계 지표 활용 기반 완수
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 08 / 11] NAtlas Wiki Browser 3D ── -->
+            <section>
+                <div class="slide-counter">SLIDE 08 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Wiki Browser: 3D 지식 지도의 탄생</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.08); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: scale-pulse 4s infinite;">
+                            <!-- 3D Interactive Reacting Node Map SVG -->
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="100" cy="100" r="14" fill="#a855f7" filter="drop-shadow(0 0 8px #a855f7)"/>
+                                <text x="100" y="125" fill="#a855f7" font-family="monospace" font-size="8.5" font-weight="bold" text-anchor="middle">todo-app</text>
+                                
+                                <circle cx="50" cy="60" r="10" fill="#f43f5e" filter="drop-shadow(0 0 6px #f43f5e)"/>
+                                <text x="50" y="80" fill="#f43f5e" font-family="monospace" font-size="7.5" font-weight="bold" text-anchor="middle">vanilla-todo</text>
+                                
+                                <circle cx="150" cy="60" r="10" fill="#10b981" filter="drop-shadow(0 0 6px #10b981)"/>
+                                <text x="150" y="80" fill="#10b981" font-family="monospace" font-size="7.5" font-weight="bold" text-anchor="middle">react-migration</text>
+                                
+                                <line x1="100" y1="100" x2="50" y2="60" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                                <line x1="100" y1="100" x2="150" y2="60" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                                <line x1="50" y1="60" x2="150" y2="60" stroke="var(--accent-blue)" stroke-width="2.2" stroke-dasharray="3 3" style="animation: laser-glow 2s infinite;"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🌐 3D 물리 웹 뷰어 상에 살아 움직이는 전사 지식 지도
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                1단계에서 2단계 마이그레이션으로 천이되며 생성되었던 3종 지식 문서들이<br>
+                                NAtlas 위키 브라우저 상에 유기적으로 결합된 반응형 노드로 철컥 안착 시각화됩니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>이중 대괄호 기반 물리적 연결</strong>:<br>
+                                    마크다운 내 인용했던 `[[todo-app-vanilla]]` 링크를 분석해 노드 간 실선 연결 완수
+                                </li>
+                                <li>
+                                    <strong>생생한 3D 반응형 노드 인터랙션</strong>:<br>
+                                    마우스 드래그 및 결합 시 햅틱 자성 자력선이 뿜어지는 프리미엄 UI
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 09 / 11] D3-force 물리 엔진 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 09 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Wiki Graph Physics Engine: D3-force 기반의 실시간 물리 시뮬레이션</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
+                            <!-- D3-force visual engine loop SVG -->
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="100" cy="100" r="50" fill="none" stroke="var(--accent-indigo)" stroke-width="1.5" stroke-dasharray="3 3" style="animation: rotate-slow 20s linear infinite;"/>
+                                <circle cx="65" cy="65" r="18" fill="rgba(8,12,22,0.95)" stroke="var(--accent-indigo)" stroke-width="2" style="filter: drop-shadow(0 0 10px rgba(99,102,241,0.3));"/>
+                                <circle cx="135" cy="135" r="14" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="1.8"/>
+                                <path d="M 77 77 L 123 123" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                <text x="100" y="103" fill="var(--accent-indigo)" font-family="monospace" font-size="8.5" font-weight="bold" text-anchor="middle">d3-force</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🧬 마우스 드래그와 조회수 팽창에 실시간 반응하는 3D 캔버스
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                NAtlas 위키 노드는 단순 2D 그림이 아니라, D3-force 라이브러리의 물리 수식에 의거하여<br>
+                                실시간 마우스 드래깅 인력 및 조회 빈도에 비례해 노드 반경이 실시간으로 부풀어 오릅니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>노드 조회 빈도에 따른 동적 팽창</strong>:<br>
+                                    개발자들이 많이 질의하거나 탐색한 주요 '허브 지식 노드'가 2배 이상 팽창하며 비주얼 하이라이트
+                                </li>
+                                <li>
+                                    <strong>마우스 피지컬 드래그 반응</strong>:<br>
+                                    마우스 드래그 시 고무줄처럼 팽팽히 인력선이 늘어났다가 철컥 안착하는 프리미엄 햅틱 모션
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 10 / 11] 신입 사원 온보딩 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 10 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">실무적 혜택: 신입 사원 온보딩 시나리오</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative;">
+                        <!-- Glassmorphism slide-out panel mockup -->
+                        <div style="background: rgba(9,12,22,0.98); height: 100%; display: flex; flex-direction: column; justify-content: space-between; border-left: 2px solid rgba(167,139,250,0.4);">
+                            <div style="background: #0d1117; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; color: #a78bfa; font-weight: bold; text-align: left;">
+                                [Slide-out Panel: todo-app/wiki.md]
+                            </div>
+                            <div style="flex-grow: 1; padding: 18px; text-align: left; font-family: 'Inter', sans-serif; font-size: 0.8vw; color: #cbd5e1; line-height: 1.5; overflow: hidden;">
+                                <strong style="color: #a78bfa; display: block; margin-bottom: 5px;">## Decision / Zustand 채택 이유</strong>
+                                <div>Redux 대비 보일러플레이트 코드가 80% 적고, 에이전트가 경량 훅으로 소화하기 쉬워 채택함.</div>
+                                <strong style="color: #a78bfa; display: block; margin-top: 10px; margin-bottom: 5px;">## Caveats</strong>
+                                <div>포트 충돌 루프 회피를 위해 main/index.ts 수정 시 Sidecar 18420 bypass 필요.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            👥 클릭 한 번으로 모든 트레이드오프 본문 인수 수령
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                새로 영입된 엔지니어가 히스토리를 묻기 위해 사방을 헤매거나 슬랙을 뒤지지 않고,<br>
+                                NAtlas 위키 그래프 노드를 클릭해 우측 슬라이드-아웃 판넬로 설계 이유를 10초 만에 인수 수령합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>인수인계(Onboarding) 공수의 극적 40% 감축</strong>:<br>
+                                    설계를 주도했던 YG 개발자나 에이전트의 구두 전수 없이도 완벽한 비동기식 지식 인수
+                                </li>
+                                <li>
+                                    <strong>유지보수 시의 실시간 위험 감지</strong>:<br>
+                                    코드를 한 줄 수정하기 전에 이 위키를 열어 `Caveats (주의사항)`을 확인해 연쇄 사이드이펙트 방지
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+            
+            <!-- ── [SLIDE 11 / 11] Resizable Panels ── -->
+            <section>
+                <div class="slide-counter">SLIDE 11 / 11</div>
+                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Resizable Panels UX & 지식 흐름의 귀착 완결</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.08); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
+                            <!-- Resizable observer logic SVG -->
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="30" y="30" width="140" height="140" rx="8" fill="none" stroke="var(--accent-indigo)" stroke-width="2"/>
+                                <line x1="110" y1="30" x2="110" y2="170" stroke="var(--accent-indigo)" stroke-width="2.5" style="animation: laser-glow 2s infinite;"/>
+                                <path d="M 98 100 L 92 100 M 122 100 L 128 100" fill="none" stroke="var(--accent-indigo)" stroke-width="2.2" style="animation: scale-pulse 2s infinite;"/>
+                                <text x="70" y="103" fill="#cbd5e1" font-family="sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">3D Canvas</text>
+                                <text x="145" y="103" fill="#cbd5e1" font-family="sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Doc View</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            ⚛️ 가변 드래그 패널과 React 리사이징 해상도 보호 UX
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                Shadcn UI `ResizablePanel`을 가동해 마우스로 드래그할 때,<br>
+                                `ResizeObserver` 가 반응해 3D Canvas 해상도 깨짐이나 찌그러짐을 300ms 이내에 정밀 자동 리셋 보호합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>가변 멀티패널 가독성 확보</strong>:<br>
+                                    마우스 드래그 조절을 통해 본인이 읽고 싶은 문서의 폭을 언제나 자유롭고 세련되게 조절
+                                </li>
+                                <li>
+                                    <strong>E2E 지식 파이프라인의 환원 완결</strong>:<br>
+                                    이중 대괄호 링크를 타고 React 마이그레이션 노드가 3D 지도에 수려히 안착하며 데모의 1개 지식 피드백 고리가 최종 완결
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- 글로벌 네온 글래스모피즘 내비게이션 바 -->
+    <div class="neon-nav-bar">
+        <button class="neon-nav-btn neon-nav-btn-prev" onclick="Reveal.prev()">◀ PREV</button>
+        <div class="neon-nav-indicator" id="globalSlideIndex">01 / 11</div>
+        <button class="neon-nav-btn neon-nav-btn-next" onclick="Reveal.next()">NEXT ▶</button>
+    </div>
+
+    <!-- Reveal.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'fade',
+            transitionSpeed: 'fast',
+            width: "100%",
+            height: "100%",
+            margin: 0,
+            minScale: 1.0,
+            maxScale: 1.0,
+            plugins: [ RevealNotes ]
+        });
+        
+        Reveal.on('slidechanged', event => {
+            const index = String(event.indexh + 1).padStart(2, '0');
+            const total = String(Reveal.getTotalSlides()).padStart(2, '0');
+            document.getElementById('globalSlideIndex').textContent = `${index} / ${total}`;
+        });
+    </script>
+</body>
+</html>

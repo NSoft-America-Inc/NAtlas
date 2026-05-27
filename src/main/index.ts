@@ -110,6 +110,7 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 1000,
     height: 750,
+    title: 'NAtlas',
     minWidth: 800,   // macOS 및 Windows에서 창 축소가 안 되는 현상을 방지하기 위해 최소 너비 제한 지정
     minHeight: 600,  // macOS 및 Windows에서 창 축소가 안 되는 현상을 방지하기 위해 최소 높이 제한 지정
     show: false,
@@ -159,6 +160,9 @@ function createWindow(): void {
   }
 }
 
+// Set app name explicitly for macOS menu bar and integration
+app.setName('NAtlas')
+
 // This method will be called when Electron has finished initialization
 app.whenReady().then(() => {
   // Set app user model id for windows
@@ -174,6 +178,13 @@ app.whenReady().then(() => {
       properties: ['openDirectory']
     })
     return canceled ? null : filePaths[0]
+  })
+
+  // Register open external browser IPC handler
+  ipcMain.handle('open-external', async (_, url) => {
+    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+      await shell.openExternal(url)
+    }
   })
 
   // Start sidecar process

@@ -1,6 +1,46 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { DocumentFile, TaskHistoryItem } from '@renderer/lib/types'
-import { Maximize2, Minimize2, ZoomIn, ZoomOut, RefreshCw, HelpCircle, Pause, Play } from 'lucide-react'
+import { Maximize2, Minimize2, RefreshCw, HelpCircle, Pause, Play, Layers } from 'lucide-react'
+
+function drawNodeShape(
+  ctx: CanvasRenderingContext2D,
+  x: number, y: number,
+  type: 'project' | 'task' | 'document',
+  docType: string | null | undefined,
+  r: number
+) {
+  ctx.beginPath()
+  if (type === 'project') {
+    ctx.arc(x, y, r, 0, Math.PI * 2)
+  } else if (type === 'task') {
+    // Diamond
+    ctx.moveTo(x, y - r)
+    ctx.lineTo(x + r * 0.85, y)
+    ctx.lineTo(x, y + r)
+    ctx.lineTo(x - r * 0.85, y)
+    ctx.closePath()
+  } else if (docType === 'order') {
+    // Square
+    const s = r * 1.1
+    ctx.rect(x - s, y - s, s * 2, s * 2)
+  } else if (docType === 'report') {
+    // Pentagon
+    for (let i = 0; i < 5; i++) {
+      const a = (i * 2 * Math.PI / 5) - Math.PI / 2
+      if (i === 0) ctx.moveTo(x + r * Math.cos(a), y + r * Math.sin(a))
+      else ctx.lineTo(x + r * Math.cos(a), y + r * Math.sin(a))
+    }
+    ctx.closePath()
+  } else if (docType === 'knowledge') {
+    // Triangle
+    ctx.moveTo(x, y - r)
+    ctx.lineTo(x + r * 0.866, y + r * 0.5)
+    ctx.lineTo(x - r * 0.866, y + r * 0.5)
+    ctx.closePath()
+  } else {
+    ctx.arc(x, y, r, 0, Math.PI * 2)
+  }
+}
 
 interface GraphNode {
   id: string
@@ -39,7 +79,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
   const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
   const [showHelp, setShowHelp] = useState<boolean>(false)
+  const [showLegend, setShowLegend] = useState<boolean>(true)
   const [isSimPaused, setIsSimPaused] = useState<boolean>(false)
+  const [editingZoom, setEditingZoom] = useState<boolean>(false)
+  const [zoomText, setZoomText] = useState<string>('')
 
   // Depth expansion
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set())
@@ -63,12 +106,20 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
   const alphaRef = useRef<number>(1.0)
   const isSimPausedRef = useRef<boolean>(false)
   const expandedNodesRef = useRef<Set<string>>(new Set())
+  // 줌/팬 lerp용 refs (draw는 render*, 입력은 target*을 각각 사용)
+  const renderZoomRef = useRef<number>(0.85)
+  const renderPanRef  = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const targetZoomRef = useRef<number>(0.85)
+  const targetPanRef  = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
   const isDraggingCanvas = useRef<boolean>(false)
   const dragStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const dragStartPos = useRef<{ clientX: number; clientY: number }>({ clientX: 0, clientY: 0 })
   const activeDragNode = useRef<GraphNode | null>(null)
   const hoveredNodeRef = useRef<GraphNode | null>(null)
+  // 액션 힌트 DOM refs (re-render 없이 직접 조작)
+  const hintContainerRef = useRef<HTMLDivElement | null>(null)
+  const hintTextRef = useRef<HTMLSpanElement | null>(null)
 
   // ── 1. 전체 노드·엣지 데이터셋 빌드 (파일이 바뀔 때만 재계산) ──
   const graphData = useMemo(() => {
@@ -369,7 +420,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         const dx = tNode.x - sNode.x
         const dy = tNode.y - sNode.y
         const dist = Math.sqrt(dx * dx + dy * dy) || 1.0
-        const targetDist = edge.type === 'wiki-link' ? 120 : 70
+        const targetDist = edge.type === 'wiki-link' ? 120 : tNode.type === 'document' ? 100 : 70
         const strength = edge.type === 'wiki-link' ? kAttraction * 0.4 : kAttraction
         const force = (dist - targetDist) * strength
         const fx = (dx / dist) * force
@@ -393,8 +444,8 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       const { visibleNodes, visibleEdges, expandableIds } = visibleData
       ctx.clearRect(0, 0, width, height)
       ctx.save()
-      ctx.translate(pan.x, pan.y)
-      ctx.scale(zoom, zoom)
+      ctx.translate(renderPanRef.current.x, renderPanRef.current.y)
+      ctx.scale(renderZoomRef.current, renderZoomRef.current)
 
       // 1. Edges
       visibleEdges.forEach(edge => {
@@ -424,16 +475,32 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         const isExpanded = expandedNodesRef.current.has(node.id)
         const isExpandable = expandableIds.has(node.id)
 
+        const isFocused = focusedProjectRef.current === node.id
+
         ctx.shadowColor = node.glowColor
-        ctx.shadowBlur = isHovered ? 22 : 8
-        ctx.beginPath()
-        ctx.arc(node.x, node.y, node.radius + (isHovered ? 2 : 0), 0, Math.PI * 2)
+        ctx.shadowBlur = isHovered ? 22 : (isExpanded || isFocused) ? 14 : 8
+        drawNodeShape(ctx, node.x, node.y, node.type, node.docType, node.radius + (isHovered ? 2 : 0))
         ctx.fillStyle = node.color
         ctx.fill()
-        ctx.strokeStyle = isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.18)'
-        ctx.lineWidth = isHovered ? 2 : 1
+        ctx.strokeStyle = isHovered ? '#ffffff' : (isExpanded || isFocused) ? 'rgba(255,255,255,0.55)' : 'rgba(255, 255, 255, 0.18)'
+        ctx.lineWidth = isHovered ? 2 : (isExpanded || isFocused) ? 2 : 1
         ctx.stroke()
         ctx.shadowBlur = 0
+
+        // 확장/포커스 선택 링 (점선 외곽)
+        if (isExpanded || isFocused) {
+          ctx.save()
+          ctx.shadowColor = isFocused ? 'rgba(99,102,241,0.7)' : 'rgba(245,158,11,0.7)'
+          ctx.shadowBlur = 16
+          drawNodeShape(ctx, node.x, node.y, node.type, node.docType, node.radius + 6)
+          ctx.strokeStyle = isFocused ? 'rgba(165,180,252,0.9)' : 'rgba(253,211,77,0.9)'
+          ctx.lineWidth = 1.5
+          ctx.setLineDash([5, 3])
+          ctx.stroke()
+          ctx.setLineDash([])
+          ctx.shadowBlur = 0
+          ctx.restore()
+        }
 
         // 확장 가능 표시: 오른쪽 하단에 +/- 배지
         if (isExpandable) {
@@ -477,7 +544,22 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       ctx.restore()
     }
 
+    const LERP = 0.1  // 보간 계수 (낮을수록 더 부드럽고 느림)
     const tick = () => {
+      // zoom/pan lerp — render refs가 target refs를 부드럽게 추적
+      const dz = targetZoomRef.current - renderZoomRef.current
+      const dx = targetPanRef.current.x - renderPanRef.current.x
+      const dy = targetPanRef.current.y - renderPanRef.current.y
+      if (Math.abs(dz) > 0.0003 || Math.abs(dx) > 0.15 || Math.abs(dy) > 0.15) {
+        renderZoomRef.current += dz * LERP
+        renderPanRef.current = {
+          x: renderPanRef.current.x + dx * LERP,
+          y: renderPanRef.current.y + dy * LERP
+        }
+        // zoom 표시 업데이트 (useEffect 재시작 없음 — deps에 없음)
+        setZoom(renderZoomRef.current)
+      }
+
       if (!isSimPausedRef.current && alphaRef.current > 0.005) tickPhysics()
       draw()
       animationRef.current = requestAnimationFrame(tick)
@@ -489,7 +571,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       resizeObserver.disconnect()
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [graphData, visibleData, zoom, pan])
+  }, [graphData, visibleData])  // zoom/pan 제거 → 스크롤 시 루프 재시작 없음
 
   // ── 4. 마우스 조작 ──
   const getTransformedCoords = (clientX: number, clientY: number) => {
@@ -497,8 +579,8 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     if (!canvas) return { x: 0, y: 0 }
     const rect = canvas.getBoundingClientRect()
     return {
-      x: (clientX - rect.left - pan.x) / zoom,
-      y: (clientY - rect.top - pan.y) / zoom
+      x: (clientX - rect.left - renderPanRef.current.x) / renderZoomRef.current,
+      y: (clientY - rect.top  - renderPanRef.current.y) / renderZoomRef.current
     }
   }
 
@@ -509,7 +591,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     return null
   }
 
+  const hideHint = () => { if (hintContainerRef.current) hintContainerRef.current.style.opacity = '0' }
+
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    hideHint()
     const { x, y } = getTransformedCoords(e.clientX, e.clientY)
     dragStartPos.current = { clientX: e.clientX, clientY: e.clientY }
     const hitNode = findNodeAt(x, y)
@@ -519,7 +604,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       alphaRef.current = Math.max(alphaRef.current, 0.4)
     } else {
       isDraggingCanvas.current = true
-      dragStart.current = { x: e.clientX - pan.x, y: e.clientY - pan.y }
+      dragStart.current = { x: e.clientX - renderPanRef.current.x, y: e.clientY - renderPanRef.current.y }
       canvasRef.current!.style.cursor = 'move'
     }
   }
@@ -534,10 +619,36 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       return
     }
     if (isDraggingCanvas.current) {
-      setPan({ x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y })
+      hideHint()
+      const newPan = { x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y }
+      renderPanRef.current = newPan
+      targetPanRef.current = newPan
       return
     }
     const foundHover = findNodeAt(x, y)
+
+    // 액션 힌트: 매 mousemove마다 위치/텍스트 업데이트 (re-render 없이 DOM 직접)
+    if (hintContainerRef.current && hintTextRef.current) {
+      if (foundHover && (foundHover.type === 'project' || foundHover.type === 'task')) {
+        const canvas = canvasRef.current!
+        const rect = canvas.getBoundingClientRect()
+        const rz = renderZoomRef.current
+        const rp = renderPanRef.current
+        const sx = foundHover.x * rz + rp.x + rect.left
+        const sy = foundHover.y * rz + rp.y + rect.top + foundHover.radius * rz + 11
+        const isFocused = focusedProjectRef.current === foundHover.id
+        const hintText = (foundHover.type === 'project' && isFocused)
+          ? '← 전체로 돌아가기'
+          : '→ 들어가기'
+        hintContainerRef.current.style.left = `${sx}px`
+        hintContainerRef.current.style.top  = `${sy}px`
+        hintContainerRef.current.style.opacity = '1'
+        hintTextRef.current.textContent = hintText
+      } else {
+        hintContainerRef.current.style.opacity = '0'
+      }
+    }
+
     if (foundHover !== hoveredNodeRef.current) {
       hoveredNodeRef.current = foundHover
       canvasRef.current!.style.cursor = foundHover ? 'pointer' : 'default'
@@ -546,14 +657,24 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       if (foundHover?.type === 'project') {
         const stats = graphData.projectStats.get(foundHover.id)
         if (stats) {
-          // 캔버스 좌표 → 화면 좌표
+          // 캔버스 좌표 → 화면 좌표 (화면 밖 넘침 방지)
           const canvas = canvasRef.current!
           const rect = canvas.getBoundingClientRect()
-          const screenX = foundHover.x * zoom + pan.x + rect.left
-          const screenY = foundHover.y * zoom + pan.y + rect.top
+          const rz = renderZoomRef.current
+          const rp = renderPanRef.current
+          const screenX = foundHover.x * rz + rp.x + rect.left
+          const screenY = foundHover.y * rz + rp.y + rect.top
+          const tooltipW = 240
+          const tooltipH = 230
+          const rawX = screenX + foundHover.radius * rz + 12
+          const adjustedX = rawX + tooltipW > window.innerWidth - 8
+            ? screenX - foundHover.radius * rz - tooltipW - 12
+            : rawX
+          const rawY = screenY - 20
+          const adjustedY = Math.min(window.innerHeight - tooltipH - 8, Math.max(8, rawY))
           setTooltip({
-            x: screenX + foundHover.radius * zoom + 10,
-            y: screenY - 20,
+            x: adjustedX,
+            y: adjustedY,
             projectId: foundHover.id,
             name: foundHover.label,
             ...stats
@@ -623,6 +744,8 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
           // 태스크 클릭: 확장/축소
           const nodeId = node.id
           const canvas = canvasRef.current
+          const wasExpanded = expandedNodesRef.current.has(nodeId)
+
           setExpandedNodes(prev => {
             const next = new Set(prev)
             if (next.has(nodeId)) {
@@ -631,14 +754,25 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
             } else {
               next.add(nodeId)
               const children = graphData.childrenMap.get(nodeId) ?? []
-              const parent = graphData.nodeMap.get(nodeId)
-              if (parent && children.length > 0 && canvas) {
+              const taskNode = graphData.nodeMap.get(nodeId)
+              if (taskNode && children.length > 0 && canvas) {
+                // 부모 프로젝트 반대 방향(바깥쪽) 기준 부채꼴 배치
+                const parentProjectId = graphData.parentMap.get(nodeId)
+                const projectNode = parentProjectId ? graphData.nodeMap.get(parentProjectId) : null
+                const outwardAngle = projectNode
+                  ? Math.atan2(taskNode.y - projectNode.y, taskNode.x - projectNode.x)
+                  : -Math.PI / 2
+                // 자식 수에 따라 호 각도 조정 (최소 60°, 최대 150°)
+                const arcSpread = children.length > 1
+                  ? Math.min(Math.PI * 0.83, children.length * (Math.PI / 5))
+                  : 0
                 children.forEach((childId, i) => {
                   const child = graphData.nodeMap.get(childId)
                   if (child) {
-                    const angle = (i / children.length) * 2 * Math.PI - Math.PI / 2
-                    child.x = parent.x + Math.cos(angle) * 80
-                    child.y = parent.y + Math.sin(angle) * 80
+                    const t = children.length > 1 ? i / (children.length - 1) : 0.5
+                    const angle = outwardAngle + (t - 0.5) * arcSpread
+                    child.x = taskNode.x + Math.cos(angle) * 130
+                    child.y = taskNode.y + Math.sin(angle) * 130
                     child.vx = 0; child.vy = 0
                   }
                 })
@@ -648,6 +782,19 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
             expandedNodesRef.current = next
             return next
           })
+
+          // 확장 시 해당 태스크를 화면 중앙으로 부드럽게 이동
+          if (!wasExpanded) {
+            const taskNode = graphData.nodeMap.get(nodeId)
+            if (taskNode && canvas) {
+              const cw = canvas.clientWidth || 800
+              const ch = canvas.clientHeight || 500
+              targetPanRef.current = {
+                x: cw / 2 - taskNode.x * targetZoomRef.current,
+                y: ch / 2 - taskNode.y * targetZoomRef.current
+              }
+            }
+          }
         }
       }
     }
@@ -661,7 +808,26 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
   useEffect(() => { expandedNodesRef.current = expandedNodes }, [expandedNodes])
   useEffect(() => { focusedProjectRef.current = focusedProject }, [focusedProject])
 
-  const handleZoom = (factor: number) => setZoom(prev => Math.min(2.5, Math.max(0.25, prev * factor)))
+  // 캔버스 중앙 기준 줌 (툴바 +/- 버튼: 즉시 반응, lerp 없음)
+  const handleZoom = (factor: number) => {
+    const canvas = canvasRef.current
+    const prevZoom = targetZoomRef.current
+    const newZoom = Math.min(2.5, Math.max(0.25, prevZoom * factor))
+    const ratio = newZoom / prevZoom
+    targetZoomRef.current = newZoom
+    renderZoomRef.current = newZoom  // 버튼은 즉각 반응
+    setZoom(newZoom)
+    if (canvas) {
+      const cx = canvas.width / 2
+      const cy = canvas.height / 2
+      const newPan = {
+        x: cx - (cx - targetPanRef.current.x) * ratio,
+        y: cy - (cy - targetPanRef.current.y) * ratio
+      }
+      targetPanRef.current = newPan
+      renderPanRef.current = newPan
+    }
+  }
 
   const toggleSimulation = () => {
     setIsSimPaused(prev => {
@@ -671,8 +837,11 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
   }
 
   const resetView = useCallback(() => {
+    renderZoomRef.current = 0.85
+    renderPanRef.current = { x: 0, y: 0 }
+    targetZoomRef.current = 0.85
+    targetPanRef.current = { x: 0, y: 0 }
     setZoom(0.85)
-    setPan({ x: 0, y: 0 })
     setExpandedNodes(new Set())
     expandedNodesRef.current = new Set()
     setFocusedProject(null)
@@ -693,10 +862,25 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     setIsSimPaused(false)
   }, [graphData])
 
-  // 마우스 휠 줌
+  // 마우스 커서 위치 기준 부드러운 줌 (target refs만 업데이트 → lerp가 실제 이동)
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault()
-    handleZoom(e.deltaY < 0 ? 1.1 : 0.9)
+    hideHint()
+    const factor = e.deltaY < 0 ? 1.04 : 0.962  // 4%/틱으로 낮춤
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const rect = canvas.getBoundingClientRect()
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    const prevTarget = targetZoomRef.current
+    const newTarget = Math.min(2.5, Math.max(0.25, prevTarget * factor))
+    const ratio = newTarget / prevTarget
+    targetZoomRef.current = newTarget
+    targetPanRef.current = {
+      x: mouseX - (mouseX - targetPanRef.current.x) * ratio,
+      y: mouseY - (mouseY - targetPanRef.current.y) * ratio
+    }
+    // setZoom/setPan 호출 없음 — lerp가 animation tick에서 처리
   }
 
   return (
@@ -711,56 +895,152 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onMouseLeave={() => { hideHint(); handleMouseUp() }}
         onWheel={handleWheel}
         className="w-full h-full block"
       />
 
-      {/* 컨트롤 패널 */}
-      <div className="absolute top-4 right-4 flex items-center gap-1.5 p-1 bg-card/65 border border-border backdrop-blur-md rounded-lg shadow-xl select-none z-10">
-        <button onClick={() => handleZoom(1.15)} title="확대" className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
-          <ZoomIn className="w-3.5 h-3.5" />
-        </button>
-        <button onClick={() => handleZoom(0.85)} title="축소" className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
-          <ZoomOut className="w-3.5 h-3.5" />
-        </button>
-        <div className="w-px h-4 bg-border/60 mx-0.5" />
-        <button
-          onClick={toggleSimulation}
-          title={isSimPaused ? '물리 재개' : '노드 고정'}
-          className={`p-2 rounded transition-all ${isSimPaused ? 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30' : 'hover:bg-muted/40 text-muted-foreground hover:text-foreground'}`}
-        >
-          {isSimPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
-        </button>
-        <div className="w-px h-4 bg-border/60 mx-0.5" />
-        <button onClick={resetView} title="초기화 (전체 접기)" className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
-          <RefreshCw className="w-3.5 h-3.5" />
-        </button>
-        <button onClick={() => setIsFullscreen(!isFullscreen)} title={isFullscreen ? '창 모드' : '전체화면'} className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
-          {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 text-indigo-400" /> : <Maximize2 className="w-3.5 h-3.5" />}
-        </button>
-        <button onClick={() => setShowHelp(!showHelp)} title="도움말" className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
-          <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
-        </button>
+      {/* 액션 힌트 (DOM 직접 조작, 재렌더 없음) */}
+      <div
+        ref={hintContainerRef}
+        className="fixed z-20 -translate-x-1/2 pointer-events-none transition-opacity duration-100"
+        style={{ opacity: 0, left: 0, top: 0 }}
+      >
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-slate-900/90 border border-slate-600/50 text-slate-200 backdrop-blur-sm shadow-lg whitespace-nowrap">
+          <span ref={hintTextRef}>들어가기</span>
+        </div>
       </div>
 
-      {/* 범례 */}
-      <div className="absolute top-4 left-4 p-3 bg-card/50 border border-border/60 backdrop-blur-md rounded-lg text-[10px] text-muted-foreground space-y-1.5 shadow-lg select-none z-10 pointer-events-none">
-        <p className="font-bold text-slate-200 border-b border-border/30 pb-1 mb-1 tracking-wider uppercase">지식 범례</p>
-        <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-[#6366f1] inline-block" /><span>💼 Project</span></div>
-        <div className="flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b] inline-block" /><span>📁 Task Slug</span></div>
-        <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#0ea5e9] inline-block" /><span>📋 작업계획서</span></div>
-        <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#10b981] inline-block" /><span>✅ 완료보고서</span></div>
-        <div className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-[#f43f5e] inline-block" /><span>🧠 지식 자산</span></div>
-        <div className="flex items-center gap-3 mt-1 border-t border-border/30 pt-1.5 text-indigo-400">
-          <span className="inline-block border-b border-dashed border-indigo-500/80 w-5 h-0" />
-          <span>[[wiki]] 연계</span>
+      {/* 컨트롤 패널 */}
+      <div className="absolute top-4 right-4 flex items-center gap-1 p-1 bg-card/65 border border-border backdrop-blur-md rounded-lg shadow-xl select-none z-10">
+        {/* 줌 컨트롤 */}
+        <div className="relative group/zoom">
+          <div className="flex items-center bg-muted/25 border border-border/60 rounded-md overflow-hidden">
+            <button
+              onClick={() => handleZoom(0.9)}
+              className="px-2 py-1.5 text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors text-sm font-bold leading-none"
+            >−</button>
+            <input
+              type="text"
+              value={editingZoom ? zoomText : `${Math.round(zoom * 100)}%`}
+              onFocus={() => { setEditingZoom(true); setZoomText(String(Math.round(zoom * 100))) }}
+              onChange={e => setZoomText(e.target.value.replace(/[^0-9]/g, ''))}
+              onBlur={() => {
+                const v = parseInt(zoomText)
+                if (!isNaN(v) && v >= 25 && v <= 250) setZoom(v / 100)
+                setEditingZoom(false)
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  const v = parseInt(zoomText)
+                  if (!isNaN(v)) setZoom(Math.min(2.5, Math.max(0.25, v / 100)))
+                  setEditingZoom(false)
+                  e.currentTarget.blur()
+                }
+                if (e.key === 'Escape') { setEditingZoom(false); e.currentTarget.blur() }
+              }}
+              className="w-12 text-center text-[10px] bg-transparent text-slate-300 border-0 focus:outline-none py-1.5 font-mono tabular-nums"
+            />
+            <button
+              onClick={() => handleZoom(1.1)}
+              className="px-2 py-1.5 text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors text-sm font-bold leading-none"
+            >+</button>
+          </div>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/zoom:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
+            확대/축소 (숫자 직접 입력 가능)
+          </div>
         </div>
-        <div className="border-t border-border/30 pt-1.5 text-[9px] text-slate-500 space-y-0.5">
-          <p>● 클릭: 확장/축소 (+숫자=자식수)</p>
-          <p>● 문서 클릭: 문서 열기</p>
+        <div className="w-px h-4 bg-border/60 mx-0.5" />
+        {/* 시뮬레이션 토글 */}
+        <div className="relative group/btn-sim">
+          <button
+            onClick={toggleSimulation}
+            className={`p-2 rounded transition-all ${isSimPaused ? 'bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30' : 'hover:bg-muted/40 text-muted-foreground hover:text-foreground'}`}
+          >
+            {isSimPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+          </button>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/btn-sim:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
+            {isSimPaused ? '물리 재개' : '노드 위치 고정'}
+          </div>
+        </div>
+        <div className="w-px h-4 bg-border/60 mx-0.5" />
+        {/* 초기화 */}
+        <div className="relative group/btn-reset">
+          <button onClick={resetView} className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
+            <RefreshCw className="w-3.5 h-3.5" />
+          </button>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/btn-reset:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
+            전체 초기화
+          </div>
+        </div>
+        {/* 전체화면 */}
+        <div className="relative group/btn-fs">
+          <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
+            {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 text-indigo-400" /> : <Maximize2 className="w-3.5 h-3.5" />}
+          </button>
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/btn-fs:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
+            {isFullscreen ? '창 모드로 전환' : '전체화면'}
+          </div>
+        </div>
+        {/* 범례 토글 */}
+        <div className="relative group/btn-legend">
+          <button
+            onClick={() => setShowLegend(prev => !prev)}
+            className={`p-2 rounded transition-all ${showLegend ? 'bg-indigo-500/15 text-indigo-400 hover:bg-indigo-500/25' : 'hover:bg-muted/40 text-muted-foreground hover:text-foreground'}`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+          </button>
+          <div className="absolute top-full right-0 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/btn-legend:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
+            {showLegend ? '범례 접기' : '범례 펼치기'}
+          </div>
+        </div>
+        {/* 도움말 */}
+        <div className="relative group/btn-help">
+          <button onClick={() => setShowHelp(!showHelp)} className={`p-2 rounded transition-all ${showHelp ? 'bg-indigo-500/15 text-indigo-400 hover:bg-indigo-500/25' : 'hover:bg-muted/40 text-muted-foreground hover:text-foreground'}`}>
+            <HelpCircle className="w-3.5 h-3.5" />
+          </button>
+          <div className="absolute top-full right-0 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/btn-help:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
+            조작법 도움말
+          </div>
         </div>
       </div>
+
+      {/* 범례 (우측 하단) */}
+      {showLegend && (
+        <div className="absolute bottom-4 right-4 p-3 bg-card/60 border border-border/60 backdrop-blur-md rounded-lg text-[10px] text-muted-foreground space-y-1.5 shadow-lg select-none z-10 pointer-events-none">
+          <p className="font-bold text-slate-200 border-b border-border/30 pb-1 mb-1 tracking-wider uppercase">지식 범례</p>
+          <div className="flex items-center gap-2">
+            <svg width="12" height="12" className="flex-shrink-0"><circle cx="6" cy="6" r="5" fill="#6366f1"/></svg>
+            <span>💼 Project</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg width="12" height="12" className="flex-shrink-0"><polygon points="6,0 11,6 6,12 1,6" fill="#f59e0b"/></svg>
+            <span>📁 Task Slug</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg width="12" height="12" className="flex-shrink-0"><rect x="1" y="1" width="10" height="10" fill="#0ea5e9"/></svg>
+            <span>📋 작업계획서</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg width="12" height="12" viewBox="0 0 12 12" className="flex-shrink-0">
+              <polygon points="6,0.5 11.3,4.6 9.3,11 2.7,11 0.7,4.6" fill="#10b981"/>
+            </svg>
+            <span>✅ 완료보고서</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg width="12" height="12" className="flex-shrink-0"><polygon points="6,0.5 12,11.5 0,11.5" fill="#f43f5e"/></svg>
+            <span>🧠 지식 자산</span>
+          </div>
+          <div className="flex items-center gap-3 mt-1 border-t border-border/30 pt-1.5 text-indigo-400">
+            <span className="inline-block border-b border-dashed border-indigo-500/80 w-5 h-0" />
+            <span>[[wiki]] 연계</span>
+          </div>
+          <div className="border-t border-border/30 pt-1.5 text-[9px] text-slate-500 space-y-0.5">
+            <p>● 클릭: 확장/축소 (+숫자=자식수)</p>
+            <p>● 문서 클릭: 문서 열기</p>
+          </div>
+        </div>
+      )}
 
       {/* ── 상위 레이어로 돌아가기 버튼 (포커스/확장 상태일 때) ── */}
       {(focusedProject !== null || expandedNodes.size > 0) && (
@@ -777,9 +1057,9 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         </button>
       )}
 
-      {/* 물리 정지 배지 */}
+      {/* 물리 고정 배지 (좌측 상단) */}
       {isSimPaused && (
-        <div className="absolute bottom-4 right-4 flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-500/15 border border-indigo-500/30 rounded-lg text-[10px] text-indigo-300 font-medium select-none z-10">
+        <div className="absolute top-4 left-4 flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-500/15 border border-indigo-500/30 rounded-lg text-[10px] text-indigo-300 font-medium select-none z-10">
           <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block" />
           고정됨
         </div>

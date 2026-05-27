@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -43,7 +43,9 @@ export function Query() {
   const [historyList, setHistoryList] = useState<TaskHistoryItem[]>([])
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const { setActiveTab, setSelectedWikiPath } = useUIStore()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const { setActiveTab, setSelectedWikiPath, searchQueryText, setSearchQueryText } = useUIStore()
 
   // 1. Fetch system status (to check local settings & availability)
   const { data: status, isLoading: isStatusLoading } = useQuery({
@@ -71,7 +73,24 @@ export function Query() {
 
   useEffect(() => {
     fetchHistory()
+
+    // 리사이즈 드래그 시 포커스 유실 방지
+    const handleResize = () => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  useEffect(() => {
+    if (searchQueryText) {
+      setInput(searchQueryText)
+      queryMutation.mutate(searchQueryText)
+      setSearchQueryText(null) // 소모 후 즉시 초기화
+    }
+  }, [searchQueryText])
 
   // Inbound path parsing helper
   const parseCitationPath = (citPath: string) => {
@@ -230,6 +249,7 @@ export function Query() {
               <div className="relative flex-1">
                 <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-muted-foreground" />
                 <Input
+                  ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="프로젝트명, 담당자 이름(developer-a), 또는 작업 키워드(memo)를 입력하고 작업 명세를 탐색해 보세요..."
@@ -275,7 +295,7 @@ export function Query() {
             )}
           </div>
 
-          <ScrollArea className="flex-1 px-6 py-6">
+          <ScrollArea className="flex-1 min-h-0 px-6 py-6">
             <div className="max-w-4xl mx-auto space-y-8">
               {/* Error Box */}
               {errorMsg && (

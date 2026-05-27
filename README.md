@@ -54,6 +54,11 @@ npm run dev
 npm run build:mac
 ```
 
+## AI 에이전트 협업 환경 (MCP 연동)
+
+AI 에이전트(Cascade, Cline 등)가 SwarmVault RAG 엔진을 기반으로 로컬 저장소 지식을 자율 탐색하고 정합성 검증을 마칠 수 있도록 하려면, 에이전트의 MCP 환경 설정을 연동해 주어야 합니다. 
+구체적인 글로벌 CLI 의존성 설치 및 `mcp_config.json` 매핑 정보는 [프로젝트 셋업 스펙](file:///Users/yg/workspace/NAtlas/docs/spec/setup.md)의 **SwarmVault RAG & MCP 의존성** 단락을 참고하십시오.
+
 ## 프로젝트 구조
 
 ```

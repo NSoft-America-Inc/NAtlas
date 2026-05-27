@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: temp-app
+appId: com.nsoftamerica.natlas
+productName: NAtlas
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: temp-app
+  executableName: NAtlas
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

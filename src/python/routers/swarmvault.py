@@ -397,9 +397,19 @@ async def delete_build_logs():
         )
 
 @router.get("/dashboard/stats")
-async def get_dashboard_stats():
+async def get_dashboard_stats(period: str = "2weeks"):
     """Calculate and retrieve consolidated dashboard analytics and statistics."""
     try:
+        # Determine the date filter for Top Projects/Contributors based on period
+        if period == "1week":
+            date_filter = "created_at >= datetime('now', '-7 days')"
+        elif period == "1month":
+            date_filter = "created_at >= datetime('now', '-30 days')"
+        elif period == "1year":
+            date_filter = "created_at >= datetime('now', '-365 days')"
+        else: # "2weeks" is the default
+            date_filter = "created_at >= datetime('now', '-14 days')"
+
         # 1. Total Queries (task history count)
         total_queries_res = db.execute_query("SELECT COUNT(*) as cnt FROM task_history", fetch_one=True)
         total_queries = total_queries_res["cnt"] if total_queries_res else 0
@@ -413,44 +423,83 @@ async def get_dashboard_stats():
         success_builds = success_builds_res["cnt"] if success_builds_res else 0
         build_success_rate = int((success_builds / total_builds) * 100) if total_builds > 0 else 100
         
-        # 4. Top Projects (Top 5)
+        # 4. Top Projects (Top 5) - period filtered
         top_projects = db.execute_query(
-            "SELECT project, COUNT(*) as count FROM task_history WHERE project IS NOT NULL GROUP BY project ORDER BY count DESC LIMIT 5",
+            f"SELECT project, COUNT(*) as count FROM task_history WHERE project IS NOT NULL AND {date_filter} GROUP BY project ORDER BY count DESC LIMIT 5",
             fetch_all=True
         )
         
-        # 5. Top Contributors (Top 5)
+        # 5. Top Contributors (Top 5) - period filtered
         top_contributors = db.execute_query(
-            "SELECT user_name, COUNT(*) as count FROM task_history WHERE user_name IS NOT NULL GROUP BY user_name ORDER BY count DESC LIMIT 5",
+            f"SELECT user_name, COUNT(*) as count FROM task_history WHERE user_name IS NOT NULL AND {date_filter} GROUP BY user_name ORDER BY count DESC LIMIT 5",
             fetch_all=True
         )
         
-        # 6. Daily Trends (Last 7 Days)
+        # 6. Daily Trends depending on selected period
         today = datetime.date.today()
         daily_trends = []
-        for i in range(6, -1, -1):
-            target_date = today - datetime.timedelta(days=i)
-            date_str = target_date.strftime("%Y-%m-%d")
-            display_str = target_date.strftime("%m/%d")
-            
-            q_res = db.execute_query(
-                "SELECT COUNT(*) as cnt FROM task_history WHERE date(created_at, 'localtime') = ?",
-                (date_str,),
-                fetch_one=True
-            )
-            b_res = db.execute_query(
-                "SELECT COUNT(*) as cnt FROM build_logs WHERE date(created_at, 'localtime') = ?",
-                (date_str,),
-                fetch_one=True
-            )
-            
-            daily_trends.append({
-                "date": display_str,
-                "full_date": date_str,
-                "queries": q_res["cnt"] if q_res else 0,
-                "builds": b_res["cnt"] if b_res else 0
-            })
-            
+        
+        if period == "1year":
+            # Last 12 Months
+            for i in range(11, -1, -1):
+                year = today.year
+                month = today.month - i
+                while month <= 0:
+                    month += 12
+                    year -= 1
+                
+                month_str = f"{year:04d}-{month:02d}"
+                display_str = f"{month}월"
+                
+                q_res = db.execute_query(
+                    "SELECT COUNT(*) as cnt FROM task_history WHERE strftime('%Y-%m', created_at, 'localtime') = ?",
+                    (month_str,),
+                    fetch_one=True
+                )
+                b_res = db.execute_query(
+                    "SELECT COUNT(*) as cnt FROM build_logs WHERE strftime('%Y-%m', created_at, 'localtime') = ?",
+                    (month_str,),
+                    fetch_one=True
+                )
+                
+                daily_trends.append({
+                    "date": display_str,
+                    "full_date": f"{month_str}-01",
+                    "queries": q_res["cnt"] if q_res else 0,
+                    "builds": b_res["cnt"] if b_res else 0
+                })
+        else:
+            # 1week (7 days), 2weeks (14 days) or 1month (30 days)
+            if period == "1week":
+                days = 7
+            elif period == "1month":
+                days = 30
+            else:
+                days = 14
+
+            for i in range(days - 1, -1, -1):
+                target_date = today - datetime.timedelta(days=i)
+                date_str = target_date.strftime("%Y-%m-%d")
+                display_str = target_date.strftime("%m/%d")
+                
+                q_res = db.execute_query(
+                    "SELECT COUNT(*) as cnt FROM task_history WHERE date(created_at, 'localtime') = ?",
+                    (date_str,),
+                    fetch_one=True
+                )
+                b_res = db.execute_query(
+                    "SELECT COUNT(*) as cnt FROM build_logs WHERE date(created_at, 'localtime') = ?",
+                    (date_str,),
+                    fetch_one=True
+                )
+                
+                daily_trends.append({
+                    "date": display_str,
+                    "full_date": date_str,
+                    "queries": q_res["cnt"] if q_res else 0,
+                    "builds": b_res["cnt"] if b_res else 0
+                })
+                
         return {
             "total_queries": total_queries,
             "total_builds": total_builds,
