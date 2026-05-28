@@ -438,7 +438,23 @@
                     <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
+                        <!-- Floating Badges corresponding to 3 points on the right -->
+                        <div style="position: absolute; top: 0%; left: -10%; width: 145px; background: rgba(8,12,22,0.92); border: 1.2px solid var(--accent-rose); border-radius: 8px; padding: 6px 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 10px rgba(244,63,94,0.1); --rot: -4deg; animation: float-slow 4s ease-in-out infinite; z-index: 10; box-sizing: border-box;">
+                            <strong style="font-size: 0.6vw; color: #f87171; display: block; margin-bottom: 2px;">⚡ PORT 18420 CONFLICT</strong>
+                            <span style="font-size: 0.55vw; color: #cbd5e1; display: block; line-height: 1.25;">Zombie PID SIGKILL ➔ Auto-Rebind [OK]</span>
+                        </div>
+                        
+                        <div style="position: absolute; top: 5%; right: -10%; width: 145px; background: rgba(8,12,22,0.92); border: 1.2px solid var(--accent-emerald); border-radius: 8px; padding: 6px 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 10px rgba(16,185,129,0.1); --rot: 3deg; animation: float-slow 4.5s ease-in-out infinite; z-index: 10; box-sizing: border-box;">
+                            <strong style="font-size: 0.6vw; color: #34d399; display: block; margin-bottom: 2px;">🔄 HEALTH RETRY (3x)</strong>
+                            <span style="font-size: 0.55vw; color: #cbd5e1; display: block; line-height: 1.25;">Crash Auto-Recovery Max 3 Retries [OK]</span>
+                        </div>
+                        
+                        <div style="position: absolute; bottom: 0%; left: 15%; width: 145px; background: rgba(8,12,22,0.92); border: 1.2px solid var(--accent-purple); border-radius: 8px; padding: 6px 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 10px rgba(168,85,247,0.1); --rot: -1deg; animation: float-slow 5s ease-in-out infinite; z-index: 10; box-sizing: border-box;">
+                            <strong style="font-size: 0.6vw; color: #c084fc; display: block; margin-bottom: 2px;">🛑 GRACEFUL TERMINATE</strong>
+                            <span style="font-size: 0.55vw; color: #cbd5e1; display: block; line-height: 1.25;">Electron Exit ➔ SIGTERM Socket Free</span>
+                        </div>
+
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.05); width: 100%;">
                             <!-- Active Circuit Board double processor double loop SVG -->
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
@@ -447,7 +463,7 @@
                                         <stop offset="100%" stop-color="#047857" stop-opacity="0.3" />
                                     </linearGradient>
                                     <linearGradient id="cpu-fastapi-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.9" />
+                                        <stop offset="0%" stop-color="#0ea5e9" stroke-width="1.8" stop-opacity="0.9" />
                                         <stop offset="100%" stop-color="#0369a1" stop-opacity="0.3" />
                                     </linearGradient>
                                     <filter id="neon-glow-circ" x="-20%" y="-20%" width="140%" height="140%">
@@ -611,9 +627,19 @@
                     <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
+                        <!-- Floating Folder Scan Status Badge -->
+                        <div style="position: absolute; top: -5%; right: -12%; width: 155px; background: rgba(8,12,22,0.92); border: 1.2px solid var(--accent-emerald); border-radius: 10px; padding: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.65), 0 0 15px rgba(16,185,129,0.1); --rot: 2deg; animation: float-slow 4.5s ease-in-out infinite; z-index: 10; box-sizing: border-box; text-align: left;">
+                            <strong style="font-size: 0.65vw; color: #34d399; display: block; margin-bottom: 4px;">📂 llmwiki/content/</strong>
+                            <div style="font-family: monospace; font-size: 0.52vw; color: #94a3b8; line-height: 1.3;">
+                                - Interval: Every 60s<br>
+                                - Scanning: Modified files<br>
+                                - Status: <span style="color: #34d399; font-weight: bold; animation: soft-blink 1.5s infinite;">Auto-Sync [ON]</span>
+                            </div>
+                        </div>
+
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.1); animation: float-slow 5s ease-in-out infinite; left: -10px;">
                             <!-- Scheduler clock logic SVG -->
-                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                            <svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                     <filter id="neon-glow-clock" x="-20%" y="-20%" width="140%" height="140%">
                                         <feGaussianBlur stdDeviation="6" result="blur" />
@@ -747,22 +773,42 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">SQLite 로컬 DB 통합: chats를 넘어선 task_history의 메타데이터 파싱</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; flex-direction: column; gap: 15px; justify-content: center; box-sizing: border-box; transform: scale(1.15);">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
-                            <!-- SQLite metadata flow SVG -->
-                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="25" y="40" width="150" height="40" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-indigo)" stroke-width="1.5"/>
-                                <text x="100" y="65" fill="#ffffff" font-family="monospace" font-size="8.5" font-weight="bold" text-anchor="middle">RAG Citations Path 파싱</text>
+                        <!-- Card 1: Normalization Parser -->
+                        <div class="glass-panel" style="padding: 10px 14px; border-color: rgba(99,102,241,0.3); background: rgba(99,102,241,0.015); display: flex; flex-direction: column; gap: 8px; width: 100%; box-sizing: border-box; text-align: left; border-radius: 12px;">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; color: var(--accent-indigo); font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 4px; display: block; width: 100%;">⚙️ PATH NORMALIZER & PARSER</span>
+                            <div style="font-family: monospace; font-size: 0.58vw; line-height: 1.45; color: #cbd5e1; word-break: break-all;">
+                                Input Path: <span style="color: #f59e0b;">01-Logs/archive/natlas/yg/i8-db-integration/</span><br>
+                                ➔ Project Extracted: <span style="color: var(--accent-blue); font-weight: bold;">natlas</span><br>
+                                ➔ Developer Extracted: <span style="color: var(--accent-purple); font-weight: bold;">yg</span><br>
+                                ➔ Task Slug Extracted: <span style="color: var(--accent-emerald); font-weight: bold;">i8-db-integration</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: SQLite database & Dashboard Stats -->
+                        <div class="glass-panel" style="padding: 10px 14px; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 12px;">
+                            <svg viewBox="0 0 100 70" width="70" height="49" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <!-- SQLite DB -->
+                                <ellipse cx="25" cy="18" rx="18" ry="5" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.2" />
+                                <path d="M 7,18 L 7,32 A 18,5 0 0 0 43,32 L 43,18" fill="none" stroke="var(--accent-emerald)" stroke-width="1.2" />
+                                <path d="M 7,25 A 18,5 0 0 0 43,25" fill="none" stroke="var(--accent-emerald)" stroke-width="1.2" stroke-dasharray="2 2" />
+                                <text x="25" y="44" fill="var(--accent-emerald)" font-family="'Outfit', sans-serif" font-size="7" font-weight="900" text-anchor="middle">task_history</text>
                                 
-                                <path d="M 100 80 L 100 120" fill="none" stroke="var(--accent-indigo)" stroke-width="2" style="animation: laser-glow 2s infinite;"/>
-                                <polygon points="100,120 96,112 104,112" fill="var(--accent-indigo)"/>
+                                <!-- Connection arrow -->
+                                <path d="M 48,25 L 60,25" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-dasharray="2 2" />
                                 
-                                <rect x="35" y="120" width="130" height="45" rx="6" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="2" style="filter: drop-shadow(0 0 10px rgba(16,185,129,0.3));"/>
-                                <text x="100" y="140" fill="var(--accent-emerald)" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">SQLite : task_history</text>
-                                <text x="100" y="152" fill="#cbd5e1" font-family="monospace" font-size="7" text-anchor="middle">(project, user, slug 적재)</text>
+                                <!-- Bar chart representing dashboard stats -->
+                                <rect x="66" y="32" width="6" height="15" fill="var(--accent-indigo)" />
+                                <rect x="76" y="22" width="6" height="25" fill="var(--accent-blue)" />
+                                <rect x="86" y="12" width="6" height="35" fill="var(--accent-emerald)" />
+                                <line x1="62" y1="47" x2="94" y2="47" stroke="#ffffff" stroke-width="1" />
                             </svg>
+                            <div>
+                                <span style="font-size: 0.8vw; font-weight: 800; color: #ffffff; display: block;">Dashboard 원천 데이터 적재</span>
+                                <span style="font-size: 0.65vw; color: var(--text-muted);">SQLite `task_history` 관계형 테이블에 정규화 메타데이터 적재 완료</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -808,9 +854,21 @@
                     <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(168,85,247,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
+                        <!-- Floating Code Syntax Badge -->
+                        <div style="position: absolute; top: -5%; left: -10%; width: 145px; background: rgba(8,12,22,0.92); border: 1.2px solid var(--accent-blue); border-radius: 8px; padding: 6px 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 10px rgba(14,165,233,0.1); --rot: -4deg; animation: float-slow 4s ease-in-out infinite; z-index: 10; box-sizing: border-box; text-align: left; font-family: monospace;">
+                            <strong style="font-size: 0.6vw; color: #60a5fa; display: block; margin-bottom: 2px;">📄 Markdown Syntax</strong>
+                            <span style="font-size: 0.52vw; color: #cbd5e1; display: block; line-height: 1.25;">refer to <span style="color: var(--accent-purple); font-weight: bold;">[[todo-app]]</span> for detail...</span>
+                        </div>
+
+                        <!-- Drag Gesture Physics Tag -->
+                        <div style="position: absolute; bottom: -5%; right: -5%; width: 135px; background: rgba(8,12,22,0.92); border: 1.2px solid var(--accent-purple); border-radius: 8px; padding: 6px 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 10px rgba(168,85,247,0.1); --rot: 2deg; animation: float-slow 5s ease-in-out infinite; z-index: 10; box-sizing: border-box; text-align: left;">
+                            <strong style="font-size: 0.6vw; color: #c084fc; display: block; margin-bottom: 2px;">⚡ Force Spring</strong>
+                            <span style="font-size: 0.52vw; color: #cbd5e1; display: block; line-height: 1.25;">Haptic Drag ➔ D3-Force Re-Arrangement</span>
+                        </div>
+
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.1); animation: float-slow 5s ease-in-out infinite; left: -10px;">
                             <!-- 3D Interactive Reacting Node Map SVG -->
-                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                            <svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                     <filter id="neon-violet-glow" x="-20%" y="-20%" width="140%" height="140%">
                                         <feGaussianBlur stdDeviation="6" result="blur" />

@@ -346,15 +346,15 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">지식 파이프라인 도입 성과 지표 대시보드</h2>
                 
                 <div class="split-container-2col">
-                    <!-- Left: Concentric 3D Neon Dial Gauges SVG -->
-                    <div class="col-45" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.35); height: 100%;">
+                    <!-- Left: Concentric 4D Neon Dial Gauges SVG (100% matched to right-side 4 points) -->
+                    <div class="col-45" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.3); height: 100%;">
                         <div style="position: absolute; width: 200px; height: 200px; background: rgba(168,85,247,0.06); filter: blur(80px); pointer-events: none; z-index: -1;"></div>
                         
                         <div style="width: 100%; max-width: 290px; height: auto; animation: float-slow 5s ease-in-out infinite;">
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                     <filter id="neon-glow-kpi" x="-20%" y="-20%" width="140%" height="140%">
-                                        <feGaussianBlur stdDeviation="5" result="blur" />
+                                        <feGaussianBlur stdDeviation="4" result="blur" />
                                         <feMerge>
                                             <feMergeNode in="blur" />
                                             <feMergeNode in="SourceGraphic" />
@@ -363,19 +363,24 @@
                                 </defs>
                                 
                                 <!-- Concentric Gauge 1 (Omission 85% -> 0% - Rose) -->
-                                <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(244,63,94,0.15)" stroke-width="8"/>
-                                <circle cx="100" cy="100" r="70" fill="none" stroke="var(--accent-rose)" stroke-width="8" stroke-dasharray="440" stroke-dashoffset="0" filter="url(#neon-glow-kpi)" style="transform-origin: 100px 100px; transform: rotate(-90deg);"/>
-                                <text x="100" y="44" fill="var(--accent-rose)" font-family="'Outfit', sans-serif" font-size="7" font-weight="900" text-anchor="middle">DOC OMISSION: 0%</text>
+                                <circle cx="100" cy="100" r="78" fill="none" stroke="rgba(244,63,94,0.12)" stroke-width="6.5"/>
+                                <circle cx="100" cy="100" r="78" fill="none" stroke="var(--accent-rose)" stroke-width="6.5" stroke-dasharray="490" stroke-dashoffset="0" filter="url(#neon-glow-kpi)" style="transform-origin: 100px 100px; transform: rotate(-90deg);"/>
+                                <text x="100" y="32" fill="var(--accent-rose)" font-family="'Outfit', sans-serif" font-size="6" font-weight="900" text-anchor="middle">DOC OMISSION: 0%</text>
                                 
                                 <!-- Concentric Gauge 2 (Time saving 5h -> 10s - Blue) -->
-                                <circle cx="100" cy="100" r="50" fill="none" stroke="rgba(14,165,233,0.15)" stroke-width="8"/>
-                                <circle cx="100" cy="100" r="50" fill="none" stroke="var(--accent-blue)" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="3.14" filter="url(#neon-glow-kpi)" style="transform-origin: 100px 100px; transform: rotate(-90deg);"/>
-                                <text x="100" y="64" fill="var(--accent-blue)" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">TIME REDUCTION: 99%</text>
+                                <circle cx="100" cy="100" r="58" fill="none" stroke="rgba(14,165,233,0.12)" stroke-width="6.5"/>
+                                <circle cx="100" cy="100" r="58" fill="none" stroke="var(--accent-blue)" stroke-width="6.5" stroke-dasharray="364" stroke-dashoffset="3.64" filter="url(#neon-glow-kpi)" style="transform-origin: 100px 100px; transform: rotate(-90deg);"/>
+                                <text x="100" y="52" fill="var(--accent-blue)" font-family="'Outfit', sans-serif" font-size="5.5" font-weight="900" text-anchor="middle">TIME REDUCTION: 99%</text>
                                 
-                                <!-- Concentric Gauge 3 (Token saving 95.29% - Emerald) -->
-                                <circle cx="100" cy="100" r="30" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="8"/>
-                                <circle cx="100" cy="100" r="30" fill="none" stroke="var(--accent-emerald)" stroke-width="8" stroke-dasharray="188" stroke-dashoffset="9" filter="url(#neon-glow-kpi)" style="transform-origin: 100px 100px; transform: rotate(-90deg);"/>
-                                <text x="100" y="84" fill="var(--accent-emerald)" font-family="'Outfit', sans-serif" font-size="6" font-weight="900" text-anchor="middle">TOKEN SAVED: 95%</text>
+                                <!-- Concentric Gauge 3 (Onboarding reduced 40% - Purple) -->
+                                <circle cx="100" cy="100" r="38" fill="none" stroke="rgba(168,85,247,0.12)" stroke-width="6.5"/>
+                                <circle cx="100" cy="100" r="38" fill="none" stroke="var(--accent-purple)" stroke-width="6.5" stroke-dasharray="238" stroke-dashoffset="142.8" filter="url(#neon-glow-kpi)" style="transform-origin: 100px 100px; transform: rotate(-90deg);"/>
+                                <text x="100" y="72" fill="var(--accent-purple)" font-family="'Outfit', sans-serif" font-size="5" font-weight="900" text-anchor="middle">ONBOARDING SAVED: 40%</text>
+                                
+                                <!-- Concentric Gauge 4 (Token saving 95.29% - Emerald) -->
+                                <circle cx="100" cy="100" r="18" fill="none" stroke="rgba(16,185,129,0.12)" stroke-width="6.5"/>
+                                <circle cx="100" cy="100" r="18" fill="none" stroke="var(--accent-emerald)" stroke-width="6.5" stroke-dasharray="113" stroke-dashoffset="5.3" filter="url(#neon-glow-kpi)" style="transform-origin: 100px 100px; transform: rotate(-90deg);"/>
+                                <text x="100" y="92" fill="var(--accent-emerald)" font-family="'Outfit', sans-serif" font-size="4.5" font-weight="900" text-anchor="middle">TOKEN SAVED: 95%</text>
                             </svg>
                         </div>
                     </div>
@@ -415,15 +420,76 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Phase 1 MVP 성공 구축 및 마일스톤 완수 보고</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
-                            <!-- Target Checked Graphic SVG -->
-                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="100" cy="100" r="70" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5" style="animation: scale-pulse 4s infinite;"/>
-                                <path d="M 65 100 L 90 125 L 145 70" fill="none" stroke="var(--accent-emerald)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Left: 3-Separate diagrams representing each point on the right (No limits on drawing count) -->
+                    <div class="col-45" style="display: flex; flex-direction: column; gap: 20px; height: 100%; justify-content: center; transform: scale(1.15);">
+                        <!-- Card 1: 3-Tabs GUI -->
+                        <div class="glass-panel" style="padding: 12px 18px; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 14px;">
+                            <svg viewBox="0 0 100 70" width="80" height="56" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <rect x="5" y="10" width="90" height="50" rx="4" fill="#090c12" stroke="var(--accent-emerald)" stroke-width="1.5" />
+                                <rect x="5" y="10" width="90" height="12" fill="rgba(16,185,129,0.15)" />
+                                <!-- Tab 1: Documents (Selected) -->
+                                <rect x="10" y="13" width="22" height="6" rx="1.5" fill="var(--accent-emerald)" />
+                                <!-- Tab 2: Update -->
+                                <rect x="36" y="13" width="18" height="6" rx="1.5" fill="rgba(255,255,255,0.15)" />
+                                <!-- Tab 3: Settings -->
+                                <rect x="58" y="13" width="20" height="6" rx="1.5" fill="rgba(255,255,255,0.15)" />
+                                <!-- Content representation -->
+                                <rect x="12" y="28" width="76" height="4" rx="1" fill="rgba(255,255,255,0.15)" />
+                                <rect x="12" y="36" width="76" height="4" rx="1" fill="rgba(255,255,255,0.15)" />
+                                <rect x="12" y="44" width="46" height="4" rx="1" fill="rgba(255,255,255,0.15)" />
                             </svg>
+                            <div>
+                                <span style="font-size: 0.85vw; font-weight: 800; color: #ffffff; display: block;">1. NAtlas GUI 3대 탭 구축</span>
+                                <span style="font-size: 0.7vw; color: var(--text-muted);">Documents (배지 분류), Update (SSE 실시간), Settings</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: setup_nstack_hooks.py -->
+                        <div class="glass-panel" style="padding: 12px 18px; border-color: rgba(14,165,233,0.3); background: rgba(14,165,233,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 14px;">
+                            <svg viewBox="0 0 100 70" width="80" height="56" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <!-- npm install connector chain -->
+                                <rect x="5" y="15" width="28" height="15" rx="3" fill="#090c12" stroke="var(--accent-blue)" stroke-width="1.2" />
+                                <text x="19" y="25" fill="var(--accent-blue)" font-family="monospace" font-size="6" font-weight="bold" text-anchor="middle">npm install</text>
+                                
+                                <path d="M 33,22.5 L 67,22.5" fill="none" stroke="var(--accent-emerald)" stroke-width="2" stroke-dasharray="3 3" style="animation: laser-glow 2s infinite;"/>
+                                
+                                <rect x="67" y="15" width="28" height="15" rx="3" fill="#090c12" stroke="var(--accent-emerald)" stroke-width="1.2" />
+                                <text x="81" y="25" fill="var(--accent-emerald)" font-family="monospace" font-size="6" font-weight="bold" text-anchor="middle">pre-commit</text>
+                                
+                                <g transform="translate(50, 48)" style="animation: scale-pulse 4s infinite;">
+                                    <circle cx="0" cy="0" r="10" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.2"/>
+                                    <text x="0" y="3.5" fill="var(--accent-emerald)" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">✔</text>
+                                </g>
+                            </svg>
+                            <div>
+                                <span style="font-size: 0.85vw; font-weight: 800; color: #ffffff; display: block;">2. pre-commit 자동화 연동</span>
+                                <span style="font-size: 0.7vw; color: var(--text-muted);">npm install 기동 시 1초 만에 로컬 Git hook 결합</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: verify_nstack_pipeline.py Linter & Healer -->
+                        <div class="glass-panel" style="padding: 12px 18px; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 14px;">
+                            <svg viewBox="0 0 100 70" width="80" height="56" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <!-- Document scan laser -->
+                                <rect x="15" y="10" width="40" height="50" rx="3" fill="#090c12" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                                <line x1="22" y1="20" x2="48" y2="20" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                                <line x1="22" y1="28" x2="48" y2="28" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                                <line x1="22" y1="36" x2="48" y2="36" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                                <line x1="22" y1="44" x2="38" y2="44" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                                
+                                <!-- Laser scanning beam -->
+                                <line x1="10" y1="32" x2="60" y2="32" stroke="var(--accent-rose)" stroke-width="2" style="filter: drop-shadow(0 0 4px var(--accent-rose)); animation: soft-blink 1.5s infinite;" />
+                                
+                                <!-- Fuzzy Healing bandage / status -->
+                                <g transform="translate(75, 35)">
+                                    <rect x="-15" y="-10" width="30" height="20" rx="4" fill="rgba(168,85,247,0.15)" stroke="var(--accent-purple)" stroke-width="1" style="animation: scale-pulse 3s infinite;"/>
+                                    <text x="0" y="3" fill="var(--accent-purple)" font-family="sans-serif" font-size="7" font-weight="bold" text-anchor="middle">🩹 Heal</text>
+                                </g>
+                            </svg>
+                            <div>
+                                <span style="font-size: 0.85vw; font-weight: 800; color: #ffffff; display: block;">3. 무결성 린터 및 자동 교정 (Heal)</span>
+                                <span style="font-size: 0.7vw; color: var(--text-muted);">verify_nstack_pipeline.py 스캔 및 Fuzzy 헤더 복구</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -470,20 +536,56 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">전사적 AI 에이전트 도입 확산 시나리오</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(168,85,247,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
-                            <!-- Multi bots synergy visual SVG -->
-                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="100" cy="100" r="30" fill="none" stroke="var(--accent-purple)" stroke-width="2"/>
-                                <circle cx="50" cy="70" r="18" fill="none" stroke="var(--accent-indigo)" stroke-width="1.8"/>
-                                <circle cx="150" cy="70" r="18" fill="none" stroke="var(--accent-indigo)" stroke-width="1.8"/>
-                                <circle cx="100" cy="150" r="20" fill="none" stroke="var(--accent-emerald)" stroke-width="2" style="animation: scale-pulse 4s infinite;"/>
+                    <!-- Left: Multiple diagrams addressing each bullet point on the right (LLM bots stack and Cross-Dept sync) -->
+                    <div class="col-45" style="display: flex; flex-direction: column; gap: 20px; height: 100%; justify-content: center; transform: scale(1.15);">
+                        <!-- Card 1: Universal Reader -->
+                        <div class="glass-panel" style="padding: 15px 18px; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 14px;">
+                            <svg viewBox="0 0 100 70" width="80" height="56" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <!-- 3 floating spheres (Claude/GPT/Gemini) feeding central pile -->
+                                <circle cx="20" cy="20" r="10" fill="rgba(168,85,247,0.15)" stroke="var(--accent-purple)" stroke-width="1.2" />
+                                <text x="20" y="23" fill="var(--accent-purple)" font-family="sans-serif" font-size="7" font-weight="bold" text-anchor="middle">GPT</text>
                                 
-                                <path d="M 50 88 L 80 135 M 150 88 L 120 135 M 100 70 L 100 130" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-dasharray="3 3"/>
-                                <text x="100" y="104" fill="var(--accent-purple)" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">CORE</text>
+                                <circle cx="50" cy="16" r="10" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.2" />
+                                <text x="50" y="19" fill="var(--accent-emerald)" font-family="sans-serif" font-size="7" font-weight="bold" text-anchor="middle">CLD</text>
+                                
+                                <circle cx="80" cy="20" r="10" fill="rgba(14,165,233,0.15)" stroke="var(--accent-blue)" stroke-width="1.2" />
+                                <text x="80" y="23" fill="var(--accent-blue)" font-family="sans-serif" font-size="7" font-weight="bold" text-anchor="middle">GEM</text>
+                                
+                                <!-- Dotted lines feeding center Stack -->
+                                <path d="M 20,30 L 40,50 M 50,26 L 50,45 M 80,30 L 60,50" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="2 2" />
+                                
+                                <!-- Center document stack -->
+                                <rect x="42" y="47" width="16" height="18" rx="2" fill="#090c12" stroke="#ffffff" stroke-width="1" />
+                                <rect x="45" y="44" width="16" height="18" rx="2" fill="#090c12" stroke="#ffffff" stroke-width="1" />
                             </svg>
+                            <div>
+                                <span style="font-size: 0.85vw; font-weight: 800; color: #ffffff; display: block;">1. 기계 가독형 지식 포맷 보편화</span>
+                                <span style="font-size: 0.7vw; color: var(--text-muted);">GPT, Claude, Gemini 어떤 에이전트든 NStack 문서를 즉각 해석</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Cross-Dept Copy -->
+                        <div class="glass-panel" style="padding: 15px 18px; border-color: rgba(14,165,233,0.3); background: rgba(14,165,233,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 14px;">
+                            <svg viewBox="0 0 100 70" width="80" height="56" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <!-- Left side (Team A) and Right side (Team B) network nodes -->
+                                <circle cx="20" cy="35" r="10" fill="none" stroke="var(--accent-blue)" stroke-width="1" />
+                                <text x="20" y="38" fill="var(--accent-blue)" font-family="sans-serif" font-size="6" font-weight="bold" text-anchor="middle">TEAM A</text>
+                                
+                                <path d="M 30,35 L 70,35" fill="none" stroke="var(--accent-emerald)" stroke-width="1.8" stroke-dasharray="4 3" style="animation: laser-glow 2s infinite;" />
+                                <polygon points="70,35 64,31 64,39" fill="var(--accent-emerald)" />
+                                
+                                <circle cx="80" cy="35" r="10" fill="none" stroke="var(--accent-emerald)" stroke-width="1" />
+                                <text x="80" y="38" fill="var(--accent-emerald)" font-family="sans-serif" font-size="6" font-weight="bold" text-anchor="middle">TEAM B</text>
+                                
+                                <g transform="translate(50, 18)" style="animation: float-slow 4s ease-in-out infinite;">
+                                    <rect x="-18" y="-7" width="36" height="14" rx="3" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1"/>
+                                    <text x="0" y="2.5" fill="var(--accent-emerald)" font-family="monospace" font-size="6" font-weight="bold" text-anchor="middle">COPY [[WIKI]]</text>
+                                </g>
+                            </svg>
+                            <div>
+                                <span style="font-size: 0.85vw; font-weight: 800; color: #ffffff; display: block;">2. 타 부서 마이그레이션 기술 복사</span>
+                                <span style="font-size: 0.7vw; color: var(--text-muted);">NAtlas 지식 지도로 타 부서 핵심 의사결정을 클릭 한 번으로 이관</span>
+                            </div>
                         </div>
                     </div>
                     
@@ -530,7 +632,7 @@
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(168,85,247,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
                         <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
-                            <!-- 3D perspective timeline arch roadway SVG -->
+                            <!-- 3D perspective timeline arch roadway SVG (Richer details covering Phase 2-3 specifications) -->
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
                                     <filter id="neon-glow-roadmap" x="-20%" y="-20%" width="140%" height="140%">
@@ -555,21 +657,36 @@
                                 <g transform="translate(45, 140)" style="animation: scale-pulse 4s infinite;">
                                     <circle cx="0" cy="0" r="7" fill="#0ea5e9" filter="url(#neon-glow-roadmap)"/>
                                     <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
-                                    <text x="0" y="-12" fill="#0ea5e9" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">Phase 1 (Done)</text>
+                                    <text x="0" y="24" fill="#0ea5e9" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">Phase 1 (Done)</text>
                                 </g>
                                 
                                 <!-- Phase 2 (Purple) -->
                                 <g transform="translate(100, 75)">
+                                    <!-- SQLite cylindrical DB icon on top of Node -->
+                                    <g transform="translate(0, -25)" style="animation: float-slow 4.5s ease-in-out infinite;">
+                                        <ellipse cx="0" cy="-8" rx="14" ry="4" fill="rgba(168,85,247,0.15)" stroke="var(--accent-purple)" stroke-width="1.2" />
+                                        <path d="M -14,-8 L -14,6 A 14,4 0 0 0 14,6 L 14,-8" fill="none" stroke="var(--accent-purple)" stroke-width="1.2" />
+                                        <path d="M -14,0 A 14,4 0 0 0 14,0" fill="none" stroke="var(--accent-purple)" stroke-width="1.2" stroke-dasharray="2 2" />
+                                        <text x="0" y="16" fill="var(--accent-purple)" font-family="'Outfit', sans-serif" font-size="7" font-weight="900" text-anchor="middle">SQLite</text>
+                                    </g>
                                     <circle cx="0" cy="0" r="9" fill="#a855f7" filter="url(#neon-glow-roadmap)" style="animation: scale-pulse 3s infinite;"/>
                                     <circle cx="0" cy="0" r="3" fill="#ffffff"/>
-                                    <text x="0" y="-15" fill="#a855f7" font-family="'Outfit', sans-serif" font-size="7.5" font-weight="900" text-anchor="middle">Phase 2 (SQLite)</text>
+                                    <text x="0" y="32" fill="#a855f7" font-family="'Outfit', sans-serif" font-size="7.5" font-weight="900" text-anchor="middle">Phase 2</text>
                                 </g>
                                 
                                 <!-- Phase 3 (Emerald) -->
                                 <g transform="translate(155, 140)">
+                                    <!-- Installer package box icon on top of Node -->
+                                    <g transform="translate(0, -24)" style="animation: float-slow 5s ease-in-out infinite;">
+                                        <!-- Isometric cube for installer package box -->
+                                        <path d="M 0,-10 L 10,-5 L 0,0 L -10,-5 Z" fill="rgba(16,185,129,0.1)" stroke="var(--accent-emerald)" stroke-width="1"/>
+                                        <path d="M -10,-5 L -10,5 L 0,10 L 0,0 Z" fill="rgba(16,185,129,0.1)" stroke="var(--accent-emerald)" stroke-width="1"/>
+                                        <path d="M 0,0 L 0,10 L 10,5 L 10,-5 Z" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1"/>
+                                        <text x="0" y="16" fill="var(--accent-emerald)" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">.dmg/.exe</text>
+                                    </g>
                                     <circle cx="0" cy="0" r="7" fill="#10b981" filter="url(#neon-glow-roadmap)"/>
                                     <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
-                                    <text x="0" y="-12" fill="#10b981" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">Phase 3 (dmg/exe)</text>
+                                    <text x="0" y="28" fill="#10b981" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">Phase 3</text>
                                 </g>
                             </svg>
                         </div>

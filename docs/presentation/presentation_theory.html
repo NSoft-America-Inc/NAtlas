@@ -652,50 +652,36 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">현업의 실상: 사내 솔루션의 아키텍처 공백 및 지식 부재</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-50" style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+                    <div class="col-50" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
                         <!-- Glow effect -->
-                        <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(50px); pointer-events: none; z-index: -1;"></div>
+                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="width: 100%; max-width: 360px; height: auto; transform: scale(1.35);">
-                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="cyberFolderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.9"/>
-                                        <stop offset="100%" stop-color="#881337" stop-opacity="0.4"/>
-                                    </linearGradient>
-                                    <linearGradient id="holoBeam" x1="50%" y1="0%" x2="50%" y2="100%">
-                                        <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.3"/>
-                                        <stop offset="100%" stop-color="#f43f5e" stop-opacity="0"/>
-                                    </linearGradient>
-                                </defs>
-                                <!-- Matrix grids -->
-                                <line x1="20" y1="230" x2="230" y2="230" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-                                <line x1="20" y1="210" x2="230" y2="210" stroke="rgba(255,255,255,0.05)" stroke-width="0.8"/>
-                                <line x1="20" y1="190" x2="230" y2="190" stroke="rgba(255,255,255,0.05)" stroke-width="0.8"/>
-                                
-                                <!-- Hologram laser beams projecting upwards -->
-                                <polygon points="50,230 125,50 200,230" fill="url(#holoBeam)" style="animation: soft-blink 2s infinite;"/>
-                                
-                                <!-- Hologram target rings -->
-                                <ellipse cx="125" cy="50" rx="30" ry="10" fill="none" stroke="var(--accent-rose)" stroke-width="1" stroke-dasharray="3 3"/>
-                                <ellipse cx="125" cy="200" rx="70" ry="20" fill="none" stroke="rgba(244,63,94,0.3)" stroke-width="1"/>
-                                
-                                <!-- Cyber Folder Body (3D angled outline) -->
-                                <path d="M 60 180 L 60 110 L 95 110 L 110 125 L 190 125 L 190 180 Z" fill="url(#cyberFolderGrad)" stroke="var(--accent-rose)" stroke-width="2" filter="drop-shadow(0 0 10px rgba(244,63,94,0.4))"/>
-                                <path d="M 60 125 L 190 125" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
-                                
-                                <!-- Warning Sign inside folder -->
-                                <polygon points="125,138 113,163 137,163" fill="none" stroke="#ffffff" stroke-width="1.5"/>
-                                <circle cx="125" cy="158" r="1" fill="#ffffff"/>
-                                <line x1="125" y1="145" x2="125" y2="153" stroke="#ffffff" stroke-width="1.5"/>
-                                
-                                <!-- Laser Line sweeping folder -->
-                                <line x1="45" y1="145" x2="205" y2="145" stroke="#ffffff" stroke-width="1.5" filter="drop-shadow(0 0 6px var(--accent-rose))" style="animation: soft-blink 1.2s infinite;"/>
-                                
-                                <!-- Red light warning node -->
-                                <circle cx="125" cy="50" r="4.5" fill="var(--accent-rose)" filter="drop-shadow(0 0 8px var(--accent-rose))" style="animation: heat-pulse 1.5s infinite;"/>
-                                <text x="125" y="32" fill="var(--accent-rose)" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle" style="animation: soft-blink 1.5s infinite;">NO DOCS DETECTED!</text>
-                            </svg>
+                        <!-- 1:1 Matching Card 1: Hollow Code Block -->
+                        <div class="glass-panel" style="width: 100%; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.5vw; color: var(--accent-rose); animation: soft-blink 1.5s infinite;">🕳️</div>
+                            <div style="text-align: left; flex-grow: 1;">
+                                <h4 style="margin: 0; font-size: 0.9vw; font-weight: 800; color: #ffffff;">1. 주석 & 아키텍처 맥락의 공백</h4>
+                                <p style="margin: 3px 0 0 0; font-size: 0.75vw !important; color: #cbd5e1 !important; line-height: 1.4;">포트 18420 우회, FastAPI 생명주기 공조 등의 로직 의도 및 주석 전무</p>
+                            </div>
+                        </div>
+
+                        <!-- 1:1 Matching Card 2: Frozen README -->
+                        <div class="glass-panel" style="width: 100%; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.5vw; color: var(--accent-rose);">❄️</div>
+                            <div style="text-align: left; flex-grow: 1;">
+                                <h4 style="margin: 0; font-size: 0.9vw; font-weight: 800; color: #ffffff;">2. README 문서의 박제화</h4>
+                                <p style="margin: 3px 0 0 0; font-size: 0.75vw !important; color: #cbd5e1 !important; line-height: 1.4;">잦은 구조 개편에도 수년 전 과거 빌드 가이드에 멈춘 유효하지 않은 문서</p>
+                            </div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65vw; color: var(--accent-rose); background: rgba(244,63,94,0.1); padding: 3px 6px; border-radius: 4px;">OUTDATED</div>
+                        </div>
+
+                        <!-- 1:1 Matching Card 3: Blocked Portal -->
+                        <div class="glass-panel" style="width: 100%; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.5vw; color: var(--accent-rose);">🔒</div>
+                            <div style="text-align: left; flex-grow: 1;">
+                                <h4 style="margin: 0; font-size: 0.9vw; font-weight: 800; color: #ffffff;">3. 신규 입사자의 지식 차단</h4>
+                                <p style="margin: 3px 0 0 0; font-size: 0.75vw !important; color: #cbd5e1 !important; line-height: 1.4;">설계 사유가 소실되어 신규 인원의 조기 기여 및 온보딩 병목 진입 차단</p>
+                            </div>
                         </div>
                     </div>
                     
@@ -746,58 +732,27 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">하이라이트: 소스 리버스 엔지니어링 의존과 인적 단일 장애점(SPOF)</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-45" style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
+                    <div class="col-45" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; position: relative;">
                         <!-- Glowing aura -->
-                        <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(50px); pointer-events: none; z-index: -1;"></div>
+                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="width: 100%; max-width: 360px; height: auto; transform: scale(1.35);">
-                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <radialGradient id="spofGlow" cx="50%" cy="50%" r="50%">
-                                        <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.4"/>
-                                        <stop offset="100%" stop-color="#030408" stop-opacity="0"/>
-                                    </radialGradient>
-                                </defs>
-                                <circle cx="125" cy="125" r="90" fill="url(#spofGlow)" opacity="0.8"/>
-                                
-                                <!-- Background grid map -->
-                                <circle cx="125" cy="125" r="80" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-                                <circle cx="125" cy="125" r="50" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-                                
-                                <!-- Multiple non-SPOF developer nodes (Normal connectivity) -->
-                                <g opacity="0.5">
-                                    <circle cx="50" cy="70" r="5" fill="var(--accent-blue)"/>
-                                    <circle cx="200" cy="70" r="5" fill="var(--accent-blue)"/>
-                                    <circle cx="60" cy="180" r="5" fill="var(--accent-blue)"/>
-                                    <circle cx="190" cy="180" r="5" fill="var(--accent-blue)"/>
-                                    
-                                    <line x1="50" y1="70" x2="60" y2="180" stroke="rgba(14,165,233,0.15)" stroke-width="1"/>
-                                    <line x1="200" y1="70" x2="190" y2="180" stroke="rgba(14,165,233,0.15)" stroke-width="1"/>
-                                </g>
-                                
-                                <!-- The Bottleneck SPOF line connections (All traffic goes through center node) -->
-                                <line x1="50" y1="70" x2="125" y2="125" stroke="var(--accent-rose)" stroke-width="1.8" stroke-dasharray="3 3"/>
-                                <line x1="200" y1="70" x2="125" y2="125" stroke="var(--accent-rose)" stroke-width="1.8" stroke-dasharray="3 3"/>
-                                <line x1="60" y1="180" x2="125" y2="125" stroke="var(--accent-rose)" stroke-width="1.8" stroke-dasharray="3 3"/>
-                                <line x1="190" y1="180" x2="125" y2="125" stroke="var(--accent-rose)" stroke-width="1.8" stroke-dasharray="3 3"/>
-                                
-                                <!-- Laser flow dots toward SPOF node -->
-                                <circle cx="87" cy="97" r="2" fill="var(--accent-rose)"><animate attributeName="cx" values="50;125" dur="1.5s" repeatCount="indefinite"/><animate attributeName="cy" values="70;125" dur="1.5s" repeatCount="indefinite"/></circle>
-                                <circle cx="162" cy="97" r="2" fill="var(--accent-rose)"><animate attributeName="cx" values="200;125" dur="1.8s" repeatCount="indefinite"/><animate attributeName="cy" values="70;125" dur="1.8s" repeatCount="indefinite"/></circle>
-                                <circle cx="92" cy="152" r="2" fill="var(--accent-rose)"><animate attributeName="cx" values="60;125" dur="1.2s" repeatCount="indefinite"/><animate attributeName="cy" values="180;125" dur="1.2s" repeatCount="indefinite"/></circle>
-                                
-                                <!-- SPOF human node in center -->
-                                <circle cx="125" cy="125" r="18" fill="#080c14" stroke="var(--accent-rose)" stroke-width="2.5" filter="drop-shadow(0 0 12px var(--accent-rose))"/>
-                                
-                                <!-- Human Silhouette icon inside center node -->
-                                <path d="M 125 113 A 4.5 4.5 0 1 0 125 122 A 4.5 4.5 0 1 0 125 113 Z" fill="var(--accent-rose)"/>
-                                <path d="M 115 133 C 115 128 119 125 125 125 C 131 125 135 128 135 133 Z" fill="var(--accent-rose)"/>
-                                
-                                <!-- Pulse ring expanding from SPOF center -->
-                                <circle cx="125" cy="125" r="18" fill="none" stroke="var(--accent-rose)" stroke-width="1" opacity="1"><animate attributeName="r" values="18;45" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite"/></circle>
-                                
-                                <text x="125" y="156" fill="var(--accent-rose)" font-family="monospace" font-size="8.5" font-weight="bold" text-anchor="middle" style="animation: soft-blink 1.5s infinite;">SINGLE POINT OF FAILURE</text>
-                            </svg>
+                        <!-- 1:1 Matching Card 1: Resource Waste -->
+                        <div class="glass-panel" style="width: 100%; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.6vw; color: var(--accent-rose);">⏳</div>
+                            <div style="text-align: left; flex-grow: 1;">
+                                <h4 style="margin: 0; font-size: 0.9vw; font-weight: 800; color: #ffffff;">1. 소스코드 직접 분석 리소스 낭비</h4>
+                                <p style="margin: 3px 0 0 0; font-size: 0.75vw !important; color: #cbd5e1 !important; line-height: 1.4;">기존 레거시 파일을 거꾸로 해킹하며 개발 이유와 주석을 직접 파악하느라 분석 비용 5배 폭증</p>
+                            </div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.7vw; color: var(--accent-rose); font-weight: bold; background: rgba(244,63,94,0.15); padding: 4px 8px; border-radius: 6px;">5x DELAY</div>
+                        </div>
+
+                        <!-- 1:1 Matching Card 2: Developer Bottleneck Node Map -->
+                        <div class="glass-panel" style="width: 100%; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.6vw; color: var(--accent-rose); animation: soft-blink 2s infinite;">👤</div>
+                            <div style="text-align: left; flex-grow: 1;">
+                                <h4 style="margin: 0; font-size: 0.9vw; font-weight: 800; color: #ffffff;">2. 특정 인물 의존성 & 병목 편중 (SPOF)</h4>
+                                <p style="margin: 3px 0 0 0; font-size: 0.75vw !important; color: #cbd5e1 !important; line-height: 1.4;">단 한 명의 개발자에게 모든 사내 질문이 집중되어 개발자 피로도 및 팀 전체 마비 위험 유발</p>
+                            </div>
                         </div>
                     </div>
                     
@@ -855,54 +810,36 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">대화형 코딩의 병목: '컨텍스트 오버로드'의 한계</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 320px; height: 320px; background: radial-gradient(circle, rgba(244,63,94,0.15) 0%, rgba(244,63,94,0) 70%); filter: blur(50px); pointer-events: none; z-index: -1;"></div>
+                    <div class="col-43" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
+                        <!-- Glowing aura -->
+                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.4); width: 100%; max-width: 250px;">
-                            <!-- Brain circuit diagram overload visual SVG -->
-                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="circGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#f43f5e"/>
-                                        <stop offset="50%" stop-color="#d946ef"/>
-                                        <stop offset="100%" stop-color="#3b82f6"/>
-                                    </linearGradient>
-                                    <linearGradient id="overloadFlow" x1="0%" y1="50%" x2="100%" y2="50%">
-                                        <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.8"/>
-                                        <stop offset="100%" stop-color="#f43f5e" stop-opacity="0.1"/>
-                                    </linearGradient>
-                                </defs>
-                                <!-- Brain shape abstract nodes and path circuit -->
-                                <path d="M 50,120 Q 90,40 125,40 T 200,120 Q 200,170 170,190 T 125,210 T 80,190 T 50,120 Z" fill="none" stroke="url(#circGrad)" stroke-width="1.8" stroke-dasharray="3 5"/>
-                                
-                                <!-- Central logical partition line -->
-                                <line x1="125" y1="40" x2="125" y2="210" stroke="rgba(255,255,255,0.08)" stroke-width="1.2" stroke-dasharray="4 4"/>
-                                
-                                <!-- Intersecting node wires -->
-                                <path d="M 60,100 L 190,100 M 55,140 L 195,140 M 80,80 L 170,160 M 170,80 L 80,160" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-                                
-                                <!-- Glowing red overflow path -->
-                                <path d="M 125,210 Q 70,170 80,120 T 125,40" fill="none" stroke="url(#overloadFlow)" stroke-width="3" style="animation: laser-glow 2s infinite;"/>
-                                
-                                <!-- Circuit nodes -->
-                                <circle cx="50" cy="120" r="4.5" fill="var(--accent-blue)"/>
-                                <circle cx="200" cy="120" r="4.5" fill="var(--accent-blue)"/>
-                                <circle cx="90" cy="65" r="4" fill="var(--accent-purple)"/>
-                                <circle cx="160" cy="65" r="4" fill="var(--accent-purple)"/>
-                                <circle cx="70" cy="165" r="4" fill="var(--accent-indigo)"/>
-                                <circle cx="180" cy="165" r="4" fill="var(--accent-indigo)"/>
-                                
-                                <!-- Exploding brain core (Saturated RED pulse) -->
-                                <circle cx="125" cy="120" r="28" fill="#080c14" stroke="var(--accent-rose)" stroke-width="3.5" filter="drop-shadow(0 0 16px var(--accent-rose))" style="animation: heat-pulse 1.8s infinite;"/>
-                                
-                                <!-- Overload spark rays -->
-                                <line x1="125" y1="80" x2="125" y2="70" stroke="var(--accent-rose)" stroke-width="2" style="animation: soft-blink 0.5s infinite;"/>
-                                <line x1="125" y1="160" x2="125" y2="170" stroke="var(--accent-rose)" stroke-width="2" style="animation: soft-blink 0.5s infinite;"/>
-                                <line x1="85" y1="120" x2="75" y2="120" stroke="var(--accent-rose)" stroke-width="2" style="animation: soft-blink 0.5s infinite;"/>
-                                <line x1="165" y1="120" x2="175" y2="120" stroke="var(--accent-rose)" stroke-width="2" style="animation: soft-blink 0.5s infinite;"/>
-                                
-                                <text x="125" y="124" fill="#ffffff" font-family="monospace" font-weight="900" font-size="7.5" text-anchor="middle" filter="drop-shadow(0 0 5px var(--accent-rose))" style="animation: soft-blink 1.2s infinite;">OVERFLOW!</text>
-                            </svg>
+                        <!-- 1:1 Matching Card 1: Context Window Full -->
+                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.4vw; color: var(--accent-rose); animation: soft-blink 1s infinite;">🔋</div>
+                            <div style="text-align: left; flex-grow: 1;">
+                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">1. 단기 메모리(Context) 포화</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">대화 이력 누적으로 앞서 내린 통제 규칙 망각 및 기술 요건 이탈 발생</p>
+                            </div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.6vw; color: var(--accent-rose); font-weight: bold; background: rgba(244,63,94,0.15); padding: 3px 6px; border-radius: 4px;">100% OVER</div>
+                        </div>
+
+                        <!-- 1:1 Matching Card 2: Consistency Collapse -->
+                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.4vw; color: var(--accent-rose);">📉</div>
+                            <div style="text-align: left; flex-grow: 1;">
+                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">2. 코드 생성 일관성 파괴</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">맥락 꼬임으로 변경 지점이 무작위로 넓어져 시스템 무결성 붕괴</p>
+                            </div>
+                        </div>
+
+                        <!-- 1:1 Matching Card 3: Cascade Side Effect -->
+                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(244,63,94,0.4); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.4vw; color: var(--accent-rose);">💥</div>
+                            <div style="text-align: left; flex-grow: 1;">
+                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">3. 예기치 못한 사이드 이펙트</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">고립화 실패로 공통 모듈 오수정 및 인접 파일의 연쇄 크래시 유발</p>
+                            </div>
                         </div>
                     </div>
                     
@@ -953,25 +890,39 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">안드레 카파시의 통찰: 소스코드와 기계 가독형 지식의 차이</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                    <div class="col-43" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
+                        <!-- Glowing aura -->
+                        <div style="position: absolute; width: 250px; height: 250px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
-                            <!-- Karpathy twitter mockup style box -->
-                            <div style="width: 250px; background: rgba(9,12,22,0.95); border: 1.5px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.8); text-align: left; box-sizing: border-box;">
-                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-                                    <div style="width: 38px; height: 38px; border-radius: 50%; background: #1d9bf0; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: white;">AK</div>
-                                    <div>
-                                        <div style="font-size: 0.85vw; font-weight: 800; color: #ffffff;">Andre Karpathy</div>
-                                        <div style="font-size: 0.65vw; color: #64748b;">@karpathy</div>
-                                    </div>
+                        <!-- Karpathy Tweet Box (Scaled slightly) -->
+                        <div style="width: 100%; background: rgba(9,12,22,0.95); border: 1.5px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 15px 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.6); text-align: left; box-sizing: border-box; transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <div style="width: 32px; height: 32px; border-radius: 50%; background: #1d9bf0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold; color: white;">AK</div>
+                                <div>
+                                    <div style="font-size: 0.8vw; font-weight: 800; color: #ffffff;">Andre Karpathy</div>
+                                    <div style="font-size: 0.6vw; color: #64748b;">@karpathy</div>
                                 </div>
-                                <p style="font-size: 0.75vw; color: #cbd5e1; line-height: 1.5; margin: 0; font-family: sans-serif;">
-                                    "Raw codebase is NOT a great map for LLMs. LLMs need condensed, structured <strong style="color: var(--accent-indigo);">Machine-readable Knowledge</strong> to understand design decisions."
-                                </p>
-                                <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin-top: 10px; font-size: 0.6vw; color: #64748b; font-family: sans-serif;">
-                                    11:24 AM · May 27, 2026
-                                </div>
+                            </div>
+                            <p style="font-size: 0.7vw; color: #cbd5e1; line-height: 1.4; margin: 0; font-family: sans-serif;">
+                                "Raw codebase is NOT a great map for LLMs. LLMs need condensed, structured <strong style="color: var(--accent-indigo);">Machine-readable Knowledge</strong>."
+                            </p>
+                        </div>
+
+                        <!-- 1:1 Matching Card 1: Machine-Readable Knowledge -->
+                        <div class="glass-panel" style="width: 100%; padding: 10px 15px; display: flex; align-items: center; gap: 12px; border-color: rgba(99,102,241,0.35); background: rgba(99,102,241,0.02); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.3vw; color: var(--accent-indigo);">🤖</div>
+                            <div style="text-align: left;">
+                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">기계 가독형 지식 압축</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">장황한 레거시 소스 대신 압축 요약된 아키텍처 맥락을 LLM에 주입</p>
+                            </div>
+                        </div>
+
+                        <!-- 1:1 Matching Card 2: LLMWiki & NStack -->
+                        <div class="glass-panel" style="width: 100%; padding: 10px 15px; display: flex; align-items: center; gap: 12px; border-color: rgba(99,102,241,0.35); background: rgba(99,102,241,0.02); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
+                            <div style="font-size: 1.3vw; color: var(--accent-indigo);">📚</div>
+                            <div style="text-align: left;">
+                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">병렬형 기술 위키 ➔ NStack 탑재</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">소스 코드와 나란히 흐르는 전사 3종 문서를 Git hooks와 RAG 시스템으로 실현</p>
                             </div>
                         </div>
                     </div>
