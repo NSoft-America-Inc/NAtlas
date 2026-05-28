@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>NStack ➔ NAtlas E2E 지식 파이프라인 - 비전 및 로드맵</title>
+    <title>NStack ➔ NAtlas 지식 그래프 생태계와 전사 AI 로드맵</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- Reveal.js CSS -->
@@ -247,6 +247,14 @@
             transform: scale(1.04);
         }
         
+        .neon-nav-btn-toc:hover {
+            background: rgba(99, 102, 241, 0.12);
+            border-color: rgba(99, 102, 241, 0.4);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+            transform: scale(1.04);
+        }
+        
         .neon-nav-btn:active {
             transform: scale(0.96);
         }
@@ -263,7 +271,37 @@
             border-right: 1px solid rgba(255,255,255,0.06);
             padding: 0 12px;
         }
-    </style>
+    
+        /* 좌측 하단 TOC 미니 버튼 스타일 */
+        .neon-nav-btn-toc-mini {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.6vw !important;
+            letter-spacing: 0.05em;
+            padding: 3px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            line-height: 1;
+            z-index: 100000;
+            pointer-events: auto;
+        }
+        
+        .neon-nav-btn-toc-mini:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.7);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
+        }
+</style>
 </head>
 <body>
     <div class="reveal">
@@ -272,7 +310,7 @@
             <!-- ── [SLIDE 01 / 06] 비전 표지 ── -->
             <section>
                 <div class="slide-counter">SLIDE 01 / 06</div>
-                <div class="slide-subtitle">PART 7: 전사적 비전 및 미래 로드맵</div>
+                <div class="slide-subtitle">전사 도입 성과 및 미래 비전 로드맵</div>
                 
                 <div class="split-container-2col">
                     <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.35);">
@@ -341,7 +379,7 @@
             <!-- ── [SLIDE 02 / 06] 성과 지표 대시보드 ── -->
             <section>
                 <div class="slide-counter">SLIDE 02 / 06</div>
-                <div class="slide-subtitle">PART 7: 전사적 비전 및 미래 로드맵</div>
+                <div class="slide-subtitle">전사 도입 성과 및 미래 비전 로드맵</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">지식 파이프라인 도입 성과 지표 대시보드</h2>
                 
@@ -415,7 +453,7 @@
             <!-- ── [SLIDE 03 / 06] Phase 1 완료 보고 ── -->
             <section>
                 <div class="slide-counter">SLIDE 03 / 06</div>
-                <div class="slide-subtitle">PART 7: 전사적 비전 및 미래 로드맵</div>
+                <div class="slide-subtitle">전사 도입 성과 및 미래 비전 로드맵</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Phase 1 MVP 성공 구축 및 마일스톤 완수 보고</h2>
                 
@@ -493,7 +531,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             ✅ 개발 목표를 100% 무결점 통과한 완료 마일스톤
                         </h3>
@@ -531,7 +569,7 @@
             <!-- ── [SLIDE 04 / 06] AI 에이전트 도입 시너지 (보강) ── -->
             <section>
                 <div class="slide-counter">SLIDE 04 / 06</div>
-                <div class="slide-subtitle">PART 7: 전사적 비전 및 미래 로드맵</div>
+                <div class="slide-subtitle">전사 도입 성과 및 미래 비전 로드맵</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">전사적 AI 에이전트 도입 확산 시나리오</h2>
                 
@@ -589,7 +627,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             🧬 전사 타 부서 확산과 복수 AI 에이전트의 선순환 시너지
                         </h3>
@@ -623,12 +661,12 @@
             <!-- ── [SLIDE 05 / 06] 로드맵 Phase 2 & 3 ── -->
             <section>
                 <div class="slide-counter">SLIDE 05 / 06</div>
-                <div class="slide-subtitle">PART 7: 전사적 비전 및 미래 로드맵</div>
+                <div class="slide-subtitle">전사 도입 성과 및 미래 비전 로드맵</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">미래 로드맵: Phase 2 & Phase 3 중장기 플랜</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(168,85,247,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
                         <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
@@ -692,7 +730,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             📅 중앙 공유 관계형 데이터베이스와 패키징 배포
                         </h3>
@@ -726,7 +764,7 @@
             <!-- ── [SLIDE 06 / 06] 최종 결론 ── -->
             <section style="justify-content: center; align-items: center; text-align: center;">
                 <div class="slide-counter">SLIDE 06 / 06</div>
-                <div class="slide-subtitle">PART 7: 전사적 비전 및 미래 로드맵</div>
+                <div class="slide-subtitle">전사 도입 성과 및 미래 비전 로드맵</div>
                 
                 <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border: none; background: transparent; box-shadow: none; transform: scale(1.1); animation: scale-pulse 5s infinite;">
                     <div style="width: 220px; height: 160px; margin-bottom: 15px; position: relative; transform: scale(1.35); display: flex; justify-content: center; align-items: center;">
@@ -798,7 +836,7 @@
     <div class="neon-nav-bar">
         <button class="neon-nav-btn neon-nav-btn-prev" onclick="Reveal.prev()">◀ PREV</button>
         <div class="neon-nav-indicator" id="globalSlideIndex">01 / 06</div>
-        <button class="neon-nav-btn neon-nav-btn-next" onclick="Reveal.next()">NEXT ▶</button>
+        <button class="neon-nav-btn neon-nav-btn-next">NEXT ▶</button>
     </div>
 
     <!-- Reveal.js -->
@@ -825,7 +863,78 @@
             const index = String(event.indexh + 1).padStart(2, '0');
             const total = String(Reveal.getTotalSlides()).padStart(2, '0');
             document.getElementById('globalSlideIndex').textContent = `${index} / ${total}`;
+            
+            // 마지막 슬라이드인 경우 NEXT 버튼 텍스트 변경
+            const nextBtn = document.querySelector('.neon-nav-btn-next');
+            if (nextBtn) {
+                if (Reveal.isLastSlide()) {
+                    nextBtn.textContent = "FINISH ▶";
+                    nextBtn.style.color = "var(--accent-emerald)";
+                    nextBtn.style.textShadow = "0 0 8px rgba(16,185,129,0.5)";
+                } else {
+                    nextBtn.textContent = "NEXT ▶";
+                    nextBtn.style.color = "#ffffff";
+                    nextBtn.style.textShadow = "none";
+                }
+            }
         });
-    </script>
+        
+        // 목차 진도 저장 및 이동 함수
+        function completeAndGoTo(nextUrl, currentKey) {
+            let completed = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]');
+            if (!completed.includes(currentKey)) {
+                completed.push(currentKey);
+                localStorage.setItem('natlas_completed_tracks', JSON.stringify(completed));
+            }
+            window.location.href = nextUrl;
+        }
+
+        // 마지막 슬라이드 종료 시 목차 컨트롤 타워 자동 회귀 키보드 훅
+        document.addEventListener('keydown', event => {
+            if (Reveal.isLastSlide() && (event.code === 'Space' || event.code === 'ArrowRight' || event.code === 'Enter')) {
+                event.preventDefault();
+                completeAndGoTo("presentation_index.html?completed=presentation_vision", "presentation_vision");
+            }
+        });
+        
+        // 내비게이션 바 NEXT 버튼 가로채기 훅
+        const nextBtn = document.querySelector('.neon-nav-btn-next');
+        if (nextBtn) {
+            nextBtn.removeAttribute('onclick');
+            nextBtn.addEventListener('click', () => {
+                if (Reveal.isLastSlide()) {
+                    completeAndGoTo("presentation_index.html?completed=presentation_vision", "presentation_vision");
+                } else {
+                    Reveal.next();
+                }
+            });
+        }
+    
+        // 좌측 하단 푸터 텍스트 옆에 TOC 미니 버튼 동적 추가
+        document.querySelectorAll('.slide-master-footer').forEach(footer => {
+            const firstSpan = footer.querySelector('span');
+            if (firstSpan) {
+                // wrapper div 생성
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'inline-flex';
+                wrapper.style.alignItems = 'center';
+                wrapper.style.gap = '8px';
+                
+                // span 바로 앞에 wrapper 삽입 후 span을 wrapper 내부로 이동
+                firstSpan.parentNode.insertBefore(wrapper, firstSpan);
+                wrapper.appendChild(firstSpan);
+                
+                // TOC 미니 버튼 생성
+                const tocBtn = document.createElement('button');
+                tocBtn.className = 'neon-nav-btn-toc-mini';
+                tocBtn.innerHTML = 'TOC ☰';
+                tocBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    window.location.href = 'presentation_index.html';
+                };
+                wrapper.appendChild(tocBtn);
+            }
+        });
+</script>
 </body>
 </html>

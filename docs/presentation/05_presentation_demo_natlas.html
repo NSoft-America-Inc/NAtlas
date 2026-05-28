@@ -260,6 +260,14 @@
             transform: scale(1.04);
         }
         
+        .neon-nav-btn-toc:hover {
+            background: rgba(99, 102, 241, 0.12);
+            border-color: rgba(99, 102, 241, 0.4);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+            transform: scale(1.04);
+        }
+        
         .neon-nav-btn:active {
             transform: scale(0.96);
         }
@@ -276,7 +284,37 @@
             border-right: 1px solid rgba(255,255,255,0.06);
             padding: 0 12px;
         }
-    </style>
+    
+        /* 좌측 하단 TOC 미니 버튼 스타일 */
+        .neon-nav-btn-toc-mini {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.6vw !important;
+            letter-spacing: 0.05em;
+            padding: 3px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            line-height: 1;
+            z-index: 100000;
+            pointer-events: auto;
+        }
+        
+        .neon-nav-btn-toc-mini:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.7);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
+        }
+</style>
 </head>
 <body>
     <div class="reveal">
@@ -285,7 +323,7 @@
             <!-- ── [SLIDE 01 / 11] NAtlas 데모 표지 ── -->
             <section>
                 <div class="slide-counter">SLIDE 01 / 11</div>
-                <div class="slide-subtitle">PART 5 & PART 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <div class="split-container-2col">
                     <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.35);">
@@ -376,7 +414,7 @@
             <!-- ── [SLIDE 02 / 11] Settings 탭 ── -->
             <section>
                 <div class="slide-counter">SLIDE 02 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas 기동: Settings 탭의 상태 진단</h2>
                 
@@ -396,7 +434,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             ⚙️ 데스크탑 기동 시의 포트 및 환경 자동 진단
                         </h3>
@@ -430,12 +468,12 @@
             <!-- ── [SLIDE 03 / 11] Sidecar 생명주기 ── -->
             <section>
                 <div class="slide-counter">SLIDE 03 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas 아키텍처: 데스크탑 메인 프로세스와 Python Sidecar 생명주기</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
                         <!-- Floating Badges corresponding to 3 points on the right -->
@@ -528,7 +566,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             ⛓️ 포트 충돌 및 크래시 예외 처리를 겸비한 공조 기전
                         </h3>
@@ -566,7 +604,7 @@
             <!-- ── [SLIDE 04 / 11] SSE Ingestion ── -->
             <section>
                 <div class="slide-counter">SLIDE 04 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Update: SSE 실시간 동기화 (Ingestion & Compile)</h2>
                 
@@ -585,7 +623,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             ⚡ 실시간 블로킹 없는 컴파일 로그 수혈 스트리밍
                         </h3>
@@ -619,12 +657,12 @@
             <!-- ── [SLIDE 05 / 11] Update UX & 스케줄러 ── -->
             <section>
                 <div class="slide-counter">SLIDE 05 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Update UX: SSE 실시간 쉘 로깅과 백그라운드 스마트 스케줄러</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
                         <!-- Floating Folder Scan Status Badge -->
@@ -674,7 +712,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             ⏰ 사용자 개입을 없앤 백그라운드 무소음 동기화
                         </h3>
@@ -708,7 +746,7 @@
             <!-- ── [SLIDE 06 / 11] Documents 탭 상태 천이 ── -->
             <section>
                 <div class="slide-counter">SLIDE 06 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Documents: 파일 상태 천이 애니메이션</h2>
                 
@@ -734,7 +772,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             🟢 `[new]` 신규 주황색 배지에서 `[indexed]` 에메랄드로의 변환
                         </h3>
@@ -768,12 +806,12 @@
             <!-- ── [SLIDE 07 / 11] SQLite 로컬 DB 통합 ── -->
             <section>
                 <div class="slide-counter">SLIDE 07 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">SQLite 로컬 DB 통합: chats를 넘어선 task_history의 메타데이터 파싱</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; flex-direction: column; gap: 15px; justify-content: center; box-sizing: border-box; transform: scale(1.15);">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; flex-direction: column; gap: 8px; justify-content: center; box-sizing: border-box;">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
                         <!-- Card 1: Normalization Parser -->
@@ -812,7 +850,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             📊 지질학적 지식 출처의 세분화 정밀 영구 파이프라인
                         </h3>
@@ -846,12 +884,12 @@
             <!-- ── [SLIDE 08 / 11] NAtlas Wiki Browser 3D ── -->
             <section>
                 <div class="slide-counter">SLIDE 08 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Wiki Browser: 3D 지식 지도의 탄생</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(168,85,247,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
                         <!-- Floating Code Syntax Badge -->
@@ -926,7 +964,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             🌐 3D 물리 웹 뷰어 상에 살아 움직이는 전사 지식 지도
                         </h3>
@@ -960,12 +998,12 @@
             <!-- ── [SLIDE 09 / 11] D3-force 물리 엔진 ── -->
             <section>
                 <div class="slide-counter">SLIDE 09 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Wiki Graph Physics Engine: D3-force 기반의 실시간 물리 시뮬레이션</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
                         <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
@@ -1018,7 +1056,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             🧬 마우스 드래그와 조회수 팽창에 실시간 반응하는 3D 캔버스
                         </h3>
@@ -1052,7 +1090,7 @@
             <!-- ── [SLIDE 10 / 11] 신입 사원 온보딩 ── -->
             <section>
                 <div class="slide-counter">SLIDE 10 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">실무적 혜택: 신입 사원 온보딩 시나리오</h2>
                 
@@ -1072,7 +1110,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-55 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             👥 클릭 한 번으로 모든 트레이드오프 본문 인수 수령
                         </h3>
@@ -1106,12 +1144,12 @@
             <!-- ── [SLIDE 11 / 11] Resizable Panels ── -->
             <section>
                 <div class="slide-counter">SLIDE 11 / 11</div>
-                <div class="slide-subtitle">PART 5 & 6: NATLAS GUI & 실물 문서 색인 시연</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
                 
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Resizable Panels UX & 지식 흐름의 귀착 완결</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.08); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
                         <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
@@ -1126,7 +1164,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-57 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center; align-items: center; padding: 45px 50px;">
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
                             ⚛️ 가변 드래그 패널과 React 리사이징 해상도 보호 UX
                         </h3>
@@ -1164,7 +1202,7 @@
     <div class="neon-nav-bar">
         <button class="neon-nav-btn neon-nav-btn-prev" onclick="Reveal.prev()">◀ PREV</button>
         <div class="neon-nav-indicator" id="globalSlideIndex">01 / 11</div>
-        <button class="neon-nav-btn neon-nav-btn-next" onclick="Reveal.next()">NEXT ▶</button>
+        <button class="neon-nav-btn neon-nav-btn-next">NEXT ▶</button>
     </div>
 
     <!-- Reveal.js -->
@@ -1191,7 +1229,78 @@
             const index = String(event.indexh + 1).padStart(2, '0');
             const total = String(Reveal.getTotalSlides()).padStart(2, '0');
             document.getElementById('globalSlideIndex').textContent = `${index} / ${total}`;
+            
+            // 마지막 슬라이드인 경우 NEXT 버튼 텍스트 변경
+            const nextBtn = document.querySelector('.neon-nav-btn-next');
+            if (nextBtn) {
+                if (Reveal.isLastSlide()) {
+                    nextBtn.textContent = "NEXT SECTION ▶";
+                    nextBtn.style.color = "var(--accent-emerald)";
+                    nextBtn.style.textShadow = "0 0 8px rgba(16,185,129,0.5)";
+                } else {
+                    nextBtn.textContent = "NEXT ▶";
+                    nextBtn.style.color = "#ffffff";
+                    nextBtn.style.textShadow = "none";
+                }
+            }
         });
-    </script>
+        
+        // 목차 진도 저장 및 이동 함수
+        function completeAndGoTo(nextUrl, currentKey) {
+            let completed = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]');
+            if (!completed.includes(currentKey)) {
+                completed.push(currentKey);
+                localStorage.setItem('natlas_completed_tracks', JSON.stringify(completed));
+            }
+            window.location.href = nextUrl;
+        }
+
+        // 마지막 슬라이드 종료 시 목차 컨트롤 타워 자동 회귀 키보드 훅
+        document.addEventListener('keydown', event => {
+            if (Reveal.isLastSlide() && (event.code === 'Space' || event.code === 'ArrowRight' || event.code === 'Enter')) {
+                event.preventDefault();
+                completeAndGoTo("presentation_index.html?completed=demo_natlas", "demo_natlas");
+            }
+        });
+        
+        // 내비게이션 바 NEXT 버튼 가로채기 훅
+        const nextBtn = document.querySelector('.neon-nav-btn-next');
+        if (nextBtn) {
+            nextBtn.removeAttribute('onclick');
+            nextBtn.addEventListener('click', () => {
+                if (Reveal.isLastSlide()) {
+                    completeAndGoTo("presentation_index.html?completed=demo_natlas", "demo_natlas");
+                } else {
+                    Reveal.next();
+                }
+            });
+        }
+    
+        // 좌측 하단 푸터 텍스트 옆에 TOC 미니 버튼 동적 추가
+        document.querySelectorAll('.slide-master-footer').forEach(footer => {
+            const firstSpan = footer.querySelector('span');
+            if (firstSpan) {
+                // wrapper div 생성
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'inline-flex';
+                wrapper.style.alignItems = 'center';
+                wrapper.style.gap = '8px';
+                
+                // span 바로 앞에 wrapper 삽입 후 span을 wrapper 내부로 이동
+                firstSpan.parentNode.insertBefore(wrapper, firstSpan);
+                wrapper.appendChild(firstSpan);
+                
+                // TOC 미니 버튼 생성
+                const tocBtn = document.createElement('button');
+                tocBtn.className = 'neon-nav-btn-toc-mini';
+                tocBtn.innerHTML = 'TOC ☰';
+                tocBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    window.location.href = 'presentation_index.html';
+                };
+                wrapper.appendChild(tocBtn);
+            }
+        });
+</script>
 </body>
 </html>

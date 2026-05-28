@@ -198,6 +198,10 @@ def normalize_and_fuzzy_match_header(raw_header: str) -> str:
     """헤더명을 정제하고, 지식 파이프라인의 H2 규격 키워드로 fuzzy 매칭합니다."""
     h_lower = raw_header.lower()
     
+    # Exact context mapping bypass for wiki.md Context section (preventing collapse into order.md contextgoal)
+    if h_lower == "context":
+        return "context"
+        
     # 1. Completed Tasks 유사 매칭
     if any(k in h_lower for k in ["completed", "task", "완료", "할일", "할 일", "목록"]):
         return "completedtasks"

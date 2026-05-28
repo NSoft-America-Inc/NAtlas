@@ -1,0 +1,1214 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>NStack ➔ NAtlas E2E 지식 파이프라인 - 개념 및 이론</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background-color: #030408;
+            --accent-blue: #0ea5e9;
+            --accent-indigo: #6366f1;
+            --accent-purple: #a855f7;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(9, 12, 22, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --glass-border-glow: rgba(99, 102, 241, 0.1);
+        }
+        
+        body {
+            background-color: var(--background-color) !important;
+            background-image: radial-gradient(rgba(99, 102, 241, 0.04) 1.5px, transparent 1.5px) !important;
+            background-size: 24px 24px !important;
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
+            color: var(--text-main) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        .reveal {
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
+            color: var(--text-main) !important;
+        }
+        
+        .reveal .slides {
+            width: 100vw !important;
+            height: 100vh !important;
+            inset: 0 !important;
+            margin: 0 !important;
+            transform: none !important;
+        }
+        
+        .reveal section {
+            width: 100% !important;
+            height: 100% !important;
+            padding: 0 !important;
+            box-sizing: border-box;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+        
+        .slide-counter {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 0.8vw;
+            color: rgba(255, 255, 255, 0.25);
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            z-index: 50;
+        }
+        
+        .slide-subtitle {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            font-size: 0.8vw;
+            color: var(--accent-indigo);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 800;
+            z-index: 50;
+        }
+        
+        .reveal h1, .reveal h2, .reveal h3 {
+            font-weight: 800 !important;
+            text-transform: none !important;
+            margin: 0;
+            padding: 0;
+            word-break: keep-all !important;
+            white-space: normal !important;
+        }
+        
+        .reveal h2 {
+            font-size: 2.0vw !important;
+            line-height: 1.3 !important;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+        
+        .reveal p, .reveal li {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif !important;
+            color: #cbd5e1 !important;
+            line-height: 1.7 !important;
+            word-break: keep-all !important;
+            white-space: normal !important;
+        }
+        
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1.5px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 45px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            box-sizing: border-box;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;    
+            text-align: center;
+        }
+        
+        .glass-panel:hover {
+            border-color: rgba(99, 102, 241, 0.25);
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.05);
+        }
+
+        .split-container-2col {
+            width: 92%;
+            height: 70%;
+            display: flex;
+            gap: 75px; 
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            margin-top: 65px;
+            margin-bottom: 10px;
+        }
+        
+        .col-40 { width: 40%; flex-shrink: 0; }
+        .col-43 { width: 43%; flex-shrink: 0; }
+        .col-45 { width: 45%; flex-shrink: 0; }
+        .col-50 { width: 50%; flex-shrink: 0; }
+        .col-55 { width: 55%; }
+        .col-57 { width: 57%; }
+        .col-60 { width: 60%; }
+        
+        .perspective-wrapper {
+            perspective: 1200px;
+            width: 92%;
+            height: 68%;
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            box-sizing: border-box;
+            margin-top: 65px;
+            margin-bottom: 10px;
+        }
+        
+        .three-d-card {
+            flex: 1;
+            height: 100%;
+            background: rgba(8, 11, 20, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 40px 35px 85px 35px; 
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;    
+            gap: 25px;
+            position: relative;     
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-style: preserve-3d;
+        }
+
+        .card-bottom-graphic {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateZ(15px);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 12px;
+            pointer-events: none;
+            width: calc(100% - 70px);
+            box-sizing: border-box;
+        }
+        
+        .pros-card {
+            border: 1.5px solid rgba(14, 165, 233, 0.15);
+            transform: rotateY(6deg) translateZ(5px);
+            box-shadow: -15px 20px 40px rgba(0,0,0,0.6), -5px 0 20px rgba(14, 165, 233, 0.02);
+        }
+        
+        .cons-card {
+            border: 1.5px solid rgba(244, 63, 94, 0.15);
+            transform: rotateY(-6deg) translateZ(5px);
+            box-shadow: 15px 20px 40px rgba(0,0,0,0.6), 5px 0 20px rgba(244, 63, 94, 0.02);
+        }
+        
+        .pros-card:hover {
+            transform: rotateY(0deg) scale(1.02) translateZ(25px) !important;
+            border-color: rgba(14, 165, 233, 0.6) !important;
+            box-shadow: 0 25px 50px rgba(14, 165, 233, 0.15) !important;
+        }
+        
+        .cons-card:hover {
+            transform: rotateY(0deg) scale(1.02) translateZ(25px) !important;
+            border-color: rgba(244, 63, 94, 0.6) !important;
+            box-shadow: 0 25px 50px rgba(244, 63, 94, 0.15) !important;
+        }
+        
+        .thread-canvas-container {
+            width: 92%;
+            height: 70%;
+            display: flex;
+            gap: 75px;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            margin-top: 65px;
+            margin-bottom: 10px;
+        }
+
+        .vscode-sim-box {
+            height: 100%;
+            background: #090c12;
+            border: 1.5px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.75);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        @keyframes text-shine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes soft-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        @keyframes scale-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        @keyframes rotate-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(var(--rot, -1.5deg)); }
+            50% { transform: translateY(-8px) rotate(var(--rot, -1.5deg)); }
+        }
+        @keyframes heat-pulse {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(244,63,94,0.3)); }
+            50% { filter: drop-shadow(0 0 20px rgba(244,63,94,0.8)); }
+        }
+        @keyframes laser-glow {
+            0%, 100% { stroke-opacity: 0.3; stroke-width: 1.5; }
+            50% { stroke-opacity: 0.9; stroke-width: 3.5; }
+        }
+        @keyframes spin-gear {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-gear-reverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        
+        .slide-master-footer {
+            width: 90%;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 0 25px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        
+        .slide-master-footer span {
+            font-size: 0.75vw;
+            color: rgba(255,255,255,0.2);
+        }
+        
+        .reveal .controls {
+            z-index: 99999 !important;
+            pointer-events: auto !important;
+            color: var(--accent-indigo) !important;
+        }
+        
+        .neon-nav-bar {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(6, 8, 15, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1.5px solid rgba(99, 102, 241, 0.25);
+            border-radius: 50px;
+            padding: 6px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(99, 102, 241, 0.1);
+            z-index: 100000;
+            pointer-events: auto;
+            user-select: none;
+        }
+        
+        .neon-nav-btn {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.85vw;
+            letter-spacing: 0.08em;
+            padding: 6px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid transparent;
+        }
+        
+        .neon-nav-btn-prev:hover {
+            background: rgba(244, 63, 94, 0.12);
+            border-color: rgba(244, 63, 94, 0.4);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
+            transform: scale(1.04);
+        }
+        
+        .neon-nav-btn-next:hover {
+            background: rgba(16, 185, 129, 0.12);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+            transform: scale(1.04);
+        }
+        
+        .neon-nav-btn-toc:hover {
+            background: rgba(99, 102, 241, 0.12);
+            border-color: rgba(99, 102, 241, 0.4);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+            transform: scale(1.04);
+        }
+        
+        .neon-nav-btn:active {
+            transform: scale(0.96);
+        }
+        
+        .neon-nav-indicator {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85vw;
+            color: var(--accent-indigo);
+            font-weight: 800;
+            min-width: 80px;
+            text-align: center;
+            letter-spacing: 0.05em;
+            border-left: 1px solid rgba(255,255,255,0.06);
+            border-right: 1px solid rgba(255,255,255,0.06);
+            padding: 0 12px;
+        }
+    
+        /* 좌측 하단 TOC 미니 버튼 스타일 */
+        .neon-nav-btn-toc-mini {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.6vw !important;
+            letter-spacing: 0.05em;
+            padding: 3px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            line-height: 1;
+            z-index: 100000;
+            pointer-events: auto;
+        }
+        
+        .neon-nav-btn-toc-mini:hover {
+            background: rgba(99, 102, 241, 0.25);
+            border-color: rgba(99, 102, 241, 0.7);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
+        }
+</style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            
+            <!-- ── [SLIDE 01 / 09] 기존 AI 협업의 한계와 새로운 돌파구 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 01 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">기존 AI 협업의 한계와 새로운 돌파구</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="wasteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--accent-rose)"/>
+                                        <stop offset="100%" stop-color="#881337"/>
+                                    </linearGradient>
+                                    <linearGradient id="cleanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--accent-emerald)"/>
+                                        <stop offset="100%" stop-color="#047857"/>
+                                    </linearGradient>
+                                </defs>
+                                
+                                <circle cx="125" cy="125" r="110" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" stroke-dasharray="4 6"/>
+                                
+                                <!-- Connection bridge -->
+                                <line x1="80" y1="80" x2="170" y2="170" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                
+                                <!-- Memory Dilution (Left-Top) -->
+                                <g transform="translate(80, 80)">
+                                    <g style="animation: spin-gear 15s linear infinite; transform-origin: 0px 0px;">
+                                        <circle cx="0" cy="0" r="38" fill="none" stroke="url(#wasteGrad)" stroke-width="6" filter="drop-shadow(0 0 8px rgba(244,63,94,0.3))"/>
+                                        <rect x="-4" y="-46" width="8" height="12" fill="var(--accent-rose)" rx="2"/>
+                                        <rect x="-4" y="34" width="8" height="12" fill="var(--accent-rose)" rx="2"/>
+                                        <rect x="-46" y="-4" width="12" height="8" fill="var(--accent-rose)" rx="2"/>
+                                        <rect x="34" y="-4" width="12" height="8" fill="var(--accent-rose)" rx="2"/>
+                                    </g>
+                                    <circle cx="0" cy="0" r="20" fill="#080c14" stroke="var(--accent-rose)" stroke-width="2"/>
+                                    <!-- Broken memory bar -->
+                                    <line x1="-8" y1="-4" x2="8" y2="4" stroke="var(--accent-rose)" stroke-width="2.5"/>
+                                    <line x1="-8" y1="4" x2="8" y2="-4" stroke="var(--accent-rose)" stroke-width="2.5"/>
+                                    <text x="0" y="-24" fill="var(--accent-rose)" font-family="monospace" font-size="7" font-weight="extrabold" text-anchor="middle">LOST MEMORY</text>
+                                </g>
+                                
+                                <!-- Clean External Memory (Right-Bottom) -->
+                                <g transform="translate(170, 170)">
+                                    <g style="animation: spin-gear-reverse 10s linear infinite; transform-origin: 0px 0px;">
+                                        <circle cx="0" cy="0" r="30" fill="none" stroke="url(#cleanGrad)" stroke-width="5" filter="drop-shadow(0 0 8px rgba(16,185,129,0.3))"/>
+                                        <rect x="-3" y="-36" width="6" height="10" fill="var(--accent-emerald)" rx="1.5"/>
+                                        <rect x="-3" y="26" width="6" height="10" fill="var(--accent-emerald)" rx="1.5"/>
+                                        <rect x="-36" y="-3" width="10" height="6" fill="var(--accent-emerald)" rx="1.5"/>
+                                        <rect x="26" y="-3" width="10" height="6" fill="var(--accent-emerald)" rx="1.5"/>
+                                    </g>
+                                    <circle cx="0" cy="0" r="16" fill="#080c14" stroke="var(--accent-emerald)" stroke-width="1.8"/>
+                                    <!-- Clean external memory card -->
+                                    <rect x="-6" y="-7" width="12" height="14" rx="2" fill="var(--accent-emerald)"/>
+                                    <line x1="-3" y1="-2" x2="3" y2="-2" stroke="#080c14" stroke-width="1.5"/>
+                                    <line x1="-3" y1="2" x2="3" y2="2" stroke="#080c14" stroke-width="1.5"/>
+                                    <text x="0" y="22" fill="var(--accent-emerald)" font-family="monospace" font-size="7" font-weight="extrabold" text-anchor="middle">NSTACK HARD</text>
+                                </g>
+                                
+                                <text x="125" y="235" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">CONTEXT MANAGEMENT ARCHITECTURE</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🚨 대화형 AI 코딩의 치명적인 한계 고발
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                기존의 단순 대화형 페어 프로그래밍은 장기 세션 진행 시 두 가지 결정적 리스크를 초래합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-rose);">1. 비효율적인 토큰 소모 (Token Waste)</strong>:<br>
+                                    사소한 리팩토링이나 수정을 수행할 때도 매번 수천 라인의 대용량 전체 코드를 프롬프트에 반복 주입해야 하여 인프라 비용 폭증.
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-rose);">2. 장기 메모리 소실 및 컨텍스트 희석</strong>:<br>
+                                    대화 세션이 길어지면 과거에 합의한 아키텍처 결정사항이나 설계 의도를 LLM이 망각하여, 시스템의 기존 규칙을 어기는 엉뚱한 코드를 생산하기 시작.
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-emerald);">NStack의 해결책: '외장 메모리 하드디스크'</strong>:<br>
+                                    에이전트의 컨텍스트 창을 매번 청소하는 대신, 초경량화되고 응축된 3종 지식 캡슐(order/report/wiki)을 통해 핵심 컨텍스트와 설계 의도를 영구 보존.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack 지식 파이프라인의 필요성과 규격</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "기존의 단순 대화형 코딩은 수천 줄의 코드를 지속적으로 프롬프트에 우겨넣는 토큰 요금의 비효율과, 대화가 길어졌을 때 기존 설계 의도를 잊어먹는 장기 메모리 유실 현상이 치명적입니다. NStack은 3종의 지식 규격을 '외장 메모리 하드디스크'처럼 활용해 에이전트의 컨텍스트 창을 청정하게 유지하고 비용과 메모리 한계를 극복합니다."
+                </aside>
+            </section>
+
+            <!-- ── [SLIDE 02 / 09] 설계 의도의 영구 보존을 위한 3종 아티팩트의 역할 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 02 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">지식 보존을 위한 3종 아티팩트의 구조 설계</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="cardGlowOrder" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--accent-rose)" stop-opacity="0.9"/>
+                                        <stop offset="100%" stop-color="#881337" stop-opacity="0.3"/>
+                                    </linearGradient>
+                                    <linearGradient id="cardGlowReport" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--accent-blue)" stop-opacity="0.9"/>
+                                        <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0.3"/>
+                                    </linearGradient>
+                                    <linearGradient id="cardGlowWiki" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--accent-purple)" stop-opacity="0.9"/>
+                                        <stop offset="100%" stop-color="#581c87" stop-opacity="0.3"/>
+                                    </linearGradient>
+                                </defs>
+                                
+                                <ellipse cx="125" cy="220" rx="75" ry="12" fill="rgba(0,0,0,0.6)" filter="blur(8px)"/>
+                                
+                                <!-- wiki.md Card -->
+                                <g transform="translate(10, -15)" style="animation: float-slow 6s ease-in-out infinite; --rot: 2deg;">
+                                    <polygon points="50,150 150,110 210,160 110,200" fill="rgba(6,8,15,0.85)" stroke="url(#cardGlowWiki)" stroke-width="2.2" filter="drop-shadow(0 8px 15px rgba(0,0,0,0.6))"/>
+                                    <text x="145" y="152" fill="var(--accent-purple)" font-family="monospace" font-size="9" font-weight="extrabold" transform="skewX(-20) rotate(-10)" text-anchor="middle">wiki.md</text>
+                                </g>
+                                
+                                <!-- report.md Card -->
+                                <g transform="translate(5, -5)" style="animation: float-slow 5s ease-in-out infinite; --rot: -1.5deg;">
+                                    <polygon points="55,120 155,80 215,130 115,170" fill="rgba(6,8,15,0.85)" stroke="url(#cardGlowReport)" stroke-width="2.2" filter="drop-shadow(0 12px 20px rgba(0,0,0,0.75))"/>
+                                    <text x="150" y="122" fill="var(--accent-blue)" font-family="monospace" font-size="9" font-weight="extrabold" transform="skewX(-20) rotate(-10)" text-anchor="middle">report.md</text>
+                                </g>
+                                
+                                <!-- order.md Card -->
+                                <g transform="translate(0, 5)" style="animation: float-slow 4s ease-in-out infinite; --rot: 3deg;">
+                                    <polygon points="60,90 160,50 220,100 120,140" fill="rgba(8,12,22,0.9)" stroke="url(#cardGlowOrder)" stroke-width="3" filter="drop-shadow(0 15px 30px rgba(0,0,0,0.85))"/>
+                                    <text x="155" y="92" fill="var(--accent-rose)" font-family="monospace" font-size="10" font-weight="extrabold" transform="skewX(-20) rotate(-10)" text-anchor="middle">order.md</text>
+                                </g>
+                                
+                                <text x="125" y="240" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">3-CORE KNOWLEDGE ARTIFACTS</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            📦 컨텍스트 희석을 원천 차단하는 3종의 무기
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                NStack은 개발의 단계별 아티팩트를 파일로 영구 보존하여 장기 세션에서의 컨텍스트를 완벽히 통제합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-rose);">order.md (작업지시서)</strong>:<br>
+                                    작업 범위, 구현 환경의 사전 설정, 비즈니스 및 기술적 목표(Goal), 통제를 위한 완료 조건 명시
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-blue);">report.md (완료보고서)</strong>:<br>
+                                    완료된 실제 세부 작업, 변경/추가 파일 목록, 정적 린터 및 분석 통과 검증 기록 보존
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-purple);">wiki.md (지식 위키 문서)</strong>:<br>
+                                    최초 계획과 구현의 실제 격차, 선택 대안의 구체적 의사결정 사유, 유지보수 제약사항의 누적 보존
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack 지식 파이프라인의 필요성과 규격</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "NStack은 3종 지식 아티팩트를 규격화하여 Git pre-commit 단계에서 강제함으로써 코딩 지식을 구조적으로 파일화하고 영구히 축적합니다."
+                </aside>
+            </section>
+
+            <!-- ── [SLIDE 03 / 09] 아티팩트 1: order.md ── -->
+            <section>
+                <div class="slide-counter">SLIDE 03 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">아티팩트 1: order.md (작업지시서)</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="orderBeam" x1="0%" y1="50%" x2="100%" y2="50%">
+                                        <stop offset="0%" stop-color="var(--accent-rose)" stop-opacity="0.8"/>
+                                        <stop offset="100%" stop-color="var(--accent-rose)" stop-opacity="0.1"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M 50 125 C 100 75, 150 75, 200 125" fill="none" stroke="url(#orderBeam)" stroke-width="3" filter="drop-shadow(0 0 8px var(--accent-rose))"/>
+                                <path d="M 50 125 C 100 175, 150 175, 200 125" fill="none" stroke="url(#orderBeam)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                
+                                <g transform="translate(20, 95)" style="animation: float-slow 4.5s ease-in-out infinite; --rot: -2deg;">
+                                    <rect x="0" y="0" width="60" height="75" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-rose)" stroke-width="2" filter="drop-shadow(0 8px 15px rgba(0,0,0,0.6))"/>
+                                    <rect x="8" y="12" width="25" height="4" fill="var(--accent-rose)" rx="1"/>
+                                    <line x1="8" y1="26" x2="42" y2="26" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                                    <line x1="8" y1="36" x2="35" y2="36" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                                    <circle cx="48" cy="18" r="3" fill="var(--accent-rose)"/>
+                                    <text x="30" y="66" fill="var(--accent-rose)" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle">order.md</text>
+                                </g>
+                                
+                                <g transform="translate(170, 95)" style="animation: float-slow 5s ease-in-out infinite; --rot: 2deg;">
+                                    <rect x="0" y="0" width="60" height="75" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-rose)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                    <polygon points="30,17 48,47 12,47" fill="#080c14" stroke="var(--accent-rose)" stroke-width="2"/>
+                                    <circle cx="30" cy="35" r="4.5" fill="#ffffff" style="filter: drop-shadow(0 0 6px var(--accent-rose));"/>
+                                    <text x="30" y="66" fill="#ffffff" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle">AI CORE</text>
+                                </g>
+                                
+                                <text x="125" y="210" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="9.5" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">ORDER HARNESS DATA INGESTION</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🎯 안전한 통제선(Harness) 수립 및 목표 명확화
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                작업을 시작하기 전에 기획 목표와 기술적 완성 기준을 확정해 에이전트의 작업 바운더리를 강력하게 제한합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-rose);">## Git Setup</strong>:<br>
+                                    Git 브랜치와 PR 매핑 등 작업 수행 전 형상 관리 환경 사전 진단
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-rose);">## Context & Goal</strong>:<br>
+                                    단순 문장을 넘어 비즈니스 배경과 기획 의도 등 풍부한 맥락의 사전 공유
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-rose);">## Completion Criteria</strong>:<br>
+                                    기능 동작 완료뿐만 아니라 정적 린터 패스 조건까지 수치화된 정량적 인수 목록 기재
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack 지식 파이프라인의 필요성과 규격</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "order.md는 기계 에이전트가 코딩 작업에 착수하기 전, 인간 설계자가 명확히 선을 그어 통제하는 첫 단계 아티팩트입니다."
+                </aside>
+            </section>
+
+            <!-- ── [SLIDE 04 / 09] 아티팩트 2: report.md ── -->
+            <section>
+                <div class="slide-counter">SLIDE 04 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">아티팩트 2: report.md (완료보고서)</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(14,165,233,0.1) 0%, rgba(14,165,233,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="125" cy="220" rx="75" ry="12" fill="rgba(0,0,0,0.6)" filter="blur(8px)"/>
+                                
+                                <g transform="translate(100, 85)" style="animation: float-slow 4.5s ease-in-out infinite; --rot: 2deg;">
+                                    <rect x="-30" y="-40" width="60" height="80" rx="6" fill="rgba(8,12,22,0.95)" stroke="var(--accent-blue)" stroke-width="2" filter="drop-shadow(0 10px 20px rgba(0,0,0,0.7))"/>
+                                    <ellipse cx="0" cy="15" rx="15" ry="5" fill="none" stroke="var(--accent-blue)" stroke-width="1.2"/>
+                                    <text x="0" y="28" fill="var(--accent-blue)" font-family="monospace" font-weight="extrabold" font-size="7.5" text-anchor="middle">SQLite Log</text>
+                                </g>
+                                
+                                <text x="125" y="210" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="9.5" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">REPORT VALIDATION & STORAGE</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🔬 변경 내역의 투명성과 작동 무결성 입증
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                작업이 완료된 후 실제로 변경된 모든 파일 목록과 정적 분석 검사 로그를 기재해 완벽한 작동을 입증합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-blue);">## Completed Tasks</strong>:<br>
+                                    최초 계획의 완료 기준(Completion Criteria)과 100% 매핑된 완료 체크리스트 기재
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-blue);">## Changes [NEW / MODIFY / DELETE]</strong>:<br>
+                                    워크스페이스 내부에서 수정되거나 생성/삭제된 구체적 파일의 기계적 파싱 태그 표기
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-blue);">## Static Analysis (검증 로그)</strong>:<br>
+                                    ESLint 및 정적 Linter를 실행한 무결점 입증 로그를 첨부하여 코드 결함을 선제 예방
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack 지식 파이프라인의 필요성과 규격</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "report.md는 코딩 완료 후 실제 변경된 파일들과 테스트 결과를 투명하게 증명하여, 구현 품질에 대해 안전을 보장하는 장치입니다."
+                </aside>
+            </section>
+
+            <!-- ── [SLIDE 05 / 09] 아티팩트 3: wiki.md ── -->
+            <section>
+                <div class="slide-counter">SLIDE 05 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">아티팩트 3: wiki.md (지식 위키 문서)</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(168,85,247,0.1) 0%, rgba(168,85,247,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M 50 125 C 100 155, 150 155, 200 125" fill="none" stroke="rgba(168,85,247,0.4)" stroke-width="3" filter="drop-shadow(0 0 8px var(--accent-purple))"/>
+                                
+                                <g transform="translate(20, 95)" style="animation: float-slow 4.5s ease-in-out infinite; --rot: -2deg;">
+                                    <rect x="0" y="0" width="60" height="75" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-purple)" stroke-width="2" filter="drop-shadow(0 8px 15px rgba(0,0,0,0.6))"/>
+                                    <rect x="38" y="52" width="14" height="10" rx="2" fill="none" stroke="var(--accent-purple)" stroke-width="1.2"/>
+                                    <text x="45" y="60" fill="var(--accent-purple)" font-family="monospace" font-weight="extrabold" font-size="6" text-anchor="middle">[[ ]]</text>
+                                    <text x="30" y="66" fill="var(--accent-purple)" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle">wiki.md</text>
+                                </g>
+                                
+                                <g transform="translate(170, 95)" style="animation: float-slow 5s ease-in-out infinite; --rot: 2deg;">
+                                    <rect x="0" y="0" width="60" height="75" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-purple)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                    <circle cx="30" cy="37" r="12" fill="#080c14" stroke="var(--accent-purple)" stroke-width="2"/>
+                                    <circle cx="30" cy="37" r="4" fill="#ffffff" style="filter: drop-shadow(0 0 4px #ffffff);"/>
+                                    <text x="30" y="66" fill="#ffffff" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle">WIKI CORE</text>
+                                </g>
+                                
+                                <text x="125" y="210" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="9.5" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">KNOWLEDGE GRAPH INTEGRATION</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🏛️ 설계의 비하인드 스토리와 결정 사유(Why) 영구 각인
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                구현 코드 그 자체보다 중대한 설계상 결정 사유와 우회 해결 전략, 유지보수 제약사항을 영구 보존합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-purple);">## Plan vs Actual (계획 대비 실제)</strong>:<br>
+                                    마이그레이션 중 마주한 설계상 구조적 제약과 이를 해결하기 위한 구현의 실제 간극 기록
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-purple);">## Decision / Solution (의사결정)</strong>:<br>
+                                    다양한 대안 라이브러리/아키텍처 중 해당 대안을 최종 낙점한 합리적인 엔지니어링 근거 기록
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-purple);">## Caveats (주의점 및 제약)</strong>:<br>
+                                    추후 유지보수 시 변경이 일어났을 때 사이드 이펙트를 유발할 수 있는 중대 제약 요소 박제
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack 지식 파이프라인의 필요성과 규격</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "wiki.md는 코드가 말해주지 않는 설계 의도와 트레이드오프(Why)를 기록하여 차후 인수인계와 유지보수의 마찰을 제로화하는 영구 지식 자산입니다."
+                </aside>
+            </section>
+
+            <!-- ── [SLIDE 06 / 09] 이중 대괄호 링크 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 06 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">지식 그래프 설계: [[이중 대괄호]] 링크</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="125" cy="125" r="95" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1.2"/>
+                                <line x1="125" y1="125" x2="65" y2="75" stroke="var(--accent-indigo)" stroke-width="2"/>
+                                <line x1="125" y1="125" x2="185" y2="175" stroke="var(--accent-purple)" stroke-width="2"/>
+                                
+                                <g transform="translate(125, 125)">
+                                    <circle cx="0" cy="0" r="24" fill="#080c14" stroke="var(--accent-indigo)" stroke-width="2.5" filter="drop-shadow(0 0 12px var(--accent-indigo))"/>
+                                    <circle cx="0" cy="0" r="8" fill="var(--accent-indigo)"/>
+                                    <text x="0" y="34" fill="var(--accent-indigo)" font-family="monospace" font-size="7.5" font-weight="extrabold" text-anchor="middle">Zustand Core</text>
+                                </g>
+                                
+                                <g transform="translate(65, 75)">
+                                    <circle cx="0" cy="0" r="16" fill="#080c14" stroke="var(--accent-blue)" stroke-width="1.8"/>
+                                    <circle cx="0" cy="0" r="5" fill="var(--accent-blue)"/>
+                                    <text x="0" y="-22" fill="var(--accent-blue)" font-family="monospace" font-size="7.5" font-weight="extrabold" text-anchor="middle">Todo App</text>
+                                </g>
+                                
+                                <g transform="translate(185, 175)">
+                                    <circle cx="0" cy="0" r="16" fill="#080c14" stroke="var(--accent-purple)" stroke-width="1.8"/>
+                                    <circle cx="0" cy="0" r="5" fill="var(--accent-purple)"/>
+                                    <text x="0" y="24" fill="var(--accent-purple)" font-family="monospace" font-size="7.5" font-weight="extrabold" text-anchor="middle">FastAPI</text>
+                                </g>
+                                
+                                <text x="125" y="235" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">D3-FORCE PHYSICS LINKAGE MAP</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🔗 파편화된 문서를 유기적 지식 네트워크로 통합
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                지식 위키 내에서 타 프로젝트나 작업을 인용할 때 이중 대괄호를 선언하여 지식 네트워크를 촘촘히 엮어냅니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">이중 괄호 링크 패턴 `[[slug]]`</strong>:<br>
+                                    위키 텍스트 본문에 이중 대괄호 기입 시 NAtlas 파서가 이를 연계선으로 자동 바인딩
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">D3-Force 물리 엔진 시각화</strong>:<br>
+                                    NAtlas UI는 이 링크들을 파싱하여 네트워크 그래프 간 자성 인력과 척력의 선으로 역동적 시각화 제공
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">꼬리를 무는 인지 가속화</strong>:<br>
+                                    처음 코드를 접한 후임자도 클릭 한 번으로 모든 아키텍처 흐름과 결정 맥락을 유기적으로 추적
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack 지식 파이프라인의 필요성과 규격</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "문서와 문서를 유기적으로 이어주는 이중 대괄호 링크는 NAtlas가 3D 지식 그래프를 구성하는 튼튼한 인력선 역할을 수행합니다."
+                </aside>
+            </section>
+
+            <!-- ── [SLIDE 07 / 09] Frontmatter ── -->
+            <section>
+                <div class="slide-counter">SLIDE 07 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">필수 사양: YAML Frontmatter 규격</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <polygon points="50,60 200,60 185,200 65,200" fill="#0f172a" stroke="var(--accent-indigo)" stroke-width="2.5"/>
+                                <rect x="65" y="70" width="120" height="20" rx="3" fill="#020617" stroke="var(--accent-indigo)" stroke-width="1.2"/>
+                                <text x="125" y="83" fill="#ffffff" font-family="monospace" font-weight="extrabold" font-size="8.5" text-anchor="middle">YAML METADATA</text>
+                                <text x="125" y="190" fill="var(--accent-blue)" font-family="monospace" font-size="7.5" font-weight="extrabold" text-anchor="middle">PARSING COMPLETE</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            📋 고속 메타데이터 파싱의 핵심 YAML 규격
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                아카이브 마크다운 최상단에는 NAtlas 파서가 고속 스캔할 수 있도록 정해진 구조의 Frontmatter가 선언되어야 합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">FastAPI 메타 파싱의 효율성</strong>:<br>
+                                    문서 전체의 무거운 로딩 과정을 거치지 않고 머리말에서 핵심 속성을 즉각 컴파일 캐싱
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">GitHub 이슈 추적 연동</strong>:<br>
+                                    `issue_url`을 기재하여 지식 문서와 정식 형상 저장소 이슈 간의 무결한 양방향 추적 구조 연결
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">검증 정밀 린터 검출</strong>:<br>
+                                    제목이 누락되었거나 양식 구조가 맞지 않은 위반 문서를 커밋 전에 즉각 필터링
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack 지식 파이프라인의 필요성과 규격</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "Frontmatter는 NAtlas 백엔드가 문서 전체를 읽지 않고 메타데이터를 초고속으로 파싱하여 화면 및 지도를 렌더링하도록 돕는 핵심 부품입니다."
+                </aside>
+            </section>
+
+            <!-- ── [SLIDE 08 / 09] 에이전트 가이드 ── -->
+            <section>
+                <div class="slide-counter">SLIDE 08 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">에이전트 가이드: AGENTS.md 규격</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.2);">
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="100" cy="100" r="45" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"/>
+                                <rect x="80" y="85" width="40" height="30" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="2"/>
+                                <circle cx="90" cy="100" r="3" fill="var(--accent-emerald)"/>
+                                <circle cx="110" cy="100" r="3" fill="var(--accent-emerald)"/>
+                                <text x="100" y="130" fill="var(--accent-emerald)" font-family="monospace" font-size="8" text-anchor="middle">AGENTS.md</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🤖 기계(AI Agent)의 준수 의무 규격 명문화
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                저장소 루트에 배포된 `AGENTS.md` 지침에 따라 AI 에이전트는 무결성 린터 실행 및 규칙 준수를 강제당합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-emerald);">에이전트 실행의 강제 헌장</strong>:<br>
+                                    `AGENTS.md` 가이드라인에 규정된 린팅 및 검증 절차를 생략한 모든 작업 결과물은 제출 전면 차단
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-emerald);">지식 자산화 파이프라인의 이식</strong>:<br>
+                                    작업 완료 시 `wiki.md` 이관 및 `[[slug]]` 링크 구축 작업을 프롬프트 상으로 완벽 지시화
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-emerald);">휴먼 에러 극복의 대안성</strong>:<br>
+                                    인간이 놓치기 쉬운 아티팩트의 무결성 검증을 에이전트 스스로의 시스템적 검증으로 완성
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack 지식 파이프라인의 필요성과 규격</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "AGENTS.md는 AI 에이전트가 NStack 규칙과 린팅 가이드를 강제 준수하도록 이끌어 지식 데이터의 무오류 고품질을 지키는 헌장입니다."
+                </aside>
+            </section>
+
+            <!-- ── [SLIDE 09 / 09] 정적 검증기 verify_nstack_pipeline.py ── -->
+            <section>
+                <div class="slide-counter">SLIDE 09 / 09</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">정적 검증기: verify_nstack_pipeline.py 구동</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="125" cy="210" rx="80" ry="18" fill="rgba(255,255,255,0.02)" stroke="rgba(244,63,94,0.2)" stroke-width="1.2"/>
+                                    <rect x="105" y="95" width="40" height="50" rx="4" fill="#080c14" stroke="var(--accent-rose)" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.8"/>
+                                    
+                                    <!-- Critical template warning mark inside doc -->
+                                    <polygon points="125,108 117,126 133,126" fill="none" stroke="var(--accent-rose)" stroke-width="1.5"/>
+                                    <circle cx="125" cy="122" r="1" fill="var(--accent-rose)"/>
+                                    <line x1="125" y1="113" x2="125" y2="119" stroke="var(--accent-rose)" stroke-width="1.5"/>
+                                    
+                                    <!-- Denied Indicator Text -->
+                                    <text x="125" y="165" fill="var(--accent-rose)" font-family="monospace" font-weight="extrabold" font-size="8" text-anchor="middle" style="animation: soft-blink 1.2s infinite;">TEMPLATE DETECTED</text>
+                                    <text x="125" y="177" fill="var(--accent-rose)" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle" style="animation: soft-blink 1.2s infinite;">[ ACCESS DENIED ]</text>
+                                </g>
+                                
+                                <text x="125" y="240" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">SECURITY SHIELD LINTER</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🛡️ 지식 파이프라인의 입구를 지키는 엄격 정적 검증
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                꼼수 등록이나 대충 복사해 넣은 문서를 지식 저장소 진입 단에서 기계적으로 차단하여,<br>
+                                지식 데이터베이스의 고품질 밀도를 안전하고 굳건히 유지합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-rose);">방치된 설명 플레이스홀더 차단</strong>:<br>
+                                    `[여기에 작업의 배경...]` 같은 복사본 가이드 텍스트가 1글자만 남아 있어도 커밋 차단
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-rose);">글자수 밀도(Density) 실질 계측</strong>:<br>
+                                    헤더 꼼수 기재를 없애기 위해 공백과 헤더 기호를 다 걷어내고 순수 바이트 검사
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-rose);">Fuzzy 지능형 치유 지원</strong>:<br>
+                                    오타 헤더를 수정해주고 알맹이는 살려 저장하는 `--heal` 복구 기능 내장
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "이제 이 무결성을 강제하는 기술적 실체인 `verify_nstack_pipeline.py` 정적 린터를 보겠습니다."
+                </aside>
+            </section>
+
+                    </div>
+    </div>
+
+    <!-- 글로벌 네온 글래스모피즘 내비게이션 바 -->
+    <div class="neon-nav-bar">
+        <button class="neon-nav-btn neon-nav-btn-prev" onclick="Reveal.prev()">◀ PREV</button>
+        <div class="neon-nav-indicator" id="globalSlideIndex">01 / 09</div>
+        <button class="neon-nav-btn neon-nav-btn-next">NEXT ▶</button>
+    </div>
+
+    <!-- Reveal.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            controls: true,
+            progress: true,
+            center: true,
+            transition: 'fade',
+            transitionSpeed: 'fast',
+            width: "100%",
+            height: "100%",
+            margin: 0,
+            minScale: 1.0,
+            maxScale: 1.0,
+            plugins: [ RevealNotes ]
+        });
+        
+        Reveal.on('slidechanged', event => {
+            const index = String(event.indexh + 1).padStart(2, '0');
+            const total = String(Reveal.getTotalSlides()).padStart(2, '0');
+            document.getElementById('globalSlideIndex').textContent = `${index} / ${total}`;
+            
+            // 마지막 슬라이드인 경우 NEXT 버튼 텍스트 변경
+            const nextBtn = document.querySelector('.neon-nav-btn-next');
+            if (nextBtn) {
+                if (Reveal.isLastSlide()) {
+                    nextBtn.textContent = "NEXT SECTION ▶";
+                    nextBtn.style.color = "var(--accent-emerald)";
+                    nextBtn.style.textShadow = "0 0 8px rgba(16,185,129,0.5)";
+                } else {
+                    nextBtn.textContent = "NEXT ▶";
+                    nextBtn.style.color = "#ffffff";
+                    nextBtn.style.textShadow = "none";
+                }
+            }
+        });
+        
+        // 목차 진도 저장 및 이동 함수
+        function completeAndGoTo(nextUrl, currentKey) {
+            let completed = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]');
+            if (!completed.includes(currentKey)) {
+                completed.push(currentKey);
+                localStorage.setItem('natlas_completed_tracks', JSON.stringify(completed));
+            }
+            window.location.href = nextUrl;
+        }
+
+        // 마지막 슬라이드 종료 시 목차 컨트롤 타워 자동 회귀 키보드 훅
+        document.addEventListener('keydown', event => {
+            if (Reveal.isLastSlide() && (event.code === 'Space' || event.code === 'ArrowRight' || event.code === 'Enter')) {
+                event.preventDefault();
+                completeAndGoTo("presentation_index.html?completed=theory_part2", "theory_part2");
+            }
+        });
+        
+        // 내비게이션 바 NEXT 버튼 가로채기 훅
+        const nextBtn = document.querySelector('.neon-nav-btn-next');
+        if (nextBtn) {
+            nextBtn.removeAttribute('onclick');
+            nextBtn.addEventListener('click', () => {
+                if (Reveal.isLastSlide()) {
+                    completeAndGoTo("presentation_index.html?completed=theory_part2", "theory_part2");
+                } else {
+                    Reveal.next();
+                }
+            });
+        }
+    
+        // 좌측 하단 푸터 텍스트 옆에 TOC 미니 버튼 동적 추가
+        document.querySelectorAll('.slide-master-footer').forEach(footer => {
+            const firstSpan = footer.querySelector('span');
+            if (firstSpan) {
+                // wrapper div 생성
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'inline-flex';
+                wrapper.style.alignItems = 'center';
+                wrapper.style.gap = '8px';
+                
+                // span 바로 앞에 wrapper 삽입 후 span을 wrapper 내부로 이동
+                firstSpan.parentNode.insertBefore(wrapper, firstSpan);
+                wrapper.appendChild(firstSpan);
+                
+                // TOC 미니 버튼 생성
+                const tocBtn = document.createElement('button');
+                tocBtn.className = 'neon-nav-btn-toc-mini';
+                tocBtn.innerHTML = 'TOC ☰';
+                tocBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    window.location.href = 'presentation_index.html';
+                };
+                wrapper.appendChild(tocBtn);
+            }
+        });
+</script>
+</body>
+</html>
