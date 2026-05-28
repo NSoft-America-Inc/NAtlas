@@ -395,33 +395,91 @@
                 <div class="split-container-2col">
                     <div class="col-45" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
                         <!-- Glowing aura -->
-                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
+                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
                         
                         <!-- 1:1 Matching Card 1: Core Todo Logic Card -->
-                        <div class="glass-panel" style="width: 100%; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.5vw; color: var(--accent-emerald);">📝</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.9vw; font-weight: 800; color: #ffffff;">1. 핵심 비즈니스 로직 설계</h4>
-                                <p style="margin: 3px 0 0 0; font-size: 0.75vw !important; color: #cbd5e1 !important; line-height: 1.4;">추가(Add), 토글(Toggle), 삭제(Delete) 및 LocalStorage 영구 데이터 바인딩</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(16,185,129,0.3); background: rgba(10,18,15,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-emerald); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(16,185,129,0.5);">[ SPEC: LOGIC ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">JS Core State</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">추가/토글/삭제 & LocalStorage 데이터</span>
+                            </div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(16,185,129,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- Gear & Disk Database -->
+                                    <circle cx="50" cy="40" r="15" fill="none" stroke="var(--accent-emerald)" stroke-width="2"/>
+                                    <g style="animation: spin-gear 10s linear infinite; transform-origin: 50px 40px;">
+                                        <rect x="47" y="20" width="6" height="6" fill="var(--accent-emerald)" rx="1"/>
+                                        <rect x="47" y="54" width="6" height="6" fill="var(--accent-emerald)" rx="1"/>
+                                        <rect x="30" y="37" width="6" height="6" fill="var(--accent-emerald)" rx="1"/>
+                                        <rect x="64" y="37" width="6" height="6" fill="var(--accent-emerald)" rx="1"/>
+                                    </g>
+                                    
+                                    <path d="M 75 40 L 105 40" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2 2" stroke-linecap="round"/>
+                                    <circle cx="90" cy="40" r="2.5" fill="#ffffff">
+                                        <animate attributeName="cx" values="75;105" dur="1.5s" repeatCount="indefinite"/>
+                                    </circle>
+                                    
+                                    <!-- Storage cylinder -->
+                                    <g transform="translate(110, 20)">
+                                        <rect x="0" y="6" width="25" height="30" rx="3" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                                        <line x1="4" y1="14" x2="21" y2="14" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                                        <line x1="4" y1="22" x2="21" y2="22" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                                        <line x1="4" y1="30" x2="21" y2="30" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                                    </g>
+                                    <text x="122.5" y="17" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="5" font-weight="bold" text-anchor="middle">STORAGE</text>
+                                </svg>
                             </div>
                         </div>
 
                         <!-- 1:1 Matching Card 2: Realtime Tally Dial Panel -->
-                        <div class="glass-panel" style="width: 100%; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-color: rgba(14,165,233,0.3); background: rgba(14,165,233,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.5vw; color: var(--accent-blue);">📊</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.9vw; font-weight: 800; color: #ffffff;">2. 실시간 집계 판넬 (Real-time DOM Tally)</h4>
-                                <p style="margin: 3px 0 0 0; font-size: 0.75vw !important; color: #cbd5e1 !important; line-height: 1.4;">전체 / 진행 중 / 완료 개수 현황판 수치를 DOM 상태 변경에 맞춰 실시간 갱신</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(14,165,233,0.3); background: rgba(10,15,22,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-blue); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(14,165,233,0.5);">[ UI: REALTIME ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">DOM Tally Dashboard</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">전체/진행/완료 수치 실시간 계측</span>
                             </div>
-                            <div style="width: 45px; height: 45px; border-radius: 50%; border: 3px solid var(--accent-blue); display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; font-weight: 900; color: var(--accent-blue); filter: drop-shadow(0 0 6px rgba(14,165,233,0.3));">100%</div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(14,165,233,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- 3 mini indicator dials -->
+                                    <!-- All: 5 -->
+                                    <circle cx="35" cy="40" r="14" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
+                                    <path d="M 35 26 A 14 14 0 1 1 21 40" fill="none" stroke="var(--accent-blue)" stroke-width="3"/>
+                                    <text x="35" y="43" fill="#ffffff" font-family="'JetBrains Mono'" font-size="6.5" font-weight="900" text-anchor="middle">5</text>
+                                    <text x="35" y="64" fill="rgba(255,255,255,0.4)" font-family="sans-serif" font-size="5" text-anchor="middle">ALL</text>
+
+                                    <!-- Active: 3 -->
+                                    <circle cx="80" cy="40" r="14" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
+                                    <path d="M 80 26 A 14 14 0 0 1 94 40" fill="none" stroke="var(--accent-blue)" stroke-width="3"/>
+                                    <text x="80" y="43" fill="#ffffff" font-family="'JetBrains Mono'" font-size="6.5" font-weight="900" text-anchor="middle">3</text>
+                                    <text x="80" y="64" fill="rgba(255,255,255,0.4)" font-family="sans-serif" font-size="5" text-anchor="middle">PEND</text>
+
+                                    <!-- Done: 2 -->
+                                    <circle cx="125" cy="40" r="14" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
+                                    <path d="M 125 26 A 14 14 0 0 1 139 40" fill="none" stroke="var(--accent-emerald)" stroke-width="3"/>
+                                    <text x="125" y="43" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="6.5" font-weight="900" text-anchor="middle">2</text>
+                                    <text x="125" y="64" fill="var(--accent-emerald)" font-family="sans-serif" font-size="5" text-anchor="middle">DONE</text>
+                                </svg>
+                            </div>
                         </div>
 
                         <!-- 1:1 Matching Card 3: NStack Harness order.md Card -->
-                        <div class="glass-panel" style="width: 100%; padding: 15px 20px; display: flex; align-items: center; gap: 15px; border-color: rgba(244,63,94,0.3); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.5vw; color: var(--accent-rose);">🛡️</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.9vw; font-weight: 800; color: #ffffff;">3. NStack Git Setup & order.md 하네스</h4>
-                                <p style="margin: 3px 0 0 0; font-size: 0.75vw !important; color: #cbd5e1 !important; line-height: 1.4;">개발 진수 전 Git 셋업을 완료하고 의사결정 맥락을 order.md 아티팩트에 강제화</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(244,63,94,0.3); background: rgba(18,10,12,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-rose); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(244,63,94,0.5);">[ HARNESS: SHIELD ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">order.md Boundary</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">작업 착수 전 설계 계획서 강제 장치</span>
+                            </div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(244,63,94,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- Harness Shield Neon Gate -->
+                                    <path d="M 80,15 L 115,28 L 115,52 L 80,68 L 45,52 L 45,28 Z" fill="rgba(244,63,94,0.12)" stroke="var(--accent-rose)" stroke-width="2" filter="drop-shadow(0 0 8px var(--accent-rose))"/>
+                                    <text x="80" y="46" fill="#ffffff" font-size="16" text-anchor="middle">🛡️</text>
+                                    <text x="80" y="60" fill="var(--accent-rose)" font-family="'JetBrains Mono'" font-size="5" font-weight="black" text-anchor="middle">order.md LOCKED</text>
+                                </svg>
                             </div>
                         </div>
                     </div>
@@ -678,32 +736,101 @@
                 <div class="split-container-2col">
                     <div class="col-45" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 12px; position: relative;">
                         <!-- Glowing aura -->
-                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
+                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
                         
                         <!-- 1:1 Matching Card 1: React 19 Component -->
-                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.4vw; color: var(--accent-emerald);">⚛️</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">1. 컴포넌트 단위 구조 분리</h4>
-                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">Vite 빌드 환경 및 React 19 가상 DOM 분리 및 최적화 컴포넌트 이식</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(16,185,129,0.3); background: rgba(10,18,15,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-emerald); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(16,185,129,0.5);">[ TECH: REACT ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">Component Tree</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">React 19 가상 DOM 최적화 컴포넌트 트리</span>
+                            </div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(16,185,129,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- Parent React Node -->
+                                    <circle cx="80" cy="22" r="8" fill="rgba(16,185,129,0.3)" stroke="var(--accent-emerald)" stroke-width="1.5" style="animation: scale-pulse 2s infinite;"/>
+                                    <text x="80" y="12" fill="#ffffff" font-family="'JetBrains Mono'" font-size="5" text-anchor="middle">App.tsx ⚛️</text>
+                                    
+                                    <!-- Child Nodes -->
+                                    <circle cx="45" cy="52" r="6" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.2"/>
+                                    <text x="45" y="65" fill="#cbd5e1" font-family="sans-serif" font-size="5" text-anchor="middle">TodoForm</text>
+                                    
+                                    <circle cx="80" cy="52" r="6" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.2"/>
+                                    <text x="80" y="65" fill="#cbd5e1" font-family="sans-serif" font-size="5" text-anchor="middle">TodoList</text>
+                                    
+                                    <circle cx="115" cy="52" r="6" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.2"/>
+                                    <text x="115" y="65" fill="#cbd5e1" font-family="sans-serif" font-size="5" text-anchor="middle">TallyPanel</text>
+                                    
+                                    <!-- Connection lines -->
+                                    <line x1="80" y1="30" x2="45" y2="46" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    <line x1="80" y1="30" x2="80" y2="46" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                    <line x1="80" y1="30" x2="115" y2="46" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+                                </svg>
                             </div>
                         </div>
 
                         <!-- 1:1 Matching Card 2: Zustand Store -->
-                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(14,165,233,0.4); background: rgba(14,165,233,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.4vw; color: var(--accent-blue);">🐻</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">2. 경량 상태 관리 Zustand 이관</h4>
-                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">수동 DOM 제어를 Zustand 스토어의 경량 state 훅 및 action 트리로 전격 변경</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(14,165,233,0.3); background: rgba(10,15,22,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-blue); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(14,165,233,0.5);">[ STORE: ZUSTAND ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">🐻 State & Action Flow</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">Zustand 스토어 이관 및 단방향 훅 흐름</span>
+                            </div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(14,165,233,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- Store circle -->
+                                    <circle cx="80" cy="40" r="16" fill="rgba(14,165,233,0.2)" stroke="var(--accent-blue)" stroke-width="2" style="animation: scale-pulse 2s infinite;"/>
+                                    <text x="80" y="43" fill="#ffffff" font-family="'JetBrains Mono'" font-size="9" text-anchor="middle">🐻</text>
+                                    
+                                    <!-- UI Component Node -->
+                                    <rect x="15" y="28" width="30" height="24" rx="3" fill="rgba(8,12,22,0.9)" stroke="rgba(255,255,255,0.15)"/>
+                                    <text x="30" y="42" fill="#cbd5e1" font-size="6" font-family="sans-serif" text-anchor="middle">View</text>
+                                    
+                                    <!-- Action arrow View -> Store -->
+                                    <path d="M 45 32 Q 62 25 64 30" fill="none" stroke="var(--accent-blue)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-flow)"/>
+                                    <text x="55" y="21" fill="var(--accent-blue)" font-size="5" font-family="'JetBrains Mono'" text-anchor="middle">action()</text>
+
+                                    <!-- State update arrow Store -> View -->
+                                    <path d="M 64 48 Q 50 55 45 48" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-flow)"/>
+                                    <text x="53" y="62" fill="var(--accent-emerald)" font-size="5" font-family="'JetBrains Mono'" text-anchor="middle">state</text>
+
+                                    <defs>
+                                        <marker id="arrow-flow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse">
+                                            <path d="M 0 1 L 10 5 L 0 9 Z" fill="var(--accent-blue)" />
+                                        </marker>
+                                    </defs>
+                                </svg>
                             </div>
                         </div>
 
                         <!-- 1:1 Matching Card 3: RAG Citations Link -->
-                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.4vw; color: var(--accent-purple);">🔗</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">3. 1단계 아카이브 Citations 연동</h4>
-                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">1단계 완료된 `todo-app/order.md` 기술 지식을 RAG로 불러와 의사결정 상속</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(168,85,247,0.3); background: rgba(15,10,22,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-purple); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(168,85,247,0.5);">[ KNOWLEDGE: RAG ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">Context Inheritance</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">1단계 todo-app 지식 아카이브 RAG 수혈</span>
+                            </div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(168,85,247,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- Archive DB node on left -->
+                                    <rect x="20" y="25" width="30" height="30" rx="4" fill="rgba(8,12,22,0.8)" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                                    <text x="35" y="42" fill="var(--accent-purple)" font-family="'JetBrains Mono'" font-size="6" font-weight="extrabold" text-anchor="middle">RAG DB</text>
+                                    
+                                    <!-- RAG Citation Vector Beam stream -->
+                                    <path d="M 50 40 L 105 40" stroke="var(--accent-purple)" stroke-width="2" filter="drop-shadow(0 0 5px var(--accent-purple))"/>
+                                    <circle cx="75" cy="40" r="3.5" fill="#ffffff" style="filter: drop-shadow(0 0 4px #ffffff);">
+                                        <animate attributeName="cx" values="50;105" dur="1.8s" repeatCount="indefinite"/>
+                                    </circle>
+                                    
+                                    <!-- Context Node receiving beam -->
+                                    <circle cx="120" cy="40" r="12" fill="rgba(168,85,247,0.2)" stroke="var(--accent-purple)" stroke-width="1.5" style="animation: scale-pulse 2.2s infinite;"/>
+                                    <text x="120" y="43" fill="#ffffff" font-size="7" font-weight="extrabold" text-anchor="middle">🧠</text>
+                                    
+                                    <text x="80" y="23" fill="var(--accent-purple)" font-family="'JetBrains Mono'" font-size="5" font-weight="black" text-anchor="middle">[[todo-app/wiki.md]]</text>
+                                </svg>
                             </div>
                         </div>
                     </div>
@@ -973,32 +1100,78 @@
                 <div class="split-container-2col">
                     <div class="col-45" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
                         <!-- Glowing aura -->
-                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
+                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
                         
                         <!-- 1:1 Matching Card 1: Fuzzy Scan Header Card -->
-                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(244,63,94,0.35); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.4vw; color: var(--accent-rose);">🔍</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">Fuzzy Header 정상화 매핑</h4>
-                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">국문이나 오타로 뒤틀린 헤더들을 정밀 대조 및 Fuzzy 매칭 딕셔너리로 검측</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(244,63,94,0.3); background: rgba(18,10,12,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-rose); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(244,63,94,0.5);">[ HEAL: FUZZY ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">Fuzzy Resolution</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">오타/뒤틀린 헤더 자동 정렬 매핑</span>
+                            </div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(244,63,94,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- Typo input on left -->
+                                    <rect x="15" y="28" width="42" height="24" rx="3" fill="rgba(8,12,22,0.9)" stroke="var(--accent-rose)" stroke-width="1"/>
+                                    <text x="36" y="42" fill="var(--accent-rose)" font-family="'JetBrains Mono'" font-size="5" text-anchor="middle">## 깃 설정</text>
+                                    
+                                    <!-- Resolution gear in middle -->
+                                    <circle cx="80" cy="40" r="10" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.5" style="animation: spin-gear 8s linear infinite; transform-origin: 80px 40px;"/>
+                                    <text x="80" y="43" fill="var(--accent-emerald)" font-size="7" font-weight="extrabold" text-anchor="middle">🩹</text>
+
+                                    <!-- Cleansed output on right -->
+                                    <rect x="103" y="28" width="42" height="24" rx="3" fill="rgba(8,12,22,0.9)" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                                    <text x="124" y="42" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="5" font-weight="bold" text-anchor="middle">## Git Setup</text>
+                                </svg>
                             </div>
                         </div>
 
                         <!-- 1:1 Matching Card 2: Markdown Content Density Safe Card -->
-                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.4vw; color: var(--accent-emerald);">🩹</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">알맹이(국문 서술) 데이터 100% 보존</h4>
-                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">개발자가 기재한 정성 서술 의사결정 본문 내용은 훼손 없이 안전하게 보존</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(16,185,129,0.3); background: rgba(10,18,15,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-emerald); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(16,185,129,0.5);">[ SECURITY: SAFE ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">Data Preservation</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">기재한 국문 서술 본문 데이터 100% 보존</span>
+                            </div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(16,185,129,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- Secure Safe Box -->
+                                    <rect x="55" y="20" width="50" height="40" rx="4" fill="rgba(8,12,22,0.9)" stroke="var(--accent-emerald)" stroke-width="2" style="animation: scale-pulse 2.2s infinite;"/>
+                                    <circle cx="80" cy="40" r="10" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                                    <!-- Dial needle -->
+                                    <line x1="80" y1="40" x2="88" y2="34" stroke="var(--accent-emerald)" stroke-width="1.8"/>
+                                    <text x="80" y="15" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="5" font-weight="black" text-anchor="middle">CONTENT PRESERVED</text>
+                                </svg>
                             </div>
                         </div>
 
                         <!-- 1:1 Matching Card 3: Quality Gate Ingestion Successful Card -->
-                        <div class="glass-panel" style="width: 100%; padding: 12px 18px; display: flex; align-items: center; gap: 12px; border-color: rgba(14,165,233,0.35); background: rgba(14,165,233,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(15deg) rotateX(5deg);">
-                            <div style="font-size: 1.4vw; color: var(--accent-blue);">🚀</div>
-                            <div style="text-align: left; flex-grow: 1;">
-                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">E2E 지식 파이프라인의 안전 안착</h4>
-                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">자동 복구 `--heal` 완료 후 pre-commit 패스, SwarmVault RAG 자동 인덱싱 귀착</p>
+                        <div class="glass-panel" style="width: 100%; height: 110px; padding: 10px 15px; display: flex; align-items: center; justify-content: space-between; border-color: rgba(14,165,233,0.3); background: rgba(10,15,22,0.7); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(12deg);">
+                            <div style="display: flex; flex-direction: column; width: 45%; text-align: left;">
+                                <span style="font-size: 0.65vw; font-weight: bold; color: var(--accent-blue); font-family: 'JetBrains Mono'; text-shadow: 0 0 8px rgba(14,165,233,0.5);">[ SUCCESS: E2E ]</span>
+                                <h4 style="margin: 3px 0 0 0; font-size: 0.85vw; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">RAG Ingestion Gate</h4>
+                                <span style="font-size: 0.6vw; color: #94a3b8; margin-top: 5px;">pre-commit 승인 완료 및 RAG 자동 인덱싱 귀착</span>
+                            </div>
+                            <div style="width: 50%; height: 90px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                <svg width="100%" height="80" viewBox="0 0 160 80" style="overflow: visible;">
+                                    <rect x="5" y="5" width="150" height="70" rx="6" fill="none" stroke="rgba(14,165,233,0.2)" stroke-dasharray="3 3"/>
+                                    <!-- Ingestion path pipeline -->
+                                    <line x1="20" y1="40" x2="140" y2="40" stroke="var(--accent-blue)" stroke-width="2"/>
+                                    <!-- Flowing data block -->
+                                    <rect x="0" y="36" width="12" height="8" rx="2" fill="#ffffff" style="filter: drop-shadow(0 0 4px var(--accent-blue));">
+                                        <animate attributeName="x" values="20;120" dur="2s" repeatCount="indefinite"/>
+                                    </rect>
+                                    <!-- Target Storage Cylinder -->
+                                    <g transform="translate(125, 22)">
+                                        <rect x="0" y="5" width="18" height="26" rx="2" fill="rgba(8,12,22,0.9)" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                                        <ellipse cx="9" cy="5" rx="9" ry="3" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5"/>
+                                    </g>
+                                    <!-- Pass checkmark -->
+                                    <path d="M 85,32 L 90,37 L 98,28" fill="none" stroke="var(--accent-emerald)" stroke-width="2" stroke-linecap="round"/>
+                                    <text x="90" y="20" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="5" font-weight="black" text-anchor="middle">PASS</text>
+                                </svg>
                             </div>
                         </div>
                     </div>
