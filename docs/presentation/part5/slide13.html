@@ -1,0 +1,102 @@
+<section>
+                <div class="slide-counter">SLIDE 13 / 13</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">입사 첫날 — 코드를 보기 전에 NAtlas를 먼저 켜는 이유</h2>
+
+                <div class="split-container-2col">
+                    <!-- Left: Before / After comparison panels -->
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; gap: 0; box-sizing: border-box; padding-right: 10px;">
+
+                        <!-- BEFORE panel -->
+                        <div style="flex: 1; height: 85%; display: flex; flex-direction: column; padding: 18px 14px; background: rgba(30,30,40,0.5); border: 1.5px solid rgba(244,63,94,0.25); border-right: none; border-radius: 12px 0 0 12px; justify-content: center; gap: 12px; box-sizing: border-box;">
+                            <div style="font-size: 0.75vw; font-weight: 700; color: var(--accent-rose); text-align: center; margin-bottom: 4px;">❌ NAtlas 없을 때</div>
+                            <svg viewBox="0 0 100 80" width="80" height="64" xmlns="http://www.w3.org/2000/svg" style="align-self: center;">
+                                <!-- Frustrated dev figure -->
+                                <circle cx="50" cy="22" r="12" fill="none" stroke="#64748b" stroke-width="1.5"/>
+                                <!-- Frowning face -->
+                                <line x1="44" y1="18" x2="44" y2="22" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="56" y1="18" x2="56" y2="22" stroke="#64748b" stroke-width="1.5"/>
+                                <path d="M 44 27 Q 50 23 56 27" fill="none" stroke="#64748b" stroke-width="1.5"/>
+                                <!-- Body -->
+                                <line x1="50" y1="34" x2="50" y2="52" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="36" y1="42" x2="64" y2="42" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="50" y1="52" x2="40" y2="65" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="50" y1="52" x2="60" y2="65" stroke="#64748b" stroke-width="1.5"/>
+                                <!-- Question marks flying -->
+                                <text x="72" y="25" fill="rgba(244,63,94,0.6)" font-family="sans-serif" font-size="12" font-weight="bold">?</text>
+                                <text x="78" y="40" fill="rgba(244,63,94,0.4)" font-family="sans-serif" font-size="9" font-weight="bold">?</text>
+                            </svg>
+                            <div style="font-size: 0.6vw; color: #64748b; line-height: 1.6; text-align: center;">
+                                코드 분석 3일<br>
+                                동료에게 질문 수십 번<br>
+                                <span style="color: rgba(244,63,94,0.7);">그래도 이해 안 됨</span>
+                            </div>
+                        </div>
+
+                        <!-- Center badge -->
+                        <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: #0e1220; border: 1.5px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 8px; flex-shrink: 0; width: 54px;">
+                            <span style="font-size: 1.1vw;">⚡</span>
+                            <div style="font-size: 0.55vw; font-weight: 800; color: var(--accent-emerald); text-align: center; line-height: 1.3;">10분</div>
+                            <div style="font-size: 0.45vw; color: rgba(255,255,255,0.3); text-align: center;">vs</div>
+                            <div style="font-size: 0.55vw; font-weight: 800; color: var(--accent-rose); text-align: center; line-height: 1.3;">3일</div>
+                        </div>
+
+                        <!-- AFTER panel -->
+                        <div style="flex: 1; height: 85%; display: flex; flex-direction: column; padding: 18px 14px; background: rgba(16,185,129,0.04); border: 1.5px solid rgba(16,185,129,0.3); border-left: none; border-radius: 0 12px 12px 0; justify-content: center; gap: 10px; box-sizing: border-box;">
+                            <div style="font-size: 0.75vw; font-weight: 700; color: var(--accent-emerald); text-align: center; margin-bottom: 4px;">✅ NAtlas 있을 때</div>
+                            <!-- 4-step mini flow -->
+                            <div style="display: flex; flex-direction: column; gap: 6px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(16,185,129,0.15); border: 1px solid var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 0.5vw; font-weight: 800; color: var(--accent-emerald); flex-shrink: 0;">1</div>
+                                    <div style="font-size: 0.58vw; color: #94a3b8; line-height: 1.3;">3D 지식 지도에서 모듈 클릭</div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(16,185,129,0.15); border: 1px solid var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 0.5vw; font-weight: 800; color: var(--accent-emerald); flex-shrink: 0;">2</div>
+                                    <div style="font-size: 0.58vw; color: #94a3b8; line-height: 1.3;">wiki.md 읽기 — "왜 이렇게 만들었는지"</div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(16,185,129,0.15); border: 1px solid var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 0.5vw; font-weight: 800; color: var(--accent-emerald); flex-shrink: 0;">3</div>
+                                    <div style="font-size: 0.58vw; color: #94a3b8; line-height: 1.3;">order.md 읽기 — 원래 요구사항 파악</div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div style="width: 20px; height: 20px; border-radius: 50%; background: rgba(16,185,129,0.15); border: 1px solid var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 0.5vw; font-weight: 800; color: var(--accent-emerald); flex-shrink: 0;">4</div>
+                                    <div style="font-size: 0.58vw; color: #94a3b8; line-height: 1.3;">관련 문서 탐색 → 전체 맥락 파악</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.58vw; color: var(--accent-emerald); font-weight: 700; text-align: center; margin-top: 4px;">⏱ 총 10분</div>
+                        </div>
+                    </div>
+
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🚀 온보딩에서 가장 힘든 것은?
+                        </h3>
+
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 16px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                코드 자체가 아닙니다.<br>
+                                <strong>"왜 이렇게 만들었는지"</strong>를<br>파악하는 것입니다.
+                            </p>
+
+                            <p style="margin: 0; font-size: 0.8vw; color: #94a3b8; text-align: center; max-width: 95%;">
+                                코드는 결과물입니다.<br>
+                                그 뒤에 있는 판단과 선택의 이유는<br>코드에 없습니다.
+                            </p>
+
+                            <div style="width: 100%; padding: 14px; background: rgba(16,185,129,0.06); border: 1.5px solid rgba(16,185,129,0.25); border-radius: 10px;">
+                                <div style="font-size: 0.72vw; color: #cbd5e1; line-height: 1.6;">
+                                    NStack으로 관리된 저장소에서는<br>
+                                    <strong style="color: var(--accent-emerald);">코드 한 줄 안 보고도</strong><br>
+                                    "왜"를 이해한 뒤에 코드를 봅니다.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>

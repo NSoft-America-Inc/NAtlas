@@ -1,62 +1,122 @@
 <section>
-                <div class="slide-counter">SLIDE 04 / 09</div>
-                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">아티팩트 2: report.md (완료보고서)</h2>
-                
+                <div class="slide-counter">SLIDE 04 / 11</div>
+                <div class="slide-subtitle">NStack 설계 사상 및 아티팩트 규격</div>
+
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NStack을 쓰는 개발자의 하루 — 생각보다 훨씬 단순하다</h2>
+
                 <div class="split-container-2col">
-                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(14,165,233,0.1) 0%, rgba(14,165,233,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
-                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <ellipse cx="125" cy="220" rx="75" ry="12" fill="rgba(0,0,0,0.6)" filter="blur(8px)"/>
-                                
-                                <g transform="translate(100, 85)" style="animation: float-slow 4.5s ease-in-out infinite; --rot: 2deg;">
-                                    <rect x="-30" y="-40" width="60" height="80" rx="6" fill="rgba(8,12,22,0.95)" stroke="var(--accent-blue)" stroke-width="2" filter="drop-shadow(0 10px 20px rgba(0,0,0,0.7))"/>
-                                    <ellipse cx="0" cy="15" rx="15" ry="5" fill="none" stroke="var(--accent-blue)" stroke-width="1.2"/>
-                                    <text x="0" y="28" fill="var(--accent-blue)" font-family="monospace" font-weight="extrabold" font-size="7.5" text-anchor="middle">SQLite Log</text>
-                                </g>
-                                
-                                <text x="125" y="210" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="9.5" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">REPORT VALIDATION & STORAGE</text>
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 12px; box-sizing: border-box; padding-right: 10px;">
+
+                        <!-- Morning block -->
+                        <div class="glass-panel" style="padding: 14px 18px; border-color: rgba(14,165,233,0.35); background: rgba(14,165,233,0.04); border-radius: 12px; display: flex; align-items: center; gap: 16px;">
+                            <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <!-- Sun rising -->
+                                <circle cx="30" cy="34" r="12" fill="rgba(14,165,233,0.15)" stroke="var(--accent-blue)" stroke-width="1.8"/>
+                                <line x1="30" y1="18" x2="30" y2="12" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                                <line x1="42" y1="22" x2="46" y2="18" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                                <line x1="18" y1="22" x2="14" y2="18" stroke="var(--accent-blue)" stroke-width="1.5"/>
+                                <line x1="10" y1="48" x2="50" y2="48" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="3 2"/>
                             </svg>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <span style="font-size: 0.75vw; font-weight: 800; color: var(--accent-blue);">🌅 시작 — 5분</span>
+                                    <span style="font-size: 0.6vw; color: rgba(14,165,233,0.6); background: rgba(14,165,233,0.1); border-radius: 4px; padding: 1px 6px;">개발자</span>
+                                </div>
+                                <div style="font-size: 0.68vw; color: #cbd5e1; line-height: 1.5;">
+                                    <strong>order.md 작성:</strong> "오늘 뭘 만들지"를 목적·범위·완료 기준으로 정리.
+                                    팀장이나 Claude가 검토하면 시작.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div style="text-align: center; color: rgba(255,255,255,0.2); font-size: 1vw; line-height: 1;">↓</div>
+
+                        <!-- Daytime block -->
+                        <div class="glass-panel" style="padding: 14px 18px; border-color: rgba(168,85,247,0.35); background: rgba(168,85,247,0.04); border-radius: 12px; display: flex; align-items: center; gap: 16px;">
+                            <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <!-- Bright sun -->
+                                <circle cx="30" cy="30" r="11" fill="rgba(168,85,247,0.15)" stroke="var(--accent-purple)" stroke-width="1.8" style="animation: scale-pulse 3s infinite;"/>
+                                <line x1="30" y1="10" x2="30" y2="16" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                                <line x1="30" y1="44" x2="30" y2="50" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                                <line x1="10" y1="30" x2="16" y2="30" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                                <line x1="44" y1="30" x2="50" y2="30" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                                <line x1="16" y1="16" x2="20" y2="20" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                                <line x1="40" y1="40" x2="44" y2="44" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                                <line x1="44" y1="16" x2="40" y2="20" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                                <line x1="16" y1="44" x2="20" y2="40" stroke="var(--accent-purple)" stroke-width="1.5"/>
+                            </svg>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <span style="font-size: 0.75vw; font-weight: 800; color: var(--accent-purple);">☀️ 낮 — AI 구현</span>
+                                    <span style="font-size: 0.6vw; color: rgba(168,85,247,0.6); background: rgba(168,85,247,0.1); border-radius: 4px; padding: 1px 6px;">AI 에이전트</span>
+                                </div>
+                                <div style="font-size: 0.68vw; color: #cbd5e1; line-height: 1.5;">
+                                    <strong>AI가 order.md를 보고 코드 작성.</strong> 개발자는 방향이 맞는지 확인하고 필요하면 조정.
+                                    자동 검사기가 문서 품질을 체크합니다.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div style="text-align: center; color: rgba(255,255,255,0.2); font-size: 1vw; line-height: 1;">↓</div>
+
+                        <!-- Evening block -->
+                        <div class="glass-panel" style="padding: 14px 18px; border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.04); border-radius: 12px; display: flex; align-items: center; gap: 16px;">
+                            <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <!-- Moon + stars -->
+                                <path d="M 36 14 A 16 16 0 1 1 20 40 A 12 12 0 0 0 36 14 Z" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.8"/>
+                                <circle cx="44" cy="18" r="2" fill="var(--accent-emerald)" style="animation: soft-blink 2s infinite;"/>
+                                <circle cx="50" cy="28" r="1.5" fill="var(--accent-emerald)" style="animation: soft-blink 3s infinite;"/>
+                                <circle cx="42" cy="36" r="1.2" fill="var(--accent-emerald)" style="animation: soft-blink 1.5s infinite;"/>
+                            </svg>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <span style="font-size: 0.75vw; font-weight: 800; color: var(--accent-emerald);">🌆 마무리 — 커밋</span>
+                                    <span style="font-size: 0.6vw; color: rgba(16,185,129,0.6); background: rgba(16,185,129,0.1); border-radius: 4px; padding: 1px 6px;">자동화</span>
+                                </div>
+                                <div style="font-size: 0.68vw; color: #cbd5e1; line-height: 1.5;">
+                                    <strong>report.md + wiki.md 기록</strong> (AI가 초안 작성).
+                                    커밋하면 자동 검사기가 문서 완성도를 확인. 통과하면 완료.
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            🔬 변경 내역의 투명성과 작동 무결성 입증
+                            🗓️ 개발자가 추가로 해야 할 일은?
                         </h3>
-                        
-                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 18px; text-align: center; align-items: center;">
                             <p style="margin: 0; text-align: center; max-width: 95%;">
-                                작업이 완료된 후 실제로 변경된 모든 파일 목록과 정적 분석 검사 로그를 기재해 완벽한 작동을 입증합니다.
+                                개발자가 직접 써야 하는 것은<br><strong>딱 하나</strong>뿐입니다.<br>
+                                처음에 작업 지시서를<br>정리하는 것입니다.
                             </p>
-                            
+
+                            <div style="width: 100%; padding: 14px; background: rgba(16,185,129,0.06); border: 1.5px solid rgba(16,185,129,0.25); border-radius: 10px;">
+                                <div style="font-size: 0.75vw; font-weight: 700; color: var(--accent-emerald); margin-bottom: 8px;">오늘 작업이 끝나면</div>
+                                <div style="font-size: 0.7vw; color: #cbd5e1; line-height: 1.6;">
+                                    지식이 자동으로<br>팀 저장소에 쌓입니다.
+                                </div>
+                            </div>
+
                             <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
                                 <li>
-                                    <strong style="color: var(--accent-blue);">## Completed Tasks</strong>:<br>
-                                    최초 계획의 완료 기준(Completion Criteria)과 100% 매핑된 완료 체크리스트 기재
+                                    <strong>report.md는 AI가 초안 작성</strong>:<br>
+                                    긴 글을 직접 쓸 필요가 없습니다.
                                 </li>
                                 <li>
-                                    <strong style="color: var(--accent-blue);">## Changes [NEW / MODIFY / DELETE]</strong>:<br>
-                                    워크스페이스 내부에서 수정되거나 생성/삭제된 구체적 파일의 기계적 파싱 태그 표기
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-blue);">## Static Analysis (검증 로그)</strong>:<br>
-                                    ESLint 및 정적 Linter를 실행한 무결점 입증 로그를 첨부하여 코드 결함을 선제 예방
+                                    <strong>자동 검사기가 품질 보장</strong>:<br>
+                                    커밋 전 문서 누락을 자동으로 잡아줍니다.
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="slide-master-footer">
                     <span>NStack 지식 파이프라인의 필요성과 규격</span>
                     <span>NSoft America, Inc.</span>
                 </div>
-                
-                <aside class="notes">
-                    "report.md는 코딩 완료 후 실제 변경된 파일들과 테스트 결과를 투명하게 증명하여, 구현 품질에 대해 안전을 보장하는 장치입니다."
-                </aside>
             </section>

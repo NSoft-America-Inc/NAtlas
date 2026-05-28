@@ -1,0 +1,68 @@
+<section>
+                <div class="slide-counter">SLIDE 11 / 11</div>
+                <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">정적 검증기: verify_nstack_pipeline.py 구동</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(244,63,94,0.1) 0%, rgba(244,63,94,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="125" cy="210" rx="80" ry="18" fill="rgba(255,255,255,0.02)" stroke="rgba(244,63,94,0.2)" stroke-width="1.2"/>
+                                    <rect x="105" y="95" width="40" height="50" rx="4" fill="#080c14" stroke="var(--accent-rose)" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.8"/>
+                                    
+                                    <!-- Critical template warning mark inside doc -->
+                                    <polygon points="125,108 117,126 133,126" fill="none" stroke="var(--accent-rose)" stroke-width="1.5"/>
+                                    <circle cx="125" cy="122" r="1" fill="var(--accent-rose)"/>
+                                    <line x1="125" y1="113" x2="125" y2="119" stroke="var(--accent-rose)" stroke-width="1.5"/>
+                                    
+                                    <!-- Denied Indicator Text -->
+                                    <text x="125" y="165" fill="var(--accent-rose)" font-family="monospace" font-weight="extrabold" font-size="8" text-anchor="middle" style="animation: soft-blink 1.2s infinite;">TEMPLATE DETECTED</text>
+                                    <text x="125" y="177" fill="var(--accent-rose)" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle" style="animation: soft-blink 1.2s infinite;">[ ACCESS DENIED ]</text>
+                                </g>
+                                
+                                <text x="125" y="240" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">SECURITY SHIELD LINTER</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🛡️ 지식 파이프라인의 입구를 지키는 엄격 정적 검증
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                꼼수 등록이나 대충 복사해 넣은 문서를 지식 저장소 진입 단에서 기계적으로 차단하여,<br>
+                                지식 데이터베이스의 고품질 밀도를 안전하고 굳건히 유지합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-rose);">방치된 설명 플레이스홀더 차단</strong>:<br>
+                                    `[여기에 작업의 배경...]` 같은 복사본 가이드 텍스트가 1글자만 남아 있어도 커밋 차단
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-rose);">글자수 밀도(Density) 실질 계측</strong>:<br>
+                                    헤더 꼼수 기재를 없애기 위해 공백과 헤더 기호를 다 걷어내고 순수 바이트 검사
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-rose);">Fuzzy 지능형 치유 지원</strong>:<br>
+                                    오타 헤더를 수정해주고 알맹이는 살려 저장하는 `--heal` 복구 기능 내장
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "이제 이 무결성을 강제하는 기술적 실체인 `verify_nstack_pipeline.py` 정적 린터를 보겠습니다."
+                </aside>
+            </section>

@@ -1,45 +1,58 @@
 <section>
-                <div class="slide-counter">SLIDE 07 / 09</div>
+                <div class="slide-counter">SLIDE 07 / 11</div>
                 <div class="slide-subtitle">NStack 지식 파이프라인의 필요성과 규격</div>
                 
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">필수 사양: YAML Frontmatter 규격</h2>
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">아티팩트 3: wiki.md (지식 위키 문서)</h2>
                 
                 <div class="split-container-2col">
                     <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(168,85,247,0.1) 0%, rgba(168,85,247,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
                         
                         <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
                             <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <polygon points="50,60 200,60 185,200 65,200" fill="#0f172a" stroke="var(--accent-indigo)" stroke-width="2.5"/>
-                                <rect x="65" y="70" width="120" height="20" rx="3" fill="#020617" stroke="var(--accent-indigo)" stroke-width="1.2"/>
-                                <text x="125" y="83" fill="#ffffff" font-family="monospace" font-weight="extrabold" font-size="8.5" text-anchor="middle">YAML METADATA</text>
-                                <text x="125" y="190" fill="var(--accent-blue)" font-family="monospace" font-size="7.5" font-weight="extrabold" text-anchor="middle">PARSING COMPLETE</text>
+                                <path d="M 50 125 C 100 155, 150 155, 200 125" fill="none" stroke="rgba(168,85,247,0.4)" stroke-width="3" filter="drop-shadow(0 0 8px var(--accent-purple))"/>
+                                
+                                <g transform="translate(20, 95)" style="animation: float-slow 4.5s ease-in-out infinite; --rot: -2deg;">
+                                    <rect x="0" y="0" width="60" height="75" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-purple)" stroke-width="2" filter="drop-shadow(0 8px 15px rgba(0,0,0,0.6))"/>
+                                    <rect x="38" y="52" width="14" height="10" rx="2" fill="none" stroke="var(--accent-purple)" stroke-width="1.2"/>
+                                    <text x="45" y="60" fill="var(--accent-purple)" font-family="monospace" font-weight="extrabold" font-size="6" text-anchor="middle">[[ ]]</text>
+                                    <text x="30" y="66" fill="var(--accent-purple)" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle">wiki.md</text>
+                                </g>
+                                
+                                <g transform="translate(170, 95)" style="animation: float-slow 5s ease-in-out infinite; --rot: 2deg;">
+                                    <rect x="0" y="0" width="60" height="75" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-purple)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                    <circle cx="30" cy="37" r="12" fill="#080c14" stroke="var(--accent-purple)" stroke-width="2"/>
+                                    <circle cx="30" cy="37" r="4" fill="#ffffff" style="filter: drop-shadow(0 0 4px #ffffff);"/>
+                                    <text x="30" y="66" fill="#ffffff" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle">WIKI CORE</text>
+                                </g>
+                                
+                                <text x="125" y="210" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="9.5" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">KNOWLEDGE GRAPH INTEGRATION</text>
                             </svg>
                         </div>
                     </div>
                     
                     <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
                         <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            📋 고속 메타데이터 파싱의 핵심 YAML 규격
+                            🏛️ 설계의 비하인드 스토리와 결정 사유(Why) 영구 각인
                         </h3>
                         
                         <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
                             <p style="margin: 0; text-align: center; max-width: 95%;">
-                                아카이브 마크다운 최상단에는 NAtlas 파서가 고속 스캔할 수 있도록 정해진 구조의 Frontmatter가 선언되어야 합니다.
+                                구현 코드 그 자체보다 중대한 설계상 결정 사유와 우회 해결 전략, 유지보수 제약사항을 영구 보존합니다.
                             </p>
                             
                             <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
                                 <li>
-                                    <strong style="color: var(--accent-indigo);">FastAPI 메타 파싱의 효율성</strong>:<br>
-                                    문서 전체의 무거운 로딩 과정을 거치지 않고 머리말에서 핵심 속성을 즉각 컴파일 캐싱
+                                    <strong style="color: var(--accent-purple);">## Plan vs Actual (계획 대비 실제)</strong>:<br>
+                                    마이그레이션 중 마주한 설계상 구조적 제약과 이를 해결하기 위한 구현의 실제 간극 기록
                                 </li>
                                 <li>
-                                    <strong style="color: var(--accent-indigo);">GitHub 이슈 추적 연동</strong>:<br>
-                                    `issue_url`을 기재하여 지식 문서와 정식 형상 저장소 이슈 간의 무결한 양방향 추적 구조 연결
+                                    <strong style="color: var(--accent-purple);">## Decision / Solution (의사결정)</strong>:<br>
+                                    다양한 대안 라이브러리/아키텍처 중 해당 대안을 최종 낙점한 합리적인 엔지니어링 근거 기록
                                 </li>
                                 <li>
-                                    <strong style="color: var(--accent-indigo);">검증 정밀 린터 검출</strong>:<br>
-                                    제목이 누락되었거나 양식 구조가 맞지 않은 위반 문서를 커밋 전에 즉각 필터링
+                                    <strong style="color: var(--accent-purple);">## Caveats (주의점 및 제약)</strong>:<br>
+                                    추후 유지보수 시 변경이 일어났을 때 사이드 이펙트를 유발할 수 있는 중대 제약 요소 박제
                                 </li>
                             </ul>
                         </div>
@@ -52,6 +65,6 @@
                 </div>
                 
                 <aside class="notes">
-                    "Frontmatter는 NAtlas 백엔드가 문서 전체를 읽지 않고 메타데이터를 초고속으로 파싱하여 화면 및 지도를 렌더링하도록 돕는 핵심 부품입니다."
+                    "wiki.md는 코드가 말해주지 않는 설계 의도와 트레이드오프(Why)를 기록하여 차후 인수인계와 유지보수의 마찰을 제로화하는 영구 지식 자산입니다."
                 </aside>
             </section>
