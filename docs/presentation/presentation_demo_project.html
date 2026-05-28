@@ -283,14 +283,51 @@
                 <div class="slide-subtitle">PART 4: 듀얼 라이브 데모 - 프로젝트 연계 시연</div>
                 
                 <div class="split-container-2col">
-                    <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
-                        <div style="position: absolute; width: 180px; height: 180px; background: rgba(16,185,129,0.08); filter: blur(75px); pointer-events: none; z-index: -1;"></div>
+                    <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.35);">
+                        <div style="position: absolute; width: 220px; height: 220px; background: rgba(16,185,129,0.12); filter: blur(85px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="width: 100%; max-width: 280px; height: auto; transform: scale(1.1);">
+                        <div style="width: 100%; max-width: 280px; height: auto; animation: float-slow 5s ease-in-out infinite;">
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="100" cy="100" r="60" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5" style="animation: scale-pulse 4s infinite;"/>
-                                <rect x="75" y="80" width="50" height="40" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="2" style="filter: drop-shadow(0 0 10px rgba(16,185,129,0.3));"/>
-                                <text x="100" y="105" fill="var(--accent-emerald)" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">LIVE DEMO</text>
+                                <defs>
+                                    <linearGradient id="cube-top-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#10b981" stop-opacity="0.85" />
+                                        <stop offset="100%" stop-color="#059669" stop-opacity="0.3" />
+                                    </linearGradient>
+                                    <linearGradient id="cube-left-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#34d399" stop-opacity="0.8" />
+                                        <stop offset="100%" stop-color="#047857" stop-opacity="0.1" />
+                                    </linearGradient>
+                                    <linearGradient id="cube-right-grad" x1="100%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.75" />
+                                        <stop offset="100%" stop-color="#065f46" stop-opacity="0.15" />
+                                    </linearGradient>
+                                    <filter id="neon-emerald-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="8" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- Outer rotating orbit -->
+                                <circle cx="100" cy="100" r="85" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.3" style="transform-origin: 100px 100px; animation: rotate-slow 20s linear infinite;"/>
+                                <circle cx="100" cy="100" r="75" fill="none" stroke="#6ee7b7" stroke-width="1" opacity="0.25"/>
+                                
+                                <!-- 3D Isometric Cube -->
+                                <g transform="translate(0, -10)" style="transform-origin: 100px 100px; animation: rotate-slow 15s linear infinite;">
+                                    <!-- Top face -->
+                                    <path d="M 100,50 L 140,70 L 100,90 L 60,70 Z" fill="url(#cube-top-grad)" stroke="#10b981" stroke-width="2" filter="url(#neon-emerald-glow)"/>
+                                    <!-- Left face -->
+                                    <path d="M 60,70 L 100,90 L 100,140 L 60,120 Z" fill="url(#cube-left-grad)" stroke="#10b981" stroke-width="2" filter="url(#neon-emerald-glow)"/>
+                                    <!-- Right face -->
+                                    <path d="M 100,90 L 140,70 L 140,120 L 100,140 Z" fill="url(#cube-right-grad)" stroke="#10b981" stroke-width="2" filter="url(#neon-emerald-glow)"/>
+                                </g>
+                                
+                                <!-- Neon LIVE DEMO sign -->
+                                <g transform="translate(100, 165)">
+                                    <rect x="-55" y="-12" width="110" height="24" rx="12" fill="rgba(6,8,15,0.9)" stroke="var(--accent-emerald)" stroke-width="1.8" filter="url(#neon-emerald-glow)" style="animation: soft-blink 3s infinite;"/>
+                                    <text x="0" y="5" fill="#ffffff" font-family="'Outfit', 'JetBrains Mono', monospace" font-size="10" font-weight="900" letter-spacing="0.1em" text-anchor="middle" style="animation: soft-blink 3s infinite;">LIVE DEMO</text>
+                                </g>
                             </svg>
                         </div>
                     </div>
@@ -356,14 +393,23 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">[시연 1단계] 신규 개발: Vanilla JS Todo Dashboard</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-45 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
-                        <!-- Sketch-style visual wireframe mockup -->
-                        <div style="width: 100%; height: 160px; border: 1.5px dashed rgba(255,255,255,0.15); border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; box-sizing: border-box; background: rgba(255,255,255,0.01);">
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; color: #64748b;">[바닐라 JS Todo GUI 레이아웃 와이어프레임]</span>
-                            <div style="border: 1px solid rgba(255,255,255,0.1); height: 35px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.8vw; color: #8b949e;">할 일 입력 인풋창</div>
-                            <div style="display: flex; gap: 10px; flex-grow: 1; margin-top: 10px;">
-                                <div style="flex: 1; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7vw; color: #8b949e;">할일 리스트</div>
-                                <div style="width: 90px; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7vw; color: #8b949e;">집계 판넬</div>
+                    <div class="col-45 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.02); transform: perspective(1000px) rotateY(18deg) rotateX(8deg) scale(1.15); box-shadow: 0 35px 70px rgba(0,0,0,0.85); filter: drop-shadow(0 0 15px rgba(16,185,129,0.1)); animation: float-slow 6s ease-in-out infinite;">
+                        <span style="font-family: 'Outfit', sans-serif; font-size: 0.8vw; color: var(--accent-emerald); font-weight: bold; border-bottom: 1.5px solid rgba(16,185,129,0.2); padding-bottom: 6px; display: block; width: 100%; text-align: left;">💻 VANILLA JS WIREFRAME</span>
+                        
+                        <!-- Sketch-style visual wireframe mockup with 3D glass perspective -->
+                        <div style="width: 100%; height: 180px; border: 1.5px dashed rgba(16,185,129,0.4); border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; padding: 15px; box-sizing: border-box; background: rgba(8,12,22,0.8);">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.7vw; color: #94a3b8; font-weight: bold;">[Todo Dashboard UI Wireframe]</span>
+                            <div style="border: 1px solid rgba(16,185,129,0.25); height: 35px; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 0.8vw; color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.01);">할 일 추가 인풋 필드...</div>
+                            <div style="display: flex; gap: 12px; flex-grow: 1; margin-top: 12px;">
+                                <div style="flex: 1.3; border: 1px solid rgba(16,185,129,0.25); border-radius: 6px; display: flex; flex-direction: column; padding: 6px; gap: 6px; text-align: left; background: rgba(255,255,255,0.01);">
+                                    <div style="height: 12px; background: rgba(16,185,129,0.15); width: 85%; border-radius: 2px;"></div>
+                                    <div style="height: 12px; background: rgba(255,255,255,0.05); width: 70%; border-radius: 2px;"></div>
+                                    <div style="height: 12px; background: rgba(255,255,255,0.05); width: 60%; border-radius: 2px;"></div>
+                                </div>
+                                <div style="width: 95px; border: 1.5px solid var(--accent-emerald); border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.7vw; color: var(--accent-emerald); font-weight: 800; background: rgba(16,185,129,0.05); filter: drop-shadow(0 0 5px rgba(16,185,129,0.25));">
+                                    <span style="font-size: 0.65vw; opacity: 0.7;">TOTAL TASKS</span>
+                                    <span style="font-size: 1.3vw; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-weight: 900;">03</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -439,7 +485,7 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">신규 개발 작업계획서 실물 공개</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-50 vscode-sim-box" style="height: 100%; position: relative;">
+                    <div class="col-50 vscode-sim-box" style="height: 100%; position: relative; border-color: rgba(244,63,94,0.35); transform: perspective(1000px) rotateY(-18deg) rotateX(6deg) scale(1.15); box-shadow: 0 35px 70px rgba(0,0,0,0.85); filter: drop-shadow(0 0 15px rgba(244,63,94,0.1)); animation: float-slow 6s ease-in-out infinite;">
                         <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
                             <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: var(--accent-rose); font-weight: bold;">[ order.md ]</span>
                         </div>
@@ -494,18 +540,20 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">신규 개발 완료 결과물 및 지식 자산 완결</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-45 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
+                    <div class="col-45 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative; border-color: rgba(16,185,129,0.45); background: rgba(16,185,129,0.02); transform: perspective(1000px) rotateY(18deg) rotateX(8deg) scale(1.15); box-shadow: 0 35px 70px rgba(0,0,0,0.85); filter: drop-shadow(0 0 15px rgba(16,185,129,0.1)); animation: float-slow 6s ease-in-out infinite;">
+                        <span style="font-family: 'Outfit', sans-serif; font-size: 0.8vw; color: var(--accent-emerald); font-weight: bold; border-bottom: 1.5px solid rgba(16,185,129,0.2); padding-bottom: 6px; display: block; width: 100%; text-align: left;">✔ TODO DASHBOARD - ACTIVE</span>
+                        
                         <!-- Completed Todo UI Wireframe mockup with actual check markers -->
-                        <div style="width: 100%; height: 160px; border: 1.5px solid rgba(16,185,129,0.45); border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; box-sizing: border-box; background: rgba(16,185,129,0.015); filter: drop-shadow(0 0 10px rgba(16,185,129,0.05));">
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; color: #10b981; font-weight: bold;">[✅ Vanilla JS Todo App Dashboard - COMPLETED]</span>
-                            <div style="border: 1px solid rgba(255,255,255,0.1); height: 35px; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 0.8vw; color: #ffffff; background: rgba(255,255,255,0.02);">
+                        <div style="width: 100%; height: 180px; border: 1.5px solid rgba(16,185,129,0.55); border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; padding: 15px; box-sizing: border-box; background: rgba(8,12,22,0.9); filter: drop-shadow(0 0 10px rgba(16,185,129,0.15));">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; color: #10b981; font-weight: bold;">[✅ Vanilla JS Todo App - COMPLETED]</span>
+                            <div style="border: 1px solid rgba(16,185,129,0.3); height: 35px; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 0.8vw; color: #ffffff; background: rgba(16,185,129,0.08);">
                                 <span style="color: #10b981; font-weight: bold; margin-right: 8px;">✔</span> 할 일 A 디자인 다듬기
                             </div>
                             <div style="display: flex; gap: 10px; flex-grow: 1; margin-top: 10px;">
-                                <div style="flex: 1; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7vw; color: #8b949e;">할일 리스트 (1개 완료)</div>
-                                <div style="width: 90px; border: 1px stroke rgba(255,255,255,0.15); border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.7vw; color: #10b981; font-weight: bold; background: rgba(16,185,129,0.03);">
-                                    <span>완료율</span>
-                                    <span style="font-size: 1.1vw; margin-top: 2px;">100%</span>
+                                <div style="flex: 1.3; border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7vw; color: #8b949e; background: rgba(255,255,255,0.01);">할일 리스트 (1개 완료)</div>
+                                <div style="width: 95px; border: 1.5px solid rgba(16,185,129,0.5); border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.7vw; color: #10b981; font-weight: bold; background: rgba(16,185,129,0.05); filter: drop-shadow(0 0 5px rgba(16,185,129,0.25));">
+                                    <span style="font-size: 0.65vw; opacity: 0.7;">완료율</span>
+                                    <span style="font-size: 1.3vw; margin-top: 2px; font-family: 'JetBrains Mono', monospace; font-weight: 900;">100%</span>
                                 </div>
                             </div>
                         </div>
@@ -630,7 +678,7 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">마이그레이션 작업계획서 결과</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-50 vscode-sim-box" style="height: 100%; position: relative;">
+                    <div class="col-50 vscode-sim-box" style="height: 100%; position: relative; border-color: rgba(16,185,129,0.35); transform: perspective(1000px) rotateY(-18deg) rotateX(6deg) scale(1.15); box-shadow: 0 35px 70px rgba(0,0,0,0.85); filter: drop-shadow(0 0 15px rgba(16,185,129,0.1)); animation: float-slow 6s ease-in-out infinite;">
                         <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
                             <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: var(--accent-emerald); font-weight: bold;">[ order.md ]</span>
                         </div>
@@ -685,7 +733,7 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">[장치] 개발자 실수에 따른 Linter Error 검증 차단 시뮬레이션</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative; border-color: rgba(244,63,94,0.3); background: rgba(244,63,94,0.015);">
+                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative; border-color: rgba(244,63,94,0.35); background: rgba(244,63,94,0.015); transform: perspective(1000px) rotateY(18deg) rotateX(8deg) scale(1.15); box-shadow: 0 35px 70px rgba(0,0,0,0.85); filter: drop-shadow(0 0 15px rgba(244,63,94,0.1)); animation: float-slow 6s ease-in-out infinite;">
                         <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
                             <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: var(--accent-rose); font-weight: bold;">[ Terminal - git commit ]</span>
                         </div>
@@ -738,18 +786,69 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">터미널 자동 복구 명령 --heal 기동 시나리오 및 통과</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.015);">
-                        <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: var(--accent-emerald); font-weight: bold;">[ Terminal - --heal ]</span>
-                        </div>
+                    <div class="col-45" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.35); height: 100%;">
+                        <div style="position: absolute; width: 200px; height: 200px; background: rgba(14,165,233,0.06); filter: blur(80px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="flex-grow: 1; padding: 22px; font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; text-align: left; line-height: 1.6; color: #cbd5e1; overflow: hidden;">
-                            <div style="color: #64748b;">$ python3 verify_nstack_pipeline.py --heal</div>
-                            <div style="color: #38bdf8; margin-top: 5px;">🔍 Analyzing broken template structures...</div>
-                            <div style="color: #10b981; margin-top: 5px;">✨ [HEALED] report.md placeholders removed.</div>
-                            <div style="color: #10b981;">✨ [HEALED] Normalized header structures successfully.</div>
-                            <div style="color: #64748b; margin-top: 8px;">$ git commit -m "feat: migrate react"</div>
-                            <div style="color: #10b981; font-weight: bold;">✅ [SUCCESS] verify_nstack_pipeline pass. 1 file committed!</div>
+                        <div style="width: 100%; max-width: 290px; height: auto; animation: float-slow 5s ease-in-out infinite;">
+                            <svg viewBox="0 0 220 220" width="230" height="230" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="fortigate-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.9" />
+                                        <stop offset="100%" stop-color="#be123c" stop-opacity="0.3" />
+                                    </linearGradient>
+                                    <linearGradient id="r750a-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.85" />
+                                        <stop offset="100%" stop-color="#0369a1" stop-opacity="0.2" />
+                                    </linearGradient>
+                                    <linearGradient id="r750b-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#10b981" stop-opacity="0.85" />
+                                        <stop offset="100%" stop-color="#047857" stop-opacity="0.2" />
+                                    </linearGradient>
+                                    <filter id="neon-glow-all" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="5" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                
+                                <!-- Core Firewall (FortiGate 60F UTM) -->
+                                <g transform="translate(110, 45)">
+                                    <rect x="-40" y="-18" width="80" height="36" rx="6" fill="url(#fortigate-grad)" stroke="#f43f5e" stroke-width="1.8" filter="url(#neon-glow-all)"/>
+                                    <text x="0" y="-3" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="7.5" font-weight="900" text-anchor="middle">FortiGate 60F</text>
+                                    <text x="0" y="7" fill="#fca5a5" font-family="monospace" font-size="6" text-anchor="middle">UTM / WAF SEC</text>
+                                    
+                                    <!-- Scanning Laser Shield -->
+                                    <line x1="-35" y1="14" x2="35" y2="14" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="2 2" style="animation: laser-glow 2s infinite;"/>
+                                </g>
+                                
+                                <!-- Dell R750 Node A (Blue) -->
+                                <g transform="translate(50, 145)">
+                                    <rect x="-35" y="-22" width="70" height="44" rx="6" fill="url(#r750a-grad)" stroke="#0ea5e9" stroke-width="1.8" filter="url(#neon-glow-all)" style="animation: scale-pulse 4s infinite;"/>
+                                    <text x="0" y="-8" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="7.5" font-weight="900" text-anchor="middle">PowerEdge A</text>
+                                    <text x="0" y="3" fill="#38bdf8" font-family="monospace" font-size="6" font-weight="bold" text-anchor="middle">R750 BLUE</text>
+                                    <text x="0" y="12" fill="#cbd5e1" font-family="monospace" font-size="5" text-anchor="middle">ACTIVE (100%)</text>
+                                </g>
+                                
+                                <!-- Dell R750 Node B (Green) -->
+                                <g transform="translate(170, 145)">
+                                    <rect x="-35" y="-22" width="70" height="44" rx="6" fill="url(#r750b-grad)" stroke="#10b981" stroke-width="1.8" filter="url(#neon-glow-all)"/>
+                                    <text x="0" y="-8" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="7.5" font-weight="900" text-anchor="middle">PowerEdge B</text>
+                                    <text x="0" y="3" fill="#34d399" font-family="monospace" font-size="6" font-weight="bold" text-anchor="middle">R750 GREEN</text>
+                                    <text x="0" y="12" fill="#94a3b8" font-family="monospace" font-size="5" text-anchor="middle">STANDBY / IDLE</text>
+                                </g>
+                                
+                                <!-- Traffic Flow Connectors -->
+                                <!-- Path to Blue -->
+                                <path d="M 100, 63 C 70, 85 50, 100 50, 123" fill="none" stroke="#0ea5e9" stroke-width="2.5" filter="url(#neon-glow-all)"/>
+                                <circle cx="0" cy="0" r="3" fill="#ffffff" filter="url(#neon-glow-all)">
+                                    <animateMotion dur="2.5s" repeatCount="indefinite" path="M 100, 63 C 70, 85 50, 100 50, 123" />
+                                </circle>
+                                
+                                <!-- Path to Green -->
+                                <path d="M 120, 63 C 150, 85 170, 100 170, 123" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.4"/>
+                            </svg>
                         </div>
                     </div>
                     

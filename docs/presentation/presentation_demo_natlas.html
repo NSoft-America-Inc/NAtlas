@@ -288,14 +288,67 @@
                 <div class="slide-subtitle">PART 5 & PART 6: NATLAS GUI & 실물 문서 색인 시연</div>
                 
                 <div class="split-container-2col">
-                    <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
-                        <div style="position: absolute; width: 180px; height: 180px; background: rgba(99,102,241,0.08); filter: blur(75px); pointer-events: none; z-index: -1;"></div>
+                    <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.35);">
+                        <div style="position: absolute; width: 220px; height: 220px; background: rgba(99,102,241,0.12); filter: blur(85px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="width: 100%; max-width: 280px; height: auto; transform: scale(1.15);">
+                        <div style="width: 100%; max-width: 280px; height: auto; animation: float-slow 5s ease-in-out infinite;">
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="100" cy="100" r="60" fill="none" stroke="var(--accent-indigo)" stroke-width="2.5" style="animation: scale-pulse 4s infinite;"/>
-                                <rect x="75" y="80" width="50" height="40" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-indigo)" stroke-width="2" style="filter: drop-shadow(0 0 10px rgba(99,102,241,0.3));"/>
-                                <text x="100" y="105" fill="var(--accent-indigo)" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">GUI DEMO</text>
+                                <defs>
+                                    <linearGradient id="neon-indigo-glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#818cf8" stop-opacity="0.85" />
+                                        <stop offset="100%" stop-color="#4f46e5" stop-opacity="0.2" />
+                                    </linearGradient>
+                                    <filter id="neon-indigo-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="6" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                
+                                <!-- Decorative 3D Grid lines -->
+                                <path d="M 20,150 L 180,150 M 50,120 L 150,120 M 70,90 L 130,90" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="1"/>
+                                <path d="M 20,150 L 70,90 M 100,150 L 100,90 M 180,150 L 130,90" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="1"/>
+                                
+                                <!-- 3D Projecting Ray from bottom grid to the floating window -->
+                                <polygon points="100,150 50,85 150,85" fill="rgba(99,102,241,0.06)" style="mix-blend-mode: screen;"/>
+                                
+                                <!-- 3D Angled Desktop GUI Frame -->
+                                <g transform="perspective(600px) rotateY(-18deg) rotateX(10deg) translate(15, 20)">
+                                    <!-- Window shadow -->
+                                    <rect x="25" y="25" width="130" height="90" rx="6" fill="rgba(0,0,0,0.6)" filter="url(#neon-indigo-glow)" opacity="0.85"/>
+                                    <!-- Window body -->
+                                    <rect x="20" y="20" width="130" height="90" rx="6" fill="rgba(6,8,15,0.92)" stroke="var(--accent-indigo)" stroke-width="1.8" filter="url(#neon-indigo-glow)"/>
+                                    <!-- Title Bar -->
+                                    <rect x="20" y="20" width="130" height="15" rx="6" fill="rgba(99,102,241,0.15)" stroke="var(--accent-indigo)" stroke-width="1"/>
+                                    <!-- Window buttons -->
+                                    <circle cx="28" cy="27" r="2" fill="#ef4444"/>
+                                    <circle cx="34" cy="27" r="2" fill="#f59e0b"/>
+                                    <circle cx="40" cy="27" r="2" fill="#10b981"/>
+                                    <text x="85" y="30" fill="#a5b4fc" font-family="'Outfit', sans-serif" font-size="5.5" font-weight="800" text-anchor="middle">NAtlas Explorer</text>
+                                    
+                                    <!-- Main body layout wireframe inside window -->
+                                    <!-- Sidebar -->
+                                    <rect x="25" y="40" width="25" height="63" rx="2" fill="rgba(255,255,255,0.02)" stroke="rgba(99,102,241,0.2)" stroke-width="0.8"/>
+                                    <line x1="28" y1="46" x2="47" y2="46" stroke="rgba(99,102,241,0.4)" stroke-width="1"/>
+                                    <line x1="28" y1="52" x2="43" y2="52" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
+                                    <line x1="28" y1="57" x2="45" y2="57" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
+                                    
+                                    <!-- Main Panel showing interactive node connections -->
+                                    <rect x="55" y="40" width="90" height="63" rx="2" fill="rgba(255,255,255,0.01)" stroke="rgba(99,102,241,0.2)" stroke-width="0.8"/>
+                                    <!-- Nodes visualization -->
+                                    <circle cx="100" cy="70" r="5" fill="var(--accent-indigo)" filter="url(#neon-indigo-glow)"/>
+                                    <circle cx="75" cy="60" r="3.5" fill="var(--accent-blue)"/>
+                                    <circle cx="125" cy="62" r="3" fill="var(--accent-emerald)"/>
+                                    <circle cx="85" cy="85" r="3" fill="var(--accent-rose)"/>
+                                    <circle cx="115" cy="88" r="3.5" fill="var(--accent-amber)"/>
+                                    <!-- Links -->
+                                    <line x1="100" y1="70" x2="75" y2="60" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+                                    <line x1="100" y1="70" x2="125" y2="62" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+                                    <line x1="100" y1="70" x2="85" y2="85" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+                                    <line x1="100" y1="70" x2="115" y2="88" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+                                </g>
                             </svg>
                         </div>
                     </div>
@@ -382,22 +435,79 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas 아키텍처: 데스크탑 메인 프로세스와 Python Sidecar 생명주기</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
-                            <!-- Sidecar lifecycle double loop SVG -->
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
+                            <!-- Active Circuit Board double processor double loop SVG -->
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="20" y="70" width="60" height="60" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-indigo)" stroke-width="2"/>
-                                <text x="50" y="103" fill="var(--accent-indigo)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">Electron Main</text>
+                                <defs>
+                                    <linearGradient id="cpu-electron-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#10b981" stop-opacity="0.9" />
+                                        <stop offset="100%" stop-color="#047857" stop-opacity="0.3" />
+                                    </linearGradient>
+                                    <linearGradient id="cpu-fastapi-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.9" />
+                                        <stop offset="100%" stop-color="#0369a1" stop-opacity="0.3" />
+                                    </linearGradient>
+                                    <filter id="neon-glow-circ" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="5" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
                                 
-                                <rect x="120" y="70" width="60" height="60" rx="6" fill="rgba(8,12,22,0.9)" stroke="var(--accent-blue)" stroke-width="2"/>
-                                <text x="150" y="103" fill="var(--accent-blue)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">FastAPI Side</text>
+                                <!-- Background Circuit Lines -->
+                                <path d="M 10,100 L 190,100 M 50,40 L 50,160 M 150,40 L 150,160 M 20,50 L 180,150 M 180,50 L 20,150" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1.5"/>
                                 
-                                <path d="M 80 90 L 120 90" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="3 3"/>
-                                <path d="M 120 110 L 80 110" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="3 3"/>
-                                <circle cx="100" cy="100" r="15" fill="rgba(239,68,68,0.15)" stroke="var(--accent-rose)" stroke-width="1.5"/>
-                                <text x="100" y="103" fill="var(--accent-rose)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">18420</text>
+                                <!-- Electron CPU (Emerald) -->
+                                <g transform="translate(45, 100)">
+                                    <rect x="-25" y="-25" width="50" height="50" rx="6" fill="url(#cpu-electron-grad)" stroke="#10b981" stroke-width="1.8" filter="url(#neon-glow-circ)"/>
+                                    <text x="0" y="-5" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="7.5" font-weight="900" text-anchor="middle">Electron</text>
+                                    <text x="0" y="7" fill="#6ee7b7" font-family="monospace" font-size="6" text-anchor="middle">MAIN UI</text>
+                                    <!-- CPU pins -->
+                                    <line x1="-28" y1="-15" x2="-25" y2="-15" stroke="#10b981" stroke-width="1.5"/>
+                                    <line x1="-28" y1="0" x2="-25" y2="0" stroke="#10b981" stroke-width="1.5"/>
+                                    <line x1="-28" y1="15" x2="-25" y2="15" stroke="#10b981" stroke-width="1.5"/>
+                                    <line x1="25" y1="-15" x2="28" y2="-15" stroke="#10b981" stroke-width="1.5"/>
+                                    <line x1="25" y1="0" x2="28" y2="0" stroke="#10b981" stroke-width="1.5"/>
+                                    <line x1="25" y1="15" x2="28" y2="15" stroke="#10b981" stroke-width="1.5"/>
+                                </g>
+                                
+                                <!-- FastAPI CPU (Blue) -->
+                                <g transform="translate(155, 100)">
+                                    <rect x="-25" y="-25" width="50" height="50" rx="6" fill="url(#cpu-fastapi-grad)" stroke="#0ea5e9" stroke-width="1.8" filter="url(#neon-glow-circ)"/>
+                                    <text x="0" y="-5" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="7.5" font-weight="900" text-anchor="middle">FastAPI</text>
+                                    <text x="0" y="7" fill="#38bdf8" font-family="monospace" font-size="6" text-anchor="middle">SIDECAR</text>
+                                    <!-- CPU pins -->
+                                    <line x1="-28" y1="-15" x2="-25" y2="-15" stroke="#0ea5e9" stroke-width="1.5"/>
+                                    <line x1="-28" y1="0" x2="-25" y2="0" stroke="#0ea5e9" stroke-width="1.5"/>
+                                    <line x1="-28" y1="15" x2="-25" y2="15" stroke="#0ea5e9" stroke-width="1.5"/>
+                                    <line x1="25" y1="-15" x2="28" y2="-15" stroke="#0ea5e9" stroke-width="1.5"/>
+                                    <line x1="25" y1="0" x2="28" y2="0" stroke="#0ea5e9" stroke-width="1.5"/>
+                                    <line x1="25" y1="15" x2="28" y2="15" stroke="#0ea5e9" stroke-width="1.5"/>
+                                </g>
+                                
+                                <!-- Bidirectional Data Bus Channels (IPC & HTTP) -->
+                                <!-- Upper path: Main to Sidecar (HTTP requests) -->
+                                <path d="M 70,85 L 130,85" fill="none" stroke="#0ea5e9" stroke-width="2" filter="url(#neon-glow-circ)"/>
+                                <circle cx="0" cy="0" r="2.5" fill="#ffffff" filter="url(#neon-glow-circ)">
+                                    <animateMotion dur="2s" repeatCount="indefinite" path="M 70,85 L 130,85" />
+                                </circle>
+                                
+                                <!-- Lower path: Sidecar to Main (IPC, SSE events) -->
+                                <path d="M 130,115 L 70,115" fill="none" stroke="#10b981" stroke-width="2" filter="url(#neon-glow-circ)"/>
+                                <circle cx="0" cy="0" r="2.5" fill="#ffffff" filter="url(#neon-glow-circ)">
+                                    <animateMotion dur="2s" repeatCount="indefinite" path="M 130,115 L 70,115" />
+                                </circle>
+                                
+                                <!-- Port Bind Socket -->
+                                <g transform="translate(100, 100)">
+                                    <circle cx="0" cy="0" r="14" fill="rgba(244,63,94,0.15)" stroke="var(--accent-rose)" stroke-width="1.5" filter="url(#neon-glow-circ)"/>
+                                    <text x="0" y="3" fill="var(--accent-rose)" font-family="monospace" font-size="7" font-weight="900" text-anchor="middle">18420</text>
+                                </g>
                             </svg>
                         </div>
                     </div>
@@ -445,7 +555,7 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Update: SSE 실시간 동기화 (Ingestion & Compile)</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative;">
+                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative; border-color: rgba(99,102,241,0.35); background: rgba(99,102,241,0.015); transform: perspective(1000px) rotateY(18deg) rotateX(8deg) scale(1.15); box-shadow: 0 35px 70px rgba(0,0,0,0.85); filter: drop-shadow(0 0 15px rgba(99,102,241,0.1)); animation: float-slow 6s ease-in-out infinite;">
                         <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
                             <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: var(--accent-indigo); font-weight: bold;">[ NAtlas Update LogViewer ]</span>
                         </div>
@@ -498,17 +608,42 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Update UX: SSE 실시간 쉘 로깅과 백그라운드 스마트 스케줄러</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(16,185,129,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
                             <!-- Scheduler clock logic SVG -->
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="100" cy="100" r="60" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"/>
-                                <line x1="100" y1="100" x2="100" y2="55" stroke="var(--accent-emerald)" stroke-width="3" style="transform-origin: 100px 100px; animation: rotate-slow 6s linear infinite;"/>
-                                <line x1="100" y1="100" x2="135" y2="100" stroke="var(--accent-emerald)" stroke-width="2" style="transform-origin: 100px 100px; animation: rotate-slow 60s linear infinite;"/>
-                                <rect x="75" y="85" width="50" height="30" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="1.5" style="filter: drop-shadow(0 0 8px rgba(16,185,129,0.25));"/>
-                                <text x="100" y="103" fill="var(--accent-emerald)" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">AUTO 1M</text>
+                                <defs>
+                                    <filter id="neon-glow-clock" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="6" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <circle cx="100" cy="100" r="70" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5" filter="url(#neon-glow-clock)"/>
+                                <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(16,185,129,0.2)" stroke-width="1"/>
+                                
+                                <!-- Clock markings -->
+                                <line x1="100" y1="35" x2="100" y2="40" stroke="var(--accent-emerald)" stroke-width="2"/>
+                                <line x1="100" y1="160" x2="100" y2="165" stroke="var(--accent-emerald)" stroke-width="2"/>
+                                <line x1="35" y1="100" x2="40" y2="100" stroke="var(--accent-emerald)" stroke-width="2"/>
+                                <line x1="160" y1="100" x2="165" y2="100" stroke="var(--accent-emerald)" stroke-width="2"/>
+                                
+                                <!-- Glowing hands -->
+                                <line x1="100" y1="100" x2="100" y2="50" stroke="var(--accent-emerald)" stroke-width="3.5" stroke-linecap="round" filter="url(#neon-glow-clock)" style="transform-origin: 100px 100px; animation: rotate-slow 6s linear infinite;"/>
+                                <line x1="100" y1="100" x2="140" y2="100" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" filter="url(#neon-glow-clock)" style="transform-origin: 100px 100px; animation: rotate-slow 60s linear infinite;"/>
+                                
+                                <!-- Center core -->
+                                <circle cx="100" cy="100" r="6" fill="#ffffff" filter="url(#neon-glow-clock)"/>
+                                
+                                <!-- Display -->
+                                <g transform="translate(100, 142)">
+                                    <rect x="-35" y="-10" width="70" height="20" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="1.5" filter="url(#neon-glow-clock)" style="animation: soft-blink 3s infinite;"/>
+                                    <text x="0" y="3" fill="var(--accent-emerald)" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="900" text-anchor="middle" style="animation: soft-blink 3s infinite;">AUTO 1M</text>
+                                </g>
                             </svg>
                         </div>
                     </div>
@@ -670,24 +805,65 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Wiki Browser: 3D 지식 지도의 탄생</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.08); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(168,85,247,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: scale-pulse 4s infinite;">
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
                             <!-- 3D Interactive Reacting Node Map SVG -->
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="100" cy="100" r="14" fill="#a855f7" filter="drop-shadow(0 0 8px #a855f7)"/>
-                                <text x="100" y="125" fill="#a855f7" font-family="monospace" font-size="8.5" font-weight="bold" text-anchor="middle">todo-app</text>
+                                <defs>
+                                    <filter id="neon-violet-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="6" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- Orbit grid -->
+                                <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(168,85,247,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+                                <circle cx="100" cy="100" r="45" fill="none" stroke="rgba(168,85,247,0.15)" stroke-width="1" stroke-dasharray="2 2"/>
                                 
-                                <circle cx="50" cy="60" r="10" fill="#f43f5e" filter="drop-shadow(0 0 6px #f43f5e)"/>
-                                <text x="50" y="80" fill="#f43f5e" font-family="monospace" font-size="7.5" font-weight="bold" text-anchor="middle">vanilla-todo</text>
+                                <!-- Connection Lines -->
+                                <line x1="100" y1="100" x2="50" y2="60" stroke="rgba(244,63,94,0.3)" stroke-width="1.8"/>
+                                <line x1="100" y1="100" x2="150" y2="60" stroke="rgba(16,185,129,0.3)" stroke-width="1.8"/>
+                                <line x1="100" y1="100" x2="60" y2="140" stroke="rgba(14,165,233,0.3)" stroke-width="1.8"/>
+                                <line x1="100" y1="100" x2="140" y2="140" stroke="rgba(245,158,11,0.3)" stroke-width="1.8"/>
                                 
-                                <circle cx="150" cy="60" r="10" fill="#10b981" filter="drop-shadow(0 0 6px #10b981)"/>
-                                <text x="150" y="80" fill="#10b981" font-family="monospace" font-size="7.5" font-weight="bold" text-anchor="middle">react-migration</text>
+                                <path d="M 50,60 C 100,20 150,60 150,60" fill="none" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="3 3" style="animation: laser-glow 2s infinite;"/>
                                 
-                                <line x1="100" y1="100" x2="50" y2="60" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-                                <line x1="100" y1="100" x2="150" y2="60" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-                                <line x1="50" y1="60" x2="150" y2="60" stroke="var(--accent-blue)" stroke-width="2.2" stroke-dasharray="3 3" style="animation: laser-glow 2s infinite;"/>
+                                <!-- Core Hub Node -->
+                                <circle cx="100" cy="100" r="16" fill="#a855f7" filter="url(#neon-violet-glow)" style="animation: scale-pulse 3s infinite;"/>
+                                <text x="100" y="103" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">todo-app</text>
+                                
+                                <!-- Outlying Nodes -->
+                                <!-- Vanilla Todo (Rose) -->
+                                <g transform="translate(50, 60)" style="animation: float-slow 4s ease-in-out infinite;">
+                                    <circle cx="0" cy="0" r="10" fill="#f43f5e" filter="url(#neon-violet-glow)"/>
+                                    <text x="0" y="18" fill="#f43f5e" font-family="'Outfit', sans-serif" font-size="6" font-weight="bold" text-anchor="middle">vanilla-todo</text>
+                                    <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+                                </g>
+                                
+                                <!-- React Migration (Emerald) -->
+                                <g transform="translate(150, 60)">
+                                    <circle cx="0" cy="0" r="10" fill="#10b981" filter="url(#neon-violet-glow)"/>
+                                    <text x="0" y="18" fill="#10b981" font-family="'Outfit', sans-serif" font-size="6" font-weight="bold" text-anchor="middle">react-migration</text>
+                                    <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+                                </g>
+                                
+                                <!-- SQLite Schema (Blue) -->
+                                <g transform="translate(60, 140)">
+                                    <circle cx="0" cy="0" r="9" fill="#0ea5e9" filter="url(#neon-violet-glow)"/>
+                                    <text x="0" y="17" fill="#0ea5e9" font-family="'Outfit', sans-serif" font-size="6" font-weight="bold" text-anchor="middle">sqlite-schema</text>
+                                    <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
+                                </g>
+                                
+                                <!-- DevSecOps (Amber) -->
+                                <g transform="translate(140, 140)">
+                                    <circle cx="0" cy="0" r="9" fill="#f59e0b" filter="url(#neon-violet-glow)"/>
+                                    <text x="0" y="17" fill="#f59e0b" font-family="'Outfit', sans-serif" font-size="6" font-weight="bold" text-anchor="middle">devsecops</text>
+                                    <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
+                                </g>
                             </svg>
                         </div>
                     </div>
@@ -731,17 +907,55 @@
                 <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Wiki Graph Physics Engine: D3-force 기반의 실시간 물리 시뮬레이션</h2>
                 
                 <div class="split-container-2col">
-                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                    <div class="col-43" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transform: scale(1.35);">
                         <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
                         
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
-                            <!-- D3-force visual engine loop SVG -->
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
+                            <!-- D3-force visual engine loop SVG with vectors -->
                             <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="100" cy="100" r="50" fill="none" stroke="var(--accent-indigo)" stroke-width="1.5" stroke-dasharray="3 3" style="animation: rotate-slow 20s linear infinite;"/>
-                                <circle cx="65" cy="65" r="18" fill="rgba(8,12,22,0.95)" stroke="var(--accent-indigo)" stroke-width="2" style="filter: drop-shadow(0 0 10px rgba(99,102,241,0.3));"/>
-                                <circle cx="135" cy="135" r="14" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="1.8"/>
-                                <path d="M 77 77 L 123 123" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="3 3"/>
-                                <text x="100" y="103" fill="var(--accent-indigo)" font-family="monospace" font-size="8.5" font-weight="bold" text-anchor="middle">d3-force</text>
+                                <defs>
+                                    <filter id="neon-glow-physics" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="5" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- Physics fields bounds -->
+                                <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(99,102,241,0.12)" stroke-width="1.5"/>
+                                <circle cx="100" cy="100" r="45" fill="none" stroke="rgba(99,102,241,0.08)" stroke-width="1" stroke-dasharray="3 3"/>
+                                
+                                <!-- Forces vectors (Arrows) -->
+                                <!-- Center gravity pull vectors -->
+                                <line x1="45" y1="55" x2="85" y2="85" stroke="rgba(167,139,250,0.4)" stroke-width="1" stroke-dasharray="2 2"/>
+                                <polygon points="85,85 82,77 78,82 M 85,85" fill="none" stroke="rgba(167,139,250,0.4)" stroke-width="1"/>
+                                
+                                <line x1="155" y1="145" x2="115" y2="115" stroke="rgba(167,139,250,0.4)" stroke-width="1" stroke-dasharray="2 2"/>
+                                <polygon points="115,115 118,123 122,118 M 115,115" fill="none" stroke="rgba(167,139,250,0.4)" stroke-width="1"/>
+                                
+                                <!-- Node A (Active/Large) -->
+                                <g transform="translate(65, 65)">
+                                    <circle cx="0" cy="0" r="16" fill="rgba(8,12,22,0.95)" stroke="var(--accent-indigo)" stroke-width="2" filter="url(#neon-glow-physics)" style="animation: scale-pulse 3s infinite;"/>
+                                    <circle cx="0" cy="0" r="5" fill="var(--accent-indigo)"/>
+                                    <!-- Velocity vector -->
+                                    <line x1="0" y1="0" x2="-25" y2="-20" stroke="var(--accent-rose)" stroke-width="1.5" stroke-linecap="round"/>
+                                    <polygon points="-25,-20 -20,-20 -24,-15" fill="var(--accent-rose)"/>
+                                    <text x="0" y="-20" fill="var(--accent-indigo)" font-family="monospace" font-size="5.5" font-weight="bold" text-anchor="middle">Velocity V(x)</text>
+                                </g>
+                                
+                                <!-- Node B (Reacting/Small) -->
+                                <g transform="translate(135, 135)">
+                                    <circle cx="0" cy="0" r="12" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="1.8" filter="url(#neon-glow-physics)"/>
+                                    <circle cx="0" cy="0" r="3.5" fill="var(--accent-emerald)"/>
+                                    <!-- Gravity pull vector -->
+                                    <line x1="0" y1="0" x2="-15" y2="-15" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                    <text x="18" y="18" fill="var(--accent-emerald)" font-family="monospace" font-size="5.5" font-weight="bold" text-anchor="middle">F(g) Pull</text>
+                                </g>
+                                
+                                <!-- Elastic Spring Connector -->
+                                <path d="M 65,65 L 135,135" fill="none" stroke="var(--accent-blue)" stroke-width="2.5" filter="url(#neon-glow-physics)" style="animation: laser-glow 2s infinite;"/>
+                                <circle cx="100" cy="100" r="4" fill="#ffffff" filter="url(#neon-glow-physics)"/>
                             </svg>
                         </div>
                     </div>
