@@ -532,10 +532,10 @@ def main():
                 if not report_file.exists():
                     missing_files.append("report.md")
                 if not wiki_file.exists() and not knowledge_file.exists():
-                    print_warn(f"     └─ 🧠 지식 자산화 문서(wiki.md)가 아직 생성되지 않았습니다.")
+                    missing_files.append("wiki.md")
 
                 # [기능 2] --heal 옵션 작동 시 즉각 교정 진행
-                if args.heal and (missing_files or not wiki_file.exists()):
+                if args.heal and missing_files:
                     print_step("규격 어긋남 감지! 스킬 템플릿 기반 강제 보정(Auto-Healing) 실행 중...")
                     meta_fallback = {
                         "project": project_name,

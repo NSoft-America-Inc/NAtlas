@@ -76,7 +76,6 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
   const animationRef = useRef<number | null>(null)
 
   const [zoom, setZoom] = useState<number>(0.85)
-  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
   const [showHelp, setShowHelp] = useState<boolean>(false)
   const [showLegend, setShowLegend] = useState<boolean>(true)
