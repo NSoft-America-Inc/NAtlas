@@ -13,6 +13,7 @@
     
     <style>
 
+
         :root {
             --background-color: #030408;
             --accent-blue: #0ea5e9;
@@ -419,6 +420,7 @@
             transform: translateY(-1px);
         }
 
+    
     </style>
 </head>
 <body>
@@ -452,7 +454,7 @@
             const promises = slideFiles.map(file => 
                 fetch(file)
                     .then(res => {
-                        if (!res.ok) throw new Error(`${file} 로드 실패`);
+                        if (!res.ok) throw new Error(`${file} 로드 실패 (Status: ${res.status})`);
                         return res.text();
                     })
             );
@@ -472,7 +474,25 @@
                 initReveal();
             } catch (err) {
                 console.error("슬라이드 렌더링 에러:", err);
-                container.innerHTML = `<section><h2>슬라이드 로딩 실패</h2><p>${err.message}</p></section>`;
+                
+                // 로컬 file:/// CORS 에러 또는 404 로딩 실패 안내 모달 시각화
+                container.innerHTML = `
+                    <section style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; height: 100vh; box-sizing: border-box; width: 100vw;">
+                        <div class="glass-panel" style="max-width: 650px; border: 1.5px solid var(--accent-rose); background: rgba(244,63,94,0.06); padding: 45px; border-radius: 20px; box-shadow: 0 15px 45px rgba(244,63,94,0.25); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                            <h2 style="color: #ffffff !important; font-size: 1.8vw !important; margin: 0; font-weight: 900; text-shadow: 0 0 10px rgba(244,63,94,0.5);">🔒 로컬 CORS 보안 제한 감지됨</h2>
+                            <p style="color: #cbd5e1 !important; font-size: 0.8vw !important; line-height: 1.8; margin: 0; word-break: keep-all; max-width: 90%;">
+                                브라우저의 보안 정책으로 인해 로컬 파일 직접 더블클릭 실행(file:///) 시 슬라이드 조각 로딩이 제한됩니다.<br>
+                                아래의 <strong>초경량 로컬 서버 기동 명령어</strong>를 복사하여 터미널에서 실행하신 뒤 로컬 웹주소로 원클릭 접속해 주십시오.
+                            </p>
+                            <div style="background: #020617; border: 1.2px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 12px 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: var(--accent-blue); text-align: center; width: 90%; user-select: all; cursor: pointer; font-weight: bold; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);" onclick="navigator.clipboard.writeText(this.innerText); alert('명령어가 클립보드에 복사되었습니다! 터미널에 붙여넣으세요.');">
+                                python3 -m http.server --directory ../../ 8080
+                            </div>
+                            <p style="color: var(--text-muted) !important; font-size: 0.7vw !important; margin: 0;">
+                                💡 실행 후 주소창에 <a href="http://localhost:8080/docs/presentation/presentation_index.html" style="color: var(--accent-indigo); text-decoration: underline; font-weight: 800; text-shadow: 0 0 8px rgba(99,102,241,0.4);">http://localhost:8080/docs/presentation/presentation_index.html</a> 로 접속하십시오.
+                            </p>
+                        </div>
+                    </section>
+                `;
             }
         }
         
