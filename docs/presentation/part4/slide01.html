@@ -1,0 +1,73 @@
+<section>
+                <div class="slide-counter">SLIDE 01 / 11</div>
+                <div class="slide-subtitle">NStack 실전 워크플로우와 차단 복구</div>
+                
+                <div class="split-container-2col">
+                    <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.35);">
+                        <div style="position: absolute; width: 220px; height: 220px; background: rgba(16,185,129,0.12); filter: blur(85px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 280px; height: auto; animation: float-slow 5s ease-in-out infinite;">
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="cube-top-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#10b981" stop-opacity="0.85" />
+                                        <stop offset="100%" stop-color="#059669" stop-opacity="0.3" />
+                                    </linearGradient>
+                                    <linearGradient id="cube-left-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#34d399" stop-opacity="0.8" />
+                                        <stop offset="100%" stop-color="#047857" stop-opacity="0.1" />
+                                    </linearGradient>
+                                    <linearGradient id="cube-right-grad" x1="100%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.75" />
+                                        <stop offset="100%" stop-color="#065f46" stop-opacity="0.15" />
+                                    </linearGradient>
+                                    <filter id="neon-emerald-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="8" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- Outer rotating orbit -->
+                                <circle cx="100" cy="100" r="85" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.3" style="transform-origin: 100px 100px; animation: rotate-slow 20s linear infinite;"/>
+                                <circle cx="100" cy="100" r="75" fill="none" stroke="#6ee7b7" stroke-width="1" opacity="0.25"/>
+                                
+                                <!-- 3D Isometric Cube -->
+                                <g transform="translate(0, -10)" style="transform-origin: 100px 100px; animation: rotate-slow 15s linear infinite;">
+                                    <!-- Top face -->
+                                    <path d="M 100,50 L 140,70 L 100,90 L 60,70 Z" fill="url(#cube-top-grad)" stroke="#10b981" stroke-width="2" filter="url(#neon-emerald-glow)"/>
+                                    <!-- Left face -->
+                                    <path d="M 60,70 L 100,90 L 100,140 L 60,120 Z" fill="url(#cube-left-grad)" stroke="#10b981" stroke-width="2" filter="url(#neon-emerald-glow)"/>
+                                    <!-- Right face -->
+                                    <path d="M 100,90 L 140,70 L 140,120 L 100,140 Z" fill="url(#cube-right-grad)" stroke="#10b981" stroke-width="2" filter="url(#neon-emerald-glow)"/>
+                                </g>
+                                
+                                <!-- Neon LIVE DEMO sign -->
+                                <g transform="translate(100, 165)">
+                                    <rect x="-55" y="-12" width="110" height="24" rx="12" fill="rgba(6,8,15,0.9)" stroke="var(--accent-emerald)" stroke-width="1.8" filter="url(#neon-emerald-glow)" style="animation: soft-blink 3s infinite;"/>
+                                    <text x="0" y="5" fill="#ffffff" font-family="'Outfit', 'JetBrains Mono', monospace" font-size="10" font-weight="900" letter-spacing="0.1em" text-anchor="middle" style="animation: soft-blink 3s infinite;">LIVE DEMO</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-60 glass-panel" style="padding: 45px 50px; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center;">
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 1.0vw; color: var(--accent-emerald); font-weight: 800; letter-spacing: 0.15em;">PART 4. 실전 듀얼 라이브 데모</span>
+                        
+                        <h1 style="font-size: 2.3vw !important; line-height: 1.35 !important; font-weight: 800; background: linear-gradient(135deg, #ffffff 40%, var(--accent-emerald) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            AI 에이전트와 함께하는<br>프로젝트 코딩 & 자동 교정
+                        </h1>
+                        
+                        <p style="font-size: 1.0vw; color: var(--text-muted); line-height: 1.6; max-width: 90%; margin: 0 auto;">
+                            신규 Vanilla JS Dashboard 개발부터,<br>
+                            Vite+React+Zustand 마이그레이션 및 Healer 복구 시연
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>

@@ -1,0 +1,52 @@
+<section>
+                <div class="slide-counter">SLIDE 02 / 11</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas 기동: Settings 탭의 상태 진단</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 15px; position: relative;">
+                        <!-- Settings visual with green badge -->
+                        <div style="width: 100%; border: 1.5px solid rgba(16,185,129,0.3); border-radius: 16px; padding: 22px; box-sizing: border-box; background: rgba(16,185,129,0.015); text-align: left;">
+                            <div style="font-size: 0.9vw; font-weight: bold; color: white; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">
+                                <span>⚙️ System Status</span>
+                                <span style="background: rgba(16,185,129,0.2); border: 1px solid #10b981; padding: 2px 8px; border-radius: 20px; font-size: 0.65vw; color: #10b981; animation: soft-blink 1.5s infinite;">CONNECTED</span>
+                            </div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: #cbd5e1; line-height: 1.6;">
+                                <div>Sidecar Binding: localhost:18420</div>
+                                <div>SwarmVault CLI: Ready (v1.0.4)</div>
+                                <div>Active Path: /Workspace/NAtlas/</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            ⚙️ 데스크탑 기동 시의 포트 및 환경 자동 진단
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                NAtlas 데스크탑 GUI가 기동되는 즉시, 백그라운드 FastAPI Sidecar 와의<br>
+                                연결을 자동 확인하고 SwarmVault 인프라 상태를 1초 만에 스마트 스캔합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>FastAPI 18420 포트 자동 진단</strong>:<br>
+                                    사이드카 웹 서버 활성화 여부 및 API 통신 상태 즉시 확인
+                                </li>
+                                <li>
+                                    <strong>로컬 SQLite 및 저장소 경로 관리</strong>:<br>
+                                    마크다운 지식이 저장되어 있는 물리 로컬 경로(llmwiki 등)의 정합성 진단
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>

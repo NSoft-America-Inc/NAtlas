@@ -1,0 +1,116 @@
+<section>
+                <div class="slide-counter">SLIDE 03 / 09</div>
+                <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">스마트 사서 방식의 4대 핵심 구동 메커니즘</h2>
+                
+                <div style="width: 92%; height: 70%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; box-sizing: border-box; margin-top: 65px; margin-bottom: 10px;">
+                    <!-- 1. 비용요금 -->
+                    <div class="glass-panel" style="padding: 20px; display: flex; flex-direction: row; align-items: center; gap: 20px; text-align: left; justify-content: flex-start; border-radius: 16px;">
+                        <div style="width: 100px; height: 100px; flex-shrink: 0; position: relative;">
+                            <div style="position: absolute; width: 80px; height: 80px; background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, rgba(14,165,233,0) 70%); filter: blur(15px); pointer-events: none; z-index: -1;"></div>
+                            <svg viewBox="0 0 100 100" width="100%" height="100%">
+                                <!-- Funnel graphic -->
+                                <path d="M 20,20 L 80,20 L 60,60 L 60,80 L 40,80 L 40,60 Z" fill="none" stroke="var(--accent-blue)" stroke-width="2.5"/>
+                                <!-- Ingoing chunks (scattered) -->
+                                <circle cx="35" cy="30" r="3" fill="rgba(255,255,255,0.3)"/>
+                                <circle cx="50" cy="27" r="4" fill="rgba(255,255,255,0.4)"/>
+                                <circle cx="65" cy="33" r="3" fill="rgba(255,255,255,0.3)"/>
+                                <!-- Filtered laser beam (outgoing) -->
+                                <path d="M 50,60 L 50,90" stroke="var(--accent-emerald)" stroke-width="4" stroke-dasharray="3 3"/>
+                                <rect x="42" y="80" width="16" height="12" rx="2" fill="none" stroke="var(--accent-emerald)" stroke-width="1.8"/>
+                                <text x="50" y="89" fill="var(--accent-emerald)" font-family="monospace" font-weight="extrabold" font-size="6" text-anchor="middle">CIT</text>
+                            </svg>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <h3 style="font-size: 1.0vw !important; color: var(--accent-blue) !important; font-weight: 800; margin: 0;">📉 비용요금: 95.29% 압축 필터링</h3>
+                            <p style="font-size: 0.68vw; color: #cbd5e1; margin: 0; line-height: 1.6; word-break: keep-all;">
+                                수만 단어의 코드 전체를 매번 LLM에 우겨넣어 비용을 폭증시키는 <strong>Naive 로드</strong>와 달리, 스마트 사서는 시맨틱 유사도 분석을 거쳐 <strong>질문에 답하는 데 필요한 핵심 1페이지 Citation(지식 조각)만 검출</strong>하여 LLM에 주입하므로 토큰 비용이 극적으로 절감됩니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 2. 인지속도 -->
+                    <div class="glass-panel" style="padding: 20px; display: flex; flex-direction: row; align-items: center; gap: 20px; text-align: left; justify-content: flex-start; border-radius: 16px;">
+                        <div style="width: 100px; height: 100px; flex-shrink: 0; position: relative;">
+                            <div style="position: absolute; width: 80px; height: 80px; background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(16,185,129,0) 70%); filter: blur(15px); pointer-events: none; z-index: -1;"></div>
+                            <svg viewBox="0 0 100 100" width="100%" height="100%">
+                                <!-- Target reticle -->
+                                <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.2"/>
+                                <circle cx="50" cy="50" r="20" fill="none" stroke="rgba(16,185,129,0.15)" stroke-width="1.5" stroke-dasharray="4 4"/>
+                                <!-- Magnifying glass pointer pointing to 1 node -->
+                                <circle cx="45" cy="45" r="10" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5"/>
+                                <line x1="52" y1="52" x2="70" y2="70" stroke="var(--accent-emerald)" stroke-width="2.5"/>
+                                <circle cx="45" cy="45" r="3" fill="#ffffff" style="filter: drop-shadow(0 0 5px var(--accent-emerald));"/>
+                                <path d="M 45,45 Q 60,30 80,30" fill="none" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="2 2"/>
+                                <text x="80" y="25" fill="var(--accent-blue)" font-family="monospace" font-weight="extrabold" font-size="7">0.2s</text>
+                            </svg>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <h3 style="font-size: 1.0vw !important; color: var(--accent-emerald) !important; font-weight: 800; margin: 0;">⚡ 인지속도: 0.2초 로컬 인덱싱 가속</h3>
+                            <p style="font-size: 0.68vw; color: #cbd5e1; margin: 0; line-height: 1.6; word-break: keep-all;">
+                                수천 라인의 원시 텍스트를 LLM이 처음부터 한 줄씩 읽고 파싱하는 버퍼링 렉(3초 이상)을 해소합니다. <strong>미리 컴파일된 로컬 SQLite 벡터 데이터베이스 인덱스</strong>에서 시맨틱 수학적 거리가 가장 가까운 요약본을 <strong>0.2초 이내로 즉각 타겟팅 인출</strong>하여 딜레이가 없습니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 3. 메모리 보전 -->
+                    <div class="glass-panel" style="padding: 20px; display: flex; flex-direction: row; align-items: center; gap: 20px; text-align: left; justify-content: flex-start; border-radius: 16px;">
+                        <div style="width: 100px; height: 100px; flex-shrink: 0; position: relative;">
+                            <div style="position: absolute; width: 80px; height: 80px; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0) 70%); filter: blur(15px); pointer-events: none; z-index: -1;"></div>
+                            <svg viewBox="0 0 100 100" width="100%" height="100%">
+                                <!-- Hexagonal Shield -->
+                                <polygon points="50,15 80,30 80,70 50,85 20,70 20,30" fill="none" stroke="var(--accent-indigo)" stroke-width="2.5" filter="drop-shadow(0 0 5px var(--accent-indigo))"/>
+                                <!-- Protected core -->
+                                <circle cx="50" cy="50" r="10" fill="var(--accent-indigo)"/>
+                                <text x="50" y="53" fill="#ffffff" font-family="monospace" font-weight="extrabold" font-size="7" text-anchor="middle">CORE</text>
+                                <!-- Deflected noises -->
+                                <path d="M 10,40 Q 20,40 18,30" fill="none" stroke="var(--accent-rose)" stroke-width="1.8" stroke-linecap="round"/>
+                                <circle cx="10" cy="40" r="1.5" fill="var(--accent-rose)"/>
+                                <path d="M 90,60 Q 80,60 82,70" fill="none" stroke="var(--accent-rose)" stroke-width="1.8" stroke-linecap="round"/>
+                                <circle cx="90" cy="60" r="1.5" fill="var(--accent-rose)"/>
+                            </svg>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <h3 style="font-size: 1.0vw !important; color: var(--accent-indigo) !important; font-weight: 800; margin: 0;">🛡️ 메모리 보전: 컨텍스트 순도 수호</h3>
+                            <p style="font-size: 0.68vw; color: #cbd5e1; margin: 0; line-height: 1.6; word-break: keep-all;">
+                                불필요한 레거시 코드와 무관한 온갖 잡음 스팸 정보들이 LLM의 한정된 컨텍스트 창을 오염시키는 것을 원천 차단합니다. <strong>작업 기억 공간(Working Memory)을 순수하게 유지</strong>함으로써, 대화 세션이 아무리 길어져도 <strong>에이전트 본래의 시스템 프롬프트 규칙과 설계 의도가 희석되지 않고 확고히 영구 보전</strong>됩니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 4. 인프라 -->
+                    <div class="glass-panel" style="padding: 20px; display: flex; flex-direction: row; align-items: center; gap: 20px; text-align: left; justify-content: flex-start; border-radius: 16px;">
+                        <div style="width: 100px; height: 100px; flex-shrink: 0; position: relative;">
+                            <div style="position: absolute; width: 80px; height: 80px; background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(168,85,247,0) 70%); filter: blur(15px); pointer-events: none; z-index: -1;"></div>
+                            <svg viewBox="0 0 100 100" width="100%" height="100%">
+                                <!-- Local PC case -->
+                                <rect x="25" y="25" width="50" height="50" rx="6" fill="none" stroke="var(--accent-purple)" stroke-width="2.5"/>
+                                <!-- Gear inside rotating -->
+                                <g style="animation: spin-gear 12s linear infinite; transform-origin: 50px 50px;">
+                                    <circle cx="50" cy="50" r="14" fill="none" stroke="var(--accent-purple)" stroke-width="2.5" stroke-dasharray="4 4"/>
+                                </g>
+                                <circle cx="50" cy="50" r="4" fill="var(--accent-purple)"/>
+                                <!-- Lock icon (Local Security) -->
+                                <rect x="42" y="32" width="16" height="12" rx="2" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+                                <path d="M 46,32 L 46,27 Q 50,23 54,27 L 54,32" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <h3 style="font-size: 1.0vw !important; color: var(--accent-purple) !important; font-weight: 800; margin: 0;">🔌 인프라: 로컬 단독 초경량 구동</h3>
+                            <p style="font-size: 0.68vw; color: #cbd5e1; margin: 0; line-height: 1.6; word-break: keep-all;">
+                                외부 유료 RAG 클라우드 API 가입이나 무거운 외부 벡터 DB 인프라 세팅이 전혀 필요 없습니다. <strong>로컬 디스크 내의 초경량 SQLite 데이터베이스와 단독 구동 CLI 도구</strong>만으로 완전히 독자 실행되며, 소스코드가 외부망으로 1byte도 유출되지 않아 <strong>전사 지식 보안 샌드박스를 완벽 충족</strong>합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "정밀 대조 슬라이드에서 요약된 스마트 사서 방식의 실제 4대 구동 원리입니다. 비용요금은 핵심 Citation만 검출하는 Funnel 필터링으로 절감하며, 인지속도는 로컬 SQLite 벡터 인덱스 수학적 거리 계산으로 0.2초 만에 즉각 인출하고, 메모리는 불필요한 레거시 노이즈 차단막으로 순도 높게 보전하고, 인프라는 외부 SaaS가 없는 로컬 단독 CLI 및 SQLite 샌드박스로 가동되어 전사 보안과 경량화를 완성합니다."
+                </aside>
+            </section>

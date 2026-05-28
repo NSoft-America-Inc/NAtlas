@@ -1,0 +1,101 @@
+<section>
+                <div class="slide-counter">SLIDE 05 / 06</div>
+                <div class="slide-subtitle">전사 도입 성과 및 미래 비전 로드맵</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">미래 로드맵: Phase 2 & Phase 3 중장기 플랜</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(168,85,247,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15); animation: float-slow 5s ease-in-out infinite;">
+                            <!-- 3D perspective timeline arch roadway SVG (Richer details covering Phase 2-3 specifications) -->
+                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <filter id="neon-glow-roadmap" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="5" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                
+                                <!-- 3D perspective rotated grid lines representing road -->
+                                <path d="M 10,170 C 50,120 150,120 190,170" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="15"/>
+                                <path d="M 25,140 C 60,100 140,100 175,140" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="10"/>
+                                <path d="M 40,110 C 70,80 130,80 160,110" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="6"/>
+                                
+                                <!-- Glowing neon roadway center path -->
+                                <path d="M 10,170 C 100,50 190,170 M 25,140 C 100,75 175,140 M 40,110 C 100,90 160,110" fill="none" stroke="var(--accent-purple)" stroke-width="2" filter="url(#neon-glow-roadmap)" stroke-dasharray="4 4" style="animation: laser-glow 2s infinite;"/>
+                                
+                                <!-- Nodes along the roadway with perspective scales -->
+                                <!-- Phase 1 (Sky Blue) -->
+                                <g transform="translate(45, 140)" style="animation: scale-pulse 4s infinite;">
+                                    <circle cx="0" cy="0" r="7" fill="#0ea5e9" filter="url(#neon-glow-roadmap)"/>
+                                    <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
+                                    <text x="0" y="24" fill="#0ea5e9" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">Phase 1 (Done)</text>
+                                </g>
+                                
+                                <!-- Phase 2 (Purple) -->
+                                <g transform="translate(100, 75)">
+                                    <!-- SQLite cylindrical DB icon on top of Node -->
+                                    <g transform="translate(0, -25)" style="animation: float-slow 4.5s ease-in-out infinite;">
+                                        <ellipse cx="0" cy="-8" rx="14" ry="4" fill="rgba(168,85,247,0.15)" stroke="var(--accent-purple)" stroke-width="1.2" />
+                                        <path d="M -14,-8 L -14,6 A 14,4 0 0 0 14,6 L 14,-8" fill="none" stroke="var(--accent-purple)" stroke-width="1.2" />
+                                        <path d="M -14,0 A 14,4 0 0 0 14,0" fill="none" stroke="var(--accent-purple)" stroke-width="1.2" stroke-dasharray="2 2" />
+                                        <text x="0" y="16" fill="var(--accent-purple)" font-family="'Outfit', sans-serif" font-size="7" font-weight="900" text-anchor="middle">SQLite</text>
+                                    </g>
+                                    <circle cx="0" cy="0" r="9" fill="#a855f7" filter="url(#neon-glow-roadmap)" style="animation: scale-pulse 3s infinite;"/>
+                                    <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+                                    <text x="0" y="32" fill="#a855f7" font-family="'Outfit', sans-serif" font-size="7.5" font-weight="900" text-anchor="middle">Phase 2</text>
+                                </g>
+                                
+                                <!-- Phase 3 (Emerald) -->
+                                <g transform="translate(155, 140)">
+                                    <!-- Installer package box icon on top of Node -->
+                                    <g transform="translate(0, -24)" style="animation: float-slow 5s ease-in-out infinite;">
+                                        <!-- Isometric cube for installer package box -->
+                                        <path d="M 0,-10 L 10,-5 L 0,0 L -10,-5 Z" fill="rgba(16,185,129,0.1)" stroke="var(--accent-emerald)" stroke-width="1"/>
+                                        <path d="M -10,-5 L -10,5 L 0,10 L 0,0 Z" fill="rgba(16,185,129,0.1)" stroke="var(--accent-emerald)" stroke-width="1"/>
+                                        <path d="M 0,0 L 0,10 L 10,5 L 10,-5 Z" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1"/>
+                                        <text x="0" y="16" fill="var(--accent-emerald)" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">.dmg/.exe</text>
+                                    </g>
+                                    <circle cx="0" cy="0" r="7" fill="#10b981" filter="url(#neon-glow-roadmap)"/>
+                                    <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
+                                    <text x="0" y="28" fill="#10b981" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">Phase 3</text>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            📅 중앙 공유 관계형 데이터베이스와 패키징 배포
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                Phase 1 MVP 안착 이후, SQLite 관계형 DB 고도화 통합과<br>
+                                원클릭 데스크탑 인스톨러(.dmg / .exe) 배포 및 팀 공유를 위해 전진합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>Phase 2: 관계형 SQLite 히스토리 보존 (차기)</strong>:<br>
+                                    단순 로컬 파싱을 넘어 `chats`, `task_history` 간 관계 통합 모델 구축, 팀 공유용 중앙 클라우드 연동
+                                </li>
+                                <li>
+                                    <strong>Phase 3: 무중단 패키징 릴리즈 배포 (최종)</strong>:<br>
+                                    `electron-builder` 파이프라인을 기동해 macOS 및 Windows 전용 원클릭 인스톨러 배포 완수
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 피날레</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>

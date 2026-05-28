@@ -1,0 +1,51 @@
+<section>
+                <div class="slide-counter">SLIDE 02 / 08</div>
+                <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">Naive 로드 vs SwarmVault RAG 정밀 대조</h2>
+                
+                <div class="perspective-wrapper">
+                    <!-- Pros Card (SwarmVault RAG) -->
+                    <div class="three-d-card pros-card" style="padding-bottom: 40px; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; align-items: flex-start;">
+                        <h3 style="font-size: 1.2vw !important; color: var(--accent-blue) !important; margin: 0 0 10px 0; font-weight: 800;">
+                            ✨ SwarmVault RAG (스마트 사서 방식)
+                        </h3>
+                        <p style="font-size: 0.75vw; color: #cbd5e1; margin-bottom: 20px; line-height: 1.6;">
+                            필요한 설계 의도와 히스토리를 콕 집어 시맨틱 인출 후 컨텍스트 창에 Citadel 보존
+                        </p>
+                        
+                        <ul style="font-size: 0.72vw; color: #cbd5e1; display: flex; flex-direction: column; gap: 15px; margin: 0; padding-left: 15px;">
+                            <li><strong>비용 요금</strong>: Naive 대비 평균 95.29% 극적인 토큰 세이빙 완수</li>
+                            <li><strong>인지 속도</strong>: 3초 이내 도달 (1초 미만의 고속 시맨틱 매핑 인출)</li>
+                            <li><strong>메모리 보존</strong>: 컨텍스트를 깨끗하게 유지해 장기 세션에서의 오작동 전면 차단</li>
+                            <li><strong>인프라</strong>: 외부 API 통신 없는 로컬 CLI 기반 초경량 구동 (SQLite 캐시)</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Cons Card (Naive 전체 로드) -->
+                    <div class="three-d-card cons-card" style="padding-bottom: 40px; display: flex; flex-direction: column; justify-content: flex-start; text-align: left; align-items: flex-start;">
+                        <h3 style="font-size: 1.2vw !important; color: var(--accent-rose) !important; margin: 0 0 10px 0; font-weight: 800;">
+                            ⚠️ Naive 전체 로드 (무지성 복사 방식)
+                        </h3>
+                        <p style="font-size: 0.75vw; color: #cbd5e1; margin-bottom: 20px; line-height: 1.6;">
+                            사소한 수정을 할 때도 수천 줄의 거대 전체 코드를 프롬프트에 반복해서 쏟아붓는 방식
+                        </p>
+                        
+                        <ul style="font-size: 0.72vw; color: #cbd5e1; display: flex; flex-direction: column; gap: 15px; margin: 0; padding-left: 15px;">
+                            <li><strong>비용 요금</strong>: 매번 전체 코드를 우겨넣어 기하급수적으로 폭증하는 토큰 사용량</li>
+                            <li><strong>인지 속도</strong>: 수천 라인의 무거운 파싱으로 인한 인지 딜레이 및 병목 현상</li>
+                            <li><strong>메모리 보존</strong>: 대화 이력이 금방 가득 차서 과거의 중대 설계 의도를 완전 망각</li>
+                            <li><strong>안정성</strong>: 컨텍스트 포화로 인한 환각(Hallucination) 및 엉뚱한 레거시 훼손 코드 양산</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "두 방식의 대조입니다. 사서 비서 방식을 사용하는 SwarmVault는 Naive 방식의 메모리 유실과 토큰 폭탄 재앙을 완벽히 비껴가며 로컬 SQLite 기반의 가볍고 청정한 개발 환경을 제공합니다."
+                </aside>
+            </section>

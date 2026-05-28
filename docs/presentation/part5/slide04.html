@@ -1,0 +1,51 @@
+<section>
+                <div class="slide-counter">SLIDE 04 / 11</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Update: SSE 실시간 동기화 (Ingestion & Compile)</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative; border-color: rgba(99,102,241,0.35); background: rgba(99,102,241,0.015); transform: perspective(1000px) rotateY(18deg) rotateX(8deg) scale(1.15); box-shadow: 0 35px 70px rgba(0,0,0,0.85); filter: drop-shadow(0 0 15px rgba(99,102,241,0.1)); animation: float-slow 6s ease-in-out infinite;">
+                        <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
+                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: var(--accent-indigo); font-weight: bold;">[ NAtlas Update LogViewer ]</span>
+                        </div>
+                        
+                        <div style="flex-grow: 1; padding: 22px; font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; text-align: left; line-height: 1.6; color: #cbd5e1; overflow: hidden;">
+                            <div style="color: #64748b;">[SwarmVault] Starting index synchronization...</div>
+                            <div style="color: #38bdf8; margin-top: 5px;">[Ingesting] content/todo-app/order.md ... OK</div>
+                            <div style="color: #38bdf8;">[Ingesting] content/todo-app/report.md ... OK</div>
+                            <div style="color: #38bdf8;">[Ingesting] content/todo-app/wiki.md ... OK</div>
+                            <div style="color: #10b981; font-weight: bold; margin-top: 8px;">[Success] SwarmVault compile completed in 1.45s!</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            ⚡ 실시간 블로킹 없는 컴파일 로그 수혈 스트리밍
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                1단계/2단계 실전 코딩 데모에서 완성한 실물 마크다운 아티팩트 문서들을<br>
+                                NAtlas Update 버튼 클릭 즉시 Server-Sent Events(SSE) 스트리밍으로 동기화 색인합니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>SSE 실시간 통신 파이프라인</strong>:<br>
+                                    uvicorn 백엔드가 SwarmVault 컴파일 명령어를 수행하며 터미널 쉘 로그를 블로킹 없이 전송
+                                </li>
+                                <li>
+                                    <strong>React 실시간 뷰어 출력</strong>:<br>
+                                    진행 상황 로그가 LogViewer 에 아름다운 네온 텍스트 애니메이션으로 실시간 스크롤링
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>

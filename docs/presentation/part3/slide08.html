@@ -1,0 +1,88 @@
+<section>
+                <div class="slide-counter">SLIDE 08 / 09</div>
+                <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">듀얼 트랙 지식 흐름도: 인간(Human) 개발자 E2E Flow</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(99,102,241,0.14) 0%, rgba(99,102,241,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
+                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="flowGradH" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--accent-indigo)"/>
+                                        <stop offset="50%" stop-color="var(--accent-blue)"/>
+                                        <stop offset="100%" stop-color="var(--accent-emerald)"/>
+                                    </linearGradient>
+                                </defs>
+                                <ellipse cx="125" cy="210" rx="90" ry="18" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1.2"/>
+                                <path d="M 40,140 Q 125,70 210,140" fill="none" stroke="url(#flowGradH)" stroke-width="6" stroke-linecap="round" opacity="0.3"/>
+                                <path d="M 40,140 Q 125,70 210,140" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="6 8" style="animation: rotate-slow 20s linear infinite;"/>
+                                
+                                <circle cx="0" cy="0" r="4.5" fill="#ffffff" style="filter: drop-shadow(0 0 5px var(--accent-indigo));">
+                                    <animateMotion path="M 40,140 Q 125,70 210,140" dur="2.2s" repeatCount="indefinite"/>
+                                </circle>
+                                
+                                <g transform="translate(40, 140)" style="animation: float-slow 4s ease-in-out infinite; --rot: -2deg;">
+                                    <circle cx="0" cy="0" r="22" fill="#080c14" stroke="var(--accent-rose)" stroke-width="2"/>
+                                    <circle cx="0" cy="0" r="6" fill="var(--accent-rose)"/>
+                                    <text x="0" y="-30" fill="var(--accent-rose)" font-family="monospace" font-weight="extrabold" font-size="8.5" text-anchor="middle">1. 설계 (Order)</text>
+                                </g>
+                                
+                                <g transform="translate(125, 95)" style="animation: float-slow 4.5s ease-in-out infinite; --rot: 1deg;">
+                                    <circle cx="0" cy="0" r="26" fill="#080c14" stroke="var(--accent-indigo)" stroke-width="2.5"/>
+                                    <polygon points="0,-8 7,4 -7,4" fill="var(--accent-indigo)"/>
+                                    <text x="0" y="-34" fill="var(--accent-indigo)" font-family="monospace" font-weight="extrabold" font-size="8.5" text-anchor="middle">2. 위임 (Commit)</text>
+                                </g>
+                                
+                                <g transform="translate(210, 140)" style="animation: float-slow 5s ease-in-out infinite; --rot: 2deg;">
+                                    <circle cx="0" cy="0" r="22" fill="#080c14" stroke="var(--accent-emerald)" stroke-width="2"/>
+                                    <rect x="-5" y="-5" width="10" height="10" rx="1.5" fill="var(--accent-emerald)"/>
+                                    <text x="0" y="-30" fill="var(--accent-emerald)" font-family="monospace" font-weight="extrabold" font-size="8.5" text-anchor="middle">3. 복기 (NAtlas)</text>
+                                </g>
+                                
+                                <text x="125" y="235" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">HUMAN DEVELOPMENT PIPELINE FLOW</text>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            ⚓ 설계 통제 ➔ 위임 ➔ 자동 검증 ➔ 지식 역인수 루프
+                        </h3>
+                        
+                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                인간 개발자가 겪는 설계 수임과 지식 복기의 E2E 여정입니다.<br>
+                                복잡한 소스 분석 스트레스를 없애고 명쾌한 의사결정의 키를 쥐게 해줍니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">1. 요구사항 정의 및 통제선(Harness) 수립</strong>:<br>
+                                    `order.md`를 기재해 에이전트의 작업 바운더리를 안전하게 봉인 가이드
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">2. 검증 통과 PR의 1초 확인</strong>:<br>
+                                    린터가 에러 없이 초록 체크를 뿜은 PR을 신뢰하고 1초 만에 승인 Merge
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-indigo);">3. NAtlas 3D 지식 지도 복기</strong>:<br>
+                                    차후 유지보수 시 NAtlas 지도를 눌러 10초 만에 의사결정 맥락을 완벽 인수
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+                
+                <aside class="notes">
+                    "인간 개발자의 시점에서 바라본 NStack-NAtlas 지식 루프입니다. order.md로 에이전트 작업을 명확히 획정하고, PR 자동 검사 완료본을 신뢰하여 1초 만에 머지하며, 추후 NAtlas 지형도를 통해 10초 만에 결정 맥락을 온전히 역인수받습니다."
+                </aside>
+            </section>

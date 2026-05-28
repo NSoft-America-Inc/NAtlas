@@ -1,0 +1,70 @@
+<section>
+                <div class="slide-counter">SLIDE 10 / 11</div>
+                <div class="slide-subtitle">NStack 실전 워크플로우와 차단 복구</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">[장치] 개발자 실수에 따른 Linter Error 검증 차단 시뮬레이션</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-55" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 6px; position: relative;">
+                        <!-- Terminal Lock Window -->
+                        <div class="vscode-sim-box" style="height: 52%; position: relative; border-color: rgba(244,63,94,0.35); background: rgba(244,63,94,0.015); transform: perspective(1000px) rotateY(10deg) rotateX(3deg); box-shadow: 0 15px 30px rgba(0,0,0,0.6);">
+                            <div style="background: #0d1117; padding: 8px 12px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
+                                <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; color: var(--accent-rose); font-weight: bold;">[ Terminal - git commit ]</span>
+                            </div>
+                            <div style="flex-grow: 1; padding: 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; text-align: left; line-height: 1.4; color: #cbd5e1; overflow: hidden;">
+                                <div style="color: #64748b;">$ git commit -m "feat: migrate react"</div>
+                                <div style="color: #38bdf8; margin-top: 3px;">🔍 Running pre-commit verify_nstack_pipeline...</div>
+                                <div style="color: #f43f5e; margin-top: 3px; font-weight: bold;">❌ [ERROR] report.md has raw placeholder template!</div>
+                                <div style="color: #f43f5e; margin-top: 3px; font-weight: bold; animation: soft-blink 1.5s infinite;">❌ Git commit rejected.</div>
+                            </div>
+                        </div>
+
+                        <!-- 1:1 Matching Card A: Placeholder Scan Alert -->
+                        <div class="glass-panel" style="padding: 10px 15px; display: flex; align-items: center; gap: 12px; border-color: rgba(244,63,94,0.45); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(10deg) rotateX(3deg);">
+                            <div style="font-size: 1.3vw; color: var(--accent-rose); animation: soft-blink 1s infinite;">🚨</div>
+                            <div style="text-align: left;">
+                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">1. 설계 가이드 문구 방치 예방</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">복사 후 채워넣지 않은 템플릿의 잔존 텍스트를 감지해 불량 아카이브 방지</p>
+                            </div>
+                        </div>
+
+                        <!-- 1:1 Matching Card B: Commit Gate Blocker -->
+                        <div class="glass-panel" style="padding: 10px 15px; display: flex; align-items: center; gap: 12px; border-color: rgba(244,63,94,0.45); background: rgba(244,63,94,0.03); border-radius: 12px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transform: perspective(1000px) rotateY(10deg) rotateX(3deg);">
+                            <div style="font-size: 1.3vw; color: var(--accent-rose);">🚧</div>
+                            <div style="text-align: left;">
+                                <h4 style="margin: 0; font-size: 0.8vw; font-weight: 800; color: #ffffff;">2. 로컬 pre-commit 격리 통제</h4>
+                                <p style="margin: 2px 0 0 0; font-size: 0.7vw !important; color: #cbd5e1 !important; line-height: 1.3;">단 한 글자의 가이드 플레이스홀더 발견 시에도 커밋을 강경 거절 차단</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🚨 바쁜 개발자가 흔히 저지르는 템플릿 방치 차단 시연
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                데모 시연을 위해, 개발자가 어설프게 한글 가이드 플레이스홀더를 지우지 않거나<br>
+                                필수 헤더 명에 오타를 낸 상태로 커밋을 쳤을 때, 로컬 훅이 단호하게 차단하는 시뮬레이션입니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong style="color: var(--accent-rose);">설계 가이드 문구 방치 예방</strong>:<br>
+                                    귀찮아서 내용 없이 템플릿 포맷만 복사해 넘기려는 불량 지식 축적을 완벽 차단
+                                </li>
+                                <li>
+                                    <strong style="color: var(--accent-rose);">로컬 샌드박스의 입구 단속</strong>:<br>
+                                    단 한 글자의 플레이스홀더 단어 검출 시에도 무결점 수호를 위해 커밋 거절
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>

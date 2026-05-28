@@ -1,0 +1,112 @@
+<section>
+                <div class="slide-counter">SLIDE 08 / 11</div>
+                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+                
+                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Wiki Browser: 3D 지식 지도의 탄생</h2>
+                
+                <div class="split-container-2col">
+                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(168,85,247,0.06); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
+                        
+                        <!-- Floating Code Syntax Badge -->
+                        <div style="position: absolute; top: -5%; left: -10%; width: 145px; background: rgba(8,12,22,0.92); border: 1.2px solid var(--accent-blue); border-radius: 8px; padding: 6px 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 10px rgba(14,165,233,0.1); --rot: -4deg; animation: float-slow 4s ease-in-out infinite; z-index: 10; box-sizing: border-box; text-align: left; font-family: monospace;">
+                            <strong style="font-size: 0.6vw; color: #60a5fa; display: block; margin-bottom: 2px;">📄 Markdown Syntax</strong>
+                            <span style="font-size: 0.52vw; color: #cbd5e1; display: block; line-height: 1.25;">refer to <span style="color: var(--accent-purple); font-weight: bold;">[[todo-app]]</span> for detail...</span>
+                        </div>
+
+                        <!-- Drag Gesture Physics Tag -->
+                        <div style="position: absolute; bottom: -5%; right: -5%; width: 135px; background: rgba(8,12,22,0.92); border: 1.2px solid var(--accent-purple); border-radius: 8px; padding: 6px 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 0 10px rgba(168,85,247,0.1); --rot: 2deg; animation: float-slow 5s ease-in-out infinite; z-index: 10; box-sizing: border-box; text-align: left;">
+                            <strong style="font-size: 0.6vw; color: #c084fc; display: block; margin-bottom: 2px;">⚡ Force Spring</strong>
+                            <span style="font-size: 0.52vw; color: #cbd5e1; display: block; line-height: 1.25;">Haptic Drag ➔ D3-Force Re-Arrangement</span>
+                        </div>
+
+                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.1); animation: float-slow 5s ease-in-out infinite; left: -10px;">
+                            <!-- 3D Interactive Reacting Node Map SVG -->
+                            <svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <filter id="neon-violet-glow" x="-20%" y="-20%" width="140%" height="140%">
+                                        <feGaussianBlur stdDeviation="6" result="blur" />
+                                        <feMerge>
+                                            <feMergeNode in="blur" />
+                                            <feMergeNode in="SourceGraphic" />
+                                        </feMerge>
+                                    </filter>
+                                </defs>
+                                <!-- Orbit grid -->
+                                <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(168,85,247,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+                                <circle cx="100" cy="100" r="45" fill="none" stroke="rgba(168,85,247,0.15)" stroke-width="1" stroke-dasharray="2 2"/>
+                                
+                                <!-- Connection Lines -->
+                                <line x1="100" y1="100" x2="50" y2="60" stroke="rgba(244,63,94,0.3)" stroke-width="1.8"/>
+                                <line x1="100" y1="100" x2="150" y2="60" stroke="rgba(16,185,129,0.3)" stroke-width="1.8"/>
+                                <line x1="100" y1="100" x2="60" y2="140" stroke="rgba(14,165,233,0.3)" stroke-width="1.8"/>
+                                <line x1="100" y1="100" x2="140" y2="140" stroke="rgba(245,158,11,0.3)" stroke-width="1.8"/>
+                                
+                                <path d="M 50,60 C 100,20 150,60 150,60" fill="none" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="3 3" style="animation: laser-glow 2s infinite;"/>
+                                
+                                <!-- Core Hub Node -->
+                                <circle cx="100" cy="100" r="16" fill="#a855f7" filter="url(#neon-violet-glow)" style="animation: scale-pulse 3s infinite;"/>
+                                <text x="100" y="103" fill="#ffffff" font-family="'Outfit', sans-serif" font-size="6.5" font-weight="900" text-anchor="middle">todo-app</text>
+                                
+                                <!-- Outlying Nodes -->
+                                <!-- Vanilla Todo (Rose) -->
+                                <g transform="translate(50, 60)" style="animation: float-slow 4s ease-in-out infinite;">
+                                    <circle cx="0" cy="0" r="10" fill="#f43f5e" filter="url(#neon-violet-glow)"/>
+                                    <text x="0" y="18" fill="#f43f5e" font-family="'Outfit', sans-serif" font-size="6" font-weight="bold" text-anchor="middle">vanilla-todo</text>
+                                    <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+                                </g>
+                                
+                                <!-- React Migration (Emerald) -->
+                                <g transform="translate(150, 60)">
+                                    <circle cx="0" cy="0" r="10" fill="#10b981" filter="url(#neon-violet-glow)"/>
+                                    <text x="0" y="18" fill="#10b981" font-family="'Outfit', sans-serif" font-size="6" font-weight="bold" text-anchor="middle">react-migration</text>
+                                    <circle cx="0" cy="0" r="3" fill="#ffffff"/>
+                                </g>
+                                
+                                <!-- SQLite Schema (Blue) -->
+                                <g transform="translate(60, 140)">
+                                    <circle cx="0" cy="0" r="9" fill="#0ea5e9" filter="url(#neon-violet-glow)"/>
+                                    <text x="0" y="17" fill="#0ea5e9" font-family="'Outfit', sans-serif" font-size="6" font-weight="bold" text-anchor="middle">sqlite-schema</text>
+                                    <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
+                                </g>
+                                
+                                <!-- DevSecOps (Amber) -->
+                                <g transform="translate(140, 140)">
+                                    <circle cx="0" cy="0" r="9" fill="#f59e0b" filter="url(#neon-violet-glow)"/>
+                                    <text x="0" y="17" fill="#f59e0b" font-family="'Outfit', sans-serif" font-size="6" font-weight="bold" text-anchor="middle">devsecops</text>
+                                    <circle cx="0" cy="0" r="2.5" fill="#ffffff"/>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
+                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
+                            🌐 3D 물리 웹 뷰어 상에 살아 움직이는 전사 지식 지도
+                        </h3>
+                        
+                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
+                            <p style="margin: 0; text-align: center; max-width: 95%;">
+                                1단계에서 2단계 마이그레이션으로 천이되며 생성되었던 3종 지식 문서들이<br>
+                                NAtlas 위키 브라우저 상에 유기적으로 결합된 반응형 노드로 철컥 안착 시각화됩니다.
+                            </p>
+                            
+                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
+                                <li>
+                                    <strong>이중 대괄호 기반 물리적 연결</strong>:<br>
+                                    마크다운 내 인용했던 `[[todo-app-vanilla]]` 링크를 분석해 노드 간 실선 연결 완수
+                                </li>
+                                <li>
+                                    <strong>생생한 3D 반응형 노드 인터랙션</strong>:<br>
+                                    마우스 드래그 및 결합 시 햅틱 자성 자력선이 뿜어지는 프리미엄 UI
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-master-footer">
+                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+                    <span>NSoft America, Inc.</span>
+                </div>
+            </section>
