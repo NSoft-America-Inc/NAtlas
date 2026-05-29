@@ -118,16 +118,18 @@ log "${BOLD}  [시스템 감지]${RESET} macOS Darwin (Platform OS detected)"
 br
 
 # ─── 4. 설치 옵션 인터랙티브 메뉴 분기 ────────────────────────────
-log "${BOLD}  설치하실 패키지 시나리오를 선택해주세요:${RESET}"
-br
+if [ -z "$INSTALL_MODE" ]; then
+  log "${BOLD}  설치하실 패키지 시나리오를 선택해주세요:${RESET}"
+  br
 
-interactive_menu \
-  "NAtlas + NStack 통합 온보딩 환경 구축 (권장 — 원클릭 E2E)" \
-  "NAtlas 전사 지식 탐색기 데스크탑 브라우저 단독 설치" \
-  "NStack AI 에이전트 개발 표준 및 파이프라인 단독 설정"
+  interactive_menu \
+    "NAtlas + NStack 통합 온보딩 환경 구축 (권장 — 원클릭 E2E)" \
+    "NAtlas 전사 지식 탐색기 데스크탑 브라우저 단독 설치" \
+    "NStack AI 에이전트 개발 표준 및 파이프라인 단독 설정"
 
-INSTALL_MODE=$MENU_RESULT
-br
+  INSTALL_MODE=$MENU_RESULT
+  br
+fi
 
 # ─── 5. 핵심 설치 프로세스 위임 오케스트레이션 ────────────────────────
 case "$INSTALL_MODE" in
@@ -179,8 +181,18 @@ install_nstack() {
     nstack_setup="$PROJECT_ROOT/setup"
   fi
 
+  # NStack 디렉토리 자동 탐색 및 누락 시 자동 복제 (Symmetrical Onboarding)
   if [ -z "$nstack_setup" ]; then
-    fail "NStack setup 스크립트를 탐색할 수 없습니다. NStack 디렉토리가 이웃에 존재해야 합니다."
+    warn "이웃 디렉토리에 NStack이 감지되지 않았습니다. GitHub에서 자동으로 복제(Clone)합니다..."
+    git clone https://github.com/NSoft-America-Inc/NStack.git "$PROJECT_ROOT/../NStack" --quiet 2>/dev/null || true
+    
+    if [ -f "$PROJECT_ROOT/../NStack/setup" ]; then
+      nstack_setup="$PROJECT_ROOT/../NStack/setup"
+    fi
+  fi
+
+  if [ -z "$nstack_setup" ] || [ ! -f "$nstack_setup" ]; then
+    fail "NStack setup 스크립트를 탐색할 수 없습니다. NStack 디렉토리가 필요합니다."
   fi
 
   # NStack 셋업 스크립트를 quiet 모드 백그라운드로 스폰하여 스피너 결합

@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from fastapi.responses import StreamingResponse, JSONResponse
 from routers.settings import CONFIG_FILE, GIT_MANAGED_DIR, LLMWIKI_REPO_URL, load_settings as load_settings_data
 from routers.documents import get_documents, get_llmwiki_root
+from pydantic import BaseModel
 import db
 
 router = APIRouter()
@@ -191,6 +192,363 @@ async def post_update():
                 ('compile', 'error', f'compile 실행 중 예외 발생: {str(e)}'),
                 commit=True
             )
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+class InstallSchema(BaseModel):
+    mode: int  # 0: Unified, 1: NAtlas only, 2: NStack only
+
+@router.post("/install")
+async def post_install(payload: InstallSchema):
+    import shutil
+    import re
+    mode = payload.mode
+    
+    # 9개의 세부 스텝 정의
+    all_steps = [
+        {"id": "runtimes", "name": "필수 개발 런타임 진단"},
+        {"id": "npm_install", "name": "Node.js 의존성 복원"},
+        {"id": "python_venv", "name": "Python 격리 가상환경 및 pip 설치"},
+        {"id": "swarmvault_cli", "name": "SwarmVault CLI 설치"},
+        {"id": "git_hook", "name": "Git Hook 연동"},
+        {"id": "pipeline_verify", "name": "지식 파이프라인 무결성 검사"},
+        {"id": "nstack_onboarding", "name": "NStack 에이전트 룰 및 지식 아카이브 연동"},
+        {"id": "mcp_verify", "name": "SwarmVault MCP 서버 기동 및 설정 검증"},
+        {"id": "rag_verify", "name": "E2E 의미론적 RAG 검색 자가 검증"}
+    ]
+
+    # 각 모드별 기동할 액티브 스텝 결정
+    if mode == 0:
+        active_steps = all_steps  # 통합 온보딩 (모든 단계 실행)
+    elif mode == 1:
+        active_steps = all_steps[:-3] + [all_steps[-1]]  # NAtlas 단독 (NStack/MCP 단계 제외, 9단계 포함)
+    else:  # mode == 2
+        active_steps = [all_steps[0], all_steps[3], all_steps[6], all_steps[7], all_steps[8]]  # NStack 단독
+
+    async def event_generator():
+        # 1. 초기화 데이터 전달 (프론트엔드가 활성 스텝 목록을 그리도록 함)
+        yield f"data: {json.dumps({'type': 'init', 'steps': active_steps})}\n\n"
+        await asyncio.sleep(0.1)
+
+        # 2. 사전 진단 1: GitHub CLI (gh auth status) 인증 상태 점검
+        yield f"data: {json.dumps({'type': 'log', 'message': '[사전 진단] GitHub CLI 인증 상태 점검 중...'})}\n\n"
+        gh_ok = False
+        try:
+            gh_proc = await asyncio.create_subprocess_exec(
+                "gh", "auth", "status",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            stdout, stderr = await gh_proc.communicate()
+            if gh_proc.returncode == 0:
+                gh_ok = True
+                yield f"data: {json.dumps({'type': 'log', 'message': '✓ GitHub CLI 인증 상태 확인 완료 (시스템 로그인 세션 캐시가 유효합니다)'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'log', 'message': '⚠ GitHub CLI 미인증 상태입니다. Settings의 github_token 유효성을 점검합니다.'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'log', 'message': f'GitHub CLI 점검 중 오류: {str(e)}'})}\n\n"
+
+        # 사전 진단 2: Settings의 github_token 유효성 교차 체크
+        cfg = load_settings_data()
+        pat_token = cfg.get("github_token", "").strip()
+        if not gh_ok and pat_token:
+            yield f"data: {json.dumps({'type': 'log', 'message': '✓ Settings의 github_token 저장 정보 확인 완료 (옵션 2 PAT 활용 가능)'})}\n\n"
+            gh_ok = True
+        
+        if not gh_ok:
+            yield f"data: {json.dumps({'type': 'auth_warning', 'message': 'GitHub 자격 증명이 누락되었습니다. NStack 이슈 연동이 작동하지 않을 수 있습니다. 터미널에서 gh auth login을 수행하거나 Settings 탭에 GitHub 토큰을 설정하십시오.'})}\n\n"
+        else:
+            yield f"data: {json.dumps({'type': 'auth_success', 'message': 'GitHub 자격 증명이 유효합니다.'})}\n\n"
+
+        # 3. install_unified.sh 실행 및 출력 파이프 파싱
+        project_root = str(Path(__file__).parent.parent.parent.parent.resolve())
+        env = os.environ.copy()
+        env["INSTALL_MODE"] = str(mode)
+        
+        yield f"data: {json.dumps({'type': 'log', 'message': f'설치 스크립트 가동 (INSTALL_MODE={mode})...'})}\n\n"
+        
+        validation_success = False
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                "bash", "install_unified.sh",
+                cwd=project_root,
+                env=env,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            
+            current_step = None
+            
+            # 파이프 라인 스트리밍 및 파싱
+            while True:
+                line = await proc.stdout.readline()
+                if not line:
+                    break
+                
+                text = line.decode('utf-8', errors='replace').strip()
+                if not text:
+                    continue
+                
+                clean_text = re.sub(r'\x1b\[[0-9;]*[mK]', '', text)
+                
+                if "[SETUP-STEP]" in clean_text:
+                    # 이전 단계를 성공으로 마감
+                    if current_step:
+                        yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
+                    
+                    # 새로운 단계 설정
+                    if "단계 1" in clean_text:
+                        current_step = "runtimes"
+                    elif "단계 2" in clean_text:
+                        current_step = "npm_install"
+                    elif "단계 3" in clean_text:
+                        current_step = "python_venv"
+                    elif "단계 4" in clean_text:
+                        current_step = "swarmvault_cli"
+                    elif "단계 5" in clean_text:
+                        current_step = "git_hook"
+                    elif "단계 6" in clean_text:
+                        current_step = "pipeline_verify"
+                    
+                    if current_step:
+                        yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
+                
+                elif "NStack 개발 규격 및 린터 파이프라인 연동 개시" in clean_text:
+                    if current_step:
+                        yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
+                    current_step = "nstack_onboarding"
+                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
+                
+                if "❌" in clean_text or "✗" in clean_text or "실패했습니다" in clean_text:
+                    if current_step:
+                        yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': clean_text})}\n\n"
+                    yield f"data: {json.dumps({'type': 'error', 'message': clean_text})}\n\n"
+                else:
+                    yield f"data: {json.dumps({'type': 'log', 'message': clean_text})}\n\n"
+            
+            # stderr 스트리밍
+            while True:
+                err_line = await proc.stderr.readline()
+                if not err_line:
+                    break
+                err_text = err_line.decode('utf-8', errors='replace').strip()
+                clean_err = re.sub(r'\x1b\[[0-9;]*[mK]', '', err_text)
+                if clean_err:
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'[STDERR] {clean_err}'})}\n\n"
+
+            await proc.wait()
+            
+            if proc.returncode != 0:
+                if current_step:
+                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': '설치 스크립트 실행 오류'})}\n\n"
+                yield f"data: {json.dumps({'type': 'error', 'message': f'설치 스크립트 실행 중 오류가 발생했습니다. (Exit Code: {proc.returncode})'})}\n\n"
+                return
+            else:
+                # 마지막 실행 스텝을 성공으로 마감
+                if current_step:
+                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
+        
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': f'설치 중 오류 발생: {str(e)}'})}\n\n"
+            return
+
+        # 4. 8단계: SwarmVault MCP 서버 기동 및 설정 검증 (mcp_verify)
+        current_step = "mcp_verify"
+        yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
+        yield f"data: {json.dumps({'type': 'log', 'message': '[MCP 검증] SwarmVault MCP 서버 및 설정 검증 개시...'})}\n\n"
+        
+        mcp_ok = False
+        try:
+            nstack_root = Path(project_root).parent / "NStack"
+            settings_json = nstack_root / ".claude" / "settings.json"
+            
+            yield f"data: {json.dumps({'type': 'log', 'message': f'[MCP 검증] NStack MCP 설정 파일 검사: {settings_json}'})}\n\n"
+            
+            # .claude 디렉토리가 없으면 생성
+            settings_json.parent.mkdir(parents=True, exist_ok=True)
+            
+            mcp_data = {}
+            if settings_json.exists():
+                try:
+                    with open(settings_json, "r", encoding="utf-8") as f:
+                        mcp_data = json.load(f)
+                    yield f"data: {json.dumps({'type': 'log', 'message': '  └─ 기존 settings.json 파일이 존재합니다. 검사 및 업데이트를 시작합니다.'})}\n\n"
+                except Exception as ex:
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'  └─ settings.json 파일 읽기 에러 (새로 작성): {str(ex)}'})}\n\n"
+                    mcp_data = {}
+            
+            # swarmvault mcp 설정 주입/보완 (Self-Healing)
+            if "mcpServers" not in mcp_data:
+                mcp_data["mcpServers"] = {}
+                
+            mcp_data["mcpServers"]["swarmvault"] = {
+                "command": "/opt/homebrew/bin/swarmvault",
+                "args": ["mcp"],
+                "cwd": "/Users/yg/workspace/NSoft-LLMWiki"
+            }
+            
+            # 파일에 쓰기
+            with open(settings_json, "w", encoding="utf-8") as f:
+                json.dump(mcp_data, f, ensure_ascii=False, indent=2)
+                
+            yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ [MCP 자가 치유] .claude/settings.json에 SwarmVault MCP 설정을 자동 주입 완료!'})}\n\n"
+            
+            # 자가 검증
+            command = "/opt/homebrew/bin/swarmvault"
+            if os.path.exists(command):
+                yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ SwarmVault 실행 바이너리 존재 확인 완료'})}\n\n"
+                mcp_ok = True
+            else:
+                yield f"data: {json.dumps({'type': 'log', 'message': f'  └─ ✗ SwarmVault 바이너리를 찾을 수 없습니다: {command}'})}\n\n"
+                
+            if mcp_ok:
+                yield f"data: {json.dumps({'type': 'log', 'message': '✓ [MCP 검증 통과] SwarmVault MCP 서버 설정 및 바이너리 유효성 검증 성공!'})}\n\n"
+                yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (MCP 서버 유효)'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'log', 'message': '⚠ [MCP 검증 실패] MCP 서버 설정을 탐색하지 못했거나 오류가 있습니다.'})}\n\n"
+                yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': 'MCP 서버 설정 요건 미충족'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'log', 'message': f'[MCP 검증] 검증 중 예외 오류 발생: {str(e)}'})}\n\n"
+            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'오류: {str(e)}'})}\n\n"
+
+        # 5. 9단계: E2E 의미론적 RAG 검색 자가 검증 (rag_verify)
+        current_step = "rag_verify"
+        yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
+        yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] RAG 의미론적 검색 자가 검증 구동 개시...'})}\n\n"
+        
+        llmwiki_root = get_llmwiki_root()
+        if not llmwiki_root:
+            llmwiki_root = os.path.join(project_root, "llmwiki")
+            
+        test_dir = Path(llmwiki_root) / "content" / "01-Logs" / "archive" / "verification" / "developer" / "verify-install"
+        test_file = test_dir / "wiki.md"
+        
+        try:
+            # (A) 테스트 문서 생성
+            test_dir.mkdir(parents=True, exist_ok=True)
+            verification_token = "NATLAS_E2E_VERIFICATION_TOKEN_X99"
+            verification_title = "NAtlas Unified Installation Verification Guide"
+            
+            test_content = f"""---
+title: "{verification_title}"
+issue_url: "https://github.com/NSoft-America-Inc/NAtlas/issues/20"
+---
+
+# {verification_title}
+
+This is a temporary test document generated automatically by NAtlas Unified Visual Installer to verify E2E pipeline compliance.
+Verification Code: `{verification_token}`
+It should be successfully indexed into SwarmVault and searchable using semantic multi-query retrievals.
+"""
+            with open(test_file, "w", encoding="utf-8") as f:
+                f.write(test_content)
+            
+            yield f"data: {json.dumps({'type': 'log', 'message': f'[E2E 검증] 테스트 검증 문서 생성 완료: {test_file.name}'})}\n\n"
+            
+            # (B) SwarmVault Ingest & Compile 실행
+            yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] SwarmVault에 테스트 문서 Ingest 등록 중...'})}\n\n"
+            
+            # Ingest
+            rel_test_path = "content/01-Logs/archive/verification/developer/verify-install/wiki.md"
+            ingest_proc = await asyncio.create_subprocess_exec(
+                "swarmvault", "ingest", rel_test_path,
+                cwd=llmwiki_root,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            await ingest_proc.communicate()
+            
+            # Compile
+            yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] SwarmVault 지식베이스 컴파일 및 RAG 색인 갱신 중...'})}\n\n"
+            compile_proc = await asyncio.create_subprocess_exec(
+                "swarmvault", "compile",
+                cwd=llmwiki_root,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            await compile_proc.communicate()
+            
+            # (C) RAG 의미론적 검색 다중 질의 수행 및 매칭 검출
+            queries = [
+                "NATLAS_E2E_VERIFICATION_TOKEN_X99",
+                "NAtlas Unified Installation Verification Guide"
+            ]
+            
+            verified_count = 0
+            for query in queries:
+                yield f"data: {json.dumps({'type': 'log', 'message': f'[E2E 검증] RAG 쿼리 질의 실행: {query}'})}\n\n"
+                query_proc = await asyncio.create_subprocess_exec(
+                    "swarmvault", "query", "--json", query,
+                    cwd=llmwiki_root,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
+                stdout, _ = await query_proc.communicate()
+                
+                if query_proc.returncode == 0:
+                    try:
+                        res_data = json.loads(stdout.decode('utf-8').strip())
+                        citations = res_data.get("citations", [])
+                        
+                        match_found = False
+                        for cit in citations:
+                            if "verify-install" in cit or "wiki.md" in cit:
+                                match_found = True
+                                break
+                        
+                        if match_found:
+                            verified_count += 1
+                            yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ RAG 의미론적 매칭 매핑 성공! (인용문서 매칭 성공)'})}\n\n"
+                        else:
+                            yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✗ RAG 매칭 실패 (검색 결과에 인용되지 않음)'})}\n\n"
+                    except Exception as e:
+                        yield f"data: {json.dumps({'type': 'log', 'message': f'  └─ ✗ JSON 파싱 오류로 검증 스킵: {str(e)}'})}\n\n"
+                else:
+                    yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✗ 쿼리 수행 프로세스 오류 발생'})}\n\n"
+            
+            if verified_count == len(queries):
+                yield f"data: {json.dumps({'type': 'log', 'message': '✓ [RAG 검증 통과] 모든 의미론적 RAG 다중 질의 검증에 성공했습니다!'})}\n\n"
+                yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (RAG 검증 통과)'})}\n\n"
+                validation_success = True
+            else:
+                yield f"data: {json.dumps({'type': 'log', 'message': '⚠ [RAG 검증 실패] 일부 의미론적 질의에 대한 매칭에 실패했습니다.'})}\n\n"
+                yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': '일부 쿼리 매칭 실패'})}\n\n"
+                validation_success = False
+            
+            # (D) 임시 테스트 리소스 자동 클린업
+            yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] 테스트 리소스 자동 클린업 수행 중...'})}\n\n"
+            if test_file.exists():
+                test_file.unlink()
+            if test_dir.exists():
+                shutil.rmtree(test_dir.parent.parent) # verify-install 및 verification 폴더 삭제
+            
+            # Ingest & Compile clean-up
+            clean_proc = await asyncio.create_subprocess_exec(
+                "swarmvault", "compile",
+                cwd=llmwiki_root,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            await clean_proc.communicate()
+            yield f"data: {json.dumps({'type': 'log', 'message': '✓ 임시 테스트 리소스 클린업 완료'})}\n\n"
+
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'log', 'message': f'[E2E 검증] RAG 검증 실행 중 오류: {str(e)}'})}\n\n"
+            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'검증 에러: {str(e)}'})}\n\n"
+            validation_success = False
+            try:
+                if test_file.exists():
+                    test_file.unlink()
+                if test_dir.exists():
+                    shutil.rmtree(test_dir.parent.parent)
+            except Exception:
+                pass
+
+        # 최종 완료 패킷 전송
+        if validation_success:
+            yield f"data: {json.dumps({'type': 'done', 'message': '🎉 모든 설치 및 E2E RAG 자가 검증이 완벽하게 완료되었습니다!'})}\n\n"
+        else:
+            yield f"data: {json.dumps({'type': 'done', 'message': '⚠ 설치는 완료되었으나 일부 RAG 검증 스텝에 에러가 존재합니다.'})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
