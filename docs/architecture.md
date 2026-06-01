@@ -2,31 +2,44 @@
 
 ## 전체 구조
 
-```
-┌────────────────────────────────────────────────────────────┐
-│                      Electron 앱                            │
-│                                                            │
-│  ┌─────────────────┐  contextBridge  ┌──────────────────┐ │
-│  │ React (renderer) │←──────────────→│ Electron Main    │ │
-│  │  port 3000(dev)  │      IPC       │  (main/index.ts) │ │
-│  │                  │                │                  │ │
-│  │  TanStack Query  │   HTTP/SSE     │  sidecar.ts:     │ │
-│  │  Zustand         │←─────────────→│  Python spawn    │ │
-│  └─────────────────┘  localhost:18420└──────────────────┘ │
-│                                             ↕              │
-│                                    ┌──────────────────┐   │
-│                                    │ Python FastAPI   │   │
-│                                    │  (port 18420)    │   │
-│                                    │  SwarmVault 제어  │   │
-│                                    │  파일시스템      │   │
-│                                    └──────────────────┘   │
-└────────────────────────────────────────────────────────────┘
-              ↕
-  {LLMWIKI_ROOT}/content/                  (문서 아카이브)
-  {LLMWIKI_ROOT}/state/graph.json          (컴파일된 그래프)
-  {LLMWIKI_ROOT}/state/manifests/*.json    (소스별 메타데이터)
-  {LLMWIKI_ROOT}/raw/sources/              (SwarmVault 인제스트 원본)
-  {LLMWIKI_ROOT}/swarmvault.config.json    (SwarmVault 설정)
+```mermaid
+flowchart TB
+    subgraph App["Electron Desktop Application Container"]
+        subgraph Frontend["React (Renderer Process)"]
+            React["React SPA Components<br/>(Port 3000 in dev)"]
+            State["Zustand (UI State)<br/>TanStack Query (Server State)"]
+            React --- State
+        end
+
+        subgraph Backend["Electron Main Process Lifecycle"]
+            Main["Electron Main Process<br/>(src/main/index.ts)"]
+            Sidecar["sidecar.ts<br/>(Child Process Spawn & Guard)"]
+            Main -->|Spawns & Monitors| Sidecar
+        end
+        
+        React <-->|1. contextBridge / IPC| Main
+    end
+
+    subgraph SidecarService["Python FastAPI Sidecar (Port 18420)"]
+        FastAPI["FastAPI Web Server<br/>(routers: swarmvault, settings, documents)"]
+        SVControl["SwarmVault CLI wrapper"]
+        FSControl["Local Filesystem Helpers"]
+        FastAPI --- SVControl
+        FastAPI --- FSControl
+    end
+
+    React <-->|2. HTTP REST API / SSE Streams<br/>(localhost:18420)| FastAPI
+    Sidecar -->|Lifecycle SIGTERM / SIGKILL| FastAPI
+
+    subgraph Storage["LLMWiki Root Storage (Local/Remote)"]
+        Content["content/ (Markdown Archive)"]
+        Graph["state/graph.json (D3 Graph JSON)"]
+        Manifests["state/manifests/*.json (File Index Meta)"]
+        Raw["raw/sources/ (Ingest Raw Source)"]
+        Config["swarmvault.config.json (SwarmVault Config)"]
+    end
+
+    FastAPI <-->|3. SwarmVault CLI Operations & DB CRUD| Storage
 ```
 
 ### LLMWiki 디렉토리 구조
@@ -175,7 +188,7 @@ return StreamingResponse(stream(settings.llmwiki_root), media_type='text/event-s
 ### 3. IPC (시스템 기능만)
 
 폴더 선택 다이얼로그처럼 Electron API가 필요한 경우만 IPC 사용.
-나머지는 모두 FastAPI 직접 호출.
+ 나머지는 모두 FastAPI 직접 호출.
 
 ---
 
