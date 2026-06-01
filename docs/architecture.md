@@ -284,3 +284,53 @@ electron-builder
 ```
 
 Phase 1-2는 개발자 환경(Python + Node.js 설치됨) 전제. Phase 3에서 번들 내장.
+
+---
+
+## NAtlas ↔ NStack 다중 프로젝트 연동 아키텍처
+
+NAtlas와 NStack은 각각 **"지식의 통합 유통/RAG 탐색(Centralized Explorer)"**과 **"개별 개발 프로젝트의 분산 지식 생산(Decentralized Producer)"**의 역할을 담당하며, 상호 보완적인 E2E(End-to-End) 지식 선순환 고리를 형성합니다.
+
+### 1. 연동 흐름 다이어그램
+
+```mermaid
+graph TD
+    subgraph "NStack 다중 프로젝트 영역 (개발자 분산 환경)"
+        P1["NStack 프로젝트 A<br/>(e.g., todo-app)"] -->|1. order.md / report.md 생성| Hub["중앙 로컬 LLMWiki<br/>(content/01-Logs/archive/)"]
+        P2["NStack 프로젝트 B<br/>(e.g., seohan)"] -->|1. order.md / report.md 생성| Hub
+        P3["NStack 프로젝트 C<br/>(e.g., natlas)"] -->|1. order.md / report.md 생성| Hub
+    end
+
+    subgraph "NAtlas 지식 통합 및 유통 영역 (GUI 데스크탑)"
+        Installer["NAtlas GUI 인스톨러<br/>(install_unified.ps1)"] -->|2. Windows 원클릭 셋업| Setup["NStack Core / MCP 자동 설정"]
+        Hub -->|3. 변경 파일 실시간 감지| SV["SwarmVault RAG Engine"]
+        SV -->|4. compile & index 갱신| State["RAG & D3 Graph State"]
+        State -->|5. 지식 소비 & 탐색| UI["NAtlas GUI 브라우저<br/>(Query / WikiGraph 탭)"]
+    end
+    
+    Setup -.->|로컬 에이전트 자율 연동| P1
+    Setup -.->|로컬 에이전트 자율 연동| P2
+```
+
+### 2. E2E 지식 파이프라인의 실시간 연동 원리
+
+1. **분산된 지식의 생산 및 린팅 (NStack)**:
+   * 개발자는 로컬 디바이스의 임의의 NStack 프로젝트 저장소에서 작업을 개별 진행합니다.
+   * 작업 완료 시 에이전트(Antigravity 또는 Claude Code)와 협업하여 **3종 아티팩트(`order.md`, `report.md`, `wiki.md`)**를 생산하며, 로컬 pre-commit 훅과 정합성 린터(`verify_nstack_pipeline.py`)를 통해 무결성을 정적 검증받습니다.
+
+2. **중앙 지식 아카이브로의 자동 이관**:
+   * 검증이 완료된 아티팩트들은 각 개발자 프로젝트 내부에 고립되지 않고, 설정된 공통 경로인 **중앙 로컬 LLMWiki content/ 디렉토리**(`llmwiki/content/01-Logs/archive/{project}/{git_username}/{slug}/`)로 자동으로 안전하게 이관 및 복사됩니다.
+
+3. **NAtlas 백엔드(FastAPI)의 실시간 컴파일**:
+   * NAtlas 데스크탑 앱 백엔드는 중앙 로컬 LLMWiki 디렉토리(`llmwiki_root`)의 파일 변경 내역을 실시간 모니터링합니다.
+   * 새로운 지식 문서가 이관되거나 기존 문서가 수정되면, `swarmvault.py` 백엔드 라우터가 즉시 `swarmvault ingest <file>` 및 `swarmvault compile`을 자동화하여 벡터 인덱스를 갱신합니다.
+
+4. **전사 지식 탐색 및 소비**:
+   * 컴파일 완료 즉시, 전사 직원은 NAtlas GUI 앱의 **Query 탭**을 통해 자연어 질문으로 새 지식을 탐색할 수 있으며, **WikiGraph 탭**에서 D3 물리 Force 그래프 형태로 다차원 지식 지도를 시각적으로 브라우징할 수 있습니다.
+
+### 3. Windows 크로스플랫폼 GUI 온보딩 고도화
+
+Windows 환경의 개발자들에게 복잡한 연동 환경을 Seamless하게 자동화하기 위해 다음 메커니즘을 지원합니다.
+
+* **원클릭 통합 인스톨러 (`install_unified.ps1`)**: Windows 파워쉘 환경에서 Node 의존성, 격리 가상환경(.venv), Git 훅 연동, RAG 자가 진단까지의 9단계 설치 시퀀스를 단 한 번의 버튼 클릭으로 네이티브 처리하고 GUI 상에 실시간 시각화합니다.
+* **Claude Desktop 글로벌 MCP 자가 치유**: `%APPDATA%\Claude\claude_desktop_config.json`을 자동 감지하여 SwarmVault MCP 설정을 주입해 줌으로써, AI 에이전트가 로컬 지식 RAG 탐색 도구들을 자율적으로 활용할 수 있도록 지원합니다.
