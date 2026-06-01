@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import asyncio
+import platform
 from pathlib import Path
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse, JSONResponse
@@ -213,7 +214,7 @@ async def post_install(payload: InstallSchema):
         {"id": "git_hook", "name": "Git Hook 연동"},
         {"id": "pipeline_verify", "name": "지식 파이프라인 무결성 검사"},
         {"id": "nstack_onboarding", "name": "NStack 에이전트 룰 및 지식 아카이브 연동"},
-        {"id": "mcp_verify", "name": "SwarmVault MCP 서버 기동 및 설정 검증"},
+        {"id": "mcp_verify", "name": "Antigravity 표준 가이드 룰 검증"},
         {"id": "rag_verify", "name": "E2E 의미론적 RAG 검색 자가 검증"}
     ]
 
@@ -260,22 +261,33 @@ async def post_install(payload: InstallSchema):
         else:
             yield f"data: {json.dumps({'type': 'auth_success', 'message': 'GitHub 자격 증명이 유효합니다.'})}\n\n"
 
-        # 3. install_unified.sh 실행 및 출력 파이프 파싱
+        # 3. install_unified.sh / install_unified.ps1 실행 및 출력 파이프 파싱 (OS 분기 멀티플렉싱)
         project_root = str(Path(__file__).parent.parent.parent.parent.resolve())
         env = os.environ.copy()
         env["INSTALL_MODE"] = str(mode)
         
-        yield f"data: {json.dumps({'type': 'log', 'message': f'설치 스크립트 가동 (INSTALL_MODE={mode})...'})}\n\n"
+        is_windows = platform.system() == "Windows"
+        script_name = "install_unified.ps1" if is_windows else "install_unified.sh"
+        yield f"data: {json.dumps({'type': 'log', 'message': f'설치 스크립트 가동 (Platform: {platform.system()}, File: {script_name}, Mode={mode})...'})}\n\n"
         
         validation_success = False
         try:
-            proc = await asyncio.create_subprocess_exec(
-                "bash", "install_unified.sh",
-                cwd=project_root,
-                env=env,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
+            if is_windows:
+                proc = await asyncio.create_subprocess_exec(
+                    "powershell.exe", "-ExecutionPolicy", "Bypass", "-File", "install_unified.ps1",
+                    cwd=project_root,
+                    env=env,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
+            else:
+                proc = await asyncio.create_subprocess_exec(
+                    "bash", "install_unified.sh",
+                    cwd=project_root,
+                    env=env,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE
+                )
             
             current_step = None
             
@@ -352,46 +364,22 @@ async def post_install(payload: InstallSchema):
             yield f"data: {json.dumps({'type': 'error', 'message': f'설치 중 오류 발생: {str(e)}'})}\n\n"
             return
 
-        # 4. 8단계: SwarmVault MCP 서버 기동 및 설정 검증 (mcp_verify)
+        # 4. 8단계: Antigravity 표준 가이드 룰 검증 (mcp_verify)
         current_step = "mcp_verify"
         yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
-        yield f"data: {json.dumps({'type': 'log', 'message': '[MCP 검증] SwarmVault MCP 서버 및 설정 검증 개시...'})}\n\n"
+        yield f"data: {json.dumps({'type': 'log', 'message': '[룰 검증] Antigravity 표준 개발 가이드 룰 검증 개시...'})}\n\n"
         
-        mcp_ok = False
         try:
-            nstack_root = Path(project_root).parent / "NStack"
-            settings_json = nstack_root / ".claude" / "settings.json"
-            
-            yield f"data: {json.dumps({'type': 'log', 'message': f'[MCP 검증] NStack MCP 설정 파일 검사: {settings_json}'})}\n\n"
-            
-            # .claude 디렉토리가 없으면 생성
-            settings_json.parent.mkdir(parents=True, exist_ok=True)
-            
-            mcp_data = {}
-            if settings_json.exists():
-                try:
-                    with open(settings_json, "r", encoding="utf-8") as f:
-                        mcp_data = json.load(f)
-                    yield f"data: {json.dumps({'type': 'log', 'message': '  └─ 기존 settings.json 파일이 존재합니다. 검사 및 업데이트를 시작합니다.'})}\n\n"
-                except Exception as ex:
-                    yield f"data: {json.dumps({'type': 'log', 'message': f'  └─ settings.json 파일 읽기 에러 (새로 작성): {str(ex)}'})}\n\n"
-                    mcp_data = {}
-            
-            # swarmvault mcp 설정 주입/보완 (Self-Healing)
-            if "mcpServers" not in mcp_data:
-                mcp_data["mcpServers"] = {}
-                
-            mcp_data["mcpServers"]["swarmvault"] = {
-                "command": "/opt/homebrew/bin/swarmvault",
-                "args": ["mcp"],
-                "cwd": "/Users/yg/workspace/NSoft-LLMWiki"
-            }
-            
-            # 파일에 쓰기
-            with open(settings_json, "w", encoding="utf-8") as f:
-                json.dump(mcp_data, f, ensure_ascii=False, indent=2)
-                
-            yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ [MCP 자가 치유] .claude/settings.json에 SwarmVault MCP 설정을 자동 주입 완료!'})}\n\n"
+            rules_path = Path(project_root) / ".antigravity" / "rules"
+            if rules_path.exists():
+                yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ .antigravity/rules 파일 존재 및 주입 확인 완료'})}\n\n"
+                yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (Antigravity 단독 연동)'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✗ .antigravity/rules 파일을 찾을 수 없습니다.'})}\n\n"
+                yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': 'Antigravity 표준 룰 요건 미충족'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'log', 'message': f'[룰 검증] 검증 중 예외 오류 발생: {str(e)}'})}\n\n"
+            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'오류: {str(e)}'})}\n\n"✓ [MCP 자가 치유] .claude/settings.json에 SwarmVault MCP 설정을 자동 주입 완료!'})}\n\n"
             
             # 자가 검증
             command = "/opt/homebrew/bin/swarmvault"

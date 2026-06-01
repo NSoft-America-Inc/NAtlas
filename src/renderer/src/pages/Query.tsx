@@ -94,7 +94,8 @@ export function Query() {
 
   // Inbound path parsing helper
   const parseCitationPath = (citPath: string) => {
-    const relPath = citPath.startsWith('content/') ? citPath.substring(8) : citPath
+    const normalizedPath = citPath.replace(/\\/g, '/')
+    const relPath = normalizedPath.startsWith('content/') ? normalizedPath.substring(8) : normalizedPath
     const parts = relPath.split('/')
     if (parts[0] === '01-Logs' && parts[1] === 'archive' && parts.length >= 5) {
       return {
@@ -168,7 +169,8 @@ export function Query() {
   }
 
   const navigateToDocument = (path: string) => {
-    setSelectedWikiPath(path)
+    const normalized = path.replace(/\\/g, '/')
+    setSelectedWikiPath(normalized)
     setActiveTab('wiki')
   }
 
