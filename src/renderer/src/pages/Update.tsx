@@ -40,9 +40,7 @@ export function Update() {
   const [activeSection, setActiveSection] = useState<'install' | 'sync'>('install')
 
   // Installer specific state
-  const [coreInstall, setCoreInstall] = useState<boolean>(true)
-  const [projectCreate, setProjectCreate] = useState<boolean>(true)
-  const [e2eTest, setE2eTest] = useState<boolean>(true)
+  const [selectedScenario, setSelectedScenario] = useState<'core' | 'project' | 'e2e'>('core')
   const [parentPath, setParentPath] = useState<string>('')
   const [projectName, setProjectName] = useState<string>('nstack-project')
   const [isInstalling, setIsInstalling] = useState<boolean>(false)
@@ -77,9 +75,9 @@ export function Update() {
   const visibleSteps = isInstalling
     ? installSteps
     : [
-        ...(coreInstall ? allSteps.slice(0, 4) : []),
-        ...(projectCreate ? allSteps.slice(4, 8) : []),
-        ...(e2eTest ? [allSteps[8]] : []),
+        ...(selectedScenario === 'core' ? allSteps.slice(0, 4) : []),
+        ...(selectedScenario === 'project' ? allSteps.slice(4, 8) : []),
+        ...(selectedScenario === 'e2e' ? [allSteps[8]] : []),
       ]
 
   // RAG Instant test state
@@ -147,9 +145,9 @@ export function Update() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          core_install: coreInstall,
-          project_create: projectCreate,
-          e2e_test: e2eTest,
+          core_install: selectedScenario === 'core',
+          project_create: selectedScenario === 'project',
+          e2e_test: selectedScenario === 'e2e',
           parent_path: parentPath,
           project_name: projectName,
         }),
@@ -447,24 +445,24 @@ export function Update() {
                   {/* Card 1: Core Install */}
                   <button
                     type="button"
-                    onClick={() => !isInstalling && setCoreInstall(!coreInstall)}
+                    onClick={() => !isInstalling && setSelectedScenario('core')}
                     disabled={isInstalling}
                     className={`text-left p-4 border rounded-xl flex flex-col gap-2 transition-all duration-300 relative overflow-hidden group ${
-                      coreInstall
+                      selectedScenario === 'core'
                         ? 'border-indigo-500 bg-indigo-500/5 shadow-md shadow-indigo-500/5'
                         : 'border-border bg-card/5 opacity-60 hover:opacity-85'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        coreInstall ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
+                        selectedScenario === 'core' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
                       }`}>
                         Core Environment
                       </span>
-                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
-                        coreInstall ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                        selectedScenario === 'core' ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
                       }`}>
-                        {coreInstall && <Check className="w-3 h-3 text-white" />}
+                        {selectedScenario === 'core' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                       </div>
                     </div>
                     <div className="font-bold text-sm text-foreground group-hover:text-indigo-300 transition-colors duration-300">코어 개발 환경 구축</div>
@@ -474,24 +472,24 @@ export function Update() {
                   {/* Card 2: Project Create */}
                   <button
                     type="button"
-                    onClick={() => !isInstalling && setProjectCreate(!projectCreate)}
+                    onClick={() => !isInstalling && setSelectedScenario('project')}
                     disabled={isInstalling}
                     className={`text-left p-4 border rounded-xl flex flex-col gap-2 transition-all duration-300 relative overflow-hidden group ${
-                      projectCreate
+                      selectedScenario === 'project'
                         ? 'border-indigo-500 bg-indigo-500/5 shadow-md shadow-indigo-500/5'
                         : 'border-border bg-card/5 opacity-60 hover:opacity-85'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        projectCreate ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
+                        selectedScenario === 'project' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
                       }`}>
                         Project Setup
                       </span>
-                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
-                        projectCreate ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                        selectedScenario === 'project' ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
                       }`}>
-                        {projectCreate && <Check className="w-3 h-3 text-white" />}
+                        {selectedScenario === 'project' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                       </div>
                     </div>
                     <div className="font-bold text-sm text-foreground group-hover:text-indigo-300 transition-colors duration-300">NStack 프로젝트 생성</div>
@@ -501,24 +499,24 @@ export function Update() {
                   {/* Card 3: E2E Test */}
                   <button
                     type="button"
-                    onClick={() => !isInstalling && setE2eTest(!e2eTest)}
+                    onClick={() => !isInstalling && setSelectedScenario('e2e')}
                     disabled={isInstalling}
                     className={`text-left p-4 border rounded-xl flex flex-col gap-2 transition-all duration-300 relative overflow-hidden group ${
-                      e2eTest
+                      selectedScenario === 'e2e'
                         ? 'border-indigo-500 bg-indigo-500/5 shadow-md shadow-indigo-500/5'
                         : 'border-border bg-card/5 opacity-60 hover:opacity-85'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        e2eTest ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
+                        selectedScenario === 'e2e' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
                       }`}>
                         Validation
                       </span>
-                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
-                        e2eTest ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${
+                        selectedScenario === 'e2e' ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
                       }`}>
-                        {e2eTest && <Check className="w-3 h-3 text-white" />}
+                        {selectedScenario === 'e2e' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                       </div>
                     </div>
                     <div className="font-bold text-sm text-foreground group-hover:text-indigo-300 transition-colors duration-300">통합 E2E 테스트 진행</div>
@@ -527,8 +525,8 @@ export function Update() {
                 </div>
               </div>
 
-              {/* Dynamic Path Inputs - Only visible if projectCreate is active */}
-              {projectCreate && (
+              {/* Dynamic Path Inputs - Only visible if selectedScenario === 'project' */}
+              {selectedScenario === 'project' && (
                 <div className="border border-border rounded-xl p-5 bg-card/10 flex flex-col gap-4 animate-in fade-in slide-in-from-top duration-300">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-400">NStack 프로젝트 다중 설치 경로 설정</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -591,7 +589,7 @@ export function Update() {
                 <Button
                   size="lg"
                   onClick={handleInstall}
-                  disabled={isInstalling || isUpdating || (!coreInstall && !projectCreate && !e2eTest) || (projectCreate && (!parentPath || !projectName))}
+                  disabled={isInstalling || isUpdating || (selectedScenario === 'project' && (!parentPath || !projectName))}
                   className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-muted/40 text-white font-bold h-11 px-6 shadow-md shadow-indigo-600/10 transition-all duration-300"
                 >
                   {isInstalling ? (

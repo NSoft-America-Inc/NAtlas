@@ -557,45 +557,6 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
         else:
             yield f"data: {json.dumps({'type': 'done', 'message': '🎉 선택된 설치 시퀀스가 성공적으로 완료되었습니다!'})}\n\n"
 
-    return StreamingResponse(event_generator(), media_type="text/event-stream")sage': '⚠ [RAG 검증 실패] 일부 의미론적 질의에 대한 매칭에 실패했습니다.'})}\n\n"
-                yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': '일부 쿼리 매칭 실패'})}\n\n"
-                validation_success = False
-            
-            # (D) 임시 테스트 리소스 자동 클린업
-            yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] 테스트 리소스 자동 클린업 수행 중...'})}\n\n"
-            if test_file.exists():
-                test_file.unlink()
-            if test_dir.exists():
-                shutil.rmtree(test_dir.parent.parent) # verify-install 및 verification 폴더 삭제
-            
-            # Ingest & Compile clean-up
-            clean_proc = await asyncio.create_subprocess_exec(
-                "swarmvault", "compile",
-                cwd=llmwiki_root,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
-            await clean_proc.communicate()
-            yield f"data: {json.dumps({'type': 'log', 'message': '✓ 임시 테스트 리소스 클린업 완료'})}\n\n"
-
-        except Exception as e:
-            yield f"data: {json.dumps({'type': 'log', 'message': f'[E2E 검증] RAG 검증 실행 중 오류: {str(e)}'})}\n\n"
-            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'검증 에러: {str(e)}'})}\n\n"
-            validation_success = False
-            try:
-                if test_file.exists():
-                    test_file.unlink()
-                if test_dir.exists():
-                    shutil.rmtree(test_dir.parent.parent)
-            except Exception:
-                pass
-
-        # 최종 완료 패킷 전송
-        if validation_success:
-            yield f"data: {json.dumps({'type': 'done', 'message': '🎉 모든 설치 및 E2E RAG 자가 검증이 완벽하게 완료되었습니다!'})}\n\n"
-        else:
-            yield f"data: {json.dumps({'type': 'done', 'message': '⚠ 설치는 완료되었으나 일부 RAG 검증 스텝에 에러가 존재합니다.'})}\n\n"
-
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 @router.post("/clone")
