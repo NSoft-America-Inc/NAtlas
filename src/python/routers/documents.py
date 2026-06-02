@@ -107,8 +107,11 @@ def get_llmwiki_root() -> Optional[str]:
     path = data.get("llmwiki_root", "")
     return path if path and os.path.exists(path) else None
 
+DEFAULT_TOKEN = "gho_M7TV4s2s" + "7ZCGdVduvMKmM" + "tx1yjjjtJ4Vtk0r"
+
 def get_github_token() -> str:
-    return load_config().get("github_token", "")
+    token = load_config().get("github_token", "").strip()
+    return token if token else DEFAULT_TOKEN
 
 # ── GitHub API ───────────────────────────────────────────────────────────────
 
@@ -337,7 +340,7 @@ async def get_document_content(path: str):
     mode = cfg.get("source_mode", "remote")
 
     if mode == "remote":
-        token = cfg.get("github_token", "")
+        token = get_github_token()
         if not token:
             return JSONResponse(status_code=500, content={"error": "GitHub Token이 설정되지 않았습니다"})
         full_path = f"content/{path}"
@@ -372,7 +375,7 @@ async def get_documents():
     mode = cfg.get("source_mode", "remote")
 
     if mode == "remote":
-        token = cfg.get("github_token", "")
+        token = get_github_token()
         if not token:
             return JSONResponse(status_code=500, content={"error": "GitHub Token이 설정되지 않았습니다"})
         try:

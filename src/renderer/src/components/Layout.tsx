@@ -90,7 +90,9 @@ export function Layout({ children }: LayoutProps) {
           <div className="px-5 py-4 border-t border-border/40 bg-muted/10">
             <div className="flex flex-col gap-0.5 truncate">
               <span className="text-[10px] text-muted-foreground font-medium truncate">NSoft America Inc.</span>
-              <span className="text-[9px] text-muted-foreground/60 truncate">Phase 2 v1.1.0</span>
+              <span className="text-[9px] text-muted-foreground/60 truncate">
+                Phase 2 {updateInfo?.current_version ? `v${updateInfo.current_version}` : 'v1.0.0-beta.6'}
+              </span>
             </div>
           </div>
         </ResizablePanel>

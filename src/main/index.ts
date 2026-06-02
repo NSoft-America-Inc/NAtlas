@@ -29,7 +29,11 @@ function startPythonSidecar(): void {
   console.log(`Spawning Python sidecar: ${pythonCmd} ${pythonScript} --port ${PORT}`)
   
   pythonProcess = spawn(pythonCmd, [pythonScript, '--port', PORT.toString()], {
-    env: { ...process.env, PYTHONUNBUFFERED: '1' }
+    env: { 
+      ...process.env, 
+      PYTHONUNBUFFERED: '1',
+      NATLAS_VERSION: app.getVersion()
+    }
   })
 
   pythonProcess.stdout?.on('data', (data) => {
@@ -47,7 +51,11 @@ function startPythonSidecar(): void {
       console.log("Retrying sidecar with fallback 'python' command...")
       pythonCmd = 'python'
       pythonProcess = spawn(pythonCmd, [pythonScript, '--port', PORT.toString()], {
-        env: { ...process.env, PYTHONUNBUFFERED: '1' }
+        env: { 
+          ...process.env, 
+          PYTHONUNBUFFERED: '1',
+          NATLAS_VERSION: app.getVersion()
+        }
       })
     }
   })
