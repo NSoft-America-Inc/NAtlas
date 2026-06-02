@@ -5,7 +5,7 @@ import { Settings as SettingsType } from '@renderer/lib/types'
 import { useUIStore } from '@renderer/store/ui'
 import { Input } from '@renderer/components/ui/input'
 import { Button } from '@renderer/components/ui/button'
-import { FolderOpen, Save, Settings as SettingsIcon, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react'
+import { FolderOpen, Save, Settings as SettingsIcon, CheckCircle2, AlertCircle, RefreshCw, Bell } from 'lucide-react'
 
 export function Settings() {
   const queryClient = useQueryClient()
@@ -17,10 +17,21 @@ export function Settings() {
   const [sourceMode, setSourceMode] = useState<'remote' | 'local'>('remote')
   const [isSyncing, setIsSyncing] = useState(false)
   const [syncResult, setSyncResult] = useState<{ ok: boolean; message: string } | null>(null)
+  const [isCheckingUpdate, setIsCheckingUpdate] = useState(false)
+  const [updateCheckMessage, setUpdateCheckMessage] = useState<{
+    type: 'success' | 'error' | 'info'
+    text: string
+  } | null>(null)
 
   const { data: currentSettings, isLoading } = useQuery<SettingsType>({
     queryKey: ['settings'],
     queryFn: api.getSettings,
+  })
+
+  const { data: updateInfo } = useQuery({
+    queryKey: ['checkUpdate'],
+    queryFn: api.checkUpdate,
+    staleTime: 300_000,
   })
 
   useEffect(() => {
@@ -92,6 +103,41 @@ export function Settings() {
     } finally {
       setIsSyncing(false)
       setTimeout(() => setSyncResult(null), 3000)
+    }
+  }
+
+  const handleCheckUpdate = async () => {
+    setIsCheckingUpdate(true)
+    setUpdateCheckMessage(null)
+    try {
+      const result = await queryClient.fetchQuery({
+        queryKey: ['checkUpdate'],
+        queryFn: api.checkUpdate,
+      })
+      if (result.has_update) {
+        setUpdateCheckMessage({
+          type: 'info',
+          text: `새로운 버전(v${result.latest_version})이 준비되었습니다. 아래 [지금 업데이트 설치] 버튼을 눌러 다운로드 페이지로 이동할 수 있습니다.`
+        })
+      } else {
+        setUpdateCheckMessage({
+          type: 'success',
+          text: `현재 최신 버전(v${result.current_version})을 사용 중입니다.`
+        })
+      }
+    } catch (err) {
+      setUpdateCheckMessage({
+        type: 'error',
+        text: err instanceof Error ? err.message : '업데이트 확인 중 오류가 발생했습니다.'
+      })
+    } finally {
+      setIsCheckingUpdate(false)
+    }
+  }
+
+  const handleDownloadUpdate = () => {
+    if (updateInfo?.release_url && window.electron && (window.electron as any).openExternal) {
+      (window.electron as any).openExternal(updateInfo.release_url)
     }
   }
 
@@ -248,6 +294,71 @@ export function Settings() {
               <Save className="w-4 h-4 mr-2" />
               {saveMutation.isPending ? '저장 중...' : '설정 저장'}
             </Button>
+          </div>
+        </div>
+
+        {/* Application Update Card */}
+        <div className="border border-border rounded-xl bg-card/10 p-6 space-y-6 shadow-sm mt-6">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/15 select-none">
+              <RefreshCw className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-foreground select-none">애플리케이션 업데이트</h3>
+              <p className="text-xs text-muted-foreground mt-1 select-none">
+                현재 설치된 NAtlas 버전을 확인하고 최신 배포 버전으로 업데이트할 수 있습니다.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 border border-border/40 rounded-lg p-4 bg-muted/10">
+            <div className="space-y-1">
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider select-none">현재 버전</p>
+              <p className="text-sm font-semibold font-mono text-slate-300">
+                v{updateInfo?.current_version || '1.0.0-beta.1'}
+              </p>
+            </div>
+            <div className="space-y-1 text-right">
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider select-none">최신 배포 버전</p>
+              <p className="text-sm font-semibold font-mono text-indigo-300">
+                {updateInfo?.latest_version ? `v${updateInfo.latest_version}` : '확인 필요'}
+              </p>
+            </div>
+          </div>
+
+          {updateCheckMessage && (
+            <div className={`p-3 border rounded-lg text-xs flex items-start gap-2.5 ${
+              updateCheckMessage.type === 'success' 
+                ? 'border-emerald-800/40 bg-emerald-950/20 text-emerald-400 animate-in fade-in duration-200' 
+                : updateCheckMessage.type === 'info' 
+                  ? 'border-indigo-800/40 bg-indigo-950/20 text-indigo-300 animate-in fade-in duration-200'
+                  : 'border-rose-800/40 bg-rose-950/20 text-rose-400 animate-in fade-in duration-200'
+            }`}>
+              {updateCheckMessage.type === 'success' && <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />}
+              {updateCheckMessage.type === 'info' && <Bell className="w-4 h-4 shrink-0 mt-0.5" />}
+              {updateCheckMessage.type === 'error' && <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />}
+              <span className="leading-relaxed">{updateCheckMessage.text}</span>
+            </div>
+          )}
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-border/40 select-none">
+            <Button
+              variant="outline"
+              onClick={handleCheckUpdate}
+              disabled={isCheckingUpdate}
+              className="bg-muted/20 hover:bg-muted text-foreground border-border h-10 px-5 transition-all duration-300 text-xs"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${isCheckingUpdate ? 'animate-spin' : ''}`} />
+              {isCheckingUpdate ? '업데이트 확인 중...' : '업데이트 확인'}
+            </Button>
+            {updateInfo?.has_update && (
+              <Button
+                onClick={handleDownloadUpdate}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold h-10 px-5 shadow-sm transition-all duration-300 text-xs animate-in zoom-in-95 duration-200"
+              >
+                지금 업데이트 다운로드
+              </Button>
+            )}
           </div>
         </div>
       </div>
