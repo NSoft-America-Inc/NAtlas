@@ -119,7 +119,7 @@ def _gh_get(path: str, token: str) -> dict:
     req.add_header("Accept", "application/vnd.github.v3+json")
     req.add_header("User-Agent", "NAtlas/1.0")
     with urllib.request.urlopen(req, timeout=20) as res:
-        return json.loads(res.read().decode())
+        return json.loads(res.read().decode("utf-8"))
 
 async def get_remote_documents(token: str) -> dict:
     loop = asyncio.get_event_loop()
@@ -147,7 +147,7 @@ async def get_remote_documents(token: str) -> dict:
             blob = await loop.run_in_executor(
                 None, _gh_get, f"/repos/{LLMWIKI_REPO}/git/blobs/{sha}", token
             )
-            raw = base64.b64decode(blob["content"].replace("\n", "")).decode()
+            raw = base64.b64decode(blob["content"].replace("\n", "")).decode("utf-8")
             data = json.loads(raw)
             if "repoRelativePath" in data:
                 return {data["repoRelativePath"]}

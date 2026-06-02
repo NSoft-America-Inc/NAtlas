@@ -31,7 +31,7 @@ async def get_swarmvault_status():
         )
         stdout, _ = await proc.communicate()
         if proc.returncode == 0:
-            version_str = stdout.decode().strip()
+            version_str = stdout.decode('utf-8', errors='replace').strip()
             # If output is empty or generic, use fallback version label
             if not version_str:
                 version_str = "1.x.x"
@@ -114,11 +114,11 @@ async def post_update():
                         break
                     
                     if stdout_line:
-                        msg = stdout_line.decode().strip()
+                        msg = stdout_line.decode('utf-8', errors='replace').strip()
                         if msg:
                             yield f"data: {json.dumps({'type': 'log', 'message': msg})}\n\n"
                     if stderr_line:
-                        msg = stderr_line.decode().strip()
+                        msg = stderr_line.decode('utf-8', errors='replace').strip()
                         if msg:
                             yield f"data: {json.dumps({'type': 'log', 'message': msg})}\n\n"
                 
@@ -163,11 +163,11 @@ async def post_update():
                     break
                 
                 if stdout_line:
-                    msg = stdout_line.decode().strip()
+                    msg = stdout_line.decode('utf-8', errors='replace').strip()
                     if msg:
                         yield f"data: {json.dumps({'type': 'log', 'message': msg})}\n\n"
                 if stderr_line:
-                    msg = stderr_line.decode().strip()
+                    msg = stderr_line.decode('utf-8', errors='replace').strip()
                     if msg:
                         yield f"data: {json.dumps({'type': 'log', 'message': msg})}\n\n"
             
@@ -577,9 +577,10 @@ async def post_clone():
                 if not stdout_line and not stderr_line:
                     break
                 for line in [stdout_line, stderr_line]:
-                    text = line.decode().strip()
-                    if text:
-                        yield f"data: {json.dumps({'type': 'log', 'message': text})}\n\n"
+                    if line:
+                        text = line.decode('utf-8', errors='replace').strip()
+                        if text:
+                            yield f"data: {json.dumps({'type': 'log', 'message': text})}\n\n"
 
             await proc.wait()
             if proc.returncode == 0:
