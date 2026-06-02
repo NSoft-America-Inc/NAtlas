@@ -107,25 +107,32 @@ export function Update() {
   // Dynamically resolve workspace parent path from settings
   useEffect(() => {
     if (settings?.llmwiki_root) {
-      const parts = settings.llmwiki_root.replace(/\\/g, '/').split('/')
-      if (parts.length > 2) {
+      const normalized = settings.llmwiki_root.replace(/\\/g, '/')
+      const parts = normalized.split('/')
+
+      // 1. parentPath: 감지된 workspace 디렉토리가 있다면 우선 매핑, 없으면 pop() 2회 fallback
+      const workspaceIdx = normalized.toLowerCase().indexOf('/workspace')
+      if (workspaceIdx !== -1) {
+        const derived = normalized.substring(0, workspaceIdx + 10)
+        setParentPath(derived)
+      } else if (parts.length > 2) {
         const parentParts = [...parts]
-        parentParts.pop() // remove llmwiki
-        parentParts.pop() // remove NAtlas
+        parentParts.pop() // remove llmwiki or last directory
+        parentParts.pop() // remove project directory
         const derived = parentParts.join('/')
         if (derived && derived !== '/') {
           setParentPath(derived)
         }
       }
 
-      // targetProjectPath: parent of llmwiki (usually the NAtlas project directory)
+      // 2. targetProjectPath: llmwiki 디렉토리만 안전하게 제외
       const projectParts = [...parts]
-      if (projectParts.length > 1) {
-        projectParts.pop() // remove llmwiki
-        const derivedProject = projectParts.join('/')
-        if (derivedProject && derivedProject !== '/') {
-          setTargetProjectPath(derivedProject)
-        }
+      if (projectParts.length > 0 && projectParts[projectParts.length - 1].toLowerCase() === 'llmwiki') {
+        projectParts.pop()
+      }
+      const derivedProject = projectParts.join('/')
+      if (derivedProject && derivedProject !== '/') {
+        setTargetProjectPath(derivedProject)
       }
     }
   }, [settings])

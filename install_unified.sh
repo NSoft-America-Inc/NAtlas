@@ -246,12 +246,12 @@ log "${CYAN}${BOLD}  ║               온보딩 통합 설치 완료 리포트 
 log "${CYAN}${BOLD}  ╚══════════════════════════════════════════════════════════╝${RESET}"
 br
 
-if [ "$INSTALL_MODE" -eq 0 ] || [ "$INSTALL_MODE" -eq 1 ]; then
+if [ "$INSTALL_MODE" = "0" ] || [ "$INSTALL_MODE" = "1" ] || [ "$RUN_CORE_INSTALL" = "1" ]; then
   ok "NAtlas 런타임  : ${DIM}$PROJECT_ROOT${RESET}"
   ok "FastAPI 격리경로: ${DIM}$PROJECT_ROOT/src/python/.venv${RESET}"
 fi
 
-if [ "$INSTALL_MODE" -eq 0 ] || [ "$INSTALL_MODE" -eq 2 ]; then
+if [ "$INSTALL_MODE" = "0" ] || [ "$INSTALL_MODE" = "2" ] || [ "$RUN_PROJECT_CREATE" = "1" ]; then
   ok "NStack 에이전트 룰: ${DIM}.antigravity/rules${RESET}"
   ok "LLMWiki 로컬경로  : ${DIM}$PROJECT_ROOT/llmwiki/content${RESET}"
 fi

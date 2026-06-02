@@ -208,6 +208,9 @@ async def post_install(payload: InstallSchema):
     import shutil
     import re
     
+    print(f"DEBUG: payload.core_install={payload.core_install}, payload.project_create={payload.project_create}, payload.e2e_test={payload.e2e_test}")
+    print(f"DEBUG: payload.parent_path='{payload.parent_path}', payload.project_name='{payload.project_name}'")
+    
     project_root = str(Path(__file__).parent.parent.parent.parent.resolve())
     
     # Compute target project path
@@ -283,6 +286,8 @@ async def post_install(payload: InstallSchema):
             env["RUN_PROJECT_CREATE"] = "1" if payload.project_create else "0"
             env["PROJECT_PATH"] = project_path
             env["PROJECT_NAME"] = payload.project_name or "nstack-project"
+            
+            print(f"DEBUG: spawning script with env PROJECT_PATH='{project_path}', PROJECT_NAME='{payload.project_name}'")
             
             is_windows = platform.system() == "Windows"
             script_name = "install_unified.ps1" if is_windows else "install_unified.sh"
