@@ -129,3 +129,58 @@ xattr -cr /Applications/NAtlas.app
    python3 verify_nstack_pipeline.py --project natlas --task {task_slug}
    ```
 5. **Git 커밋**: pre-commit Hook이 스테이징된 문서의 양식 준수 여부를 자동으로 가로채어 최종 검증하며, 통과 시 원격 레포지토리에 안전하게 지식이 합산(Assetization)됩니다.
+
+---
+
+## 6. GitHub Actions 자동 배포 파이프라인 (Automated Release Pipeline)
+
+NAtlas와 NStack의 크로스플랫폼 빌드 배포를 원클릭으로 자동화하기 위해 GitHub Actions를 활용한 **릴리즈 자동 발행 파이프라인**을 구축하여 연동해 둡니다.
+
+### 6.1 배포 흐름 다이어그램
+
+```mermaid
+flowchart TD
+    Tag["1. git tag push (v*)"] -->|Trigger Workflow| GH["GitHub Actions Runner"]
+    
+    subgraph Parallel["2. 병렬 빌드 단계 (Parallel Build)"]
+        MacRunner["macos-latest Runner"] -->|npm run build:mac| MacAsset["dist/natlas-*.dmg"]
+        WinRunner["windows-latest Runner"] -->|npm run build:win| WinAsset["dist/natlas-*-setup.exe"]
+    end
+    
+    GH --> MacRunner
+    GH --> WinRunner
+    
+    MacAsset -->|3. upload-artifact| Hub["Actions Artifact Storage"]
+    WinAsset -->|3. upload-artifact| Hub
+    
+    Hub -->|4. download-artifact| PubRunner["ubuntu-latest (Publish Job)"]
+    
+    PubRunner -->|5. softprops/action-gh-release| Release["GitHub Releases Asset"]
+    
+    style Tag fill:#4F46E5,stroke:#312E81,color:#FFF
+    style Release fill:#10B981,stroke:#065F46,color:#FFF
+```
+
+### 6.2 파이프라인 단계별 명세
+
+* **트리거 조건 (`on.push.tags: 'v*'`)**: 개발자가 새로운 배포용 Git 태그(예: `v1.0.0`)를 생성하여 GitHub 원격 저장소에 푸시하면 빌드 배포 러너가 즉시 자동 기동됩니다.
+* **병렬 컴파일 (macOS / Windows)**:
+  * **macOS 빌드 잡 (`build-mac`)**: `macos-latest` 러너 환경에서 Node.js v20 및 의존성을 정비한 뒤 `npm run build:mac`을 기동하여 `.dmg` 설치 바이너리를 컴파일하고, `actions/upload-artifact`로 임시 보관합니다.
+  * **Windows 빌드 잡 (`build-win`)**: `windows-latest` 러너 환경에서 동일 런타임 셋업 후 `npm run build:win`을 기동하여 스마트스크린 대응 `.exe` 설치 바이너리를 컴파일하고, `actions/upload-artifact`로 임시 보관합니다.
+* **릴리즈 단일 발행 및 취합 (`publish` 잡)**:
+  * 양대 운영체제의 병렬 빌드 잡이 모두 정상 완료되면 최종적으로 가동됩니다.
+  * 보관된 `.dmg`와 `.exe` 자산을 일괄 다운로드한 후, `softprops/action-gh-release` 액션을 사용하여 GitHub Releases 탭에 다운로드 링크 자산(Asset)으로 함께 첨부하여 공식 배포본을 발행합니다.
+  * 이 취합 단계를 통해, 빌드 에러 발생 시 특정 OS 설치 파일만 반쪽짜리로 업로드되는 경합 상태(Race Condition)를 완벽하게 방지합니다.
+
+### 6.3 개발자 배포 트리거 가이드
+
+신규 빌드 배포 버전을 릴리즈 탭에 자동으로 등록하고 게시하려면 터미널에서 아래 단 두 줄의 Git 태깅 명령을 수행합니다:
+
+```bash
+# 1. 신규 버전 태그 로컬 생성
+git tag v1.0.0
+
+# 2. GitHub 원격 저장소로 태그 푸시 (릴리즈 파이프라인 기동)
+git push origin v1.0.0
+```
+푸시가 완료되면 GitHub 저장소의 **Actions** 탭에서 실시간 빌드 진행도를 시각적으로 모니터링할 수 있으며, 성공 완료 시 **Releases** 탭에서 전사 임직원용 `NAtlas-Setup.exe` 다운로드 페이지가 자동으로 개설됩니다.
