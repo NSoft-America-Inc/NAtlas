@@ -1,3 +1,28 @@
+import os
+import sys
+
+# packaged app 구동 시 PATH 유실 현상(Homebrew 경로 등 누락) 방지
+if sys.platform != "win32":
+    extra_paths = ["/opt/homebrew/bin", "/usr/local/bin", os.path.expanduser("~/.npm-global/bin")]
+    path_env = os.environ.get("PATH", "")
+    paths = path_env.split(":")
+    for ep in extra_paths:
+        if ep not in paths and os.path.exists(ep):
+            paths.insert(0, ep)
+    os.environ["PATH"] = ":".join(paths)
+else:
+    extra_paths = [
+        os.path.expanduser("~/AppData/Roaming/npm"),
+        os.path.expanduser("~/AppData/Local/Programs/Python/Python311"),
+        os.path.expanduser("~/AppData/Local/Programs/Python/Python312"),
+    ]
+    path_env = os.environ.get("PATH", "")
+    paths = path_env.split(";")
+    for ep in extra_paths:
+        if ep not in paths and os.path.exists(ep):
+            paths.insert(0, ep)
+    os.environ["PATH"] = ";".join(paths)
+
 import argparse
 import uvicorn
 from fastapi import FastAPI
