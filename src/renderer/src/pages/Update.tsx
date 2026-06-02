@@ -525,8 +525,8 @@ export function Update() {
                 </div>
               </div>
 
-              {/* Dynamic Path Inputs - Only visible if selectedScenario === 'project' */}
-              {selectedScenario === 'project' && (
+              {/* Dynamic Path Inputs - Only visible if selectedScenario === 'project' or 'e2e' */}
+              {(selectedScenario === 'project' || selectedScenario === 'e2e') && (
                 <div className="border border-border rounded-xl p-5 bg-card/10 flex flex-col gap-4 animate-in fade-in slide-in-from-top duration-300">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-400">NStack 프로젝트 다중 설치 경로 설정</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -589,7 +589,7 @@ export function Update() {
                 <Button
                   size="lg"
                   onClick={handleInstall}
-                  disabled={isInstalling || isUpdating || (selectedScenario === 'project' && (!parentPath || !projectName))}
+                  disabled={isInstalling || isUpdating || ((selectedScenario === 'project' || selectedScenario === 'e2e') && (!parentPath || !projectName))}
                   className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-muted/40 text-white font-bold h-11 px-6 shadow-md shadow-indigo-600/10 transition-all duration-300"
                 >
                   {isInstalling ? (
