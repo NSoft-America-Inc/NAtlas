@@ -1,1 +1,0 @@
-/Users/yg/workspace/NStack/.claude/skills/llmwiki-writer//SKILL.md

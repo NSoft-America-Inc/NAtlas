@@ -1,1 +1,0 @@
-/Users/yg/workspace/NStack/.claude/skills/noffice-writer//SKILL.md

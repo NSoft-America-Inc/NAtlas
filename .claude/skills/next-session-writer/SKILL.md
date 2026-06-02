@@ -1,1 +1,0 @@
-/Users/yg/workspace/NStack/.claude/skills/next-session-writer//SKILL.md
