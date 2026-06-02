@@ -1,8 +1,10 @@
 import React from 'react'
-import { FileText, RefreshCw, Settings as SettingsIcon, Brain, BookOpen, Sparkles, BarChart3 } from 'lucide-react'
+import { FileText, RefreshCw, Settings as SettingsIcon, Brain, BookOpen, Sparkles, BarChart3, Bell, X } from 'lucide-react'
 import { useUIStore } from '@renderer/store/ui'
 import { Separator } from '@renderer/components/ui/separator'
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@renderer/components/ui/resizable'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@renderer/lib/api'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -10,6 +12,13 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { activeTab, setActiveTab } = useUIStore()
+  const [isBannerDismissed, setIsBannerDismissed] = React.useState(false)
+
+  const { data: updateInfo } = useQuery({
+    queryKey: ['checkUpdate'],
+    queryFn: api.checkUpdate,
+    refetchInterval: 300_000 // 5분
+  })
 
   const tabs = [
     { id: 'dashboard' as const, label: 'Dashboard', icon: BarChart3 },
@@ -91,6 +100,34 @@ export function Layout({ children }: LayoutProps) {
 
         {/* Main Content Area */}
         <ResizablePanel defaultSize="84%" className="flex flex-col h-full bg-background/95 overflow-hidden">
+          {updateInfo?.has_update && !isBannerDismissed && (
+            <div className="flex items-center justify-between px-5 py-3.5 bg-indigo-950/45 border-b border-indigo-500/20 text-indigo-200 select-none animate-in slide-in-from-top duration-300 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Bell className="w-4 h-4 text-indigo-400 animate-bounce shrink-0" />
+                <span className="text-xs font-medium truncate">
+                  NAtlas의 새로운 버전(<span className="text-indigo-300 font-semibold">{updateInfo.latest_version}</span>)이 준비되었습니다. (현재 버전: {updateInfo.current_version})
+                </span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => {
+                    if (window.electron && (window.electron as any).openExternal) {
+                      (window.electron as any).openExternal(updateInfo.release_url)
+                    }
+                  }}
+                  className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-[11px] font-semibold tracking-wide transition-all shadow-inner shadow-white/10"
+                >
+                  지금 업데이트
+                </button>
+                <button
+                  onClick={() => setIsBannerDismissed(true)}
+                  className="p-1 hover:bg-indigo-900/60 rounded text-indigo-400 hover:text-indigo-200 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
           {children}
         </ResizablePanel>
       </ResizablePanelGroup>

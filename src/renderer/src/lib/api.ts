@@ -114,6 +114,20 @@ export const api = {
       }
       return r.json()
     }),
+
+  checkUpdate: (): Promise<{
+    has_update: boolean
+    current_version: string
+    latest_version: string
+    release_url: string
+    release_notes: string
+  }> =>
+    fetch(`${BASE}/settings/check-update`).then(async r => {
+      if (!r.ok) {
+        throw new Error('업데이트 정보를 확인하는 중 오류가 발생했습니다.')
+      }
+      return r.json()
+    }),
 }
 
 

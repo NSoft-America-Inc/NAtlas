@@ -66,3 +66,89 @@ async def put_settings(settings: SettingsSchema):
             return JSONResponse(status_code=400, content={"error": "swarmvault.config.json을 찾을 수 없습니다"})
         save_settings({"source_mode": "local", "github_token": "", "llmwiki_root": root_path})
         return {"ok": True}
+
+import urllib.request
+import urllib.error
+
+def parse_version(v_str: str):
+    v_str = v_str.strip().lower().lstrip('v')
+    parts = v_str.split('-')
+    nums = []
+    for x in parts[0].split('.'):
+        if x.isdigit():
+            nums.append(int(x))
+    while len(nums) < 3:
+        nums.append(0)
+    pre = parts[1] if len(parts) > 1 else ""
+    return tuple(nums), pre
+
+def is_newer(curr_str: str, latest_str: str) -> bool:
+    try:
+        curr_nums, curr_pre = parse_version(curr_str)
+        latest_nums, latest_pre = parse_version(latest_str)
+        
+        if latest_nums > curr_nums:
+            return True
+        if latest_nums < curr_nums:
+            return False
+            
+        if curr_pre and not latest_pre:
+            return True
+        if not curr_pre and latest_pre:
+            return False
+        if curr_pre and latest_pre:
+            return latest_pre > curr_pre
+        return False
+    except Exception:
+        return curr_str.strip().lower() != latest_str.strip().lower()
+
+def load_current_version() -> str:
+    try:
+        package_json_path = Path(__file__).resolve().parent.parent.parent.parent / "package.json"
+        if package_json_path.exists():
+            with open(package_json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("version", "1.0.0-beta.1")
+    except Exception:
+        pass
+    return "1.0.0-beta.1"
+
+@router.get("/check-update")
+async def get_check_update():
+    settings = load_settings()
+    token = settings.get("github_token", "").strip()
+    curr_ver = load_current_version()
+    
+    url = "https://api.github.com/repos/NSoft-America-Inc/NAtlas/releases/latest"
+    req = urllib.request.Request(url)
+    req.add_header("User-Agent", "NAtlas-App")
+    if token:
+        req.add_header("Authorization", f"token {token}")
+        
+    try:
+        # 3초 타임아웃으로 오프라인 시 지연 최소화
+        with urllib.request.urlopen(req, timeout=3) as response:
+            if response.status == 200:
+                data = json.loads(response.read().decode('utf-8'))
+                latest_tag = data.get("tag_name", "")
+                release_url = data.get("html_url", "")
+                notes = data.get("body", "")
+                
+                has_update = is_newer(curr_ver, latest_tag)
+                return {
+                    "has_update": has_update,
+                    "current_version": curr_ver,
+                    "latest_version": latest_tag,
+                    "release_url": release_url,
+                    "release_notes": notes
+                }
+    except Exception as e:
+        print(f"Error checking update from GitHub: {e}")
+        
+    return {
+        "has_update": False,
+        "current_version": curr_ver,
+        "latest_version": curr_ver,
+        "release_url": "",
+        "release_notes": ""
+    }
