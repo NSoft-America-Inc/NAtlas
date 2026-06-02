@@ -50,25 +50,46 @@ br
 $INSTALL_MODE = $env:INSTALL_MODE
 
 if ($null -eq $INSTALL_MODE -or $INSTALL_MODE -eq "") {
-    log "$Bold  설치하실 패키지 시나리오를 선택해주세요:$Reset"
-    log "    [1] NAtlas + NStack 통합 온보딩 환경 구축 (권장 — 원클릭 E2E)"
-    log "    [2] NAtlas 전사 지식 탐색기 데스크탑 브라우저 단독 설치"
-    log "    [3] NStack AI 에이전트 개발 표준 및 파이프라인 단독 설정"
-    br
-    $choice = Read-Host "  선택 [기본값: 1]"
-    if ($null -eq $choice -or $choice -eq "") { $choice = "1" }
-    
-    if ($choice -eq "2") { $INSTALL_MODE = 1 }
-    elseif ($choice -eq "3") { $INSTALL_MODE = 2 }
-    else { $INSTALL_MODE = 0 }
-    br
+    if ($null -ne $env:RUN_CORE_INSTALL -or $null -ne $env:RUN_PROJECT_CREATE) {
+        $INSTALL_MODE = "api"
+    } else {
+        log "$Bold  설치하실 패키지 시나리오를 선택해주세요:$Reset"
+        log "    [1] 통합 온보딩 (코어 환경 구축 + NStack 프로젝트 생성)"
+        log "    [2] 코어 개발 환경 구축 (Python 가상환경 & SwarmVault CLI)"
+        log "    [3] NStack 프로젝트 생성 및 개발 규격 설정"
+        br
+        $choice = Read-Host "  선택 [기본값: 1]"
+        if ($null -eq $choice -or $choice -eq "") { $choice = "1" }
+        
+        if ($choice -eq "2") { $INSTALL_MODE = 1 }
+        elseif ($choice -eq "3") { $INSTALL_MODE = 2 }
+        else { $INSTALL_MODE = 0 }
+        br
+    }
 }
 
 # ─── 5. 핵심 설치 프로세스 위임 오케스트레이션 ────────────────────────
-switch ($INSTALL_MODE) {
-    0 { log "$Bold▶ [시나리오 1] NAtlas & NStack 통합 설치를 가동합니다.$Reset"; br }
-    1 { log "$Bold▶ [시나리오 2] NAtlas 데스크탑 런타임 단독 설치를 가동합니다.$Reset"; br }
-    2 { log "$Bold▶ [시나리오 3] NStack 개발 규격 단독 설정을 가동합니다.$Reset"; br }
+if ($INSTALL_MODE -eq "api") {
+    log "$Bold▶ 백엔드 API 요청을 감지하여 자동 파싱 실행합니다.$Reset"
+    br
+} else {
+    switch ($INSTALL_MODE) {
+        0 {
+            log "$Bold▶ [시나리오 1] 통합 온보딩 환경 구축을 가동합니다.$Reset"; br
+            $env:RUN_CORE_INSTALL = "1"
+            $env:RUN_PROJECT_CREATE = "1"
+        }
+        1 {
+            log "$Bold▶ [시나리오 2] 코어 개발 환경 구축을 가동합니다.$Reset"; br
+            $env:RUN_CORE_INSTALL = "1"
+            $env:RUN_PROJECT_CREATE = "0"
+        }
+        2 {
+            log "$Bold▶ [시나리오 3] NStack 프로젝트 생성을 가동합니다.$Reset"; br
+            $env:RUN_CORE_INSTALL = "0"
+            $env:RUN_PROJECT_CREATE = "1"
+        }
+    }
 }
 
 $PROJECT_ROOT = $PSScriptRoot
@@ -135,9 +156,18 @@ function install_nstack {
     log "  NStack Antigravity 온보딩 시작..."
     
     # quiet 및 host 인자 주입하여 대화식 프롬프트 우회
-    Push-Location $nstack_dir
-    & powershell.exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project (Split-Path $PROJECT_ROOT -Leaf) --quiet
-    Pop-Location
+    if ($null -ne $env:PROJECT_PATH -and $null -ne $env:PROJECT_NAME -and $env:PROJECT_PATH -ne "" -and $env:PROJECT_NAME -ne "") {
+        $parent_dir = Split-Path $env:PROJECT_PATH -Parent
+        log "지정된 부모 디렉토리로 이동: $parent_dir"
+        if (-not (Test-Path $parent_dir)) { New-Item -ItemType Directory -Force -Path $parent_dir | Out-Null }
+        Push-Location $parent_dir
+        & powershell.exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project $env:PROJECT_NAME --quiet
+        Pop-Location
+    } else {
+        Push-Location $nstack_dir
+        & powershell.exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project (Split-Path $PROJECT_ROOT -Leaf) --quiet
+        Pop-Location
+    }
     ok "SwarmVault CLI 및 디렉토리 구조 초기화 완수!"
 
     log "[SETUP-STEP] 단계 5: Git Hook 연동"
@@ -164,10 +194,12 @@ function install_nstack {
 }
 
 # ─── 6. 옵션 분기 실행 ───────────────────────────────────────────
-switch ($INSTALL_MODE) {
-    0 { install_natlas; br; install_nstack }
-    1 { install_natlas }
-    2 { install_nstack }
+if ($env:RUN_CORE_INSTALL -eq "1") {
+    install_natlas
+    br
+}
+if ($env:RUN_PROJECT_CREATE -eq "1") {
+    install_nstack
 }
 
 # ─── 7. 최종 성공 리포트 테이블 출력 ───────────────────────────────

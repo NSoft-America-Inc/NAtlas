@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@renderer/lib/api'
 import { SwarmVaultStatus, LogLine, Settings } from '@renderer/lib/types'
 import { useUIStore } from '@renderer/store/ui'
 import { LogViewer } from '@renderer/components/LogViewer'
 import { Button } from '@renderer/components/ui/button'
+import { Input } from '@renderer/components/ui/input'
 import {
   Cpu,
   Database,
@@ -21,6 +22,7 @@ import {
   ShieldAlert,
   Sparkles,
   RefreshCw,
+  FolderOpen,
 } from 'lucide-react'
 
 interface InstallStep {
@@ -38,7 +40,11 @@ export function Update() {
   const [activeSection, setActiveSection] = useState<'install' | 'sync'>('install')
 
   // Installer specific state
-  const [installMode, setInstallMode] = useState<number>(0) // 0: Unified, 1: NAtlas only, 2: NStack only
+  const [coreInstall, setCoreInstall] = useState<boolean>(true)
+  const [projectCreate, setProjectCreate] = useState<boolean>(true)
+  const [e2eTest, setE2eTest] = useState<boolean>(true)
+  const [parentPath, setParentPath] = useState<string>('')
+  const [projectName, setProjectName] = useState<string>('nstack-project')
   const [isInstalling, setIsInstalling] = useState<boolean>(false)
   const [installStatus, setInstallStatus] = useState<'idle' | 'running' | 'success' | 'failed'>('idle')
   const [gitHubAuthStatus, setGitHubAuthStatus] = useState<'loading' | 'success' | 'warning' | null>(null)
@@ -51,10 +57,30 @@ export function Update() {
     { id: 'git_hook', name: 'Git Hook 연동', status: 'idle' },
     { id: 'pipeline_verify', name: '지식 파이프라인 무결성 검사', status: 'idle' },
     { id: 'nstack_onboarding', name: 'NStack 에이전트 룰 및 지식 아카이브 연동', status: 'idle' },
-    { id: 'mcp_verify', name: 'SwarmVault MCP 서버 기동 및 설정 검증', status: 'idle' },
+    { id: 'mcp_verify', name: 'Antigravity 표준 가이드 룰 검증', status: 'idle' },
     { id: 'rag_verify', name: 'E2E 의미론적 RAG 검색 자가 검증', status: 'idle' },
   ])
   const [copiedCmd, setCopiedCmd] = useState<boolean>(false)
+
+  const allSteps: InstallStep[] = [
+    { id: 'runtimes', name: '필수 개발 런타임 진단', status: 'idle' },
+    { id: 'npm_install', name: 'Node.js 의존성 복원', status: 'idle' },
+    { id: 'python_venv', name: 'Python 격리 가상환경 및 pip 설치', status: 'idle' },
+    { id: 'swarmvault_cli', name: 'SwarmVault CLI 설치', status: 'idle' },
+    { id: 'git_hook', name: 'Git Hook 연동', status: 'idle' },
+    { id: 'pipeline_verify', name: '지식 파이프라인 무결성 검사', status: 'idle' },
+    { id: 'nstack_onboarding', name: 'NStack 에이전트 룰 및 지식 아카이브 연동', status: 'idle' },
+    { id: 'mcp_verify', name: 'Antigravity 표준 가이드 룰 검증', status: 'idle' },
+    { id: 'rag_verify', name: 'E2E 의미론적 RAG 검색 자가 검증', status: 'idle' },
+  ]
+
+  const visibleSteps = isInstalling
+    ? installSteps
+    : [
+        ...(coreInstall ? allSteps.slice(0, 4) : []),
+        ...(projectCreate ? allSteps.slice(4, 8) : []),
+        ...(e2eTest ? [allSteps[8]] : []),
+      ]
 
   // RAG Instant test state
   const [testQuery, setTestQuery] = useState<string>('')
@@ -79,6 +105,30 @@ export function Update() {
     setTimeout(() => setCopiedCmd(false), 2000)
   }
 
+  // Dynamically resolve workspace parent path from settings
+  useEffect(() => {
+    if (settings?.llmwiki_root) {
+      const parts = settings.llmwiki_root.replace(/\\/g, '/').split('/')
+      if (parts.length > 2) {
+        parts.pop() // remove llmwiki
+        parts.pop() // remove NAtlas
+        const derived = parts.join('/')
+        if (derived && derived !== '/') {
+          setParentPath(derived)
+        }
+      }
+    }
+  }, [settings])
+
+  const handleOpenFolder = async () => {
+    try {
+      const selectedPath = await window.electron.openFolderDialog()
+      if (selectedPath) setParentPath(selectedPath)
+    } catch {
+      // ignore dialog close
+    }
+  }
+
   // SSE Install handler
   const handleInstall = async () => {
     if (isInstalling) return
@@ -96,7 +146,13 @@ export function Update() {
       const response = await fetch('http://127.0.0.1:18420/swarmvault/install', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: installMode }),
+        body: JSON.stringify({
+          core_install: coreInstall,
+          project_create: projectCreate,
+          e2e_test: e2eTest,
+          parent_path: parentPath,
+          project_name: projectName,
+        }),
       })
 
       if (!response.ok) {
@@ -385,57 +441,144 @@ export function Update() {
             /* ============================================================================== */
             <div className="flex flex-col gap-5">
               {/* Option Selector Cards */}
-              <div className="flex flex-col gap-2.5 select-none">
+              <div className="flex flex-col gap-3 select-none">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">설치 시나리오 옵션 선택</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {[
-                    {
-                      id: 0,
-                      title: '통합 온보딩 패키지 구축',
-                      desc: 'NAtlas 브라우저 및 NStack AI 에이전트 개발 파이프라인 전체를 한 번에 빌드합니다 (권장).',
-                      tag: 'E2E Full',
-                    },
-                    {
-                      id: 1,
-                      title: 'NAtlas 단독 설치',
-                      desc: '지식 탐색기 데스크탑 브라우저 구동에 필요한 런타임 및 사이드카 패키지를 격리 구축합니다.',
-                      tag: 'Desktop',
-                    },
-                    {
-                      id: 2,
-                      title: 'NStack 단독 설정',
-                      desc: '지식 아카이브 싱킹과 AI 에이전트 규칙(antigravity) 연동 파이프라인만 신속 설치합니다.',
-                      tag: 'Agent Core',
-                    },
-                  ].map((mode) => (
-                    <button
-                      key={mode.id}
-                      onClick={() => !isInstalling && setInstallMode(mode.id)}
-                      disabled={isInstalling}
-                      className={`text-left p-4 border rounded-xl flex flex-col gap-2 transition-all duration-300 relative overflow-hidden group ${
-                        installMode === mode.id
-                          ? 'border-indigo-500 bg-indigo-500/5 shadow-md shadow-indigo-500/5'
-                          : 'border-border bg-card/5 hover:border-muted-foreground/30 hover:bg-card/10'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                          installMode === mode.id ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
-                        }`}>
-                          {mode.tag}
-                        </span>
-                        <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                          installMode === mode.id ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30'
-                        }`}>
-                          {installMode === mode.id && <Check className="w-2.5 h-2.5 text-white" />}
-                        </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Card 1: Core Install */}
+                  <button
+                    type="button"
+                    onClick={() => !isInstalling && setCoreInstall(!coreInstall)}
+                    disabled={isInstalling}
+                    className={`text-left p-4 border rounded-xl flex flex-col gap-2 transition-all duration-300 relative overflow-hidden group ${
+                      coreInstall
+                        ? 'border-indigo-500 bg-indigo-500/5 shadow-md shadow-indigo-500/5'
+                        : 'border-border bg-card/5 opacity-60 hover:opacity-85'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        coreInstall ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
+                      }`}>
+                        Core Environment
+                      </span>
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                        coreInstall ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
+                      }`}>
+                        {coreInstall && <Check className="w-3 h-3 text-white" />}
                       </div>
-                      <div className="font-bold text-sm text-foreground group-hover:text-indigo-300 transition-colors duration-300">{mode.title}</div>
-                      <div className="text-[11px] text-muted-foreground leading-normal mt-1">{mode.desc}</div>
-                    </button>
-                  ))}
+                    </div>
+                    <div className="font-bold text-sm text-foreground group-hover:text-indigo-300 transition-colors duration-300">코어 개발 환경 구축</div>
+                    <div className="text-[11px] text-muted-foreground leading-normal mt-1">Python 가상환경 및 uvicorn 의존성, SwarmVault CLI 글로벌/로컬 설치를 구축합니다.</div>
+                  </button>
+
+                  {/* Card 2: Project Create */}
+                  <button
+                    type="button"
+                    onClick={() => !isInstalling && setProjectCreate(!projectCreate)}
+                    disabled={isInstalling}
+                    className={`text-left p-4 border rounded-xl flex flex-col gap-2 transition-all duration-300 relative overflow-hidden group ${
+                      projectCreate
+                        ? 'border-indigo-500 bg-indigo-500/5 shadow-md shadow-indigo-500/5'
+                        : 'border-border bg-card/5 opacity-60 hover:opacity-85'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        projectCreate ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
+                      }`}>
+                        Project Setup
+                      </span>
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                        projectCreate ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
+                      }`}>
+                        {projectCreate && <Check className="w-3 h-3 text-white" />}
+                      </div>
+                    </div>
+                    <div className="font-bold text-sm text-foreground group-hover:text-indigo-300 transition-colors duration-300">NStack 프로젝트 생성</div>
+                    <div className="text-[11px] text-muted-foreground leading-normal mt-1">지정 폴더 하위에 격리된 신규 NStack 지식 에이전트 스캐폴딩과 룰 규격 설정을 완료합니다.</div>
+                  </button>
+
+                  {/* Card 3: E2E Test */}
+                  <button
+                    type="button"
+                    onClick={() => !isInstalling && setE2eTest(!e2eTest)}
+                    disabled={isInstalling}
+                    className={`text-left p-4 border rounded-xl flex flex-col gap-2 transition-all duration-300 relative overflow-hidden group ${
+                      e2eTest
+                        ? 'border-indigo-500 bg-indigo-500/5 shadow-md shadow-indigo-500/5'
+                        : 'border-border bg-card/5 opacity-60 hover:opacity-85'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        e2eTest ? 'bg-indigo-500/20 text-indigo-400' : 'bg-muted text-muted-foreground'
+                      }`}>
+                        Validation
+                      </span>
+                      <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${
+                        e2eTest ? 'border-indigo-500 bg-indigo-500' : 'border-muted-foreground/30 bg-transparent'
+                      }`}>
+                        {e2eTest && <Check className="w-3 h-3 text-white" />}
+                      </div>
+                    </div>
+                    <div className="font-bold text-sm text-foreground group-hover:text-indigo-300 transition-colors duration-300">통합 E2E 테스트 진행</div>
+                    <div className="text-[11px] text-muted-foreground leading-normal mt-1">지정된 프로젝트 경로의 llmwiki를 타겟으로 임시 문서를 주입하여 의미론적 RAG 자가 검증을 수행합니다.</div>
+                  </button>
                 </div>
               </div>
+
+              {/* Dynamic Path Inputs - Only visible if projectCreate is active */}
+              {projectCreate && (
+                <div className="border border-border rounded-xl p-5 bg-card/10 flex flex-col gap-4 animate-in fade-in slide-in-from-top duration-300">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-400">NStack 프로젝트 다중 설치 경로 설정</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Parent Path Selection */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] font-bold text-muted-foreground">부모 폴더 경로 (Parent Folder)</label>
+                      <div className="flex gap-2">
+                        <Input
+                          type="text"
+                          placeholder="/Users/yg/workspace"
+                          value={parentPath}
+                          onChange={(e) => setParentPath(e.target.value)}
+                          disabled={isInstalling}
+                          className="flex-1 h-9 text-xs bg-slate-900 border-border text-foreground placeholder:text-muted-foreground/40"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleOpenFolder}
+                          disabled={isInstalling}
+                          className="h-9 px-3 text-xs bg-muted/40 border-border hover:bg-muted text-foreground flex items-center gap-1.5 border-dashed"
+                        >
+                          <FolderOpen className="w-3.5 h-3.5 text-indigo-400" />
+                          폴더 선택
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Project Name Input */}
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] font-bold text-muted-foreground">프로젝트 명 (Project Name)</label>
+                      <Input
+                        type="text"
+                        placeholder="nstack-project"
+                        value={projectName}
+                        onChange={(e) => setProjectName(e.target.value.replace(/[^a-zA-Z0-9-_]/g, ''))}
+                        disabled={isInstalling}
+                        className="h-9 text-xs bg-slate-900 border-border text-foreground placeholder:text-muted-foreground/40"
+                      />
+                    </div>
+                  </div>
+
+                  {parentPath && projectName && (
+                    <div className="text-[10px] text-muted-foreground font-mono bg-black/30 p-2.5 rounded border border-border/30">
+                      <span className="text-indigo-400 font-bold">생성 경로:</span>{' '}
+                      {parentPath.replace(/\/$/, '')}/{projectName}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Action Trigger Card */}
               <div className="flex justify-between items-center bg-card/15 p-4 border border-border rounded-xl shadow-sm select-none">
@@ -448,18 +591,18 @@ export function Update() {
                 <Button
                   size="lg"
                   onClick={handleInstall}
-                  disabled={isInstalling || isUpdating}
+                  disabled={isInstalling || isUpdating || (!coreInstall && !projectCreate && !e2eTest) || (projectCreate && (!parentPath || !projectName))}
                   className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-muted/40 text-white font-bold h-11 px-6 shadow-md shadow-indigo-600/10 transition-all duration-300"
                 >
                   {isInstalling ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      설치 진행 중...
+                      실행 중...
                     </>
                   ) : (
                     <>
                       <Play className="w-4 h-4 mr-2" />
-                      비주얼 설치 실행
+                      실행
                     </>
                   )}
                 </Button>
@@ -494,7 +637,7 @@ export function Update() {
               <div className="border border-border rounded-xl p-5 bg-card/5 flex flex-col gap-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground select-none">설치 및 E2E RAG 검증 스텝 진행률</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {installSteps.map((step, idx) => (
+                  {visibleSteps.map((step, idx) => (
                     <div
                       key={step.id}
                       className={`flex items-start gap-3.5 p-3 rounded-lg border transition-all duration-300 ${

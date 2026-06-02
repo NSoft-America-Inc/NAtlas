@@ -119,33 +119,48 @@ br
 
 # ─── 4. 설치 옵션 인터랙티브 메뉴 분기 ────────────────────────────
 if [ -z "$INSTALL_MODE" ]; then
-  log "${BOLD}  설치하실 패키지 시나리오를 선택해주세요:${RESET}"
-  br
+  if [ -n "$RUN_CORE_INSTALL" ] || [ -n "$RUN_PROJECT_CREATE" ]; then
+    INSTALL_MODE="api"
+  else
+    log "${BOLD}  설치하실 패키지 시나리오를 선택해주세요:${RESET}"
+    br
 
-  interactive_menu \
-    "NAtlas + NStack 통합 온보딩 환경 구축 (권장 — 원클릭 E2E)" \
-    "NAtlas 전사 지식 탐색기 데스크탑 브라우저 단독 설치" \
-    "NStack AI 에이전트 개발 표준 및 파이프라인 단독 설정"
+    interactive_menu \
+      "통합 온보딩 (코어 환경 구축 + NStack 프로젝트 생성)" \
+      "코어 개발 환경 구축 (Python 가상환경 & SwarmVault CLI)" \
+      "NStack 프로젝트 생성 및 개발 규격 설정"
 
-  INSTALL_MODE=$MENU_RESULT
-  br
+    INSTALL_MODE=$MENU_RESULT
+    br
+  fi
 fi
 
 # ─── 5. 핵심 설치 프로세스 위임 오케스트레이션 ────────────────────────
-case "$INSTALL_MODE" in
-  0)
-    log "${BOLD}▶ [시나리오 1] NAtlas & NStack 통합 설치를 가동합니다.${RESET}"
-    br
-    ;;
-  1)
-    log "${BOLD}▶ [시나리오 2] NAtlas 데스크탑 런타임 단독 설치를 가동합니다.${RESET}"
-    br
-    ;;
-  2)
-    log "${BOLD}▶ [시나리오 3] NStack 개발 규격 단독 설정을 가동합니다.${RESET}"
-    br
-    ;;
-esac
+if [ "$INSTALL_MODE" = "api" ]; then
+  log "${BOLD}▶ 백엔드 API 요청을 감지하여 자동 파싱 실행합니다.${RESET}"
+  br
+else
+  case "$INSTALL_MODE" in
+    0)
+      log "${BOLD}▶ [시나리오 1] 통합 온보딩 환경 구축을 가동합니다.${RESET}"
+      RUN_CORE_INSTALL="1"
+      RUN_PROJECT_CREATE="1"
+      br
+      ;;
+    1)
+      log "${BOLD}▶ [시나리오 2] 코어 개발 환경 구축을 가동합니다.${RESET}"
+      RUN_CORE_INSTALL="1"
+      RUN_PROJECT_CREATE="0"
+      br
+      ;;
+    2)
+      log "${BOLD}▶ [시나리오 3] NStack 프로젝트 생성을 가동합니다.${RESET}"
+      RUN_CORE_INSTALL="0"
+      RUN_PROJECT_CREATE="1"
+      br
+      ;;
+  esac
+fi
 
 PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
 
@@ -171,32 +186,41 @@ install_natlas() {
 install_nstack() {
   log "${BOLD}  NStack 개발 규격 및 린터 파이프라인 연동 개시...${RESET}"
   
-  # NStack 디렉토리 자동 탐색 (상대 및 동반 경로)
-  local nstack_setup=""
+  # Resolve nstack_setup absolute path BEFORE changing directory
+  local nstack_setup_abs=""
   if [ -f "$PROJECT_ROOT/../NStack/setup" ]; then
-    nstack_setup="$PROJECT_ROOT/../NStack/setup"
+    nstack_setup_abs="$(cd "$PROJECT_ROOT/../NStack" && pwd)/setup"
   elif [ -f "$PROJECT_ROOT/NStack/setup" ]; then
-    nstack_setup="$PROJECT_ROOT/NStack/setup"
+    nstack_setup_abs="$(cd "$PROJECT_ROOT/NStack" && pwd)/setup"
   elif [ -f "$PROJECT_ROOT/setup" ] && grep -q "NStack Setup" "$PROJECT_ROOT/setup"; then
-    nstack_setup="$PROJECT_ROOT/setup"
+    nstack_setup_abs="$PROJECT_ROOT/setup"
   fi
 
-  # NStack 디렉토리 자동 탐색 및 누락 시 자동 복제 (Symmetrical Onboarding)
-  if [ -z "$nstack_setup" ]; then
+  # Auto clone if missing
+  if [ -z "$nstack_setup_abs" ]; then
     warn "이웃 디렉토리에 NStack이 감지되지 않았습니다. GitHub에서 자동으로 복제(Clone)합니다..."
     git clone https://github.com/NSoft-America-Inc/NStack.git "$PROJECT_ROOT/../NStack" --quiet 2>/dev/null || true
     
     if [ -f "$PROJECT_ROOT/../NStack/setup" ]; then
-      nstack_setup="$PROJECT_ROOT/../NStack/setup"
+      nstack_setup_abs="$(cd "$PROJECT_ROOT/../NStack" && pwd)/setup"
     fi
   fi
 
-  if [ -z "$nstack_setup" ] || [ ! -f "$nstack_setup" ]; then
-    fail "NStack setup 스크립트를 탐색할 수 없습니다. NStack 디렉토리가 필요합니다."
+  if [ -z "$nstack_setup_abs" ] || [ ! -f "$nstack_setup_abs" ]; then
+    fail "NStack setup 스크립트를 탐색할 수 없습니다."
   fi
 
   # NStack 셋업 스크립트를 quiet 모드 백그라운드로 스폰하여 스피너 결합
-  bash "$nstack_setup" --quiet > /tmp/nstack_install.log 2>&1 &
+  if [ -n "$PROJECT_PATH" ] && [ -n "$PROJECT_NAME" ]; then
+    local parent_dir
+    parent_dir="$(dirname "$PROJECT_PATH")"
+    log "지정된 부모 디렉토리로 이동: $parent_dir"
+    mkdir -p "$parent_dir"
+    cd "$parent_dir"
+    bash "$nstack_setup_abs" --project "$PROJECT_NAME" --quiet > /tmp/nstack_install.log 2>&1 &
+  else
+    bash "$nstack_setup_abs" --quiet > /tmp/nstack_install.log 2>&1 &
+  fi
   local nstack_pid=$!
 
   spinner "$nstack_pid" "LLMWiki Sparse Checkout 및 Antigravity 에이전트 룰 주입 중..."
@@ -206,19 +230,14 @@ install_nstack() {
 }
 
 # ─── 6. 옵션 분기 실행 ───────────────────────────────────────────
-case "$INSTALL_MODE" in
-  0)
-    install_natlas
-    br
-    install_nstack
-    ;;
-  1)
-    install_natlas
-    ;;
-  2)
-    install_nstack
-    ;;
-esac
+if [ "$RUN_CORE_INSTALL" = "1" ]; then
+  install_natlas
+  br
+fi
+
+if [ "$RUN_PROJECT_CREATE" = "1" ]; then
+  install_nstack
+fi
 
 # ─── 7. 최종 성공 리포트 테이블 출력 ───────────────────────────────
 br
