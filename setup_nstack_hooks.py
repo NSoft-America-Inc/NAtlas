@@ -5,9 +5,13 @@ import os
 import sys
 import stat
 
+# Windows CP1252/CP949 환경 대비 UTF-8 인코딩 강제 적용
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
 def setup_git_hooks():
     print("===========================================================================")
-    print("  NStack ➔ NAtlas E2E Git Hook 자동 설치 도구")
+    print("  NStack -> NAtlas E2E Git Hook 자동 설치 도구")
     print("===========================================================================")
     
     # 1. .git 디렉토리 존재 파악
@@ -25,7 +29,7 @@ def setup_git_hooks():
     
     # 2. Hook 스크립트 본문 정의
     hook_content = """#!/bin/sh
-# NStack ➔ NAtlas E2E 지식 파이프라인 무결성 Git pre-commit Hook
+# NStack -> NAtlas E2E 지식 파이프라인 무결성 Git pre-commit Hook
 
 # Python3 기동 여부 체크
 if command -v python3 >/dev/null 2>&1; then
@@ -46,7 +50,7 @@ if command -v python3 >/dev/null 2>&1; then
       USER_NAME=$(echo "$task_info" | cut -d'/' -f2)
       TASK_SLUG=$(echo "$task_info" | cut -d'/' -f3)
       
-      echo "🔍 [NStack Hook] 태스크 정밀 검사 가동 ➔ [Project: $PROJECT_NAME] Task: $TASK_SLUG ($USER_NAME)"
+      echo "🔍 [NStack Hook] 태스크 정밀 검사 가동 -> [Project: $PROJECT_NAME] Task: $TASK_SLUG ($USER_NAME)"
       python3 verify_nstack_pipeline.py --project "$PROJECT_NAME" --task "$TASK_SLUG"
       EXIT_CODE=$?
       if [ $EXIT_CODE -ne 0 ]; then
