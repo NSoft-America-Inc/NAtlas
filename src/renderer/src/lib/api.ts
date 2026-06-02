@@ -1,7 +1,7 @@
 import { DocumentsResponse, SwarmVaultStatus, Settings, SwarmVaultQueryResponse, TaskHistoryItem, BuildLogItem, DashboardStats } from './types'
 
 
-const BASE = 'http://localhost:18420'
+const BASE = 'http://127.0.0.1:18420'
 
 export const api = {
   getDocuments: (): Promise<DocumentsResponse> =>

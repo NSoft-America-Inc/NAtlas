@@ -93,7 +93,7 @@ export function Update() {
     addLog({ type: 'log', message: 'NStack & NAtlas 통합 비주얼 인스톨러 구동 중...' })
 
     try {
-      const response = await fetch('http://localhost:18420/swarmvault/install', {
+      const response = await fetch('http://127.0.0.1:18420/swarmvault/install', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode: installMode }),
@@ -182,7 +182,7 @@ export function Update() {
     addLog({ type: 'log', message: 'SwarmVault 동기화 업데이트를 시작합니다...' })
 
     try {
-      const response = await fetch('http://localhost:18420/swarmvault/update', {
+      const response = await fetch('http://127.0.0.1:18420/swarmvault/update', {
         method: 'POST',
       })
 
