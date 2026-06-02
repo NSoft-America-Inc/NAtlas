@@ -18,6 +18,8 @@ files:
 asarUnpack:
   - resources/**
   - src/python/**
+  - install_unified.sh
+  - install_unified.ps1
 win:
   executableName: NAtlas
 nsis:
