@@ -14,7 +14,12 @@ let isQuitting = false
 function startPythonSidecar(): void {
   if (isQuitting) return
 
-  const pythonScript = join(app.getAppPath(), 'src/python/main.py')
+  let pythonScript = join(app.getAppPath(), 'src/python/main.py')
+  
+  if (pythonScript.includes('app.asar')) {
+    pythonScript = pythonScript.replace('app.asar', 'app.asar.unpacked')
+  }
+
   let pythonCmd = 'python3'
   
   if (process.platform === 'win32') {
