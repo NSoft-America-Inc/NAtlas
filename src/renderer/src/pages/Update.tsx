@@ -43,6 +43,7 @@ export function Update() {
   const [selectedScenario, setSelectedScenario] = useState<'core' | 'project' | 'e2e'>('core')
   const [parentPath, setParentPath] = useState<string>('')
   const [projectName, setProjectName] = useState<string>('nstack-project')
+  const [targetProjectPath, setTargetProjectPath] = useState<string>('')
   const [isInstalling, setIsInstalling] = useState<boolean>(false)
   const [installStatus, setInstallStatus] = useState<'idle' | 'running' | 'success' | 'failed'>('idle')
   const [gitHubAuthStatus, setGitHubAuthStatus] = useState<'loading' | 'success' | 'warning' | null>(null)
@@ -108,11 +109,22 @@ export function Update() {
     if (settings?.llmwiki_root) {
       const parts = settings.llmwiki_root.replace(/\\/g, '/').split('/')
       if (parts.length > 2) {
-        parts.pop() // remove llmwiki
-        parts.pop() // remove NAtlas
-        const derived = parts.join('/')
+        const parentParts = [...parts]
+        parentParts.pop() // remove llmwiki
+        parentParts.pop() // remove NAtlas
+        const derived = parentParts.join('/')
         if (derived && derived !== '/') {
           setParentPath(derived)
+        }
+      }
+
+      // targetProjectPath: parent of llmwiki (usually the NAtlas project directory)
+      const projectParts = [...parts]
+      if (projectParts.length > 1) {
+        projectParts.pop() // remove llmwiki
+        const derivedProject = projectParts.join('/')
+        if (derivedProject && derivedProject !== '/') {
+          setTargetProjectPath(derivedProject)
         }
       }
     }
@@ -122,6 +134,15 @@ export function Update() {
     try {
       const selectedPath = await window.electron.openFolderDialog()
       if (selectedPath) setParentPath(selectedPath)
+    } catch {
+      // ignore dialog close
+    }
+  }
+
+  const handleOpenProjectFolder = async () => {
+    try {
+      const selectedPath = await window.electron.openFolderDialog()
+      if (selectedPath) setTargetProjectPath(selectedPath)
     } catch {
       // ignore dialog close
     }
@@ -140,6 +161,23 @@ export function Update() {
 
     addLog({ type: 'log', message: 'NStack & NAtlas 통합 비주얼 인스톨러 구동 중...' })
 
+    let sendParentPath = parentPath
+    let sendProjectName = projectName
+
+    if (selectedScenario === 'e2e') {
+      if (targetProjectPath) {
+        const normalized = targetProjectPath.replace(/\\/g, '/').replace(/\/$/, '')
+        const lastSlashIdx = normalized.lastIndexOf('/')
+        if (lastSlashIdx !== -1) {
+          sendParentPath = normalized.substring(0, lastSlashIdx)
+          sendProjectName = normalized.substring(lastSlashIdx + 1)
+        } else {
+          sendParentPath = ''
+          sendProjectName = normalized
+        }
+      }
+    }
+
     try {
       const response = await fetch('http://127.0.0.1:18420/swarmvault/install', {
         method: 'POST',
@@ -148,8 +186,8 @@ export function Update() {
           core_install: selectedScenario === 'core',
           project_create: selectedScenario === 'project',
           e2e_test: selectedScenario === 'e2e',
-          parent_path: parentPath,
-          project_name: projectName,
+          parent_path: sendParentPath,
+          project_name: sendProjectName,
         }),
       })
 
@@ -311,6 +349,16 @@ export function Update() {
   const renderStatusIndicator = (ok: boolean) => {
     if (ok) return <CheckCircle2 className="w-5 h-5 text-emerald-400" />
     return <XCircle className="w-5 h-5 text-rose-500 animate-pulse" />
+  }
+
+  const isFormValid = () => {
+    if (selectedScenario === 'project') {
+      return !!parentPath && !!projectName
+    }
+    if (selectedScenario === 'e2e') {
+      return !!targetProjectPath
+    }
+    return true
   }
 
   // Render installation step icon
@@ -526,7 +574,7 @@ export function Update() {
               </div>
 
               {/* Dynamic Path Inputs - Only visible if selectedScenario === 'project' or 'e2e' */}
-              {(selectedScenario === 'project' || selectedScenario === 'e2e') && (
+              {selectedScenario === 'project' && (
                 <div className="border border-border rounded-xl p-5 bg-card/10 flex flex-col gap-4 animate-in fade-in slide-in-from-top duration-300">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-400">NStack 프로젝트 다중 설치 경로 설정</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -578,6 +626,42 @@ export function Update() {
                 </div>
               )}
 
+              {selectedScenario === 'e2e' && (
+                <div className="border border-border rounded-xl p-5 bg-card/10 flex flex-col gap-4 animate-in fade-in slide-in-from-top duration-300">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-400">검증 대상 NStack 프로젝트 폴더 설정</h4>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-bold text-muted-foreground">대상 프로젝트 폴더 경로 (NStack Project Folder)</label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="text"
+                        placeholder="/Users/yg/workspace/nstack-project"
+                        value={targetProjectPath}
+                        onChange={(e) => setTargetProjectPath(e.target.value)}
+                        disabled={isInstalling}
+                        className="flex-1 h-9 text-xs bg-slate-900 border-border text-foreground placeholder:text-muted-foreground/40"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleOpenProjectFolder}
+                        disabled={isInstalling}
+                        className="h-9 px-3 text-xs bg-muted/40 border-border hover:bg-muted text-foreground flex items-center gap-1.5 border-dashed"
+                      >
+                        <FolderOpen className="w-3.5 h-3.5 text-indigo-400" />
+                        폴더 선택
+                      </Button>
+                    </div>
+                  </div>
+
+                  {targetProjectPath && (
+                    <div className="text-[10px] text-muted-foreground font-mono bg-black/30 p-2.5 rounded border border-border/30">
+                      <span className="text-indigo-400 font-bold">대상 프로젝트 경로:</span>{' '}
+                      {targetProjectPath}
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Action Trigger Card */}
               <div className="flex justify-between items-center bg-card/15 p-4 border border-border rounded-xl shadow-sm select-none">
                 <div className="max-w-md">
@@ -589,7 +673,7 @@ export function Update() {
                 <Button
                   size="lg"
                   onClick={handleInstall}
-                  disabled={isInstalling || isUpdating || ((selectedScenario === 'project' || selectedScenario === 'e2e') && (!parentPath || !projectName))}
+                  disabled={isInstalling || isUpdating || !isFormValid()}
                   className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-muted/40 text-white font-bold h-11 px-6 shadow-md shadow-indigo-600/10 transition-all duration-300"
                 >
                   {isInstalling ? (
