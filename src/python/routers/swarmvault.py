@@ -379,7 +379,7 @@ async def post_install(payload: InstallSchema):
                 yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': 'Antigravity 표준 룰 요건 미충족'})}\n\n"
         except Exception as e:
             yield f"data: {json.dumps({'type': 'log', 'message': f'[룰 검증] 검증 중 예외 오류 발생: {str(e)}'})}\n\n"
-            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'오류: {str(e)}'})}\n\n"✓ [MCP 자가 치유] .claude/settings.json에 SwarmVault MCP 설정을 자동 주입 완료!'})}\n\n"
+            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'오류: {str(e)}'})}\n\n"
             
             # 자가 검증
             command = "/opt/homebrew/bin/swarmvault"
