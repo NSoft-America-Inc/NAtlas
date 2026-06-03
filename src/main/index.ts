@@ -341,6 +341,7 @@ app.whenReady().then(() => {
       // Read github_token from ~/.natlas/config.json to pass to installer
       let nstackGithubToken = ''
       try {
+        const fs = require('fs')
         const configPath = require('path').join(require('os').homedir(), '.natlas', 'config.json')
         if (fs.existsSync(configPath)) {
           const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
