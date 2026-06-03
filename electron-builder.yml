@@ -21,6 +21,9 @@ asarUnpack:
   - src/python/**
   - install_unified.sh
   - install_unified.ps1
+  - setup_natlas_env.py
+  - setup_nstack_hooks.py
+  - verify_nstack_pipeline.py
 win:
   executableName: NAtlas
 nsis:
