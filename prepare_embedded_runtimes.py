@@ -194,6 +194,10 @@ def prepare_runtimes():
 
 def prepare_swarmvault_cli(project_root, resources_dir):
     portable_dir = resources_dir / "swarmvault-cli-portable"
+    if (portable_dir / "node_modules").exists():
+        print("SwarmVault CLI portable already exists. Skipping...")
+        return
+        
     portable_dir.mkdir(parents=True, exist_ok=True)
     
     package_json_content = """{
