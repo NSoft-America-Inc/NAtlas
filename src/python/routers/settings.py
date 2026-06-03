@@ -19,11 +19,12 @@ class SettingsSchema(BaseModel):
     source_mode: str = "remote"   # 'remote' | 'local'
     github_token: str = ""
     llmwiki_root: str = ""
+    enable_auto_sync: bool = True
 
 DEFAULT_TOKEN = "gho_M7TV4s2s" + "7ZCGdVduvMKmM" + "tx1yjjjtJ4Vtk0r"
 
 def load_settings():
-    defaults = {"source_mode": "remote", "github_token": DEFAULT_TOKEN, "llmwiki_root": ""}
+    defaults = {"source_mode": "remote", "github_token": DEFAULT_TOKEN, "llmwiki_root": "", "enable_auto_sync": True}
     if not CONFIG_FILE.exists():
         return defaults
     try:
@@ -36,6 +37,7 @@ def load_settings():
                 "source_mode": data.get("source_mode", "remote"),
                 "github_token": token,
                 "llmwiki_root": data.get("llmwiki_root", ""),
+                "enable_auto_sync": data.get("enable_auto_sync", True),
             }
     except Exception:
         return defaults
@@ -55,12 +57,18 @@ async def get_settings():
 @router.put("")
 async def put_settings(settings: SettingsSchema):
     mode = settings.source_mode.strip()
+    current = load_settings()
 
     if mode == "remote":
         token = settings.github_token.strip()
         if not token:
             return JSONResponse(status_code=400, content={"error": "GitHub Token을 입력해주세요"})
-        save_settings({"source_mode": "remote", "github_token": token, "llmwiki_root": ""})
+        save_settings({
+            "source_mode": "remote",
+            "github_token": token,
+            "llmwiki_root": "",
+            "enable_auto_sync": settings.enable_auto_sync
+        })
         return {"ok": True}
 
     else:  # local
@@ -70,8 +78,22 @@ async def put_settings(settings: SettingsSchema):
         config_json_path = os.path.join(root_path, "swarmvault.config.json")
         if not os.path.exists(config_json_path):
             return JSONResponse(status_code=400, content={"error": "swarmvault.config.json을 찾을 수 없습니다"})
-        save_settings({"source_mode": "local", "github_token": "", "llmwiki_root": root_path})
+        save_settings({
+            "source_mode": "local",
+            "github_token": "",
+            "llmwiki_root": root_path,
+            "enable_auto_sync": settings.enable_auto_sync
+        })
         return {"ok": True}
+
+@router.post("/toggle-auto-sync")
+async def post_toggle_auto_sync():
+    settings = load_settings()
+    current_state = settings.get("enable_auto_sync", True)
+    new_state = not current_state
+    settings["enable_auto_sync"] = new_state
+    save_settings(settings)
+    return {"ok": True, "enable_auto_sync": new_state}
 
 import urllib.request
 import urllib.error

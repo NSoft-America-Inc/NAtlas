@@ -70,10 +70,28 @@ async def get_status():
             else:
                 wiki_status = {"ok": True, "file_count": md_files_count}
 
+    # 마지막 동기화 성공(Compile done) 시각 조회
+    last_sync_time = None
+    try:
+        row = db.execute_query(
+            "SELECT created_at FROM build_logs WHERE action = 'compile' AND status = 'done' ORDER BY id DESC LIMIT 1",
+            fetch_one=True
+        )
+        if row:
+            last_sync_time = row["created_at"]
+    except Exception:
+        pass
+
+    # 스마트 자동 동기화 ON/OFF 상태 로드
+    cfg = load_settings_data()
+    enable_auto_sync = cfg.get("enable_auto_sync", True)
+
     return {
         "python": py_status,
         "swarmvault": sv_status,
-        "llmwiki": wiki_status
+        "llmwiki": wiki_status,
+        "enable_auto_sync": enable_auto_sync,
+        "last_sync_time": last_sync_time
     }
 
 @router.post("/update")
@@ -337,7 +355,7 @@ async def post_install(payload: InstallSchema):
                     
                     clean_text = re.sub(r'\x1b\[[0-9;]*[mK]', '', text)
                     # 유니코드 깨짐 물음표 마커() 혹은 정밀하지 않은 특수 스피너 기호 필터링
-                    if not clean_text or "" in clean_text or "[?" in clean_text:
+                    if not clean_text or "\ufffd" in clean_text or "[?" in clean_text:
                         continue
                     
                     if "[SETUP-STEP]" in clean_text:
@@ -401,7 +419,7 @@ async def post_install(payload: InstallSchema):
                 yield f"data: {json.dumps({'type': 'error', 'message': f'설치 중 오류 발생: {str(e)}'})}\n\n"
                 return
 
-        # 4. 8단계: Antigravity 표준 가이드 룰 검증 (mcp_verify)
+        # 4. 8단계: Antigravity 표준 가이드 룰 및 스킬 검증 (mcp_verify)
         if payload.project_create:
             current_step = "mcp_verify"
             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
@@ -430,52 +448,62 @@ async def post_install(payload: InstallSchema):
                         target_link = os.readlink(skills_path)
                         yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ NStack 스킬 심링크 연동 완료 (대상: {target_link})'})}\n\n"
                     else:
-                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✓ NStack 스킬 로컬 디렉토리 바인딩 확인 완료'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✓ NStack 스킬 디렉토리 바인딩 완료 (일반 디렉토리)'})}\n\n"
                 else:
                     mcp_ok = False
-                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✗ .agents/skills/nsoft 스킬을 탐색할 수 없습니다.'})}\n\n"
-                
-                # (3) 지식 파이프라인 무결성 린터 가용성 검증
-                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  [3/3] 지식 파이프라인 무결성 린터(verify_nstack_pipeline.py) 가용성 점검 중...'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✗ .agents/skills/nsoft 경로를 찾을 수 없습니다.'})}\n\n"
+
+                # (3) verify_nstack_pipeline.py 가용성 검증
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  [3/3] verify_nstack_pipeline.py 린터 가용성 검증 중...'})}\n\n"
                 await asyncio.sleep(0.5)
-                linter_script = Path(project_root) / "verify_nstack_pipeline.py"
-                if linter_script.exists():
-                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✓ verify_nstack_pipeline.py 정적 린터 모듈 유효성 감지 완료'})}\n\n"
+                linter_path = Path(project_path) / "verify_nstack_pipeline.py"
+                if not linter_path.exists():
+                    src_linter = Path(project_root) / "verify_nstack_pipeline.py"
+                    if src_linter.exists():
+                        shutil.copy2(src_linter, linter_path)
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✓ verify_nstack_pipeline.py 누락 감지: NAtlas 백업본으로부터 복제 완료'})}\n\n"
+                
+                if linter_path.exists() and linter_path.is_file():
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✓ verify_nstack_pipeline.py 린터 파일 존재 확인 완료'})}\n\n"
                 else:
                     mcp_ok = False
                     yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✗ verify_nstack_pipeline.py 린터 파일을 찾을 수 없습니다.'})}\n\n"
 
-                if mcp_ok:
-                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (가이드 룰 및 스킬 무결성 통과)'})}\n\n"
+                # 추가 SwarmVault MCP 검증
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  [추가] SwarmVault 실행 바이너리 및 MCP 가용성 검증 중...'})}\n\n"
+                await asyncio.sleep(0.5)
+                command = "/opt/homebrew/bin/swarmvault"
+                if not os.path.exists(command):
+                    import shutil as sh_util
+                    resolved_cmd = sh_util.which("swarmvault")
+                    if resolved_cmd:
+                        command = resolved_cmd
+                
+                if os.path.exists(command):
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ SwarmVault 실행 바이너리 존재 확인 완료 ({command})'})}\n\n"
                 else:
-                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': 'Antigravity 표준 룰/스킬 요건 미충족'})}\n\n"
+                    mcp_ok = False
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✗ SwarmVault 바이너리를 찾을 수 없습니다: {command}'})}\n\n"
+
+                if mcp_ok:
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ [MCP 검증 통과] SwarmVault MCP 서버 설정 및 바이너리 유효성 검증 성공!'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
+                else:
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '⚠ [MCP 검증 실패] MCP 서버 설정을 탐색하지 못했거나 일부 구성 파일이 유효하지 않습니다.'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': '검증 실패'})}\n\n"
 
             except Exception as e:
-                mcp_ok = False
-                yield f"data: {json.dumps({'type': 'log', 'message': f'[룰 검증] 검증 중 예외 오류 발생: {str(e)}'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'[룰 검증] 검증 중 예외 오류 발생: {str(e)}'})}\n\n"
                 yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'오류: {str(e)}'})}\n\n"
-                
-                # 자가 검증
-                command = "/opt/homebrew/bin/swarmvault"
-                if os.path.exists(command):
-                    yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ SwarmVault 실행 바이너리 존재 확인 완료'})}\n\n"
-                    mcp_ok = True
-                else:
-                    yield f"data: {json.dumps({'type': 'log', 'message': f'  └─ ✗ SwarmVault 바이너리를 찾을 수 없습니다: {command}'})}\n\n"
-                    
-                if mcp_ok:
-                    yield f"data: {json.dumps({'type': 'log', 'message': '✓ [MCP 검증 통과] SwarmVault MCP 서버 설정 및 바이너리 유효성 검증 성공!'})}\n\n"
-                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (MCP 서버 유효)'})}\n\n"
-                else:
-                    yield f"data: {json.dumps({'type': 'log', 'message': '⚠ [MCP 검증 실패] MCP 서버 설정을 탐색하지 못했거나 오류가 있습니다.'})}\n\n"
-                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': 'MCP 서버 설정 요건 미충족'})}\n\n"
 
+        # 5. 9단계: E2E 의미론적 RAG 검색 자가 검증 (rag_verify)
+        validation_success = False
         # 5. 9단계: E2E 의미론적 RAG 검색 자가 검증 (rag_verify)
         validation_success = False
         if payload.e2e_test:
             current_step = "rag_verify"
             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
-            yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] RAG 의미론적 검색 자가 검증 구동 개시...'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '[E2E 검증] RAG 의미론적 검색 자가 검증 구동 개시...'})}\n\n"
             
             # Target the dynamically constructed project's llmwiki path
             llmwiki_root = os.path.join(project_path, "llmwiki")
@@ -503,10 +531,10 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                 with open(test_file, "w", encoding="utf-8") as f:
                     f.write(test_content)
                 
-                yield f"data: {json.dumps({'type': 'log', 'message': f'[E2E 검증] 테스트 검증 문서 생성 완료: {test_file.name}'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'[E2E 검증] 테스트 검증 문서 생성 완료: {test_file.name}'})}\n\n"
                 
                 # (B) SwarmVault Ingest & Compile 실행
-                yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] SwarmVault에 테스트 문서 Ingest 등록 중...'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '[E2E 검증] SwarmVault에 테스트 문서 Ingest 등록 중...'})}\n\n"
                 
                 # Ingest
                 rel_test_path = "content/01-Logs/archive/verification/developer/verify-install/wiki.md"
@@ -519,7 +547,7 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                 await ingest_proc.communicate()
                 
                 # Compile
-                yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] SwarmVault 지식베이스 컴파일 및 RAG 색인 갱신 중...'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '[E2E 검증] SwarmVault 지식베이스 컴파일 및 RAG 색인 갱신 중...'})}\n\n"
                 compile_proc = await asyncio.create_subprocess_exec(
                     "swarmvault", "compile",
                     cwd=llmwiki_root,
@@ -536,7 +564,7 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                 
                 verified_count = 0
                 for query in queries:
-                    yield f"data: {json.dumps({'type': 'log', 'message': f'[E2E 검증] RAG 쿼리 질의 실행: {query}'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'[E2E 검증] RAG 쿼리 질의 실행: {query}'})}\n\n"
                     query_proc = await asyncio.create_subprocess_exec(
                         "swarmvault", "query", "--json", query,
                         cwd=llmwiki_root,
@@ -558,25 +586,25 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                             
                             if match_found:
                                 verified_count += 1
-                                yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ RAG 의미론적 매칭 매핑 성공! (인용문서 매칭 성공)'})}\n\n"
+                                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  └─ ✓ RAG 의미론적 매칭 매핑 성공! (인용문서 매칭 성공)'})}\n\n"
                             else:
-                                yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✗ RAG 매칭 실패 (검색 결과에 인용되지 않음)'})}\n\n"
+                                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  └─ ✗ RAG 매칭 실패 (검색 결과에 인용되지 않음)'})}\n\n"
                         except Exception as e:
-                            yield f"data: {json.dumps({'type': 'log', 'message': f'  └─ ✗ JSON 파싱 오류로 검증 스킵: {str(e)}'})}\n\n"
+                            yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'  └─ ✗ JSON 파싱 오류로 검증 스킵: {str(e)}'})}\n\n"
                     else:
-                        yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✗ 쿼리 수행 프로세스 오류 발생'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  └─ ✗ 쿼리 수행 프로세스 오류 발생'})}\n\n"
                 
                 if verified_count == len(queries):
-                    yield f"data: {json.dumps({'type': 'log', 'message': '✓ [RAG 검증 통과] 모든 의미론적 RAG 다중 질의 검증에 성공했습니다!'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ [RAG 검증 통과] 모든 의미론적 RAG 다중 질의 검증에 성공했습니다!'})}\n\n"
                     yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (RAG 검증 통과)'})}\n\n"
                     validation_success = True
                 else:
-                    yield f"data: {json.dumps({'type': 'log', 'message': '⚠ [RAG 검증 실패] 일부 의미론적 질의에 대한 매칭에 실패했습니다.'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '⚠ [RAG 검증 실패] 일부 의미론적 질의에 대한 매칭에 실패했습니다.'})}\n\n"
                     yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': '일부 쿼리 매칭 실패'})}\n\n"
                     validation_success = False
                 
                 # (D) 임시 테스트 리소스 자동 클린업
-                yield f"data: {json.dumps({'type': 'log', 'message': '[E2E 검증] 테스트 리소스 자동 클린업 수행 중...'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '[E2E 검증] 테스트 리소스 자동 클린업 수행 중...'})}\n\n"
                 if test_file.exists():
                     test_file.unlink()
                 if test_dir.exists():
@@ -590,10 +618,10 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                     stderr=asyncio.subprocess.PIPE
                 )
                 await clean_proc.communicate()
-                yield f"data: {json.dumps({'type': 'log', 'message': '✓ 임시 테스트 리소스 클린업 완료'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ 임시 테스트 리소스 클린업 완료'})}\n\n"
 
             except Exception as e:
-                yield f"data: {json.dumps({'type': 'log', 'message': f'[E2E 검증] RAG 검증 실행 중 오류: {str(e)}'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'[E2E 검증] RAG 검증 실행 중 오류: {str(e)}'})}\n\n"
                 yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'검증 에러: {str(e)}'})}\n\n"
                 validation_success = False
                 try:
@@ -950,7 +978,7 @@ async def start_smart_scheduler(interval_seconds: int = 60):
                 continue
                 
             cfg = load_settings_data()
-            if cfg.get("source_mode", "remote") != "local":
+            if cfg.get("source_mode", "remote") != "local" or not cfg.get("enable_auto_sync", True):
                 continue
                 
             # 1. 문서 상태 가볍게 조회

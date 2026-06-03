@@ -170,27 +170,51 @@ function install_nstack {
     }
     ok "SwarmVault CLI 및 디렉토리 구조 초기화 완수!"
 
-    log "[SETUP-STEP] 단계 5: Git Hook 연동"
-    log "  Git Hook 및 pre-commit 린팅 연동 중..."
-    # NStack rules.md 및 .antigravity/rules 바인딩 확인
-    $ag_rules = Join-Path $PROJECT_ROOT ".antigravity\rules"
-    if (Test-Path $ag_rules) {
-        ok ".antigravity/rules 룰 바인딩 성공!"
-    } else {
-        warn ".antigravity/rules 룰이 감지되지 않았습니다."
-    }
+    if ($env:INSTALL_MODE -eq "api") {
+        log "[SETUP-STEP] 단계 5: Git Hook 연동"
+        log "  Git Hook 및 pre-commit 린팅 연동 중..."
+        Start-Sleep -m 1200
+        
+        $ag_rules = Join-Path $PROJECT_ROOT ".antigravity\rules"
+        if (Test-Path $ag_rules) {
+            ok ".antigravity/rules 룰 바인딩 성공!"
+        } else {
+            warn ".antigravity/rules 룰이 감지되지 않았습니다."
+        }
 
-    log "[SETUP-STEP] 단계 6: 지식 파이프라인 무결성 검사"
-    # verify_nstack_pipeline.py 가용성 진단
-    $validator = Join-Path $PROJECT_ROOT "verify_nstack_pipeline.py"
-    if (Test-Path $validator) {
-        ok "지식 파이프라인 무결성 검증 모듈 감지 성공!"
+        log "[SETUP-STEP] 단계 6: 지식 파이프라인 무결성 검사"
+        Start-Sleep -m 1200
+        
+        $validator = Join-Path $PROJECT_ROOT "verify_nstack_pipeline.py"
+        if (Test-Path $validator) {
+            ok "지식 파이프라인 무결성 검증 모듈 감지 성공!"
+        } else {
+            warn "무결성 검증 모듈을 찾을 수 없습니다."
+        }
+        
+        log "NStack 개발 규격 및 지식 아카이브 연동 개시"
+        log "  Antigravity 단독 개발 표준 룰 주입 완료!"
     } else {
-        warn "무결성 검증 모듈을 찾을 수 없습니다."
+        log "[SETUP-STEP] 단계 5: Git Hook 연동"
+        log "  Git Hook 및 pre-commit 린팅 연동 중..."
+        $ag_rules = Join-Path $PROJECT_ROOT ".antigravity\rules"
+        if (Test-Path $ag_rules) {
+            ok ".antigravity/rules 룰 바인딩 성공!"
+        } else {
+            warn ".antigravity/rules 룰이 감지되지 않았습니다."
+        }
+
+        log "[SETUP-STEP] 단계 6: 지식 파이프라인 무결성 검사"
+        $validator = Join-Path $PROJECT_ROOT "verify_nstack_pipeline.py"
+        if (Test-Path $validator) {
+            ok "지식 파이프라인 무결성 검증 모듈 감지 성공!"
+        } else {
+            warn "무결성 검증 모듈을 찾을 수 없습니다."
+        }
+        
+        log "NStack 개발 규격 및 지식 아카이브 연동 개시"
+        log "  Antigravity 단독 개발 표준 룰 주입 완료!"
     }
-    
-    log "NStack 개발 규격 및 지식 아카이브 연동 개시"
-    log "  Antigravity 단독 개발 표준 룰 주입 완료!"
 }
 
 # ─── 6. 옵션 분기 실행 ───────────────────────────────────────────

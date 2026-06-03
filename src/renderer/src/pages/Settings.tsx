@@ -77,18 +77,29 @@ export function Settings() {
 
   const handleSave = () => {
     setSaveError(null)
+    const autoSync = currentSettings?.enable_auto_sync ?? true
     if (sourceMode === 'remote') {
       if (!githubToken.trim()) {
         setSaveError('GitHub Token을 입력해주세요.')
         return
       }
-      saveMutation.mutate({ source_mode: 'remote', github_token: githubToken.trim(), llmwiki_root: '' })
+      saveMutation.mutate({
+        source_mode: 'remote',
+        github_token: githubToken.trim(),
+        llmwiki_root: '',
+        enable_auto_sync: autoSync
+      })
     } else {
       if (!llmwikiRoot.trim()) {
         setSaveError('LLMWiki 루트 경로를 입력해주세요.')
         return
       }
-      saveMutation.mutate({ source_mode: 'local', github_token: '', llmwiki_root: llmwikiRoot.trim() })
+      saveMutation.mutate({
+        source_mode: 'local',
+        github_token: '',
+        llmwiki_root: llmwikiRoot.trim(),
+        enable_auto_sync: autoSync
+      })
     }
   }
 

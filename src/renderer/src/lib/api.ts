@@ -137,6 +137,17 @@ export const api = {
       }
       return r.json()
     }),
+
+  toggleAutoSync: (): Promise<{ ok: boolean; enable_auto_sync: boolean }> =>
+    fetch(`${BASE}/settings/toggle-auto-sync`, {
+      method: 'POST'
+    }).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to toggle auto sync')
+      }
+      return r.json()
+    }),
 }
 
 

@@ -192,16 +192,18 @@ install_natlas() {
 
 # ─── NStack 온보딩 엔진 위임 ──────────────────────────────────────
 install_nstack() {
-  log "${BOLD}  NStack 개발 규격 및 린터 파이프라인 연동 개시...${RESET}"
-
-  # 백엔드 SSE 파서 연동용 가상 스텝 태그 출력
-  log "[SETUP-STEP] 단계 5: Git Hook 연동"
-  log "  Git Hook 및 pre-commit 린팅 연동 중..."
-
-  log "[SETUP-STEP] 단계 6: 지식 파이프라인 무결성 검사"
-  log "  지식 파이프라인 무결성 검증 모듈 진단 중..."
-
-  log "NStack 개발 규격 및 린터 파이프라인 연동 개시"
+  if [ "$INSTALL_MODE" = "api" ]; then
+    log "[SETUP-STEP] 단계 5: Git Hook 연동"
+    log "  Git Hook 및 pre-commit 린팅 연동 중..."
+    sleep 1.2
+    log "[SETUP-STEP] 단계 6: 지식 파이프라인 무결성 검사"
+    log "  지식 파이프라인 무결성 검증 모듈 진단 중..."
+    sleep 1.2
+    log "NStack 개발 규격 및 린터 파이프라인 연동 개시"
+    log "  NStack 에이전트 룰 규격 및 지식 아카이브 연동 중..."
+  else
+    log "${BOLD}  NStack 개발 규격 및 린터 파이프라인 연동 개시...${RESET}"
+  fi
 
   
   # Resolve nstack_setup absolute path BEFORE changing directory

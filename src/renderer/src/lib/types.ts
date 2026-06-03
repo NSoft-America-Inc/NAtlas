@@ -51,6 +51,8 @@ export interface SwarmVaultStatus {
   python:      { ok: boolean; version: string | null; bin: string | null }
   swarmvault:  { ok: boolean; version: string | null }
   llmwiki:     { ok: boolean; file_count: number; error?: string }
+  enable_auto_sync: boolean
+  last_sync_time: string | null
 }
 
 // Settings
@@ -58,6 +60,7 @@ export interface Settings {
   source_mode: 'remote' | 'local'
   github_token: string            // Remote 모드 전용
   llmwiki_root: string            // Local 모드 전용
+  enable_auto_sync?: boolean
 }
 
 // SSE Log

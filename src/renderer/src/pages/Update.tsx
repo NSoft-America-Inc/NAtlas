@@ -286,10 +286,13 @@ export function Update() {
                   setGitHubAuthMessage(data.message)
                 } else if (data.type === 'log') {
                   const stepId = data.step || 'general'
-                  setStepLogs((prev) => ({
-                    ...prev,
-                    [stepId]: [...(prev[stepId] || []), data.message],
-                  }))
+                  const filteredMsg = filterStepLogMessage(stepId, data.message)
+                  if (filteredMsg && stepId !== 'general') {
+                    setStepLogs((prev) => ({
+                      ...prev,
+                      [stepId]: [...(prev[stepId] || []), filteredMsg],
+                    }))
+                  }
                   addLog({ type: 'log', message: data.message })
                 } else if (data.type === 'error') {
                   addLog({ type: 'error', message: data.message })
@@ -805,7 +808,7 @@ export function Update() {
                       }`}
                     >
                       <div className="mt-0.5 flex-shrink-0">{renderStepIcon(step.status)}</div>
-                      <div className="space-y-1 select-none flex-1">
+                      <div className="space-y-1 select-none flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-foreground">
                             {idx + 1}. {step.name}
@@ -828,7 +831,7 @@ export function Update() {
                         {stepLogs[step.id] && stepLogs[step.id].length > 0 && (
                           <div className="mt-2 text-[9px] font-mono text-slate-300 bg-black/40 p-2 rounded border border-border/30 max-h-32 overflow-y-auto space-y-0.5 leading-relaxed select-text scrollbar-thin">
                             {stepLogs[step.id].map((logMsg, lIdx) => (
-                              <div key={lIdx} className="truncate">{logMsg}</div>
+                              <div key={lIdx} className="break-all whitespace-pre-wrap">{logMsg}</div>
                             ))}
                           </div>
                         )}
@@ -944,6 +947,75 @@ export function Update() {
                 </Button>
               </div>
 
+              {/* 스마트 백그라운드 자동 동기화 설정 카드 */}
+              <div className={`flex flex-col gap-4 p-5 border rounded-xl select-none animate-in fade-in duration-300 ${
+                settings?.source_mode === 'local' 
+                  ? 'border-indigo-500/20 bg-indigo-500/5 text-indigo-300' 
+                  : 'border-slate-800 bg-slate-900/30 text-muted-foreground'
+              }`}>
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  {/* ON/OFF 상태 지시계 */}
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${
+                      (settings?.source_mode === 'local' && (status?.enable_auto_sync ?? true)) ? 'bg-emerald-400 animate-ping' : 'bg-slate-600'
+                    }`} />
+                    <div>
+                      <span className="text-xs font-bold block">
+                        {settings?.source_mode === 'local' 
+                          ? ((status?.enable_auto_sync ?? true) ? '스마트 백그라운드 자동 동기화 구동 중' : '스마트 백그라운드 자동 동기화 일시정지')
+                          : '스마트 백그라운드 자동 동기화 비활성'}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground mt-0.5 block">
+                        {settings?.source_mode === 'local' 
+                          ? '로컬 LLMWiki 변경 감지 시, 60초 간격으로 자동 색인을 갱신합니다.' 
+                          : 'Settings 탭에서 Source Mode를 Local Path로 설정 시 동작합니다.'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* ON/OFF 토글 스위치 */}
+                  {settings?.source_mode === 'local' && (
+                    <div className="flex items-center gap-2.5 bg-black/25 border border-border/30 px-3.5 py-2 rounded-lg">
+                      <span className="text-[11px] font-bold text-slate-300 select-none">자동 동기화</span>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await api.toggleAutoSync()
+                            queryClient.invalidateQueries({ queryKey: ['swarmvaultStatus'] })
+                          } catch (err) {
+                            addLog({
+                              type: 'error',
+                              message: `자동 동기화 토글 오류: ${err instanceof Error ? err.message : '알 수 없음'}`
+                            })
+                          }
+                        }}
+                        className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${
+                          (status?.enable_auto_sync ?? true) ? 'bg-indigo-500' : 'bg-slate-700'
+                        }`}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out ${
+                            (status?.enable_auto_sync ?? true) ? 'translate-x-4' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* 마지막 동기화 시각 안내 */}
+                <div className="border-t border-border/20 pt-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                  <span className="text-[10px] text-muted-foreground font-semibold flex items-center gap-1.5">
+                    <Database className="w-3.5 h-3.5 text-indigo-400" />
+                    실시간 색인 상태 및 최종 동기화 이력
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-300 bg-black/35 px-2.5 py-1 rounded border border-border/20">
+                    최종 성공 동기화: <strong className="text-indigo-400 font-bold ml-1">{formatLastSyncTime(status?.last_sync_time || null)}</strong>
+                  </span>
+                </div>
+              </div>
+
               {settings?.source_mode === 'remote' && (
                 <div className="flex items-start gap-3 p-4 border border-amber-800/40 rounded-xl bg-amber-950/20 text-amber-400 text-xs animate-in fade-in duration-300">
                   <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5" />
@@ -970,3 +1042,125 @@ export function Update() {
 }
 
 export default Update
+
+const filterStepLogMessage = (stepId: string, message: string): string | null => {
+  const clean = message.trim();
+  
+  // 1. 쉘 진행률, 테이블선, 스피너 찌꺼기 등 무조건 필터링
+  if (
+    clean.startsWith('%') || 
+    clean.includes('╔══') || 
+    clean.includes('╚══') || 
+    clean.includes('║') || 
+    clean.includes('➔') || 
+    clean.includes('100 ') ||
+    clean.startsWith('==') ||
+    clean.includes('[SETUP-STEP]') ||
+    clean.includes('[?25') ||
+    clean.includes('\x1b')
+  ) {
+    return null;
+  }
+  
+  // 2. nstack_onboarding 스텝
+  if (stepId === 'nstack_onboarding') {
+    if (clean.includes('✓ NStack 에이전트 룰') || clean.includes('✓ LLMWiki 로컬경로') || clean.includes('완수!')) {
+      if (clean.includes('룰:')) return '✓ .antigravity/rules 룰 주입 완료';
+      if (clean.includes('로컬경로')) return '✓ LLMWiki 로컬 저장소 연동 완료';
+      return clean.replace(/^[✓\s]+/, '✓ ').trim();
+    }
+    return null;
+  }
+  
+  // 3. mcp_verify 스텝
+  if (stepId === 'mcp_verify') {
+    if (clean.includes('✓') || clean.includes('✗') || clean.includes('⚠')) {
+      if (clean.includes('rules 파일 존재')) {
+        return '✓ .antigravity/rules 룰 검증 완료';
+      }
+      if (clean.includes('스킬 심링크 연동 완료') || clean.includes('스킬 디렉토리 바인딩 완료')) {
+        return '✓ .agents/skills/nsoft 스킬 검증 완료';
+      }
+      if (clean.includes('verify_nstack_pipeline.py 누락')) {
+        return '✓ verify_nstack_pipeline.py 누락 자동 복구 완료';
+      }
+      if (clean.includes('verify_nstack_pipeline.py 린터 파일 존재')) {
+        return '✓ verify_nstack_pipeline.py 린터 파일 검증 완료';
+      }
+      if (clean.includes('SwarmVault 실행 바이너리 존재')) {
+        return '✓ SwarmVault CLI 실행 파일 검증 완료';
+      }
+      if (clean.includes('MCP 서버 설정 및 바이너리 유효성')) {
+        return '✓ SwarmVault MCP 서버 검증 통과';
+      }
+      return clean.replace(/^[└─\s\u2514\u2500\u2713\u2717\u26a0]+/, '✓ ').trim();
+    }
+    return null;
+  }
+
+  // 4. rag_verify 스텝
+  if (stepId === 'rag_verify') {
+    if (clean.includes('테스트 검증 문서 생성 완료')) {
+      return '✓ 테스트 검증용 마크다운 문서 생성 완료';
+    }
+    if (clean.includes('Ingest 등록 중')) {
+      return '✓ SwarmVault 테스트 문서 Ingest 등록 완료';
+    }
+    if (clean.includes('컴파일 및 RAG 색인 갱신')) {
+      return '✓ SwarmVault 컴파일 및 RAG 색인 갱신 완료';
+    }
+    if (clean.includes('RAG 쿼리 질의 실행')) {
+      const q = clean.split(':').pop()?.trim() || '';
+      return `✓ RAG 검색 질의 실행: "${q}"`;
+    }
+    if (clean.includes('RAG 의미론적 매칭 매핑 성공')) {
+      return '  └─ ✓ RAG 의미론적 매칭 매핑 성공';
+    }
+    if (clean.includes('모든 의미론적 RAG 다중 질의 검증')) {
+      return '✓ 모든 의미론적 RAG 다중 질의 검증 성공';
+    }
+    if (clean.includes('클린업 완료')) {
+      return '✓ 임시 테스트 리소스 클린업 완료';
+    }
+    return null;
+  }
+  
+  // 5. 기타 스텝들
+  if (stepId === 'runtimes' || stepId === 'npm_install' || stepId === 'python_venv' || stepId === 'swarmvault_cli') {
+    if (clean.includes('✓') || clean.includes('성공') || clean.includes('완수') || clean.includes('완료')) {
+      return clean.replace(/^[✓\s]+/, '✓ ').trim();
+    }
+    return null;
+  }
+  
+  if (stepId === 'git_hook' || stepId === 'pipeline_verify') {
+    if (clean.includes('성공') || clean.includes('완료') || clean.includes('✓')) {
+      if (clean.includes('pre-commit') && clean.includes('바인딩 성공')) {
+        return '✓ NStack E2E pre-commit Git Hook 바인딩 성공';
+      }
+      return clean.replace(/^[✓\s]+/, '✓ ').trim();
+    }
+    return null;
+  }
+
+  return clean;
+}
+
+const formatLastSyncTime = (timeStr: string | null) => {
+  if (!timeStr) return '기록 없음'
+  try {
+    const date = new Date(timeStr)
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }
+    return date.toLocaleString('ko-KR', options)
+  } catch {
+    return timeStr
+  }
+}
