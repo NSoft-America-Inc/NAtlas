@@ -60,6 +60,11 @@ export function Update() {
     { id: 'rag_verify', name: 'E2E 의미론적 RAG 검색 자가 검증', status: 'idle' },
   ])
   const [copiedCmd, setCopiedCmd] = useState<boolean>(false)
+  const [validationResult, setValidationResult] = useState<{
+    success: boolean;
+    verifiedCount: number;
+    totalCount: number;
+  } | null>(null)
 
   const allSteps: InstallStep[] = [
     { id: 'runtimes', name: '필수 개발 런타임 진단', status: 'idle' },
@@ -106,33 +111,45 @@ export function Update() {
 
   // Dynamically resolve workspace parent path from settings
   useEffect(() => {
+    const savedParent = localStorage.getItem('natlas_last_parent_path')
+    const savedProject = localStorage.getItem('natlas_last_project_name')
+    const savedTarget = localStorage.getItem('natlas_last_target_project_path')
+
+    if (savedParent) setParentPath(savedParent)
+    if (savedProject) setProjectName(savedProject)
+    if (savedTarget) setTargetProjectPath(savedTarget)
+
     if (settings?.llmwiki_root) {
       const normalized = settings.llmwiki_root.replace(/\\/g, '/')
       const parts = normalized.split('/')
 
       // 1. parentPath: 감지된 workspace 디렉토리가 있다면 우선 매핑, 없으면 pop() 2회 fallback
-      const workspaceIdx = normalized.toLowerCase().indexOf('/workspace')
-      if (workspaceIdx !== -1) {
-        const derived = normalized.substring(0, workspaceIdx + 10)
-        setParentPath(derived)
-      } else if (parts.length > 2) {
-        const parentParts = [...parts]
-        parentParts.pop() // remove llmwiki or last directory
-        parentParts.pop() // remove project directory
-        const derived = parentParts.join('/')
-        if (derived && derived !== '/') {
+      if (!savedParent) {
+        const workspaceIdx = normalized.toLowerCase().indexOf('/workspace')
+        if (workspaceIdx !== -1) {
+          const derived = normalized.substring(0, workspaceIdx + 10)
           setParentPath(derived)
+        } else if (parts.length > 2) {
+          const parentParts = [...parts]
+          parentParts.pop() // remove llmwiki or last directory
+          parentParts.pop() // remove project directory
+          const derived = parentParts.join('/')
+          if (derived && derived !== '/') {
+            setParentPath(derived)
+          }
         }
       }
 
       // 2. targetProjectPath: llmwiki 디렉토리만 안전하게 제외
-      const projectParts = [...parts]
-      if (projectParts.length > 0 && projectParts[projectParts.length - 1].toLowerCase() === 'llmwiki') {
-        projectParts.pop()
-      }
-      const derivedProject = projectParts.join('/')
-      if (derivedProject && derivedProject !== '/') {
-        setTargetProjectPath(derivedProject)
+      if (!savedTarget) {
+        const projectParts = [...parts]
+        if (projectParts.length > 0 && projectParts[projectParts.length - 1].toLowerCase() === 'llmwiki') {
+          projectParts.pop()
+        }
+        const derivedProject = projectParts.join('/')
+        if (derivedProject && derivedProject !== '/') {
+          setTargetProjectPath(derivedProject)
+        }
       }
     }
   }, [settings])
@@ -165,6 +182,7 @@ export function Update() {
     setGitHubAuthMessage(null)
     clearLogs()
     setTestResult(null)
+    setValidationResult(null)
 
     addLog({ type: 'log', message: 'NStack & NAtlas 통합 비주얼 인스톨러 구동 중...' })
 
@@ -249,7 +267,25 @@ export function Update() {
                   setInstallStatus('failed')
                 } else if (data.type === 'done') {
                   addLog({ type: 'done', message: data.message })
-                  setInstallStatus('success')
+                  if (selectedScenario === 'e2e') {
+                    setValidationResult({
+                      success: !!data.success,
+                      verifiedCount: data.verified_count || 0,
+                      totalCount: data.total_count || 0,
+                    })
+                    setInstallStatus(data.success ? 'success' : 'failed')
+                  } else if (selectedScenario === 'project') {
+                    const createdPath = `${parentPath.replace(/\/$/, '')}/${projectName}`
+                    setTargetProjectPath(createdPath)
+                    
+                    localStorage.setItem('natlas_last_parent_path', parentPath)
+                    localStorage.setItem('natlas_last_project_name', projectName)
+                    localStorage.setItem('natlas_last_target_project_path', createdPath)
+                    
+                    setInstallStatus('success')
+                  } else {
+                    setInstallStatus('success')
+                  }
                   setIsInstalling(false)
                 }
               } catch (e) {
@@ -767,26 +803,52 @@ export function Update() {
               </div>
 
               {/* RAG Verification Success Summary Box */}
-              {installStatus === 'success' && (
-                <div className="border border-emerald-500/20 rounded-xl p-5 bg-emerald-950/5 flex flex-col gap-4 animate-in fade-in slide-in-from-bottom duration-500">
+              {((installStatus === 'success' || installStatus === 'failed') && selectedScenario === 'e2e' && validationResult) && (
+                <div className={`border rounded-xl p-5 flex flex-col gap-4 animate-in fade-in slide-in-from-bottom duration-500 ${
+                  validationResult.success 
+                    ? 'border-emerald-500/20 bg-emerald-950/5' 
+                    : 'border-amber-500/20 bg-amber-950/5'
+                }`}>
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/15">
-                      <Sparkles className="w-5 h-5" />
+                    <div className={`p-2 rounded-lg border ${
+                      validationResult.success 
+                        ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/15' 
+                        : 'bg-amber-500/10 text-amber-400 border-amber-500/15'
+                    }`}>
+                      {validationResult.success ? <Sparkles className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-emerald-400">E2E 설치 및 RAG 자동 검증 완전 완료</h4>
-                      <p className="text-xs text-muted-foreground">백엔드 및 의미론적 지식 베이스 연동이 100% 정상 작동합니다.</p>
+                      <h4 className={`text-sm font-bold ${validationResult.success ? 'text-emerald-400' : 'text-amber-400'}`}>
+                        {validationResult.success ? 'E2E 설치 및 RAG 자동 검증 완전 완료' : 'E2E 설치 완료 및 RAG 일부 검증 실패'}
+                      </h4>
+                      <p className="text-xs text-muted-foreground">
+                        {validationResult.success 
+                          ? '백엔드 및 의미론적 지식 베이스 연동이 100% 정상 작동합니다.' 
+                          : '일부 의미론적 질의에 대한 RAG 매칭에 실패했습니다. 로그창의 에러 로그를 확인하세요.'}
+                      </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-1 select-none">
-                    <div className="border border-emerald-500/10 rounded-lg p-3 bg-emerald-950/10 flex flex-col gap-1">
+                    <div className={`border rounded-lg p-3 flex flex-col gap-1 ${
+                      validationResult.success 
+                        ? 'border-emerald-500/10 bg-emerald-950/10' 
+                        : 'border-amber-500/10 bg-amber-950/10'
+                    }`}>
                       <span className="text-[10px] uppercase text-muted-foreground font-semibold">RAG 매칭 테스트 질의 수</span>
-                      <span className="text-lg font-bold text-foreground">2 / 2 성공</span>
+                      <span className={`text-lg font-bold ${validationResult.success ? 'text-foreground' : 'text-amber-500'}`}>
+                        {validationResult.verifiedCount} / {validationResult.totalCount} 성공
+                      </span>
                     </div>
-                    <div className="border border-emerald-500/10 rounded-lg p-3 bg-emerald-950/10 flex flex-col gap-1">
+                    <div className={`border rounded-lg p-3 flex flex-col gap-1 ${
+                      validationResult.success 
+                        ? 'border-emerald-500/10 bg-emerald-950/10' 
+                        : 'border-amber-500/10 bg-amber-950/10'
+                    }`}>
                       <span className="text-[10px] uppercase text-muted-foreground font-semibold">임시 리소스 청소 상태</span>
-                      <span className="text-lg font-bold text-emerald-400">Cleanup 완료 (Cleaned)</span>
+                      <span className={`text-lg font-bold ${validationResult.success ? 'text-emerald-400' : 'text-amber-500'}`}>
+                        Cleanup 완료 (Cleaned)
+                      </span>
                     </div>
                   </div>
 

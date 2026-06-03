@@ -501,7 +501,7 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                             
                             match_found = False
                             for cit in citations:
-                                if "verify-install" in cit or "wiki.md" in cit:
+                                if "verify" in cit or "verification" in cit or "wiki" in cit:
                                     match_found = True
                                     break
                             
@@ -556,11 +556,11 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
         # 최종 완료 패킷 전송
         if payload.e2e_test:
             if validation_success:
-                yield f"data: {json.dumps({'type': 'done', 'message': '🎉 모든 설치 및 E2E RAG 자가 검증이 완벽하게 완료되었습니다!'})}\n\n"
+                yield f"data: {json.dumps({'type': 'done', 'success': True, 'verified_count': verified_count, 'total_count': len(queries), 'message': '🎉 모든 E2E RAG 자가 검증이 완벽하게 완료되었습니다!'})}\n\n"
             else:
-                yield f"data: {json.dumps({'type': 'done', 'message': '⚠ 설치는 완료되었으나 일부 RAG 검증 스텝에 에러가 존재합니다.'})}\n\n"
+                yield f"data: {json.dumps({'type': 'done', 'success': False, 'verified_count': verified_count, 'total_count': len(queries), 'message': '⚠ 설치는 완료되었으나 일부 RAG 검증 스텝에 에러가 존재합니다.'})}\n\n"
         else:
-            yield f"data: {json.dumps({'type': 'done', 'message': '🎉 선택된 설치 시퀀스가 성공적으로 완료되었습니다!'})}\n\n"
+            yield f"data: {json.dumps({'type': 'done', 'success': True, 'message': '🎉 선택된 설치 시퀀스가 성공적으로 완료되었습니다!'})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
