@@ -208,21 +208,30 @@ app.whenReady().then(() => {
     return new Promise((resolve) => {
       console.log(`IPC request to run core installer. Scenario: ${scenario}`)
       
-      let installerScript = join(app.getAppPath(), 'install_unified.sh')
+      const isWin = process.platform === 'win32'
+      const shellCmd = isWin ? 'powershell.exe' : 'bash'
+      const scriptFile = isWin ? 'install_unified.ps1' : 'install_unified.sh'
+      
+      let installerScript = join(app.getAppPath(), scriptFile)
       if (installerScript.includes('app.asar')) {
         installerScript = installerScript.replace('app.asar', 'app.asar.unpacked')
       }
 
-      console.log(`Running unified installer shell script: ${installerScript}`)
+      console.log(`Running unified installer script: ${installerScript} using ${shellCmd}`)
       
       const runCwd = app.getAppPath().includes('app.asar') 
         ? join(app.getAppPath(), '..') 
         : app.getAppPath()
 
-      const installerProcess = spawn('bash', [installerScript], {
+      const spawnArgs = isWin 
+        ? ['-ExecutionPolicy', 'Bypass', '-File', installerScript] 
+        : [installerScript]
+
+      const installerProcess = spawn(shellCmd, spawnArgs, {
         cwd: runCwd,
         env: {
           ...process.env,
+          INSTALL_MODE: scenario !== undefined ? scenario.toString() : '0',
           TERM: 'dumb'
         }
       })
