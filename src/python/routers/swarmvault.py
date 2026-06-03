@@ -400,7 +400,7 @@ async def post_install(payload: InstallSchema):
             yield f"data: {json.dumps({'type': 'log', 'message': '[룰 검증] Antigravity 표준 개발 가이드 룰 검증 개시...'})}\n\n"
             
             try:
-                rules_path = Path(project_root) / ".antigravity" / "rules"
+                rules_path = Path(project_path) / ".antigravity" / "rules"
                 if rules_path.exists():
                     yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ .antigravity/rules 파일 존재 및 주입 확인 완료'})}\n\n"
                     yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (Antigravity 단독 연동)'})}\n\n"
@@ -408,6 +408,7 @@ async def post_install(payload: InstallSchema):
                     yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✗ .antigravity/rules 파일을 찾을 수 없습니다.'})}\n\n"
                     yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': 'Antigravity 표준 룰 요건 미충족'})}\n\n"
             except Exception as e:
+                mcp_ok = False
                 yield f"data: {json.dumps({'type': 'log', 'message': f'[룰 검증] 검증 중 예외 오류 발생: {str(e)}'})}\n\n"
                 yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'오류: {str(e)}'})}\n\n"
                 
