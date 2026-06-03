@@ -3,6 +3,7 @@ productName: NAtlas
 directories:
   buildResources: build
 files:
+  - '**/*'
   - '!**/.vscode/*'
   - '!**/.agents/*'
   - '!src/main/**/*'
