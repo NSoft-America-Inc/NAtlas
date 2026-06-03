@@ -70,20 +70,21 @@ def get_swarmvault_cmd() -> list:
     # to avoid unreliable __file__-based path traversal in packaged apps.
     resources_dir = os.environ.get("NATLAS_RESOURCES_DIR")
 
-    cli_suffix = Path("swarmvault-cli-portable") / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js"
+    # node_modules is renamed to pkgs to bypass electron-builder's node_modules exclusion
+    cli_suffix = Path("swarmvault-cli-portable") / "pkgs" / "@swarmvaultai" / "cli" / "dist" / "index.js"
 
     # CLI 경로 후보:
-    # 1. env-based portable (packaged):  NATLAS_RESOURCES_DIR/swarmvault-cli-portable/...
+    # 1. env-based portable (packaged):  NATLAS_RESOURCES_DIR/swarmvault-cli-portable/pkgs/...
     # 2. dev mode:                       project_root/node_modules/@swarmvaultai/cli/dist/index.js
-    # 3. isolated portable packaged:     project_root.parent/swarmvault-cli-portable/...
-    # 4. isolated portable local:        project_root/resources/swarmvault-cli-portable/...
+    # 3. isolated portable packaged:     project_root.parent/swarmvault-cli-portable/pkgs/...
+    # 4. isolated portable local:        project_root/resources/swarmvault-cli-portable/pkgs/...
     cli_path_candidates = []
     if resources_dir:
         cli_path_candidates.append(Path(resources_dir) / cli_suffix)
     cli_path_candidates += [
         project_root / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
-        project_root.parent / "swarmvault-cli-portable" / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
-        project_root / "resources" / "swarmvault-cli-portable" / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
+        project_root.parent / "swarmvault-cli-portable" / "pkgs" / "@swarmvaultai" / "cli" / "dist" / "index.js",
+        project_root / "resources" / "swarmvault-cli-portable" / "pkgs" / "@swarmvaultai" / "cli" / "dist" / "index.js",
     ]
     print(f"DEBUG: cli_path_candidates = {[str(p) for p in cli_path_candidates]}")
     cli_path = next((p for p in cli_path_candidates if p.exists()), cli_path_candidates[0])

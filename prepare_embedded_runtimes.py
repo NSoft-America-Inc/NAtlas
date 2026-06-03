@@ -200,12 +200,16 @@ def prepare_runtimes():
 
 def prepare_swarmvault_cli(project_root, resources_dir):
     portable_dir = resources_dir / "swarmvault-cli-portable"
-    if (portable_dir / "node_modules").exists():
+    # electron-builder silently excludes 'node_modules' folders from extraResources.
+    # We install into a temp dir then rename node_modules → pkgs to bypass this.
+    pkgs_dir = portable_dir / "pkgs"
+    if pkgs_dir.exists():
         print("SwarmVault CLI portable already exists. Skipping...")
         return
-        
-    portable_dir.mkdir(parents=True, exist_ok=True)
-    
+
+    temp_install_dir = resources_dir / "swarmvault-cli-tmp"
+    temp_install_dir.mkdir(parents=True, exist_ok=True)
+
     package_json_content = """{
   "name": "swarmvault-cli-portable",
   "version": "1.0.0",
@@ -215,20 +219,23 @@ def prepare_swarmvault_cli(project_root, resources_dir):
   }
 }
 """
-    package_json_path = portable_dir / "package.json"
-    package_json_path.write_text(package_json_content, encoding="utf-8")
-    print(f"Created package.json at {package_json_path}")
-    
+    (temp_install_dir / "package.json").write_text(package_json_content, encoding="utf-8")
+
     import subprocess
     print("Installing SwarmVault CLI and dependencies into isolated folder...")
-    
+
     is_win = sys.platform == "win32"
     subprocess.check_call(
         ["npm", "install", "--omit=dev", "--no-audit", "--no-fund"],
-        cwd=str(portable_dir),
+        cwd=str(temp_install_dir),
         shell=is_win
     )
-    print("SwarmVault CLI portable installation complete.")
+
+    # Rename node_modules → pkgs so electron-builder does not strip it
+    portable_dir.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(temp_install_dir / "node_modules"), str(pkgs_dir))
+    shutil.rmtree(str(temp_install_dir))
+    print(f"SwarmVault CLI portable installation complete. pkgs: {pkgs_dir}")
 
 if __name__ == "__main__":
     prepare_runtimes()
