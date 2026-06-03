@@ -44,14 +44,14 @@ def prepare_runtimes():
         import platform
         arch = platform.machine().lower()
         if "arm" in arch or "aarch64" in arch:
-            urls["node"] = "https://nodejs.org/dist/v22.11.0/node-v22.11.0-darwin-arm64.tar.gz"
+            urls["node"] = "https://nodejs.org/dist/v24.2.0/node-v24.2.0-darwin-arm64.tar.gz"
         else:
-            urls["node"] = "https://nodejs.org/dist/v22.11.0/node-v22.11.0-darwin-x64.tar.gz"
+            urls["node"] = "https://nodejs.org/dist/v24.2.0/node-v24.2.0-darwin-x64.tar.gz"
         urls["git"] = None  # macOS: git is always system-available; skip embedding
     elif is_win:
         # Windows links (python embedded, node portable, portable MinGit)
         urls["python"] = "https://www.python.org/ftp/python/3.11.7/python-3.11.7-embed-amd64.zip"
-        urls["node"] = "https://nodejs.org/dist/v22.11.0/node-v22.11.0-win-x64.zip"
+        urls["node"] = "https://nodejs.org/dist/v24.2.0/node-v24.2.0-win-x64.zip"
         urls["git"] = "https://github.com/git-for-windows/git/releases/download/v2.43.0.windows.1/MinGit-2.43.0-64-bit.zip"
     else:
         print(f"Unsupported OS platform: {sys.platform}")

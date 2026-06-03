@@ -34,7 +34,6 @@ nsis:
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
 mac:
-  identity: null
   hardenedRuntime: false
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
