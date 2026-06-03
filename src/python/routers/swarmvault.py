@@ -64,9 +64,18 @@ def check_system_node_fts5() -> bool:
 
 def get_swarmvault_cmd() -> list:
     project_root = Path(__file__).resolve().parent.parent.parent.parent
-    # CLI 3.16.0 규격에 맞게 bin/swarmvault 대신 dist/index.js 경로를 탐색
-    cli_path = project_root / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js"
     is_win = sys.platform == "win32"
+
+    # CLI 경로 후보:
+    # 1. dev mode:       project_root/node_modules/@swarmvaultai/cli/dist/index.js
+    # 2. packaged DMG:   Contents/Resources/node_modules/@swarmvaultai/cli/dist/index.js
+    #    (extraResources로 복사됨, project_root.parent = Contents/Resources/)
+    cli_path_candidates = [
+        project_root / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
+        project_root.parent / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
+    ]
+    cli_path = next((p for p in cli_path_candidates if p.exists()), cli_path_candidates[0])
+
     
     # 1. 시스템 글로벌 node에서 FTS5가 작동한다면 시스템 node 최우선권 부여 (우회 가드 - Windows/macOS 공통 적용)
     sys_node = get_real_system_node_path()
