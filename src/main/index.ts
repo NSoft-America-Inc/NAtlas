@@ -227,11 +227,22 @@ app.whenReady().then(() => {
         ? ['-ExecutionPolicy', 'Bypass', '-File', installerScript] 
         : [installerScript]
 
+      let installModeEnv = '0'
+      if (scenario === 'core') {
+        installModeEnv = '0'
+      } else if (scenario === 'project') {
+        installModeEnv = '2'
+      } else if (scenario === 'e2e') {
+        installModeEnv = '0'
+      } else if (scenario !== undefined) {
+        installModeEnv = scenario.toString()
+      }
+
       const installerProcess = spawn(shellCmd, spawnArgs, {
         cwd: runCwd,
         env: {
           ...process.env,
-          INSTALL_MODE: scenario !== undefined ? scenario.toString() : '0',
+          INSTALL_MODE: installModeEnv,
           TERM: 'dumb'
         }
       })
