@@ -237,7 +237,7 @@ async def post_install(payload: InstallSchema):
         {"id": "git_hook", "name": "Git Hook 연동"},
         {"id": "pipeline_verify", "name": "지식 파이프라인 무결성 검사"},
         {"id": "nstack_onboarding", "name": "NStack 에이전트 룰 및 지식 아카이브 연동"},
-        {"id": "mcp_verify", "name": "Antigravity 표준 가이드 룰 검증"},
+        {"id": "mcp_verify", "name": "Antigravity 표준 룰 및 스킬 검증"},
         {"id": "rag_verify", "name": "E2E 의미론적 RAG 검색 자가 검증"}
     ]
 
