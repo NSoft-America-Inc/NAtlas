@@ -27,6 +27,14 @@ br()   { echo ""; }
 spinner() {
   local pid=$1
   local label=$2
+  
+  # API 호출 모드이거나 비대화형/TTY가 없는 환경인 경우 스피너 출력을 전면 바이패스하고 조용히 wait합니다.
+  if [ "$INSTALL_MODE" = "api" ] || [ ! -t 0 ] || [ ! -c /dev/tty ]; then
+    log "  ➔ %s (배경 작업 대기 중...)" "$label"
+    wait "$pid"
+    return 0
+  fi
+  
   local delay=0.08
   local spinstr='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
   

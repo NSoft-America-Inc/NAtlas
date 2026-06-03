@@ -60,6 +60,7 @@ export function Update() {
     { id: 'rag_verify', name: 'E2E 의미론적 RAG 검색 자가 검증', status: 'idle' },
   ])
   const [copiedCmd, setCopiedCmd] = useState<boolean>(false)
+  const [stepLogs, setStepLogs] = useState<{[stepId: string]: string[]}>({})
   const [validationResult, setValidationResult] = useState<{
     success: boolean;
     verifiedCount: number;
@@ -219,6 +220,7 @@ export function Update() {
     setGitHubAuthStatus('loading')
     setGitHubAuthMessage(null)
     clearLogs()
+    setStepLogs({})
     setTestResult(null)
     setValidationResult(null)
 
@@ -266,6 +268,7 @@ export function Update() {
 
                 if (data.type === 'init') {
                   setInstallSteps(data.steps.map((s: any) => ({ ...s, status: 'idle' })))
+                  setStepLogs({})
                 } else if (data.type === 'step') {
                   setInstallSteps((prev) =>
                     prev.map((s) => {
@@ -282,6 +285,11 @@ export function Update() {
                   setGitHubAuthStatus('success')
                   setGitHubAuthMessage(data.message)
                 } else if (data.type === 'log') {
+                  const stepId = data.step || 'general'
+                  setStepLogs((prev) => ({
+                    ...prev,
+                    [stepId]: [...(prev[stepId] || []), data.message],
+                  }))
                   addLog({ type: 'log', message: data.message })
                 } else if (data.type === 'error') {
                   addLog({ type: 'error', message: data.message })
@@ -816,6 +824,13 @@ export function Update() {
                           <p className="text-[10px] text-muted-foreground leading-normal font-mono truncate max-w-sm">
                             {step.message}
                           </p>
+                        )}
+                        {stepLogs[step.id] && stepLogs[step.id].length > 0 && (
+                          <div className="mt-2 text-[9px] font-mono text-slate-300 bg-black/40 p-2 rounded border border-border/30 max-h-32 overflow-y-auto space-y-0.5 leading-relaxed select-text scrollbar-thin">
+                            {stepLogs[step.id].map((logMsg, lIdx) => (
+                              <div key={lIdx} className="truncate">{logMsg}</div>
+                            ))}
+                          </div>
                         )}
                       </div>
                     </div>

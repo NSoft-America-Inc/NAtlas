@@ -254,8 +254,10 @@ async def post_install(payload: InstallSchema):
         yield f"data: {json.dumps({'type': 'init', 'steps': active_steps})}\n\n"
         await asyncio.sleep(0.1)
 
+        current_step = "general"
+
         # 2. 사전 진단 1: GitHub CLI (gh auth status) 인증 상태 점검
-        yield f"data: {json.dumps({'type': 'log', 'message': '[사전 진단] GitHub CLI 인증 상태 점검 중...'})}\n\n"
+        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '[사전 진단] GitHub CLI 인증 상태 점검 중...'})}\n\n"
         gh_ok = False
         try:
             gh_proc = await asyncio.create_subprocess_exec(
@@ -266,17 +268,17 @@ async def post_install(payload: InstallSchema):
             stdout, stderr = await gh_proc.communicate()
             if gh_proc.returncode == 0:
                 gh_ok = True
-                yield f"data: {json.dumps({'type': 'log', 'message': '✓ GitHub CLI 인증 상태 확인 완료 (시스템 로그인 세션 캐시가 유효합니다)'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ GitHub CLI 인증 상태 확인 완료 (시스템 로그인 세션 캐시가 유효합니다)'})}\n\n"
             else:
-                yield f"data: {json.dumps({'type': 'log', 'message': '⚠ GitHub CLI 미인증 상태입니다. Settings의 github_token 유효성을 점검합니다.'})}\n\n"
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '⚠ GitHub CLI 미인증 상태입니다. Settings의 github_token 유효성을 점검합니다.'})}\n\n"
         except Exception as e:
-            yield f"data: {json.dumps({'type': 'log', 'message': f'GitHub CLI 점검 중 오류: {str(e)}'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'GitHub CLI 점검 중 오류: {str(e)}'})}\n\n"
 
         # 사전 진단 2: Settings의 github_token 유효성 교차 체크
         cfg = load_settings_data()
         pat_token = cfg.get("github_token", "").strip()
         if not gh_ok and pat_token:
-            yield f"data: {json.dumps({'type': 'log', 'message': '✓ Settings의 github_token 저장 정보 확인 완료 (옵션 2 PAT 활용 가능)'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ Settings의 github_token 저장 정보 확인 완료 (옵션 2 PAT 활용 가능)'})}\n\n"
             gh_ok = True
         
         if not gh_ok:
@@ -293,12 +295,13 @@ async def post_install(payload: InstallSchema):
             env["RUN_PROJECT_CREATE"] = "1" if payload.project_create else "0"
             env["PROJECT_PATH"] = project_path
             env["PROJECT_NAME"] = payload.project_name or "nstack-project"
+            env["INSTALL_MODE"] = "api"
             
             print(f"DEBUG: spawning script with env PROJECT_PATH='{project_path}', PROJECT_NAME='{payload.project_name}'")
             
             is_windows = platform.system() == "Windows"
             script_name = "install_unified.ps1" if is_windows else "install_unified.sh"
-            yield f"data: {json.dumps({'type': 'log', 'message': f'설치 스크립트 가동 (Platform: {platform.system()}, File: {script_name})...'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'설치 스크립트 가동 (Platform: {platform.system()}, File: {script_name})...'})}\n\n"
             
             try:
                 if is_windows:
@@ -318,8 +321,6 @@ async def post_install(payload: InstallSchema):
                         stderr=asyncio.subprocess.PIPE
                     )
                 
-                current_step = None
-                
                 # 파이프 라인 스트리밍 및 파싱
                 while True:
                     line = await proc.stdout.readline()
@@ -330,11 +331,18 @@ async def post_install(payload: InstallSchema):
                     if not text:
                         continue
                     
+                    # 캐리지 리턴 및 스피너 깨짐 로그 정제
+                    if '\r' in text:
+                        text = text.split('\r')[-1].strip()
+                    
                     clean_text = re.sub(r'\x1b\[[0-9;]*[mK]', '', text)
+                    # 유니코드 깨짐 물음표 마커() 혹은 정밀하지 않은 특수 스피너 기호 필터링
+                    if not clean_text or "" in clean_text or "[?" in clean_text:
+                        continue
                     
                     if "[SETUP-STEP]" in clean_text:
                         # 이전 단계를 성공으로 마감
-                        if current_step:
+                        if current_step and current_step != "general":
                             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
                         
                         # 새로운 단계 설정
@@ -355,17 +363,17 @@ async def post_install(payload: InstallSchema):
                             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
                     
                     elif "NStack 개발 규격 및 린터 파이프라인 연동 개시" in clean_text:
-                        if current_step:
+                        if current_step and current_step != "general":
                             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
                         current_step = "nstack_onboarding"
                         yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
                     
                     if "❌" in clean_text or "✗" in clean_text or "실패했습니다" in clean_text:
-                        if current_step:
+                        if current_step and current_step != "general":
                             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': clean_text})}\n\n"
                         yield f"data: {json.dumps({'type': 'error', 'message': clean_text})}\n\n"
                     else:
-                        yield f"data: {json.dumps({'type': 'log', 'message': clean_text})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': clean_text})}\n\n"
                 
                 # stderr 스트리밍
                 while True:
@@ -375,18 +383,18 @@ async def post_install(payload: InstallSchema):
                     err_text = err_line.decode('utf-8', errors='replace').strip()
                     clean_err = re.sub(r'\x1b\[[0-9;]*[mK]', '', err_text)
                     if clean_err:
-                        yield f"data: {json.dumps({'type': 'log', 'message': f'[STDERR] {clean_err}'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'[STDERR] {clean_err}'})}\n\n"
     
                 await proc.wait()
                 
                 if proc.returncode != 0:
-                    if current_step:
+                    if current_step and current_step != "general":
                         yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': '설치 스크립트 실행 오류'})}\n\n"
                     yield f"data: {json.dumps({'type': 'error', 'message': f'설치 스크립트 실행 중 오류가 발생했습니다. (Exit Code: {proc.returncode})'})}\n\n"
                     return
                 else:
                     # 마지막 실행 스텝을 성공으로 마감
-                    if current_step:
+                    if current_step and current_step != "general":
                         yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
             
             except Exception as e:
@@ -397,16 +405,51 @@ async def post_install(payload: InstallSchema):
         if payload.project_create:
             current_step = "mcp_verify"
             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
-            yield f"data: {json.dumps({'type': 'log', 'message': '[룰 검증] Antigravity 표준 개발 가이드 룰 검증 개시...'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '[룰 검증] Antigravity 표준 개발 가이드 룰 및 스킬 무결성 검증 개시...'})}\n\n"
+            await asyncio.sleep(0.5)
             
             try:
+                mcp_ok = True
+                
+                # (1) .antigravity/rules 파일 존재 여부 검증
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  [1/3] .antigravity/rules 룰 파일 실재 검증 중...'})}\n\n"
+                await asyncio.sleep(0.5)
                 rules_path = Path(project_path) / ".antigravity" / "rules"
-                if rules_path.exists():
-                    yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✓ .antigravity/rules 파일 존재 및 주입 확인 완료'})}\n\n"
-                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (Antigravity 단독 연동)'})}\n\n"
+                if rules_path.exists() and rules_path.is_file():
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✓ .antigravity/rules 파일 존재 및 주입 확인 완료'})}\n\n"
                 else:
-                    yield f"data: {json.dumps({'type': 'log', 'message': '  └─ ✗ .antigravity/rules 파일을 찾을 수 없습니다.'})}\n\n"
-                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': 'Antigravity 표준 룰 요건 미충족'})}\n\n"
+                    mcp_ok = False
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✗ .antigravity/rules 파일을 찾을 수 없습니다.'})}\n\n"
+                
+                # (2) .agents/skills/nsoft 스킬 심링크 유효성 검증
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  [2/3] .agents/skills/nsoft 스킬 바인딩 무결성 검증 중...'})}\n\n"
+                await asyncio.sleep(0.5)
+                skills_path = Path(project_path) / ".agents" / "skills" / "nsoft"
+                if skills_path.exists():
+                    if os.path.islink(skills_path):
+                        target_link = os.readlink(skills_path)
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ NStack 스킬 심링크 연동 완료 (대상: {target_link})'})}\n\n"
+                    else:
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✓ NStack 스킬 로컬 디렉토리 바인딩 확인 완료'})}\n\n"
+                else:
+                    mcp_ok = False
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✗ .agents/skills/nsoft 스킬을 탐색할 수 없습니다.'})}\n\n"
+                
+                # (3) 지식 파이프라인 무결성 린터 가용성 검증
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  [3/3] 지식 파이프라인 무결성 린터(verify_nstack_pipeline.py) 가용성 점검 중...'})}\n\n"
+                await asyncio.sleep(0.5)
+                linter_script = Path(project_root) / "verify_nstack_pipeline.py"
+                if linter_script.exists():
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✓ verify_nstack_pipeline.py 정적 린터 모듈 유효성 감지 완료'})}\n\n"
+                else:
+                    mcp_ok = False
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✗ verify_nstack_pipeline.py 린터 파일을 찾을 수 없습니다.'})}\n\n"
+
+                if mcp_ok:
+                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료 (가이드 룰 및 스킬 무결성 통과)'})}\n\n"
+                else:
+                    yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': 'Antigravity 표준 룰/스킬 요건 미충족'})}\n\n"
+
             except Exception as e:
                 mcp_ok = False
                 yield f"data: {json.dumps({'type': 'log', 'message': f'[룰 검증] 검증 중 예외 오류 발생: {str(e)}'})}\n\n"
