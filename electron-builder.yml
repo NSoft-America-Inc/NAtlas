@@ -66,6 +66,10 @@ extraResources:
     to: node
     filter:
       - '**/*'
+      - '!bin/npm'
+      - '!bin/npx'
+      - '!bin/corepack'
+      - '!lib/node_modules/**/*'
   - from: resources/git
     to: git
     filter:
