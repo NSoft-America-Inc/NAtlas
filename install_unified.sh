@@ -233,8 +233,25 @@ install_nstack() {
   # Auto clone if missing
   if [ -z "$nstack_setup_abs" ]; then
     warn "이웃 디렉토리에 NStack이 감지되지 않았습니다. GitHub에서 자동으로 복제(Clone)합니다..."
-    git clone https://github.com/NSoft-America-Inc/NStack.git "$PROJECT_ROOT/../NStack" --quiet 2>/dev/null || true
-    
+
+    # Resolve GitHub token: env var > ~/.natlas/config.json
+    local clone_token="${NSTACK_GITHUB_TOKEN:-${GITHUB_TOKEN:-}}"
+    if [ -z "$clone_token" ]; then
+      local config_file="$HOME/.natlas/config.json"
+      if [ -f "$config_file" ]; then
+        clone_token=$(python3 -c "import json,sys; d=json.load(open('$config_file')); print(d.get('github_token',''))" 2>/dev/null || true)
+      fi
+    fi
+
+    # Build clone URL with token if available
+    local clone_url="https://github.com/NSoft-America-Inc/NStack.git"
+    if [ -n "$clone_token" ]; then
+      clone_url="https://${clone_token}@github.com/NSoft-America-Inc/NStack.git"
+    fi
+
+    # Clone with timeout to prevent infinite hang on credential prompt
+    GIT_TERMINAL_PROMPT=0 timeout 30 git clone "$clone_url" "$PROJECT_ROOT/../NStack" --quiet 2>/dev/null || true
+
     if [ -f "$PROJECT_ROOT/../NStack/setup" ]; then
       nstack_setup_abs="$(cd "$PROJECT_ROOT/../NStack" && pwd)/setup"
     fi

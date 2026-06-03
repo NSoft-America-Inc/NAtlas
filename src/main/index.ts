@@ -338,15 +338,27 @@ app.whenReady().then(() => {
       const extraPaths = process.platform === 'darwin' ? ':/opt/homebrew/bin:/usr/local/bin' : ''
       const systemPath = (process.env.PATH || '') + extraPaths
 
+      // Read github_token from ~/.natlas/config.json to pass to installer
+      let nstackGithubToken = ''
+      try {
+        const configPath = require('path').join(require('os').homedir(), '.natlas', 'config.json')
+        if (fs.existsSync(configPath)) {
+          const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'))
+          nstackGithubToken = config.github_token || ''
+        }
+      } catch (_) { /* ignore */ }
+
       const installerProcess = spawn(shellCmd, spawnArgs, {
         cwd: runCwd,
         env: {
           ...process.env,
           PATH: systemPath,
           INSTALL_MODE: installModeEnv,
-          TERM: 'dumb'
+          TERM: 'dumb',
+          ...(nstackGithubToken ? { NSTACK_GITHUB_TOKEN: nstackGithubToken } : {})
         }
       })
+
 
       installerProcess.stdout?.on('data', (data) => {
         const log = data.toString()
