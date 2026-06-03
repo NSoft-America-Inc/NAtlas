@@ -54,9 +54,6 @@ jobs:
       - name: Prepare Embedded Portable Runtimes
         run: python3 prepare_embedded_runtimes.py
 
-      - name: Install Python requirements into embedded runtime
-        run: resources/python/bin/pip3 install -r src/python/requirements.txt --quiet
-
       - name: Build macOS Assets
         run: npm run build:mac
         env:
@@ -115,9 +112,6 @@ jobs:
 
       - name: Prepare Embedded Portable Runtimes
         run: python prepare_embedded_runtimes.py
-
-      - name: Install Python requirements into embedded runtime
-        run: resources\python\python.exe -m pip install -r src\python\requirements.txt --quiet
 
       - name: Build Windows Assets
         run: npm run build:win

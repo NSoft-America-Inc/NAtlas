@@ -75,11 +75,35 @@ def prepare_runtimes():
                 shutil.move(str(src_install), str(py_dir))
         else:
             extract_zip(py_archive, py_dir)
+            # Windows embedded Python: patch _pth to enable site-packages (needed for pip)
             pth_file = list(py_dir.glob("python*._pth"))
             if pth_file:
-                with open(pth_file[0], "a", encoding="utf-8") as f:
-                    f.write("\nimport site\n")
-                print(f"Patched Windows Python _pth: {pth_file[0]}")
+                content = pth_file[0].read_text(encoding="utf-8")
+                if "import site" not in content:
+                    with open(pth_file[0], "a", encoding="utf-8") as f:
+                        f.write("\nimport site\n")
+                    print(f"Patched Windows Python _pth: {pth_file[0]}")
+        
+        # Bootstrap pip (Windows embedded has no pip; macOS standalone has pip already)
+        requirements_file = project_root / "src" / "python" / "requirements.txt"
+        import subprocess
+        
+        if is_win:
+            python_exe = py_dir / "python.exe"
+            get_pip_path = temp_dir / "get-pip.py"
+            print("Bootstrapping pip for Windows embedded Python...")
+            download_file("https://bootstrap.pypa.io/get-pip.py", get_pip_path)
+            subprocess.check_call([str(python_exe), str(get_pip_path), "--quiet"])
+            print("pip bootstrapped successfully.")
+        else:
+            python_exe = py_dir / "bin" / "python3"
+        
+        if requirements_file.exists():
+            print(f"Installing Python requirements into embedded runtime...")
+            subprocess.check_call([str(python_exe), "-m", "pip", "install",
+                                   "-r", str(requirements_file), "--quiet"])
+            print("Python requirements installed.")
+        
         print("Python runtime ready.")
 
     # 2. Node runtime
