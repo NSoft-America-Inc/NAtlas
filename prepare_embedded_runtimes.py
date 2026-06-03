@@ -95,14 +95,21 @@ def prepare_runtimes():
             download_file("https://bootstrap.pypa.io/get-pip.py", get_pip_path)
             subprocess.check_call([str(python_exe), str(get_pip_path), "--quiet"])
             print("pip bootstrapped successfully.")
+            # On Windows embedded Python, use Scripts/pip.exe directly
+            # because 'python -m pip' doesn't work even after bootstrapping
+            pip_exe = py_dir / "Scripts" / "pip.exe"
+            if requirements_file.exists():
+                print("Installing Python requirements into embedded runtime (Windows)...")
+                subprocess.check_call([str(pip_exe), "install",
+                                       "-r", str(requirements_file), "--quiet"])
+                print("Python requirements installed.")
         else:
             python_exe = py_dir / "bin" / "python3"
-        
-        if requirements_file.exists():
-            print(f"Installing Python requirements into embedded runtime...")
-            subprocess.check_call([str(python_exe), "-m", "pip", "install",
-                                   "-r", str(requirements_file), "--quiet"])
-            print("Python requirements installed.")
+            if requirements_file.exists():
+                print("Installing Python requirements into embedded runtime (macOS)...")
+                subprocess.check_call([str(python_exe), "-m", "pip", "install",
+                                       "-r", str(requirements_file), "--quiet"])
+                print("Python requirements installed.")
         
         print("Python runtime ready.")
 
