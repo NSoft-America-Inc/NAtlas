@@ -1,6 +1,9 @@
 import os
 import sys
 
+# Windows embedded Python does not add the script's directory to sys.path automatically.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 # packaged app 구동 시 PATH 유실 현상(Homebrew 경로 등 누락) 방지
 if sys.platform != "win32":
     extra_paths = ["/opt/homebrew/bin", "/usr/local/bin", os.path.expanduser("~/.npm-global/bin")]
