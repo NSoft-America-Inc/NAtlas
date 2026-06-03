@@ -128,6 +128,15 @@ export const api = {
       }
       return r.json()
     }),
+
+  checkFolder: (path: string): Promise<{ exists: boolean; path: string }> =>
+    fetch(`${BASE}/swarmvault/check-folder?path=${encodeURIComponent(path)}`).then(async r => {
+      if (!r.ok) {
+        const errorData = await r.json().catch(() => ({}))
+        throw new Error(errorData.error || '폴더 존재 여부를 확인하는 중 오류가 발생했습니다.')
+      }
+      return r.json()
+    }),
 }
 
 

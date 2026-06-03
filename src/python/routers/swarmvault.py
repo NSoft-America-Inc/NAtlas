@@ -41,6 +41,13 @@ async def get_swarmvault_status():
     except Exception:
         return {"ok": False, "version": None}
 
+@router.get("/check-folder")
+async def check_folder(path: str):
+    import os
+    full_path = os.path.abspath(os.path.expanduser(path))
+    exists = os.path.exists(full_path) and os.path.isdir(full_path)
+    return {"exists": exists, "path": full_path}
+
 @router.get("/status")
 async def get_status():
     py_status = await get_python_status()

@@ -176,16 +176,6 @@ export function Update() {
   const handleInstall = async () => {
     if (isInstalling) return
 
-    setIsInstalling(true)
-    setInstallStatus('running')
-    setGitHubAuthStatus('loading')
-    setGitHubAuthMessage(null)
-    clearLogs()
-    setTestResult(null)
-    setValidationResult(null)
-
-    addLog({ type: 'log', message: 'NStack & NAtlas 통합 비주얼 인스톨러 구동 중...' })
-
     let sendParentPath = parentPath
     let sendProjectName = projectName
 
@@ -202,6 +192,37 @@ export function Update() {
         }
       }
     }
+
+    // NStack 프로젝트 생성 시나리오인 경우 폴더 존재 여부 사전 체크
+    if (selectedScenario === 'project') {
+      try {
+        const checkPath = `${sendParentPath.replace(/\/$/, '')}/${sendProjectName}`
+        const res = await api.checkFolder(checkPath)
+        if (res.exists) {
+          const confirmed = window.confirm(
+            `지정한 경로에 이미 폴더가 존재합니다:\n${res.path}\n\n이 폴더에 NStack 환경을 구성하시겠습니까?\n(기존 파일이 보존되거나 덮어씌워질 수 있습니다.)`
+          )
+          if (!confirmed) {
+            return
+          }
+        }
+      } catch (err) {
+        addLog({
+          type: 'error',
+          message: `폴더 감지 중 오류: ${err instanceof Error ? err.message : '알 수 없음'}`
+        })
+      }
+    }
+
+    setIsInstalling(true)
+    setInstallStatus('running')
+    setGitHubAuthStatus('loading')
+    setGitHubAuthMessage(null)
+    clearLogs()
+    setTestResult(null)
+    setValidationResult(null)
+
+    addLog({ type: 'log', message: 'NStack & NAtlas 통합 비주얼 인스톨러 구동 중...' })
 
     try {
       const response = await fetch('http://127.0.0.1:18420/swarmvault/install', {
