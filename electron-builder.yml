@@ -19,6 +19,7 @@ files:
   - '!resources/**/*'
   - '!node_modules/**/*'
   - 'node_modules/@swarmvaultai/**/*'
+  - 'node_modules/commander/**/*'
 asarUnpack:
   - src/python/**
   - install_unified.sh
@@ -27,6 +28,7 @@ asarUnpack:
   - setup_nstack_hooks.py
   - verify_nstack_pipeline.py
   - node_modules/@swarmvaultai/**
+  - node_modules/commander/**
 win:
   executableName: NAtlas
 nsis:
