@@ -12,8 +12,40 @@ const MAX_RESTARTS = 3
 const PORT = 18420
 let isQuitting = false
 
-function startPythonSidecar(): void {
+function cleanupExistingSidecar(): Promise<void> {
+  return new Promise((resolve) => {
+    console.log('Cleaning up existing sidecar processes on port 18420...')
+    const isWin = process.platform === 'win32'
+    const exec = require('child_process').exec
+    
+    if (isWin) {
+      // Windows: Find process by port 18420 and kill it
+      const cmd = `for /f "tokens=5" %a in ('netstat -aon ^| findstr 18420') do taskkill /F /PID %a`
+      exec(cmd, (err) => {
+        if (err) {
+          console.log('No existing Windows sidecar process to kill.')
+        } else {
+          console.log('Killed existing Windows sidecar process.')
+        }
+        resolve()
+      })
+    } else {
+      // macOS/Linux: Kill by port using lsof and pkill
+      exec("lsof -t -i:18420 | xargs kill -9", () => {
+        exec("pkill -9 -f uvicorn", () => {
+          console.log('Cleaned up existing macOS sidecar processes.')
+          resolve()
+        })
+      })
+    }
+  })
+}
+
+async function startPythonSidecar(): Promise<void> {
   if (isQuitting) return
+
+  // 1. 좀비 프로세스 사전 클린업 수행
+  await cleanupExistingSidecar()
 
   let pythonScript = join(app.getAppPath(), 'src/python/main.py')
   
