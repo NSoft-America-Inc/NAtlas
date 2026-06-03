@@ -238,10 +238,16 @@ app.whenReady().then(() => {
         installModeEnv = scenario.toString()
       }
 
+      const extraPaths = process.platform === 'darwin'
+        ? ':/opt/homebrew/bin:/usr/local/bin'
+        : ''
+      const systemPath = (process.env.PATH || '') + extraPaths
+
       const installerProcess = spawn(shellCmd, spawnArgs, {
         cwd: runCwd,
         env: {
           ...process.env,
+          PATH: systemPath,
           INSTALL_MODE: installModeEnv,
           TERM: 'dumb'
         }
