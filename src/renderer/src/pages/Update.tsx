@@ -111,6 +111,27 @@ export function Update() {
     setTimeout(() => setCopiedCmd(false), 2000)
   }
 
+  // Listen for Electron Main installer log stream
+  useEffect(() => {
+    if (window.electron && (window.electron as any).onInstallerLog) {
+      ;(window.electron as any).onInstallerLog((logStr: string) => {
+        const cleaned = logStr.replace(/\r/g, '\n')
+        const lines = cleaned.split('\n').filter(Boolean)
+        lines.forEach((line) => {
+          const cleanLine = line.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '')
+          if (cleanLine.trim()) {
+            addLog({ type: 'log', message: cleanLine })
+          }
+        })
+      })
+    }
+    return () => {
+      if (window.electron && (window.electron as any).offInstallerLog) {
+        ;(window.electron as any).offInstallerLog()
+      }
+    }
+  }, [addLog])
+
   // Dynamically resolve workspace parent path from settings
   useEffect(() => {
     const savedParent = localStorage.getItem('natlas_last_parent_path')
@@ -228,11 +249,50 @@ export function Update() {
     addLog({ type: 'log', message: 'NStack & NAtlas 통합 비주얼 인스톨러 구동 중...' })
 
     try {
+      const isBackendOffline = !status || isStatusError
+
+      if (isBackendOffline || selectedScenario === 'core') {
+        addLog({ type: 'log', message: '백엔드 오프라인 또는 코어 설치가 식별되었습니다. Electron IPC 권한으로 로컬 설치기를 직접 가동합니다.' })
+        
+        setInstallSteps([
+          { id: '1_dep', name: 'Node 의존성 복원', status: 'running' },
+          { id: '2_venv', name: 'Python 가상환경 및 FastAPI 설치', status: 'idle' },
+          { id: '3_nstack', name: 'NStack 에이전트 룰 설정', status: 'idle' },
+        ])
+
+        const result = await (window.electron as any).runCoreInstaller({
+          scenario: selectedScenario,
+          parentPath: sendParentPath,
+          projectName: sendProjectName
+        })
+
+        if (!result.success) {
+          throw new Error(result.error || '통합 설치 프로세스 실행 실패')
+        }
+
+        setInstallSteps([
+          { id: '1_dep', name: 'Node 의존성 복원', status: 'success' },
+          { id: '2_venv', name: 'Python 가상환경 및 FastAPI 설치', status: 'success' },
+          { id: '3_nstack', name: 'NStack 에이전트 룰 설정', status: 'success' },
+        ])
+        
+        addLog({ type: 'done', message: '통합 설치 완료! 백엔드 서버가 재기동됩니다. 5초 후 환경이 갱신됩니다.' })
+        setInstallStatus('success')
+        setIsInstalling(false)
+        
+        setTimeout(() => {
+          refetchStatus()
+          queryClient.invalidateQueries({ queryKey: ['swarmvaultStatus'] })
+          queryClient.invalidateQueries({ queryKey: ['documents'] })
+        }, 5000)
+        return
+      }
+
       const response = await fetch('http://127.0.0.1:18420/swarmvault/install', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          core_install: selectedScenario === 'core',
+          core_install: false,
           project_create: selectedScenario === 'project',
           e2e_test: selectedScenario === 'e2e',
           parent_path: sendParentPath,

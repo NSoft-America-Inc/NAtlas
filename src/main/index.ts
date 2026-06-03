@@ -6,6 +6,7 @@ import { spawn, ChildProcess } from 'child_process'
 import http from 'http'
 
 let pythonProcess: ChildProcess | null = null
+let mainWindow: BrowserWindow | null = null
 let restartCount = 0
 const MAX_RESTARTS = 3
 const PORT = 18420
@@ -120,7 +121,7 @@ function pollHealthCheck(callback: () => void): void {
 
 function createWindow(): void {
   // Create the browser window
-  const mainWindow = new BrowserWindow({
+  const win = new BrowserWindow({
     width: 1000,
     height: 750,
     title: 'NAtlas',
@@ -135,41 +136,43 @@ function createWindow(): void {
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+  mainWindow = win
+
+  win.on('ready-to-show', () => {
+    win.show()
   })
 
   // Keyboard Zoom Shortcut Handler (Cmd/Ctrl + +, Cmd/Ctrl + -, Cmd/Ctrl + 0)
-  mainWindow.webContents.on('before-input-event', (event, input) => {
+  win.webContents.on('before-input-event', (event, input) => {
     if (input.type === 'keyDown') {
       const isCmdOrCtrl = process.platform === 'darwin' ? input.meta : input.control
       if (isCmdOrCtrl) {
         if (input.key === '-' || input.key === '_') {
           event.preventDefault()
-          const currentZoom = mainWindow.webContents.getZoomLevel()
-          mainWindow.webContents.setZoomLevel(Math.max(-3, currentZoom - 0.5))
+          const currentZoom = win.webContents.getZoomLevel()
+          win.webContents.setZoomLevel(Math.max(-3, currentZoom - 0.5))
         } else if (input.key === '=' || input.key === '+') {
           event.preventDefault()
-          const currentZoom = mainWindow.webContents.getZoomLevel()
-          mainWindow.webContents.setZoomLevel(Math.min(3, currentZoom + 0.5))
+          const currentZoom = win.webContents.getZoomLevel()
+          win.webContents.setZoomLevel(Math.min(3, currentZoom + 0.5))
         } else if (input.key === '0') {
           event.preventDefault()
-          mainWindow.webContents.setZoomLevel(0)
+          win.webContents.setZoomLevel(0)
         }
       }
     }
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  win.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
 
   // HMR for renderer based on electron-vite cli
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    win.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    win.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
 
@@ -198,6 +201,64 @@ app.whenReady().then(() => {
     if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
       await shell.openExternal(url)
     }
+  })
+
+  // Register run core installer IPC handler
+  ipcMain.handle('run-core-installer', async (_, { scenario }) => {
+    return new Promise((resolve) => {
+      console.log(`IPC request to run core installer. Scenario: ${scenario}`)
+      
+      let installerScript = join(app.getAppPath(), 'install_unified.sh')
+      if (installerScript.includes('app.asar')) {
+        installerScript = installerScript.replace('app.asar', 'app.asar.unpacked')
+      }
+
+      console.log(`Running unified installer shell script: ${installerScript}`)
+      
+      const runCwd = app.getAppPath().includes('app.asar') 
+        ? join(app.getAppPath(), '..') 
+        : app.getAppPath()
+
+      const installerProcess = spawn('bash', [installerScript], {
+        cwd: runCwd,
+        env: {
+          ...process.env,
+          TERM: 'dumb'
+        }
+      })
+
+      installerProcess.stdout?.on('data', (data) => {
+        const log = data.toString()
+        console.log(`[Installer Stdout]: ${log}`)
+        if (mainWindow) {
+          mainWindow.webContents.send('installer-log', log)
+        }
+      })
+
+      installerProcess.stderr?.on('data', (data) => {
+        const log = data.toString()
+        console.error(`[Installer Stderr]: ${log}`)
+        if (mainWindow) {
+          mainWindow.webContents.send('installer-log', log)
+        }
+      })
+
+      installerProcess.on('error', (err) => {
+        console.error('Failed to run unified installer:', err)
+        resolve({ success: false, error: err.message })
+      })
+
+      installerProcess.on('close', (code) => {
+        console.log(`Unified installer process closed with code ${code}`)
+        if (code === 0) {
+          console.log('Installation succeeded. Restarting python sidecar...')
+          startPythonSidecar()
+          resolve({ success: true })
+        } else {
+          resolve({ success: false, error: `Process exited with code ${code}` })
+        }
+      })
+    })
   })
 
   // Start sidecar process
