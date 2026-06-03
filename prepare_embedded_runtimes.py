@@ -101,6 +101,26 @@ def prepare_runtimes():
             extract_zip(node_archive, node_extract_temp)
             extracted_folder = list(node_extract_temp.glob("node-v*"))[0]
             shutil.move(str(extracted_folder), str(node_dir))
+            
+        # Delete unused npm/node_modules to prevent electron-builder OOM and shrink app size
+        npm_modules = node_dir / ("node_modules" if is_win else "lib/node_modules")
+        if npm_modules.exists():
+            shutil.rmtree(npm_modules)
+            print(f"Removed unused npm modules to prevent builder scan: {npm_modules}")
+        
+        # Also clean up npm binaries/scripts
+        npm_bins = []
+        if is_win:
+            npm_bins = ["npm", "npm.cmd", "npx", "npx.cmd"]
+        else:
+            npm_bins = ["bin/npm", "bin/npx"]
+            
+        for b in npm_bins:
+            b_path = node_dir / b
+            if b_path.is_symlink() or b_path.exists():
+                b_path.unlink()
+                print(f"Removed npm helper binary: {b_path}")
+                    
         print("Node runtime ready.")
 
     # 3. Git runtime
