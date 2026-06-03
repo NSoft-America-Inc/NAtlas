@@ -7,11 +7,90 @@ from pathlib import Path
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse, JSONResponse
 from routers.settings import CONFIG_FILE, GIT_MANAGED_DIR, LLMWIKI_REPO_URL, load_settings as load_settings_data
-from routers.documents import get_documents, get_llmwiki_root
+from routers.documents import get_documents, get_llmwiki_root, get_remote_wiki_status, get_github_token
 from pydantic import BaseModel
 import db
 
 router = APIRouter()
+
+_system_node_fts5_supported = None
+_real_system_node_path = None
+
+def get_real_system_node_path() -> str:
+    global _real_system_node_path
+    if _real_system_node_path is not None:
+        return _real_system_node_path
+        
+    # 1. 널리 사용되는 macOS/Linux 글로벌 설치 경로 우선 탐색
+    for candidate in ["/opt/homebrew/bin/node", "/usr/local/bin/node", "/usr/bin/node"]:
+        if os.path.exists(candidate):
+            _real_system_node_path = candidate
+            return candidate
+            
+    # 2. PATH 상에서 내장 resources/node 이외의 위치에 있는 node 탐색
+    import shutil
+    resolved = shutil.which("node")
+    if resolved:
+        # 내장 node 경로를 가리키는지 Windows/macOS 구분 없이 검증
+        normalized = resolved.replace("\\", "/").lower()
+        if "resources/node" not in normalized:
+            _real_system_node_path = resolved
+            return resolved
+        
+    _real_system_node_path = ""
+    return None
+
+def check_system_node_fts5() -> bool:
+    global _system_node_fts5_supported
+    if _system_node_fts5_supported is not None:
+        return _system_node_fts5_supported
+        
+    sys_node = get_real_system_node_path()
+    if not sys_node:
+        _system_node_fts5_supported = False
+        return False
+        
+    import subprocess
+    try:
+        # 시스템 node 버전 및 FTS5 가용성 검증 수행 (절대 경로 사용)
+        cmd = [sys_node, "--experimental-sqlite", "-e", "const sqlite = require('node:sqlite'); const db = new sqlite.DatabaseSync(':memory:'); db.exec('CREATE VIRTUAL TABLE t USING fts5(c)');"]
+        res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=2)
+        _system_node_fts5_supported = (res.returncode == 0)
+    except Exception:
+        _system_node_fts5_supported = False
+        
+    print(f"DEBUG: check_system_node_fts5 result = {_system_node_fts5_supported} using {sys_node}")
+    return _system_node_fts5_supported
+
+def get_swarmvault_cmd() -> list:
+    project_root = Path(__file__).resolve().parent.parent.parent.parent
+    # CLI 3.16.0 규격에 맞게 bin/swarmvault 대신 dist/index.js 경로를 탐색
+    cli_path = project_root / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js"
+    is_win = sys.platform == "win32"
+    
+    # 1. 시스템 글로벌 node에서 FTS5가 작동한다면 시스템 node 최우선권 부여 (우회 가드 - Windows/macOS 공통 적용)
+    sys_node = get_real_system_node_path()
+    if sys_node and check_system_node_fts5():
+        if cli_path.exists():
+            return [sys_node, "--experimental-require-module", "--experimental-sqlite", str(cli_path)]
+        return ["swarmvault"]
+    
+    # 2. 내장 포터블 node 바이너리 절대 경로 해석 시도 (크로스 플랫폼)
+    embedded_node = project_root / "resources" / "node" / ("node.exe" if is_win else "bin/node")
+    
+    if embedded_node.exists():
+        # 내장 노드 v22.x의 ESM require 호환 지원 및 node:sqlite 지원을 위해 플래그 삽입
+        return [str(embedded_node), "--experimental-require-module", "--experimental-sqlite", str(cli_path)]
+    
+    # 3. 내장 노드가 없을 경우 시스템 노드 fallback
+    node_bin = "node.exe" if is_win else "node"
+    if cli_path.exists():
+        return [node_bin, str(cli_path)]
+        
+    if is_win:
+        return ["swarmvault.cmd"]
+    return ["swarmvault"]
+
 
 async def get_python_status():
     try:
@@ -23,22 +102,24 @@ async def get_python_status():
 
 async def get_swarmvault_status():
     try:
-        # Run swarmvault --version to check if it's available in PATH
+        cmd = get_swarmvault_cmd()
+        print(f"DEBUG: get_swarmvault_status running command: {cmd}")
         proc = await asyncio.create_subprocess_exec(
-            "swarmvault", "--version",
+            *cmd, "--version",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
         )
-        stdout, _ = await proc.communicate()
+        stdout, stderr = await proc.communicate()
+        print(f"DEBUG: get_swarmvault_status code={proc.returncode}, stdout={stdout.decode().strip()}, stderr={stderr.decode().strip()}")
         if proc.returncode == 0:
             version_str = stdout.decode('utf-8', errors='replace').strip()
-            # If output is empty or generic, use fallback version label
             if not version_str:
                 version_str = "1.x.x"
             return {"ok": True, "version": version_str}
         else:
             return {"ok": False, "version": None}
-    except Exception:
+    except Exception as e:
+        print(f"DEBUG: get_swarmvault_status exception: {str(e)}")
         return {"ok": False, "version": None}
 
 @router.get("/check-folder")
@@ -50,29 +131,25 @@ async def check_folder(path: str):
 
 @router.get("/status")
 async def get_status():
-    py_status = await get_python_status()
-    sv_status = await get_swarmvault_status()
+    # 1. Python 및 SwarmVault 진단을 병렬 태스크로 스폰
+    py_task = asyncio.create_task(get_python_status())
+    sv_task = asyncio.create_task(get_swarmvault_status())
     
     cfg = load_settings_data()
     source_mode = cfg.get("source_mode", "remote")
     
+    # 2. Remote 모드인 경우 깃허브 API를 이용해 경량 파일 개수만 조회하는 태스크 스폰
+    wiki_task = None
     if source_mode == "remote":
-        try:
-            docs_res = await get_documents()
-            if isinstance(docs_res, JSONResponse):
-                import json
-                try:
-                    body = json.loads(docs_res.body.decode('utf-8'))
-                    err_msg = body.get("error", "GitHub API 오류")
-                except Exception:
-                    err_msg = "GitHub API 오류"
-                wiki_status = {"ok": False, "file_count": 0, "error": err_msg}
-            elif isinstance(docs_res, dict) and "files" in docs_res:
-                wiki_status = {"ok": True, "file_count": len(docs_res["files"])}
-            else:
-                wiki_status = {"ok": False, "file_count": 0, "error": "원격 문서 목록 로드 실패"}
-        except Exception as e:
-            wiki_status = {"ok": False, "file_count": 0, "error": f"원격 연결 실패: {str(e)}"}
+        token = get_github_token()
+        wiki_task = asyncio.create_task(get_remote_wiki_status(token))
+        
+    # 3. 기본적인 비동기 진단 완료 대기 (병렬)
+    py_status, sv_status = await asyncio.gather(py_task, sv_task)
+    
+    if source_mode == "remote":
+        # 이미 깃허브에서 개수만 가볍게 조회한 태스크의 결과를 획득
+        wiki_status = await wiki_task
     else:
         llmwiki_root = get_llmwiki_root()
         if not llmwiki_root:
@@ -82,8 +159,12 @@ async def get_status():
             if not content_dir.exists() or not content_dir.is_dir():
                 wiki_status = {"ok": False, "file_count": 0, "error": "content/ 폴더를 찾을 수 없습니다"}
             else:
-                md_files = list(content_dir.glob("**/*.md"))
-                md_files_count = len([f for f in md_files if not f.name.startswith('.')])
+                # 성능 극대화: 동기 로컬 파일 스캔을 asyncio.to_thread로 스레드 풀 위임
+                def scan_local_files():
+                    md_files = list(content_dir.glob("**/*.md"))
+                    return len([f for f in md_files if not f.name.startswith('.')])
+                
+                md_files_count = await asyncio.to_thread(scan_local_files)
                 
                 config_json = Path(llmwiki_root) / "swarmvault.config.json"
                 if not config_json.exists():
@@ -145,7 +226,7 @@ async def post_update():
             
             try:
                 proc = await asyncio.create_subprocess_exec(
-                    "swarmvault", "ingest", file_rel,
+                    *get_swarmvault_cmd(), "ingest", file_rel,
                     cwd=llmwiki_root,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE
@@ -195,7 +276,7 @@ async def post_update():
         yield f"data: {json.dumps({'type': 'log', 'message': 'SwarmVault 컴파일 및 벡터 지식 베이스 갱신 중...'})}\n\n"
         try:
             proc = await asyncio.create_subprocess_exec(
-                "swarmvault", "compile",
+                *get_swarmvault_cmd(), "compile",
                 cwd=llmwiki_root,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
@@ -335,6 +416,7 @@ async def post_install(payload: InstallSchema):
             env["PROJECT_PATH"] = project_path
             env["PROJECT_NAME"] = payload.project_name or "nstack-project"
             env["INSTALL_MODE"] = "api"
+            env["NSTACK_GITHUB_TOKEN"] = pat_token
             
             print(f"DEBUG: spawning script with env PROJECT_PATH='{project_path}', PROJECT_NAME='{payload.project_name}'")
             
@@ -493,18 +575,30 @@ async def post_install(payload: InstallSchema):
                 # 추가 SwarmVault MCP 검증
                 yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  [추가] SwarmVault 실행 바이너리 및 MCP 가용성 검증 중...'})}\n\n"
                 await asyncio.sleep(0.5)
-                command = "/opt/homebrew/bin/swarmvault"
-                if not os.path.exists(command):
-                    import shutil as sh_util
-                    resolved_cmd = sh_util.which("swarmvault")
-                    if resolved_cmd:
-                        command = resolved_cmd
                 
-                if os.path.exists(command):
-                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ SwarmVault 실행 바이너리 존재 확인 완료 ({command})'})}\n\n"
+                project_root_path = Path(__file__).resolve().parent.parent.parent.parent
+                cli_path = project_root_path / "node_modules" / "@swarmvaultai" / "cli" / "bin" / "swarmvault"
+                
+                mcp_detected = False
+                if cli_path.exists():
+                    mcp_detected = True
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ 내장 SwarmVault CLI 확인 완료 ({cli_path})'})}\n\n"
                 else:
+                    command = "/opt/homebrew/bin/swarmvault"
+                    if not os.path.exists(command):
+                        import shutil as sh_util
+                        resolved_cmd = sh_util.which("swarmvault")
+                        if resolved_cmd:
+                            command = resolved_cmd
+                    
+                    if os.path.exists(command):
+                        mcp_detected = True
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ 시스템 SwarmVault 실행 바이너리 존재 확인 완료 ({command})'})}\n\n"
+                    else:
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✗ SwarmVault 바이너리(내장/시스템)를 찾을 수 없습니다.'})}\n\n"
+                
+                if not mcp_detected:
                     mcp_ok = False
-                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✗ SwarmVault 바이너리를 찾을 수 없습니다: {command}'})}\n\n"
 
                 if mcp_ok:
                     yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ [MCP 검증 통과] SwarmVault MCP 서버 설정 및 바이너리 유효성 검증 성공!'})}\n\n"
@@ -560,22 +654,28 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                 # Ingest
                 rel_test_path = "content/01-Logs/archive/verification/developer/verify-install/wiki.md"
                 ingest_proc = await asyncio.create_subprocess_exec(
-                    "swarmvault", "ingest", rel_test_path,
+                    *get_swarmvault_cmd(), "ingest", rel_test_path,
                     cwd=llmwiki_root,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE
                 )
-                await ingest_proc.communicate()
+                stdout_ing, stderr_ing = await ingest_proc.communicate()
+                if ingest_proc.returncode != 0:
+                    err_msg = stderr_ing.decode('utf-8', errors='replace').strip()
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'  └─ ✗ SwarmVault Ingest 실패 (코드: {ingest_proc.returncode}): {err_msg}'})}\n\n"
                 
                 # Compile
                 yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '[E2E 검증] SwarmVault 지식베이스 컴파일 및 RAG 색인 갱신 중...'})}\n\n"
                 compile_proc = await asyncio.create_subprocess_exec(
-                    "swarmvault", "compile",
+                    *get_swarmvault_cmd(), "compile",
                     cwd=llmwiki_root,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE
                 )
-                await compile_proc.communicate()
+                stdout_cmp, stderr_cmp = await compile_proc.communicate()
+                if compile_proc.returncode != 0:
+                    err_msg = stderr_cmp.decode('utf-8', errors='replace').strip()
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'  └─ ✗ SwarmVault Compile 실패 (코드: {compile_proc.returncode}): {err_msg}'})}\n\n"
                 
                 # (C) RAG 의미론적 검색 다중 질의 수행 및 매칭 검출
                 queries = [
@@ -587,12 +687,12 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                 for query in queries:
                     yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'[E2E 검증] RAG 쿼리 질의 실행: {query}'})}\n\n"
                     query_proc = await asyncio.create_subprocess_exec(
-                        "swarmvault", "query", "--json", query,
+                        *get_swarmvault_cmd(), "query", "--json", query,
                         cwd=llmwiki_root,
                         stdout=asyncio.subprocess.PIPE,
                         stderr=asyncio.subprocess.PIPE
                     )
-                    stdout, _ = await query_proc.communicate()
+                    stdout, stderr = await query_proc.communicate()
                     
                     if query_proc.returncode == 0:
                         try:
@@ -613,7 +713,8 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                         except Exception as e:
                             yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'  └─ ✗ JSON 파싱 오류로 검증 스킵: {str(e)}'})}\n\n"
                     else:
-                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '  └─ ✗ 쿼리 수행 프로세스 오류 발생'})}\n\n"
+                        err_msg = stderr.decode('utf-8', errors='replace').strip()
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'  └─ ✗ 쿼리 수행 프로세스 오류 발생 (코드: {query_proc.returncode}): {err_msg}'})}\n\n"
                 
                 if verified_count == len(queries):
                     yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ [RAG 검증 통과] 모든 의미론적 RAG 다중 질의 검증에 성공했습니다!'})}\n\n"
@@ -633,7 +734,7 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
                 
                 # Ingest & Compile clean-up
                 clean_proc = await asyncio.create_subprocess_exec(
-                    "swarmvault", "compile",
+                    *get_swarmvault_cmd(), "compile",
                     cwd=llmwiki_root,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE
@@ -742,7 +843,7 @@ async def post_query(payload: QuerySchema):
 
     try:
         proc = await asyncio.create_subprocess_exec(
-            "swarmvault", "query", "--json", question,
+            *get_swarmvault_cmd(), "query", "--json", question,
             cwd=llmwiki_root,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
@@ -1023,7 +1124,7 @@ async def start_smart_scheduler(interval_seconds: int = 60):
             success = True
             for file_rel in files_to_ingest:
                 proc = await asyncio.create_subprocess_exec(
-                    "swarmvault", "ingest", file_rel,
+                    *get_swarmvault_cmd(), "ingest", file_rel,
                     cwd=llmwiki_root,
                     stdout=asyncio.subprocess.PIPE,
                     stderr=asyncio.subprocess.PIPE
@@ -1043,7 +1144,7 @@ async def start_smart_scheduler(interval_seconds: int = 60):
                 
             # 3. Compile 실행
             proc = await asyncio.create_subprocess_exec(
-                "swarmvault", "compile",
+                *get_swarmvault_cmd(), "compile",
                 cwd=llmwiki_root,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE

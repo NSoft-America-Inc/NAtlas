@@ -25,7 +25,9 @@ export function LogViewer({ logs, onClear }: LogViewerProps) {
   return (
     <div className="flex flex-col h-[400px] border border-border rounded-lg bg-card text-card-foreground shadow-inner overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/30">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">실시간 업데이트 로그</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          실시간 업데이트 로그
+        </span>
         <Button
           variant="ghost"
           size="sm"
@@ -36,7 +38,10 @@ export function LogViewer({ logs, onClear }: LogViewerProps) {
           로그 비우기
         </Button>
       </div>
-      <ScrollArea ref={viewportRef} className="flex-1 p-4 font-mono text-sm leading-relaxed overflow-y-auto">
+      <ScrollArea
+        ref={viewportRef}
+        className="flex-1 p-4 font-mono text-sm leading-relaxed overflow-y-auto"
+      >
         {logs.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground text-xs italic">
             실행 로그가 없습니다. 업데이트 실행 버튼을 눌러 작업을 시작하세요.

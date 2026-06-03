@@ -1,73 +1,233 @@
 <section>
-                <div class="slide-counter">SLIDE 08 / 11</div>
-                <div class="slide-subtitle">NStack 실전 워크플로우와 차단 복구</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">마이그레이션 기동: 연계 프롬프트</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-45" style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;">
-                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
-                        <div style="width: 100%; max-width: 320px; height: auto; transform: scale(1.25);">
-                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="rag-flow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#10b981" />
-                                        <stop offset="100%" stop-color="#0ea5e9" />
-                                    </linearGradient>
-                                    <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
-                                        <feGaussianBlur stdDeviation="5" result="blur" />
-                                        <feMerge>
-                                            <feMergeNode in="blur" />
-                                            <feMergeNode in="SourceGraphic" />
-                                        </feMerge>
-                                    </filter>
-                                </defs>
-                                <!-- Interactive Rings -->
-                                <circle cx="100" cy="100" r="75" fill="none" stroke="var(--accent-emerald)" stroke-width="1" stroke-dasharray="4 6" opacity="0.3" style="transform-origin: 100px 100px; animation: rotate-slow 18s linear infinite;"/>
-                                
-                                <!-- Document Database (RAG Source) -->
-                                <g transform="translate(100, 50)">
-                                    <rect x="-40" y="-16" width="80" height="32" rx="6" fill="#080c14" stroke="var(--accent-emerald)" stroke-width="1.8" filter="url(#glow-emerald)"/>
-                                    <text x="0" y="3" fill="#ffffff" font-family="monospace" font-size="7.5" font-weight="900" text-anchor="middle">RAG Citations</text>
-                                </g>
+  <div class="slide-counter">SLIDE 08 / 11</div>
+  <div class="slide-subtitle">NStack 실전 워크플로우와 차단 복구</div>
 
-                                <!-- AI Agent Context Ingestion Node -->
-                                <g transform="translate(100, 150)">
-                                    <circle cx="0" cy="0" r="18" fill="#080c14" stroke="var(--accent-blue)" stroke-width="2" filter="url(#glow-emerald)"/>
-                                    <text x="0" y="4" fill="var(--accent-blue)" font-family="sans-serif" font-size="9" font-weight="900" text-anchor="middle">LLM</text>
-                                    <circle cx="0" cy="0" r="18" fill="none" stroke="var(--accent-blue)" stroke-width="1" opacity="1"><animate attributeName="r" values="18;35" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite"/></circle>
-                                </g>
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    마이그레이션 기동: 연계 프롬프트
+  </h2>
 
-                                <!-- Downward speed injection path -->
-                                <path d="M 100,66 L 100,132" fill="none" stroke="url(#rag-flow-grad)" stroke-width="2.5" filter="url(#glow-emerald)"/>
-                                
-                                <!-- Speed laser bullets flowing down in 3 seconds -->
-                                <circle cx="100" cy="80" r="3.5" fill="#ffffff" filter="url(#glow-emerald)">
-                                    <animate attributeName="cy" values="66;132" dur="0.8s" repeatCount="indefinite"/>
-                                </circle>
-                                
-                                <text x="145" y="104" fill="var(--accent-emerald)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="start">3 Sec Context</text>
-                                <text x="145" y="114" fill="#cbd5e1" font-family="monospace" font-size="7" text-anchor="start">RAG Ingestion</text>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-55 glass-panel" style="padding: 40px; box-sizing: border-box; text-align: left; border: 1.5px solid rgba(16,185,129,0.3); background: rgba(16,185,129,0.03); filter: drop-shadow(0 0 20px rgba(16,185,129,0.05));">
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.9vw; color: var(--accent-emerald); font-weight: bold; display: block; margin-bottom: 12px;">💬 YG DEVELOPER'S SECOND PROMPT (MIGRATION):</span>
-                        <p style="font-size: 1.1vw !important; color: #ffffff; line-height: 1.8; margin: 0; font-family: 'Noto Sans KR', sans-serif;">
-                            "방금 1단계에서 완성한 Vanilla JS Todo App 코드를 소스로 삼아서, Vite + React 19 + Zustand 모던 아키텍처로 포팅 및 마이그레이션을 진행해줘.<br>
-                            <strong style="color: var(--accent-emerald);">이전 1단계 NStack 아카이브(todo-app/order.md 등)를 적극 참고하여, 기술적 트레이드오프 의사결정을 wiki.md에 정확하게 기록해라.</strong>"
-                        </p>
-                        
-                        <div style="font-size: 0.95vw; color: var(--text-muted); line-height: 1.7; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 20px; padding-top: 15px;">
-                            이 프롬프트가 입력되는 즉시, 에이전트의 RAG 검색기가 가동하여<br>
-                            수만 줄의 소스 코드를 읽는 리버스 엔지니어링을 생략한 채, 이전 지식 3종의 citations만으로 3초 만에 맥락을 삼킵니다.
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+  <div class="split-container-2col">
+    <div
+      class="col-45"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 250px;
+          height: 250px;
+          background: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.12) 0%,
+            rgba(16, 185, 129, 0) 70%
+          );
+          filter: blur(40px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+      <div style="width: 100%; max-width: 320px; height: auto; transform: scale(1.25)">
+        <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="rag-flow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#10b981" />
+              <stop offset="100%" stop-color="#0ea5e9" />
+            </linearGradient>
+            <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- Interactive Rings -->
+          <circle
+            cx="100"
+            cy="100"
+            r="75"
+            fill="none"
+            stroke="var(--accent-emerald)"
+            stroke-width="1"
+            stroke-dasharray="4 6"
+            opacity="0.3"
+            style="transform-origin: 100px 100px; animation: rotate-slow 18s linear infinite"
+          />
+
+          <!-- Document Database (RAG Source) -->
+          <g transform="translate(100, 50)">
+            <rect
+              x="-40"
+              y="-16"
+              width="80"
+              height="32"
+              rx="6"
+              fill="#080c14"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.8"
+              filter="url(#glow-emerald)"
+            />
+            <text
+              x="0"
+              y="3"
+              fill="#ffffff"
+              font-family="monospace"
+              font-size="7.5"
+              font-weight="900"
+              text-anchor="middle"
+            >
+              RAG Citations
+            </text>
+          </g>
+
+          <!-- AI Agent Context Ingestion Node -->
+          <g transform="translate(100, 150)">
+            <circle
+              cx="0"
+              cy="0"
+              r="18"
+              fill="#080c14"
+              stroke="var(--accent-blue)"
+              stroke-width="2"
+              filter="url(#glow-emerald)"
+            />
+            <text
+              x="0"
+              y="4"
+              fill="var(--accent-blue)"
+              font-family="sans-serif"
+              font-size="9"
+              font-weight="900"
+              text-anchor="middle"
+            >
+              LLM
+            </text>
+            <circle
+              cx="0"
+              cy="0"
+              r="18"
+              fill="none"
+              stroke="var(--accent-blue)"
+              stroke-width="1"
+              opacity="1"
+            >
+              <animate attributeName="r" values="18;35" dur="2s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="1;0" dur="2s" repeatCount="indefinite" />
+            </circle>
+          </g>
+
+          <!-- Downward speed injection path -->
+          <path
+            d="M 100,66 L 100,132"
+            fill="none"
+            stroke="url(#rag-flow-grad)"
+            stroke-width="2.5"
+            filter="url(#glow-emerald)"
+          />
+
+          <!-- Speed laser bullets flowing down in 3 seconds -->
+          <circle cx="100" cy="80" r="3.5" fill="#ffffff" filter="url(#glow-emerald)">
+            <animate attributeName="cy" values="66;132" dur="0.8s" repeatCount="indefinite" />
+          </circle>
+
+          <text
+            x="145"
+            y="104"
+            fill="var(--accent-emerald)"
+            font-family="monospace"
+            font-size="8"
+            font-weight="bold"
+            text-anchor="start"
+          >
+            3 Sec Context
+          </text>
+          <text
+            x="145"
+            y="114"
+            fill="#cbd5e1"
+            font-family="monospace"
+            font-size="7"
+            text-anchor="start"
+          >
+            RAG Ingestion
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-55 glass-panel"
+      style="
+        padding: 40px;
+        box-sizing: border-box;
+        text-align: left;
+        border: 1.5px solid rgba(16, 185, 129, 0.3);
+        background: rgba(16, 185, 129, 0.03);
+        filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.05));
+      "
+    >
+      <span
+        style="
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.9vw;
+          color: var(--accent-emerald);
+          font-weight: bold;
+          display: block;
+          margin-bottom: 12px;
+        "
+        >💬 YG DEVELOPER'S SECOND PROMPT (MIGRATION):</span
+      >
+      <p
+        style="
+          font-size: 1.1vw !important;
+          color: #ffffff;
+          line-height: 1.8;
+          margin: 0;
+          font-family: 'Noto Sans KR', sans-serif;
+        "
+      >
+        "방금 1단계에서 완성한 Vanilla JS Todo App 코드를 소스로 삼아서, Vite + React 19 + Zustand
+        모던 아키텍처로 포팅 및 마이그레이션을 진행해줘.<br />
+        <strong style="color: var(--accent-emerald)"
+          >이전 1단계 NStack 아카이브(todo-app/order.md 등)를 적극 참고하여, 기술적 트레이드오프
+          의사결정을 wiki.md에 정확하게 기록해라.</strong
+        >"
+      </p>
+
+      <div
+        style="
+          font-size: 0.95vw;
+          color: var(--text-muted);
+          line-height: 1.7;
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          margin-top: 20px;
+          padding-top: 15px;
+        "
+      >
+        이 프롬프트가 입력되는 즉시, 에이전트의 RAG 검색기가 가동하여<br />
+        수만 줄의 소스 코드를 읽는 리버스 엔지니어링을 생략한 채, 이전 지식 3종의 citations만으로
+        3초 만에 맥락을 삼킵니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

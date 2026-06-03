@@ -1,60 +1,192 @@
 <section>
-                <div class="slide-counter">SLIDE 06 / 09</div>
-                <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">로컬 SQLite DB 기반 상태/이력/빌드 통계 연동</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-45" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(14,165,233,0.12) 0%, rgba(14,165,233,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
-                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="40" y="60" width="170" height="130" rx="6" fill="#080c14" stroke="var(--accent-blue)" stroke-width="2"/>
-                                <line x1="40" y1="90" x2="210" y2="90" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
-                                <ellipse cx="125" cy="115" rx="55" ry="12" fill="none" stroke="var(--accent-blue)" stroke-width="1.8"/>
-                                <ellipse cx="125" cy="140" rx="55" ry="12" fill="none" stroke="var(--accent-blue)" stroke-width="1.8"/>
-                                <ellipse cx="125" cy="165" rx="55" ry="12" fill="none" stroke="var(--accent-blue)" stroke-width="1.8"/>
-                                <text x="125" y="80" fill="var(--accent-blue)" font-family="monospace" font-size="9" font-weight="extrabold" text-anchor="middle">SQLite Storage</text>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            🏛️ SQLite DB를 활용한 정교한 이력 관리 및 캐싱
-                        </h3>
-                        
-                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                SwarmVault는 단순히 마크다운 파일을 검색하는 RAG에 그치지 않고,<br>
-                                로컬 SQLite DB와의 철저한 상태 데이터 동기화를 통해 질문 이력과 색인 통계를 완벽 추적합니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong style="color: var(--accent-blue);">task_history 테이블 관리</strong>:<br>
-                                    에이전트가 어떤 의사결정과 질문을 거쳐 코딩을 진행했는지 모든 시맨틱 질문 히스토리 기록.
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-blue);">build_logs 테이블 캐싱</strong>:<br>
-                                    백그라운드 스케줄러가 색인을 갱신할 때 생성한 컴파일 빌드 통계와 타임스탬프 로그를 저장하여 증분 스캔 가속화.
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-blue);">시각화 통합 대시보드</strong>:<br>
-                                    로컬 SQLite에 적재된 통계 데이터가 NAtlas UI와 API를 통해 즉각 연동되어 실시간 색인 컴파일 상태 그래프 제공.
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-                
-                <aside class="notes">
-                    "단순 텍스트 시맨틱 매핑을 넘어, SQLite DB의 task_history와 build_logs를 정교하게 연동하여 증분 빌드 속도를 비약적으로 끌어올리고 대시보드 시각화의 원천 데이터로 사용합니다."
-                </aside>
-            </section>
+  <div class="slide-counter">SLIDE 06 / 09</div>
+  <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
+
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    로컬 SQLite DB 기반 상태/이력/빌드 통계 연동
+  </h2>
+
+  <div class="split-container-2col">
+    <div
+      class="col-45"
+      style="
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 340px;
+          height: 340px;
+          background: radial-gradient(
+            circle,
+            rgba(14, 165, 233, 0.12) 0%,
+            rgba(14, 165, 233, 0) 70%
+          );
+          filter: blur(55px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+
+      <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35)">
+        <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect
+            x="40"
+            y="60"
+            width="170"
+            height="130"
+            rx="6"
+            fill="#080c14"
+            stroke="var(--accent-blue)"
+            stroke-width="2"
+          />
+          <line
+            x1="40"
+            y1="90"
+            x2="210"
+            y2="90"
+            stroke="rgba(255,255,255,0.1)"
+            stroke-width="1.5"
+          />
+          <ellipse
+            cx="125"
+            cy="115"
+            rx="55"
+            ry="12"
+            fill="none"
+            stroke="var(--accent-blue)"
+            stroke-width="1.8"
+          />
+          <ellipse
+            cx="125"
+            cy="140"
+            rx="55"
+            ry="12"
+            fill="none"
+            stroke="var(--accent-blue)"
+            stroke-width="1.8"
+          />
+          <ellipse
+            cx="125"
+            cy="165"
+            rx="55"
+            ry="12"
+            fill="none"
+            stroke="var(--accent-blue)"
+            stroke-width="1.8"
+          />
+          <text
+            x="125"
+            y="80"
+            fill="var(--accent-blue)"
+            font-family="monospace"
+            font-size="9"
+            font-weight="extrabold"
+            text-anchor="middle"
+          >
+            SQLite Storage
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        🏛️ SQLite DB를 활용한 정교한 이력 관리 및 캐싱
+      </h3>
+
+      <div
+        style="
+          font-size: 0.85vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          SwarmVault는 단순히 마크다운 파일을 검색하는 RAG에 그치지 않고,<br />
+          로컬 SQLite DB와의 철저한 상태 데이터 동기화를 통해 질문 이력과 색인 통계를 완벽
+          추적합니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong style="color: var(--accent-blue)">task_history 테이블 관리</strong>:<br />
+            에이전트가 어떤 의사결정과 질문을 거쳐 코딩을 진행했는지 모든 시맨틱 질문 히스토리 기록.
+          </li>
+          <li>
+            <strong style="color: var(--accent-blue)">build_logs 테이블 캐싱</strong>:<br />
+            백그라운드 스케줄러가 색인을 갱신할 때 생성한 컴파일 빌드 통계와 타임스탬프 로그를
+            저장하여 증분 스캔 가속화.
+          </li>
+          <li>
+            <strong style="color: var(--accent-blue)">시각화 통합 대시보드</strong>:<br />
+            로컬 SQLite에 적재된 통계 데이터가 NAtlas UI와 API를 통해 즉각 연동되어 실시간 색인
+            컴파일 상태 그래프 제공.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+
+  <aside class="notes">
+    "단순 텍스트 시맨틱 매핑을 넘어, SQLite DB의 task_history와 build_logs를 정교하게 연동하여 증분
+    빌드 속도를 비약적으로 끌어올리고 대시보드 시각화의 원천 데이터로 사용합니다."
+  </aside>
+</section>

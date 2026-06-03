@@ -10,7 +10,7 @@ if (process.contextIsolated) {
       ...electronAPI,
       openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog'),
       openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
-      runCoreInstaller: (params: { scenario: string; parentPath?: string; projectName?: string }) => 
+      runCoreInstaller: (params: { scenario: string; parentPath?: string; projectName?: string }) =>
         ipcRenderer.invoke('run-core-installer', params),
       onInstallerLog: (callback: (log: string) => void) => {
         ipcRenderer.on('installer-log', (_, log) => callback(log))
@@ -29,7 +29,7 @@ if (process.contextIsolated) {
     ...electronAPI,
     openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog'),
     openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
-    runCoreInstaller: (params: { scenario: string; parentPath?: string; projectName?: string }) => 
+    runCoreInstaller: (params: { scenario: string; parentPath?: string; projectName?: string }) =>
       ipcRenderer.invoke('run-core-installer', params),
     onInstallerLog: (callback: (log: string) => void) => {
       ipcRenderer.on('installer-log', (_, log) => callback(log))

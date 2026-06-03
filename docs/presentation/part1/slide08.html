@@ -1,88 +1,276 @@
 <section>
-                <div class="slide-counter">SLIDE 08 / 28</div>
-                <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">코드베이스 팽창에 따른 인프라 비용 및 인지 속도 장벽</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 320px; height: 320px; background: radial-gradient(circle, rgba(244,63,94,0.15) 0%, rgba(244,63,94,0) 70%); filter: blur(50px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.4); width: 100%; max-width: 250px;">
-                            <!-- Token Cost Exponential Blast Spiral SVG -->
-                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="tokenBlastGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="#3b82f6"/>
-                                        <stop offset="60%" stop-color="#a855f7"/>
-                                        <stop offset="100%" stop-color="#f43f5e"/>
-                                    </linearGradient>
-                                </defs>
-                                <!-- Grid axes with styling -->
-                                <line x1="30" y1="220" x2="220" y2="220" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-                                <line x1="30" y1="30" x2="30" y2="220" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-                                
-                                <!-- Dash Grid lines -->
-                                <line x1="30" y1="160" x2="220" y2="160" stroke="rgba(255,255,255,0.05)" stroke-width="0.8" stroke-dasharray="3 3"/>
-                                <line x1="30" y1="100" x2="220" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="0.8" stroke-dasharray="3 3"/>
-                                <line x1="30" y1="40" x2="220" y2="40" stroke="rgba(255,255,255,0.05)" stroke-width="0.8" stroke-dasharray="3 3"/>
-                                
-                                <!-- Exponential cost curve -->
-                                <path d="M 30,220 Q 130,210 170,140 T 210,40" fill="none" stroke="url(#tokenBlastGrad)" stroke-width="3" style="animation: laser-glow 2.5s infinite;"/>
-                                
-                                <!-- Orbiting cost explosion dots -->
-                                <circle cx="30" cy="220" r="4" fill="var(--accent-blue)"/>
-                                <circle cx="100" cy="213" r="4.5" fill="var(--accent-blue)"/>
-                                <circle cx="150" cy="180" r="5" fill="var(--accent-purple)"/>
-                                <circle cx="180" cy="120" r="6.5" fill="var(--accent-rose)" filter="drop-shadow(0 0 8px var(--accent-rose))" style="animation: soft-blink 1.5s infinite;"/>
-                                <circle cx="210" cy="40" r="10" fill="var(--accent-rose)" filter="drop-shadow(0 0 15px var(--accent-rose))" style="animation: heat-pulse 2s infinite;"/>
-                                
-                                <!-- Exploding light rays from top node -->
-                                <line x1="210" y1="40" x2="210" y2="15" stroke="var(--accent-rose)" stroke-width="1.8" opacity="0.6"/>
-                                <line x1="210" y1="40" x2="235" y2="40" stroke="var(--accent-rose)" stroke-width="1.8" opacity="0.6"/>
-                                <line x1="210" y1="40" x2="228" y2="22" stroke="var(--accent-rose)" stroke-width="1.8" opacity="0.6"/>
-                                
-                                <text x="210" y="60" fill="var(--accent-rose)" font-family="monospace" font-size="8" font-weight="extrabold" text-anchor="middle" style="animation: soft-blink 1s infinite;">TOKEN BURST!</text>
-                                <text x="175" y="232" fill="rgba(255,255,255,0.4)" font-family="Outfit" font-size="8" font-weight="bold">Code Size (LOC)</text>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            💸 전체 로드 방식의 토큰 폭발 및 경제적 한계
-                        </h3>
-                        
-                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                기능 수정 시, 이력을 확인하기 위해 수십 개의 전체 소스 코드를 LLM 에이전트에<br>
-                                통째로 로드하는 역공학 방식은 프로젝트가 팽창함에 따라 치명적인 비용 폭발을 초래합니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong style="color: var(--accent-rose);">토큰 소모량 지수함수적 폭발</strong>:<br>
-                                    코드 5,000줄 이하의 소형 앱 대비 50,000줄 이상 팽창 시 분석 비용 10배 폭증
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-rose);">에이전트 인지 지연 유발</strong>:<br>
-                                    수천만 토큰에 달하는 무거운 코드맥락을 소화하느라 정작 중요한 생성 속도 급격히 다운
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-rose);">질문 효율의 경제적 임계점 봉착</strong>:<br>
-                                    RAGCitation 없는 무차별 전체 코드 스캔은 전사 AI 도입 시 인프라 요금 폭탄으로 귀착
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-                
-                <aside class="notes">
-                    "신규 기능을 추가하거나 마이그레이션을 할 때, 과거 의사결정을 역공학으로 파악하기 위해 소스 코드 전체를 매번 LLM에 로드하는 것은 비효율적입니다. 코드가 커질수록 에이전트는 무거운 소스 코드를 읽는 데에만 아까운 컨텍스트를 소진하여, 정작 본래 해야 할 안전한 코드 생성을 수행하지 못하는 상태에 직면합니다."
-                </aside>
-            </section>
+  <div class="slide-counter">SLIDE 08 / 28</div>
+  <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
+
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    코드베이스 팽창에 따른 인프라 비용 및 인지 속도 장벽
+  </h2>
+
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 320px;
+          height: 320px;
+          background: radial-gradient(circle, rgba(244, 63, 94, 0.15) 0%, rgba(244, 63, 94, 0) 70%);
+          filter: blur(50px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+
+      <div
+        style="
+          position: relative;
+          text-align: center;
+          z-index: 1;
+          transform: scale(1.4);
+          width: 100%;
+          max-width: 250px;
+        "
+      >
+        <!-- Token Cost Exponential Blast Spiral SVG -->
+        <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="tokenBlastGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#3b82f6" />
+              <stop offset="60%" stop-color="#a855f7" />
+              <stop offset="100%" stop-color="#f43f5e" />
+            </linearGradient>
+          </defs>
+          <!-- Grid axes with styling -->
+          <line
+            x1="30"
+            y1="220"
+            x2="220"
+            y2="220"
+            stroke="rgba(255,255,255,0.15)"
+            stroke-width="1.5"
+          />
+          <line
+            x1="30"
+            y1="30"
+            x2="30"
+            y2="220"
+            stroke="rgba(255,255,255,0.15)"
+            stroke-width="1.5"
+          />
+
+          <!-- Dash Grid lines -->
+          <line
+            x1="30"
+            y1="160"
+            x2="220"
+            y2="160"
+            stroke="rgba(255,255,255,0.05)"
+            stroke-width="0.8"
+            stroke-dasharray="3 3"
+          />
+          <line
+            x1="30"
+            y1="100"
+            x2="220"
+            y2="100"
+            stroke="rgba(255,255,255,0.05)"
+            stroke-width="0.8"
+            stroke-dasharray="3 3"
+          />
+          <line
+            x1="30"
+            y1="40"
+            x2="220"
+            y2="40"
+            stroke="rgba(255,255,255,0.05)"
+            stroke-width="0.8"
+            stroke-dasharray="3 3"
+          />
+
+          <!-- Exponential cost curve -->
+          <path
+            d="M 30,220 Q 130,210 170,140 T 210,40"
+            fill="none"
+            stroke="url(#tokenBlastGrad)"
+            stroke-width="3"
+            style="animation: laser-glow 2.5s infinite"
+          />
+
+          <!-- Orbiting cost explosion dots -->
+          <circle cx="30" cy="220" r="4" fill="var(--accent-blue)" />
+          <circle cx="100" cy="213" r="4.5" fill="var(--accent-blue)" />
+          <circle cx="150" cy="180" r="5" fill="var(--accent-purple)" />
+          <circle
+            cx="180"
+            cy="120"
+            r="6.5"
+            fill="var(--accent-rose)"
+            filter="drop-shadow(0 0 8px var(--accent-rose))"
+            style="animation: soft-blink 1.5s infinite"
+          />
+          <circle
+            cx="210"
+            cy="40"
+            r="10"
+            fill="var(--accent-rose)"
+            filter="drop-shadow(0 0 15px var(--accent-rose))"
+            style="animation: heat-pulse 2s infinite"
+          />
+
+          <!-- Exploding light rays from top node -->
+          <line
+            x1="210"
+            y1="40"
+            x2="210"
+            y2="15"
+            stroke="var(--accent-rose)"
+            stroke-width="1.8"
+            opacity="0.6"
+          />
+          <line
+            x1="210"
+            y1="40"
+            x2="235"
+            y2="40"
+            stroke="var(--accent-rose)"
+            stroke-width="1.8"
+            opacity="0.6"
+          />
+          <line
+            x1="210"
+            y1="40"
+            x2="228"
+            y2="22"
+            stroke="var(--accent-rose)"
+            stroke-width="1.8"
+            opacity="0.6"
+          />
+
+          <text
+            x="210"
+            y="60"
+            fill="var(--accent-rose)"
+            font-family="monospace"
+            font-size="8"
+            font-weight="extrabold"
+            text-anchor="middle"
+            style="animation: soft-blink 1s infinite"
+          >
+            TOKEN BURST!
+          </text>
+          <text
+            x="175"
+            y="232"
+            fill="rgba(255,255,255,0.4)"
+            font-family="Outfit"
+            font-size="8"
+            font-weight="bold"
+          >
+            Code Size (LOC)
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        💸 전체 로드 방식의 토큰 폭발 및 경제적 한계
+      </h3>
+
+      <div
+        style="
+          font-size: 0.85vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          기능 수정 시, 이력을 확인하기 위해 수십 개의 전체 소스 코드를 LLM 에이전트에<br />
+          통째로 로드하는 역공학 방식은 프로젝트가 팽창함에 따라 치명적인 비용 폭발을 초래합니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong style="color: var(--accent-rose)">토큰 소모량 지수함수적 폭발</strong>:<br />
+            코드 5,000줄 이하의 소형 앱 대비 50,000줄 이상 팽창 시 분석 비용 10배 폭증
+          </li>
+          <li>
+            <strong style="color: var(--accent-rose)">에이전트 인지 지연 유발</strong>:<br />
+            수천만 토큰에 달하는 무거운 코드맥락을 소화하느라 정작 중요한 생성 속도 급격히 다운
+          </li>
+          <li>
+            <strong style="color: var(--accent-rose)">질문 효율의 경제적 임계점 봉착</strong>:<br />
+            RAGCitation 없는 무차별 전체 코드 스캔은 전사 AI 도입 시 인프라 요금 폭탄으로 귀착
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+
+  <aside class="notes">
+    "신규 기능을 추가하거나 마이그레이션을 할 때, 과거 의사결정을 역공학으로 파악하기 위해 소스 코드
+    전체를 매번 LLM에 로드하는 것은 비효율적입니다. 코드가 커질수록 에이전트는 무거운 소스 코드를
+    읽는 데에만 아까운 컨텍스트를 소진하여, 정작 본래 해야 할 안전한 코드 생성을 수행하지 못하는
+    상태에 직면합니다."
+  </aside>
+</section>

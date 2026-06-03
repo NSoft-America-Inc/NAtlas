@@ -54,3 +54,17 @@ npmRebuild: false
 publish:
   provider: generic
   url: https://example.com/auto-updates
+
+extraResources:
+  - from: resources/python
+    to: python
+    filter:
+      - '**/*'
+  - from: resources/node
+    to: node
+    filter:
+      - '**/*'
+  - from: resources/git
+    to: git
+    filter:
+      - '**/*'

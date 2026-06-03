@@ -14,10 +14,23 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '@renderer/components/ui/select'
-import { Search, RefreshCw, AlertCircle, X, FileText, Loader2, ChevronDown, ChevronRight } from 'lucide-react'
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@renderer/components/ui/resizable'
+import {
+  Search,
+  RefreshCw,
+  AlertCircle,
+  X,
+  FileText,
+  Loader2,
+  ChevronDown,
+  ChevronRight
+} from 'lucide-react'
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle
+} from '@renderer/components/ui/resizable'
 
 // ── Markdown Viewer ───────────────────────────────────────────────────────────
 
@@ -25,7 +38,7 @@ function MarkdownViewer({ file, onClose }: { file: DocumentFile; onClose: () => 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['doc-content', file.path],
     queryFn: () => api.getDocumentContent(file.path),
-    staleTime: 60_000,
+    staleTime: 60_000
   })
 
   const filename = file.path.split('/').pop() ?? file.path
@@ -78,7 +91,7 @@ function MarkdownViewer({ file, onClose }: { file: DocumentFile; onClose: () => 
                         if (isExternal) {
                           e.preventDefault()
                           if (window.electron && (window.electron as any).openExternal) {
-                            (window.electron as any).openExternal(href!)
+                            ;(window.electron as any).openExternal(href!)
                           } else {
                             window.open(href!, '_blank', 'noopener,noreferrer')
                           }
@@ -114,12 +127,12 @@ export function Documents() {
   const [userFilter, setUserFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState<'all' | 'indexed' | 'modified' | 'new'>('all')
   const [selectedFile, setSelectedFile] = useState<DocumentFile | null>(null)
-  
+
   // Accordion toggle status
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
 
   const toggleGroup = (groupId: string) => {
-    setExpandedGroups(prev => {
+    setExpandedGroups((prev) => {
       const next = new Set(prev)
       if (next.has(groupId)) {
         next.delete(groupId)
@@ -133,22 +146,28 @@ export function Documents() {
   const { data, isLoading, isError, error, refetch, isFetching } = useQuery<DocumentsResponse>({
     queryKey: ['documents'],
     queryFn: api.getDocuments,
-    refetchInterval: 30_000,
+    refetchInterval: 30_000
   })
 
   // Derive unique filter options from data
   const { categories, projects, users } = useMemo(() => {
     const files = data?.files ?? []
     return {
-      categories: ['all', ...Array.from(new Set(files.map(f => f.category))).sort()],
-      projects: ['all', ...Array.from(new Set(files.map(f => f.project).filter(Boolean) as string[])).sort()],
-      users: ['all', ...Array.from(new Set(files.map(f => f.user).filter(Boolean) as string[])).sort()],
+      categories: ['all', ...Array.from(new Set(files.map((f) => f.category))).sort()],
+      projects: [
+        'all',
+        ...Array.from(new Set(files.map((f) => f.project).filter(Boolean) as string[])).sort()
+      ],
+      users: [
+        'all',
+        ...Array.from(new Set(files.map((f) => f.user).filter(Boolean) as string[])).sort()
+      ]
     }
   }, [data])
 
   // Apply filters
   const filteredFiles = useMemo(() => {
-    return (data?.files ?? []).filter(file => {
+    return (data?.files ?? []).filter((file) => {
       if (categoryFilter !== 'all' && file.category !== categoryFilter) return false
       if (projectFilter !== 'all' && file.project !== projectFilter) return false
       if (userFilter !== 'all' && file.user !== userFilter) return false
@@ -163,7 +182,7 @@ export function Documents() {
     const groups: Record<string, DocumentFile[]> = {}
     const result: DocumentsListItem[] = []
 
-    filteredFiles.forEach(file => {
+    filteredFiles.forEach((file) => {
       if (file.category === 'Logs' && file.slug) {
         const groupKey = `group:${file.project || ''}:${file.user || ''}:${file.slug}`
         if (!groups[groupKey]) {
@@ -188,15 +207,15 @@ export function Documents() {
 
       // Determine overall status: new > modified > indexed
       let overallStatus: 'indexed' | 'modified' | 'new' = 'indexed'
-      if (files.some(f => f.status === 'new')) {
+      if (files.some((f) => f.status === 'new')) {
         overallStatus = 'new'
-      } else if (files.some(f => f.status === 'modified')) {
+      } else if (files.some((f) => f.status === 'modified')) {
         overallStatus = 'modified'
       }
 
       // Find latest modified_at
       let latestModifiedAt: string | null = null
-      files.forEach(f => {
+      files.forEach((f) => {
         if (f.modified_at) {
           if (!latestModifiedAt || f.modified_at > latestModifiedAt) {
             latestModifiedAt = f.modified_at
@@ -207,8 +226,8 @@ export function Documents() {
       // Sort files within group so that order.md -> report.md -> wiki.md / knowledge.md order is preferred
       const typeOrder = { order: 1, report: 2, wiki: 3, knowledge: 4 }
       const sortedFiles = [...files].sort((a, b) => {
-        const orderA = a.doc_type ? (typeOrder[a.doc_type] || 99) : 99
-        const orderB = b.doc_type ? (typeOrder[b.doc_type] || 99) : 99
+        const orderA = a.doc_type ? typeOrder[a.doc_type] || 99 : 99
+        const orderB = b.doc_type ? typeOrder[b.doc_type] || 99 : 99
         return orderA - orderB
       })
 
@@ -249,7 +268,9 @@ export function Documents() {
       if (hours < 24) return `${hours}시간 전`
       if (days < 7) return `${days}일 전`
       return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
-    } catch { return '-' }
+    } catch {
+      return '-'
+    }
   }
 
   if (isError) {
@@ -261,7 +282,10 @@ export function Documents() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             {error instanceof Error ? error.message : 'LLMWiki에 접근할 수 없습니다.'}
           </p>
-          <Button onClick={() => setActiveTab('settings')} className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold">
+          <Button
+            onClick={() => setActiveTab('settings')}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold"
+          >
             Settings 탭으로 이동
           </Button>
         </div>
@@ -281,7 +305,8 @@ export function Documents() {
             <p className="text-xs text-muted-foreground mt-0.5">LLMWiki 문서 탐색</p>
           </div>
           <Button
-            variant="outline" size="sm"
+            variant="outline"
+            size="sm"
             onClick={() => refetch()}
             disabled={isLoading || isFetching}
             className="h-9 px-3 text-xs bg-muted/40 hover:bg-muted border-border"
@@ -294,12 +319,19 @@ export function Documents() {
         {/* ── Filter dropdowns ── */}
         <div className="flex flex-wrap gap-2">
           {/* Category */}
-          <Select value={categoryFilter} onValueChange={val => { setCategoryFilter(val); setProjectFilter('all'); setUserFilter('all') }}>
+          <Select
+            value={categoryFilter}
+            onValueChange={(val) => {
+              setCategoryFilter(val)
+              setProjectFilter('all')
+              setUserFilter('all')
+            }}
+          >
             <SelectTrigger className="h-8 w-32 text-xs bg-muted/20 border-border">
               <SelectValue placeholder="카테고리" />
             </SelectTrigger>
             <SelectContent>
-              {categories.map(c => (
+              {categories.map((c) => (
                 <SelectItem key={c} value={c} className="text-xs">
                   {c === 'all' ? '전체 카테고리' : c}
                 </SelectItem>
@@ -308,12 +340,18 @@ export function Documents() {
           </Select>
 
           {/* Project — only meaningful for Logs */}
-          <Select value={projectFilter} onValueChange={val => { setProjectFilter(val); setUserFilter('all') }}>
+          <Select
+            value={projectFilter}
+            onValueChange={(val) => {
+              setProjectFilter(val)
+              setUserFilter('all')
+            }}
+          >
             <SelectTrigger className="h-8 w-32 text-xs bg-muted/20 border-border">
               <SelectValue placeholder="프로젝트" />
             </SelectTrigger>
             <SelectContent>
-              {projects.map(p => (
+              {projects.map((p) => (
                 <SelectItem key={p} value={p} className="text-xs">
                   {p === 'all' ? '전체 프로젝트' : p}
                 </SelectItem>
@@ -327,7 +365,7 @@ export function Documents() {
               <SelectValue placeholder="유저" />
             </SelectTrigger>
             <SelectContent>
-              {users.map(u => (
+              {users.map((u) => (
                 <SelectItem key={u} value={u} className="text-xs">
                   {u === 'all' ? '전체 유저' : u}
                 </SelectItem>
@@ -337,15 +375,23 @@ export function Documents() {
 
           {/* Status */}
           <div className="flex items-center gap-1 bg-muted/20 border border-border px-1 rounded-md">
-            {(['all', 'indexed', 'modified', 'new'] as const).map(f => (
+            {(['all', 'indexed', 'modified', 'new'] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setStatusFilter(f)}
                 className={`px-2.5 py-1 rounded text-[11px] font-semibold uppercase tracking-wide transition-all ${
-                  statusFilter === f ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
+                  statusFilter === f
+                    ? 'bg-accent text-accent-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                {f === 'all' ? '전체' : f === 'indexed' ? '인덱싱' : f === 'modified' ? '수정됨' : '미인덱싱'}
+                {f === 'all'
+                  ? '전체'
+                  : f === 'indexed'
+                    ? '인덱싱'
+                    : f === 'modified'
+                      ? '수정됨'
+                      : '미인덱싱'}
               </button>
             ))}
           </div>
@@ -355,7 +401,7 @@ export function Documents() {
             <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <Input
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="파일명 검색..."
               className="pl-8 h-8 text-xs bg-muted/20 border-border focus-visible:ring-indigo-500/50"
             />
@@ -365,12 +411,11 @@ export function Documents() {
 
       {/* ── Main: list + viewer ── */}
       <ResizablePanelGroup orientation="horizontal" className="flex-1 overflow-hidden">
-
         {/* File list */}
         <ResizablePanel
-          defaultSize={selectedFile ? "42%" : "100%"}
-          minSize={selectedFile ? "30%" : "100%"}
-          maxSize={selectedFile ? "70%" : "100%"}
+          defaultSize={selectedFile ? '42%' : '100%'}
+          minSize={selectedFile ? '30%' : '100%'}
+          maxSize={selectedFile ? '70%' : '100%'}
           className="flex flex-col overflow-hidden"
         >
           <div className="flex-1 overflow-y-auto">
@@ -396,11 +441,23 @@ export function Documents() {
 
                     // doc_type 뱃지 색상
                     const docTypeBadge = file.doc_type
-                      ? {
-                          order:     { bg: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300',  label: 'order' },
-                          report:    { bg: 'bg-amber-500/10 border-amber-500/20 text-amber-300',   label: 'report' },
-                          knowledge: { bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300', label: 'knowledge' },
-                        }[file.doc_type] ?? { bg: 'bg-muted/20 border-border text-muted-foreground', label: file.doc_type }
+                      ? ({
+                          order: {
+                            bg: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300',
+                            label: 'order'
+                          },
+                          report: {
+                            bg: 'bg-amber-500/10 border-amber-500/20 text-amber-300',
+                            label: 'report'
+                          },
+                          knowledge: {
+                            bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300',
+                            label: 'knowledge'
+                          }
+                        }[file.doc_type] ?? {
+                          bg: 'bg-muted/20 border-border text-muted-foreground',
+                          label: file.doc_type
+                        })
                       : null
 
                     return (
@@ -422,11 +479,15 @@ export function Documents() {
                           </div>
                           <div className="flex items-center gap-1.5 min-w-0">
                             {docTypeBadge && (
-                              <span className={`flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wide ${docTypeBadge.bg}`}>
+                              <span
+                                className={`flex-shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wide ${docTypeBadge.bg}`}
+                              >
                                 {docTypeBadge.label}
                               </span>
                             )}
-                            <p className="text-xs text-slate-200 font-medium truncate">{filename}</p>
+                            <p className="text-xs text-slate-200 font-medium truncate">
+                              {filename}
+                            </p>
                           </div>
                         </div>
 
@@ -438,9 +499,9 @@ export function Documents() {
                   } else {
                     // Group Item Accordion
                     const isExpanded = expandedGroups.has(item.id)
-                    const orderFile = item.files.find(f => f.doc_type === 'order')
-                    const reportFile = item.files.find(f => f.doc_type === 'report')
-                    const knowledgeFile = item.files.find(f => f.doc_type === 'knowledge')
+                    const orderFile = item.files.find((f) => f.doc_type === 'order')
+                    const reportFile = item.files.find((f) => f.doc_type === 'report')
+                    const knowledgeFile = item.files.find((f) => f.doc_type === 'knowledge')
 
                     // 요약 미니 대시보드 인디케이터
                     const getMiniIndicator = (docFile?: DocumentFile, label: string = '') => {
@@ -452,15 +513,26 @@ export function Documents() {
                           </span>
                         )
                       }
-                      
+
                       const colors = {
-                        indexed: { bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400', dot: 'bg-emerald-500' },
-                        modified: { bg: 'bg-amber-500/10 border-amber-500/20 text-amber-400', dot: 'bg-amber-500' },
-                        new: { bg: 'bg-rose-500/10 border-rose-500/20 text-rose-400', dot: 'bg-rose-500' }
+                        indexed: {
+                          bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400',
+                          dot: 'bg-emerald-500'
+                        },
+                        modified: {
+                          bg: 'bg-amber-500/10 border-amber-500/20 text-amber-400',
+                          dot: 'bg-amber-500'
+                        },
+                        new: {
+                          bg: 'bg-rose-500/10 border-rose-500/20 text-rose-400',
+                          dot: 'bg-rose-500'
+                        }
                       }[docFile.status]
 
                       return (
-                        <span className={`flex items-center gap-1 text-[9px] border px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${colors.bg}`}>
+                        <span
+                          className={`flex items-center gap-1 text-[9px] border px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${colors.bg}`}
+                        >
                           <span className={`w-1.5 h-1.5 rounded-full ${colors.dot}`} />
                           {label}
                         </span>
@@ -524,22 +596,37 @@ export function Documents() {
                             {/* Vertical Guide Line */}
                             <div className="absolute left-6 top-0 bottom-0 w-[1px] bg-border/20" />
 
-                            {item.files.map(childFile => {
+                            {item.files.map((childFile) => {
                               const isChildSelected = selectedFile?.path === childFile.path
-                              const childFilename = childFile.path.split('/').pop() ?? childFile.path
-                              
+                              const childFilename =
+                                childFile.path.split('/').pop() ?? childFile.path
+
                               const childDocTypeBadge = childFile.doc_type
-                                ? {
-                                    order:     { bg: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300',  label: 'order' },
-                                    report:    { bg: 'bg-amber-500/10 border-amber-500/20 text-amber-300',   label: 'report' },
-                                    knowledge: { bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300', label: 'knowledge' },
-                                  }[childFile.doc_type] ?? { bg: 'bg-muted/20 border-border text-muted-foreground', label: childFile.doc_type }
+                                ? ({
+                                    order: {
+                                      bg: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-300',
+                                      label: 'order'
+                                    },
+                                    report: {
+                                      bg: 'bg-amber-500/10 border-amber-500/20 text-amber-300',
+                                      label: 'report'
+                                    },
+                                    knowledge: {
+                                      bg: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300',
+                                      label: 'knowledge'
+                                    }
+                                  }[childFile.doc_type] ?? {
+                                    bg: 'bg-muted/20 border-border text-muted-foreground',
+                                    label: childFile.doc_type
+                                  })
                                 : null
 
                               return (
                                 <div
                                   key={childFile.path}
-                                  onClick={() => setSelectedFile(isChildSelected ? null : childFile)}
+                                  onClick={() =>
+                                    setSelectedFile(isChildSelected ? null : childFile)
+                                  }
                                   className={`group/child flex items-center gap-3 px-3 py-1.5 rounded-md cursor-pointer transition-all duration-150 select-none relative ${
                                     isChildSelected
                                       ? 'bg-indigo-950/20 border border-indigo-500/30 text-foreground font-semibold'
@@ -553,7 +640,9 @@ export function Documents() {
 
                                   <div className="flex-1 min-w-0 flex items-center gap-2">
                                     {childDocTypeBadge && (
-                                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider flex-shrink-0 ${childDocTypeBadge.bg}`}>
+                                      <span
+                                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold border uppercase tracking-wider flex-shrink-0 ${childDocTypeBadge.bg}`}
+                                      >
                                         {childDocTypeBadge.label}
                                       </span>
                                     )}
@@ -582,7 +671,10 @@ export function Documents() {
         {/* Markdown Viewer */}
         {selectedFile && (
           <>
-            <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
+            <ResizableHandle
+              withHandle
+              className="bg-border/60 hover:bg-indigo-500/50 transition-colors"
+            />
             <ResizablePanel defaultSize="58%" className="overflow-hidden">
               <MarkdownViewer file={selectedFile} onClose={() => setSelectedFile(null)} />
             </ResizablePanel>
@@ -598,9 +690,18 @@ export function Documents() {
             {filteredFiles.length !== data.summary.total && ` / ${data.summary.total}`}개 파일
           </span>
           <div className="flex items-center gap-4">
-            <span><span className="text-emerald-400 font-bold">{data.summary.indexed}</span> <span className="text-muted-foreground">인덱싱됨</span></span>
-            <span><span className="text-amber-400 font-bold">{data.summary.modified}</span> <span className="text-muted-foreground">수정됨</span></span>
-            <span><span className="text-rose-400 font-bold">{data.summary.new}</span> <span className="text-muted-foreground">미인덱싱</span></span>
+            <span>
+              <span className="text-emerald-400 font-bold">{data.summary.indexed}</span>{' '}
+              <span className="text-muted-foreground">인덱싱됨</span>
+            </span>
+            <span>
+              <span className="text-amber-400 font-bold">{data.summary.modified}</span>{' '}
+              <span className="text-muted-foreground">수정됨</span>
+            </span>
+            <span>
+              <span className="text-rose-400 font-bold">{data.summary.new}</span>{' '}
+              <span className="text-muted-foreground">미인덱싱</span>
+            </span>
           </div>
         </div>
       )}

@@ -27,17 +27,18 @@ export const useUIStore = create<UIState>((set) => ({
   searchQueryText: null,
 
   setActiveTab: (tab) => set({ activeTab: tab }),
-  addLog: (log) => set((state) => {
-    // Limit to maximum 500 log lines to ensure high rendering performance
-    const newLogs = [...state.logs, log]
-    if (newLogs.length > 500) {
-      newLogs.shift()
-    }
-    return { logs: newLogs }
-  }),
+  addLog: (log) =>
+    set((state) => {
+      // Limit to maximum 500 log lines to ensure high rendering performance
+      const newLogs = [...state.logs, log]
+      if (newLogs.length > 500) {
+        newLogs.shift()
+      }
+      return { logs: newLogs }
+    }),
   clearLogs: () => set({ logs: [] }),
   setIsUpdating: (updating) => set({ isUpdating: updating }),
   setSettings: (settings) => set({ settings }),
   setSelectedWikiPath: (path) => set({ selectedWikiPath: path }),
-  setSearchQueryText: (text) => set({ searchQueryText: text }),
+  setSearchQueryText: (text) => set({ searchQueryText: text })
 }))

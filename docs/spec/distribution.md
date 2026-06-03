@@ -7,8 +7,9 @@
 ## 1. 개요 (Overview)
 
 NStack 및 NAtlas는 사내 내부 전용 업무 효율화 솔루션으로서, 외부의 공개 배포 채널을 사용하지 않고 사내망을 통해 자체적으로 패키지를 배포합니다.
-* **개발자 환경**: 로컬 머신 사양 및 운영체제에 상관없이 일관된 버전의 Node.js, Python 가상환경, 글로벌 SwarmVault CLI, Git hook 정합성 도구를 원클릭으로 정렬해야 하는 과제가 있습니다.
-* **임직원 런타임 환경**: 사내 전용 도구의 특성상 수만 달러 상당의 공인 코드 서명(Apple Developer ID / Windows Codesign Certificate)을 생략한 채 배포하므로, 각 OS의 무서명 앱 차단 시스템(Apple Gatekeeper 및 MS SmartScreen)을 우아하게 우회하고 안심하고 실행할 수 있는 정밀 표준 가이드가 필수적입니다.
+
+- **개발자 환경**: 로컬 머신 사양 및 운영체제에 상관없이 일관된 버전의 Node.js, Python 가상환경, 글로벌 SwarmVault CLI, Git hook 정합성 도구를 원클릭으로 정렬해야 하는 과제가 있습니다.
+- **임직원 런타임 환경**: 사내 전용 도구의 특성상 수만 달러 상당의 공인 코드 서명(Apple Developer ID / Windows Codesign Certificate)을 생략한 채 배포하므로, 각 OS의 무서명 앱 차단 시스템(Apple Gatekeeper 및 MS SmartScreen)을 우아하게 우회하고 안심하고 실행할 수 있는 정밀 표준 가이드가 필수적입니다.
 
 ---
 
@@ -17,12 +18,15 @@ NStack 및 NAtlas는 사내 내부 전용 업무 효율화 솔루션으로서, �
 개발 환경을 복원하고 빌드를 완료하는 전체 과정이 단 하나의 통합 셋업 스크립트로 자동화되어 제공됩니다.
 
 ### 2.1 사전 준비 사항 (Prerequisites)
+
 로컬 터미널에서 다음 3가지 핵심 런타임이 기동 중이어야 합니다:
-* **Git** (CLI 환경 기동)
-* **Node.js** (v18 이상 및 npm 패키지 매니저)
-* **Python** (v3.10 이상)
+
+- **Git** (CLI 환경 기동)
+- **Node.js** (v18 이상 및 npm 패키지 매니저)
+- **Python** (v3.10 이상)
 
 ### 2.2 원클릭 환경 구축 스크립트 실행
+
 프로젝트 루트 폴더로 이동한 후, 로컬 쉘에서 다음 명령어를 수행합니다:
 
 ```bash
@@ -35,6 +39,7 @@ python setup_natlas_env.py
 
 > [!NOTE]
 > **스크립트가 자동으로 완수하는 주요 작업 목록:**
+>
 > 1. **OS-Agnostic 시스템 진단**: `sys.platform`을 통한 양대 OS 유형 판독 및 `pathlib.Path` 기반의 안전한 경로 연산.
 > 2. **Node.js 의존성 복원**: Windows의 `npm.cmd` 프로세스 충돌 방지를 위한 쉘 래핑 및 `npm install` 수행.
 > 3. **Python 격리 가상환경(.venv) 구축**: `src/python` 산하에 `.venv`를 생성하고, OS별로 적절한 바이너리 경로(Windows의 `Scripts/pip.exe` vs macOS의 `bin/pip`)를 분기하여 `pip install -r requirements.txt` 패키지 복원.
@@ -42,7 +47,9 @@ python setup_natlas_env.py
 > 5. **Git Hook 바인딩**: `setup_nstack_hooks.py`를 연동하여 pre-commit hook에 지식 무결성 정합성 린터(`verify_nstack_pipeline.py`) 바인딩.
 
 ### 2.3 로컬 개발 서버 구동
+
 셋업 완료 후 다음 명령어를 통해 백엔드 FastAPI 사이드카 서버(포트: `18420`)와 Electron 데스크탑 앱을 동시에 구동할 수 있습니다:
+
 ```bash
 npm run dev
 ```
@@ -54,6 +61,7 @@ npm run dev
 `electron-builder` 설정을 기반으로 임직원에게 직접 배포할 바이너리를 컴파일합니다.
 
 ### 3.1 OS별 빌드 스크립트 트리거
+
 개발을 마친 후 각 플랫폼 환경에 맞게 아래 컴파일 빌드를 호출합니다.
 
 ```bash
@@ -65,13 +73,15 @@ npm run build:win
 ```
 
 ### 3.2 Sidecar 번들링 및 asarUnpack 구조
+
 NAtlas는 핵심 RAG 연산과 FastAPI 구동을 위해 Python 프로세스를 sidecar로 탑재합니다. `electron-builder.yml`에서는 이를 위해 `asarUnpack` 규칙을 준수하여 플랫폼 독립적인 이식성을 획득합니다:
-* **asarUnpack 설정**: 
+
+- **asarUnpack 설정**:
   ```yaml
   asarUnpack:
     - resources/**
   ```
-* **동작 원리**: Electron이 가동될 때 `app.asar.unpacked/resources` 디렉토리에 Python sidecar 코드 및 가상환경 라이브러리가 그대로 압축 해제되며, `main/index.ts`에서 이를 감지하여 서브프로세스로 안전하게 spawn합니다.
+- **동작 원리**: Electron이 가동될 때 `app.asar.unpacked/resources` 디렉토리에 Python sidecar 코드 및 가상환경 라이브러리가 그대로 압축 해제되며, `main/index.ts`에서 이를 감지하여 서브프로세스로 안전하게 spawn합니다.
 
 ---
 
@@ -84,14 +94,17 @@ NAtlas는 핵심 RAG 연산과 FastAPI 구동을 위해 Python 프로세스를 s
 macOS에 다운로드된 배포 패키지는 격리 속성(Quarantine Flag)이 지정되어 실행이 전면 차단되거나 깨진 파일로 오인받을 수 있습니다.
 
 #### 방법 A: 터미널 명령어를 통한 전격 해제 (권장)
+
 앱을 `/Applications` (응용 프로그램) 디렉토리로 이동시킨 후 터미널을 열고 다음 명령어를 1회 수행합니다:
 
 ```bash
 xattr -cr /Applications/NAtlas.app
 ```
-* **설명**: `xattr -cr` 명령어는 다운로드된 바이너리에 강제 바인딩된 격리 태그(`com.apple.quarantine`)를 깨끗하게 소거하여 애플의 코드 서명 검증 관문을 프리패스하도록 해줍니다.
+
+- **설명**: `xattr -cr` 명령어는 다운로드된 바이너리에 강제 바인딩된 격리 태그(`com.apple.quarantine`)를 깨끗하게 소거하여 애플의 코드 서명 검증 관문을 프리패스하도록 해줍니다.
 
 #### 방법 B: 시스템 설정 마우스 클릭 통과
+
 1. 최초 실행 시 `"확인할 수 없는 개발자가 만든 앱이므로 열 수 없습니다"` 팝업이 출력되면 **[확인]**을 누릅니다.
 2. macOS **시스템 환경설정 ➔ 개인정보 보호 및 보안** 탭으로 이동합니다.
 3. 스크롤을 하단으로 내려 **"안전하지 않은 앱"** 영역에서 `NAtlas.app이(가) 차단되었습니다` 메시지를 확인하고 옆에 있는 **[확인 없이 열기]** 버튼을 클릭합니다.
@@ -104,6 +117,7 @@ xattr -cr /Applications/NAtlas.app
 윈도우 환경에서는 사내 배포 빌드 실행 시 스마트스크린 필터가 미인증 설치 파일로 식별하여 가동을 차단합니다.
 
 #### 실행 허용 절차
+
 1. NAtlas 설치 패키지(`natlas-1.0.0-setup.exe`)를 실행할 때 `"Windows의 PC 보호 - Microsoft Defender SmartScreen에서 인식되지 않는 앱의 시작을 차단했습니다."` 파란색 팝업 알림창이 뜹니다.
 2. 팝업 창 본문 내부에 조그맣게 기재된 **[추가 정보]** (More info) 텍스트 링크를 마우스로 클릭합니다.
 3. 링크를 클릭하면 하단에 가려져 있던 **[실행]** (Run anyway) 버튼이 활성화됩니다.
@@ -116,11 +130,14 @@ xattr -cr /Applications/NAtlas.app
 환경 설정이 완료된 후 NStack의 E2E 지식 파이프라인에 기여하는 시나리오를 수립합니다.
 
 ### 5.1 NAtlas Settings 탭 설정
+
 1. 가동된 NAtlas UI의 좌측 사이드바 하단에서 **Settings** 탭으로 진입합니다.
 2. **LLMWiki Root Path** 설정 필드에서 사내 지식 저장소인 `NSoft-LLMWiki` 로컬 레포지토리의 절대 경로를 기입하고 **[Save Settings]**를 클릭합니다.
 
 ### 5.2 지식 기여 시나리오 (NStack Workflow)
+
 모든 개발자가 코드를 커밋하고 PR을 발행할 때 다음 단계를 준수해야 정합성 관문을 통과할 수 있습니다:
+
 1. **작업지시서 작성**: 태스크 슬러그 디렉토리 생성 후 `order.md`를 규격 양식에 맞추어 작성하고 승인을 받습니다.
 2. **코드 구현 및 테스트**: 코딩 작업을 마치고 로컬 컴파일 성공을 달성합니다.
 3. **완료보고서 및 위키 기록**: 해당 폴더에 `report.md` 및 `wiki.md`에 기술 결정 사항과 아키텍처 의사결정을 누락 없이 상세 기술합니다.
@@ -141,36 +158,36 @@ NAtlas와 NStack의 크로스플랫폼 빌드 배포를 원클릭으로 자동�
 ```mermaid
 flowchart TD
     Tag["1. git tag push (v*)"] -->|Trigger Workflow| GH["GitHub Actions Runner"]
-    
+
     subgraph Parallel["2. 병렬 빌드 단계 (Parallel Build)"]
         MacRunner["macos-latest Runner"] -->|npm run build:mac| MacAsset["dist/natlas-*.dmg"]
         WinRunner["windows-latest Runner"] -->|npm run build:win| WinAsset["dist/natlas-*-setup.exe"]
     end
-    
+
     GH --> MacRunner
     GH --> WinRunner
-    
+
     MacAsset -->|3. upload-artifact| Hub["Actions Artifact Storage"]
     WinAsset -->|3. upload-artifact| Hub
-    
+
     Hub -->|4. download-artifact| PubRunner["ubuntu-latest (Publish Job)"]
-    
+
     PubRunner -->|5. softprops/action-gh-release| Release["GitHub Releases Asset"]
-    
+
     style Tag fill:#4F46E5,stroke:#312E81,color:#FFF
     style Release fill:#10B981,stroke:#065F46,color:#FFF
 ```
 
 ### 6.2 파이프라인 단계별 명세
 
-* **트리거 조건 (`on.push.tags: 'v*'`)**: 개발자가 새로운 배포용 Git 태그(예: `v1.0.0`)를 생성하여 GitHub 원격 저장소에 푸시하면 빌드 배포 러너가 즉시 자동 기동됩니다.
-* **병렬 컴파일 (macOS / Windows)**:
-  * **macOS 빌드 잡 (`build-mac`)**: `macos-latest` 러너 환경에서 Node.js v20 및 의존성을 정비한 뒤 `npm run build:mac`을 기동하여 `.dmg` 설치 바이너리를 컴파일하고, `actions/upload-artifact`로 임시 보관합니다.
-  * **Windows 빌드 잡 (`build-win`)**: `windows-latest` 러너 환경에서 동일 런타임 셋업 후 `npm run build:win`을 기동하여 스마트스크린 대응 `.exe` 설치 바이너리를 컴파일하고, `actions/upload-artifact`로 임시 보관합니다.
-* **릴리즈 단일 발행 및 취합 (`publish` 잡)**:
-  * 양대 운영체제의 병렬 빌드 잡이 모두 정상 완료되면 최종적으로 가동됩니다.
-  * 보관된 `.dmg`와 `.exe` 자산을 일괄 다운로드한 후, `softprops/action-gh-release` 액션을 사용하여 GitHub Releases 탭에 다운로드 링크 자산(Asset)으로 함께 첨부하여 공식 배포본을 발행합니다.
-  * 이 취합 단계를 통해, 빌드 에러 발생 시 특정 OS 설치 파일만 반쪽짜리로 업로드되는 경합 상태(Race Condition)를 완벽하게 방지합니다.
+- **트리거 조건 (`on.push.tags: 'v*'`)**: 개발자가 새로운 배포용 Git 태그(예: `v1.0.0`)를 생성하여 GitHub 원격 저장소에 푸시하면 빌드 배포 러너가 즉시 자동 기동됩니다.
+- **병렬 컴파일 (macOS / Windows)**:
+  - **macOS 빌드 잡 (`build-mac`)**: `macos-latest` 러너 환경에서 Node.js v20 및 의존성을 정비한 뒤 `npm run build:mac`을 기동하여 `.dmg` 설치 바이너리를 컴파일하고, `actions/upload-artifact`로 임시 보관합니다.
+  - **Windows 빌드 잡 (`build-win`)**: `windows-latest` 러너 환경에서 동일 런타임 셋업 후 `npm run build:win`을 기동하여 스마트스크린 대응 `.exe` 설치 바이너리를 컴파일하고, `actions/upload-artifact`로 임시 보관합니다.
+- **릴리즈 단일 발행 및 취합 (`publish` 잡)**:
+  - 양대 운영체제의 병렬 빌드 잡이 모두 정상 완료되면 최종적으로 가동됩니다.
+  - 보관된 `.dmg`와 `.exe` 자산을 일괄 다운로드한 후, `softprops/action-gh-release` 액션을 사용하여 GitHub Releases 탭에 다운로드 링크 자산(Asset)으로 함께 첨부하여 공식 배포본을 발행합니다.
+  - 이 취합 단계를 통해, 빌드 에러 발생 시 특정 OS 설치 파일만 반쪽짜리로 업로드되는 경합 상태(Race Condition)를 완벽하게 방지합니다.
 
 ### 6.3 개발자 배포 트리거 가이드
 
@@ -183,4 +200,5 @@ git tag v1.0.0
 # 2. GitHub 원격 저장소로 태그 푸시 (릴리즈 파이프라인 기동)
 git push origin v1.0.0
 ```
+
 푸시가 완료되면 GitHub 저장소의 **Actions** 탭에서 실시간 빌드 진행도를 시각적으로 모니터링할 수 있으며, 성공 완료 시 **Releases** 탭에서 전사 임직원용 `NAtlas-Setup.exe` 다운로드 페이지가 자동으로 개설됩니다.

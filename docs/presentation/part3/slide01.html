@@ -1,89 +1,255 @@
 <section>
-                <div class="slide-counter">SLIDE 01 / 08</div>
-                <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">SwarmVault RAG: 스마트 큐레이션 메커니즘</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
-                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="ragBeam" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="var(--accent-emerald)"/>
-                                        <stop offset="100%" stop-color="var(--accent-blue)"/>
-                                    </linearGradient>
-                                </defs>
-                                
-                                <ellipse cx="125" cy="220" rx="75" ry="12" fill="rgba(0,0,0,0.6)" filter="blur(8px)"/>
-                                
-                                <!-- Books library (Left) vs Secretary curation card (Right) -->
-                                <g transform="translate(45, 105)" style="animation: float-slow 4.5s ease-in-out infinite; --rot: -3deg;">
-                                    <rect x="-25" y="-35" width="50" height="70" rx="4" fill="rgba(8,12,22,0.9)" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
-                                    <!-- Book spines -->
-                                    <rect x="-15" y="-25" width="6" height="50" fill="var(--accent-rose)" opacity="0.4"/>
-                                    <rect x="-5" y="-20" width="6" height="45" fill="var(--accent-indigo)" opacity="0.4"/>
-                                    <rect x="5" y="-27" width="6" height="52" fill="var(--accent-blue)" opacity="0.4"/>
-                                    <text x="0" y="38" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="6" text-anchor="middle">LIBRARY</text>
-                                </g>
-                                
-                                <!-- Arrow connection -->
-                                <path d="M 95,125 L 145,125" stroke="url(#ragBeam)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                                <polygon points="145,121 153,125 145,129" fill="var(--accent-blue)"/>
-                                
-                                <!-- Smart curation card (Right) -->
-                                <g transform="translate(185, 105)" style="animation: float-slow 5s ease-in-out infinite; --rot: 2deg;">
-                                    <rect x="-25" y="-35" width="50" height="70" rx="4" fill="rgba(8,12,22,0.95)" stroke="var(--accent-emerald)" stroke-width="2.2" filter="drop-shadow(0 0 10px rgba(16,185,129,0.3))"/>
-                                    <!-- 1 targeted summary card -->
-                                    <rect x="-15" y="-20" width="30" height="4" fill="var(--accent-emerald)" rx="1"/>
-                                    <line x1="-15" y1="-8" x2="15" y2="-8" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-                                    <line x1="-15" y1="2" x2="10" y2="2" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-                                    <line x1="-15" y1="12" x2="5" y2="12" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-                                    <text x="0" y="28" fill="var(--accent-emerald)" font-family="monospace" font-size="6.5" font-weight="extrabold" text-anchor="middle">CITATION</text>
-                                </g>
-                                
-                                <text x="125" y="235" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">SMART KNOWLEDGE CURATION BIAS</text>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            📖 도서관 전체 복사 vs 사서 비서의 1초 큐레이션
-                        </h3>
-                        
-                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                SwarmVault RAG는 소스코드 정보와 과거의 의사결정 맥락을 비효율적으로 통째 로딩하는 대신,<br>
-                                지금 필요로 하는 딱 1장의 요약 위키 지식만을 큐레이션하여 제공하는 스마트 RAG 엔진입니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong style="color: var(--accent-rose);">Naive 방식의 재앙</strong>:<br>
-                                    도서관에 있는 수천 권의 책(소스코드 전체)을 매번 통째로 인쇄 복사해서 에이전트의 책상 위에 부어버려 토큰 비용 낭비와 메모리 유실 발생.
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">SwarmVault RAG의 해결책</strong>:<br>
-                                    에이전트가 질문을 던졌을 때, 사서 비서(RAG)가 도서관에서 딱 맞는 핵심 요약 캡슐(1장의 Citation 문서)만 찾아 1초 만에 책상에 쏙 얹어주는 고효율 정보 제공.
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">로컬 초경량성</strong>:<br>
-                                    무거운 외부 클라우드 RAG 솔루션 없이, 로컬 단독으로 작동하여 샌드박스의 완벽한 보안과 초고속성 유지.
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-                
-                <aside class="notes">
-                    "SwarmVault RAG를 쉽게 이해하기 위한 도서관 비서 비유입니다. 매번 수천 라인의 거대 전체 코드를 로딩하느라 비용을 폭증시키는 대신, 질문에 대답하는 데 필요한 단 1장의 정제된 지식 캡슐만 에이전트의 책상에 쏙 올려놓는 고도의 큐레이션 기전입니다."
-                </aside>
-            </section>
+  <div class="slide-counter">SLIDE 01 / 08</div>
+  <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
+
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    SwarmVault RAG: 스마트 큐레이션 메커니즘
+  </h2>
+
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 340px;
+          height: 340px;
+          background: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.1) 0%,
+            rgba(16, 185, 129, 0) 70%
+          );
+          filter: blur(55px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+
+      <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35)">
+        <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ragBeam" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="var(--accent-emerald)" />
+              <stop offset="100%" stop-color="var(--accent-blue)" />
+            </linearGradient>
+          </defs>
+
+          <ellipse cx="125" cy="220" rx="75" ry="12" fill="rgba(0,0,0,0.6)" filter="blur(8px)" />
+
+          <!-- Books library (Left) vs Secretary curation card (Right) -->
+          <g
+            transform="translate(45, 105)"
+            style="animation: float-slow 4.5s ease-in-out infinite; --rot: -3deg"
+          >
+            <rect
+              x="-25"
+              y="-35"
+              width="50"
+              height="70"
+              rx="4"
+              fill="rgba(8,12,22,0.9)"
+              stroke="rgba(255,255,255,0.1)"
+              stroke-width="1.5"
+            />
+            <!-- Book spines -->
+            <rect x="-15" y="-25" width="6" height="50" fill="var(--accent-rose)" opacity="0.4" />
+            <rect x="-5" y="-20" width="6" height="45" fill="var(--accent-indigo)" opacity="0.4" />
+            <rect x="5" y="-27" width="6" height="52" fill="var(--accent-blue)" opacity="0.4" />
+            <text
+              x="0"
+              y="38"
+              fill="rgba(255,255,255,0.4)"
+              font-family="monospace"
+              font-size="6"
+              text-anchor="middle"
+            >
+              LIBRARY
+            </text>
+          </g>
+
+          <!-- Arrow connection -->
+          <path
+            d="M 95,125 L 145,125"
+            stroke="url(#ragBeam)"
+            stroke-width="2.5"
+            fill="none"
+            stroke-linecap="round"
+          />
+          <polygon points="145,121 153,125 145,129" fill="var(--accent-blue)" />
+
+          <!-- Smart curation card (Right) -->
+          <g
+            transform="translate(185, 105)"
+            style="animation: float-slow 5s ease-in-out infinite; --rot: 2deg"
+          >
+            <rect
+              x="-25"
+              y="-35"
+              width="50"
+              height="70"
+              rx="4"
+              fill="rgba(8,12,22,0.95)"
+              stroke="var(--accent-emerald)"
+              stroke-width="2.2"
+              filter="drop-shadow(0 0 10px rgba(16,185,129,0.3))"
+            />
+            <!-- 1 targeted summary card -->
+            <rect x="-15" y="-20" width="30" height="4" fill="var(--accent-emerald)" rx="1" />
+            <line
+              x1="-15"
+              y1="-8"
+              x2="15"
+              y2="-8"
+              stroke="rgba(255,255,255,0.2)"
+              stroke-width="1.5"
+            />
+            <line
+              x1="-15"
+              y1="2"
+              x2="10"
+              y2="2"
+              stroke="rgba(255,255,255,0.2)"
+              stroke-width="1.5"
+            />
+            <line
+              x1="-15"
+              y1="12"
+              x2="5"
+              y2="12"
+              stroke="rgba(255,255,255,0.2)"
+              stroke-width="1.5"
+            />
+            <text
+              x="0"
+              y="28"
+              fill="var(--accent-emerald)"
+              font-family="monospace"
+              font-size="6.5"
+              font-weight="extrabold"
+              text-anchor="middle"
+            >
+              CITATION
+            </text>
+          </g>
+
+          <text
+            x="125"
+            y="235"
+            fill="rgba(255,255,255,0.3)"
+            font-family="Outfit"
+            font-size="10"
+            font-weight="bold"
+            text-anchor="middle"
+            letter-spacing="0.05em"
+          >
+            SMART KNOWLEDGE CURATION BIAS
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        📖 도서관 전체 복사 vs 사서 비서의 1초 큐레이션
+      </h3>
+
+      <div
+        style="
+          font-size: 0.85vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          SwarmVault RAG는 소스코드 정보와 과거의 의사결정 맥락을 비효율적으로 통째 로딩하는
+          대신,<br />
+          지금 필요로 하는 딱 1장의 요약 위키 지식만을 큐레이션하여 제공하는 스마트 RAG 엔진입니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong style="color: var(--accent-rose)">Naive 방식의 재앙</strong>:<br />
+            도서관에 있는 수천 권의 책(소스코드 전체)을 매번 통째로 인쇄 복사해서 에이전트의 책상
+            위에 부어버려 토큰 비용 낭비와 메모리 유실 발생.
+          </li>
+          <li>
+            <strong style="color: var(--accent-emerald)">SwarmVault RAG의 해결책</strong>:<br />
+            에이전트가 질문을 던졌을 때, 사서 비서(RAG)가 도서관에서 딱 맞는 핵심 요약 캡슐(1장의
+            Citation 문서)만 찾아 1초 만에 책상에 쏙 얹어주는 고효율 정보 제공.
+          </li>
+          <li>
+            <strong style="color: var(--accent-emerald)">로컬 초경량성</strong>:<br />
+            무거운 외부 클라우드 RAG 솔루션 없이, 로컬 단독으로 작동하여 샌드박스의 완벽한 보안과
+            초고속성 유지.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+
+  <aside class="notes">
+    "SwarmVault RAG를 쉽게 이해하기 위한 도서관 비서 비유입니다. 매번 수천 라인의 거대 전체 코드를
+    로딩하느라 비용을 폭증시키는 대신, 질문에 대답하는 데 필요한 단 1장의 정제된 지식 캡슐만
+    에이전트의 책상에 쏙 올려놓는 고도의 큐레이션 기전입니다."
+  </aside>
+</section>

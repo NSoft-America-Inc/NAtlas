@@ -1,58 +1,186 @@
 <section>
-                <div class="slide-counter">SLIDE 06 / 11</div>
-                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Documents: 파일 상태 천이 애니메이션</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative;">
-                        <div style="background: #0d1117; padding: 10px 14px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); gap: 8px;">
-                            <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: #8b949e;">Documents Explorer</span>
-                        </div>
-                        
-                        <div style="flex-grow: 1; padding: 22px; font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; text-align: left; line-height: 1.7; color: #cbd5e1; overflow: hidden;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <span>📄 todo-app/order.md</span>
-                                <span style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7vw; font-weight: bold; animation: scale-pulse 2s infinite;">indexed</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <span>📄 todo-app/report.md</span>
-                                <span style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7vw; font-weight: bold; animation: scale-pulse 2s infinite;">indexed</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span>📄 todo-app/wiki.md</span>
-                                <span style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; color: #10b981; padding: 2px 6px; border-radius: 4px; font-size: 0.7vw; font-weight: bold; animation: scale-pulse 2s infinite;">indexed</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            🟢 `[new]` 신규 주황색 배지에서 `[indexed]` 에메랄드로의 변환
-                        </h3>
-                        
-                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                데모에서 커밋되어 새로 생성되었던 미색인 주황색 `[new]` 파일 목록들이,<br>
-                                SwarmVault 컴파일 스캔 완료 후 산뜻하고 화려한 초록색 `[indexed]` 상태 배지로 역동적으로 천이됩니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong>직관적인 상태 가시성 보장</strong>:<br>
-                                    어느 파일이 현재 전사 AI 에이전트의 단기 기억(Citations RAG)으로 주입될 수 있는 상태인지 시각 판별
-                                </li>
-                                <li>
-                                    <strong>마이크로 트랜지션 연출</strong>:<br>
-                                    색인 성공 시 배지 컬러가 부드럽게 페이드 아웃/인 되는 고급 마이크로 모션 이식 완료
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+  <div class="slide-counter">SLIDE 06 / 11</div>
+  <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    NAtlas Documents: 파일 상태 천이 애니메이션
+  </h2>
+
+  <div class="split-container-2col">
+    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative">
+      <div
+        style="
+          background: #0d1117;
+          padding: 10px 14px;
+          display: flex;
+          align-items: center;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          gap: 8px;
+        "
+      >
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.8vw; color: #8b949e"
+          >Documents Explorer</span
+        >
+      </div>
+
+      <div
+        style="
+          flex-grow: 1;
+          padding: 22px;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.8vw;
+          text-align: left;
+          line-height: 1.7;
+          color: #cbd5e1;
+          overflow: hidden;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          "
+        >
+          <span>📄 todo-app/order.md</span>
+          <span
+            style="
+              background: rgba(16, 185, 129, 0.15);
+              border: 1px solid #10b981;
+              color: #10b981;
+              padding: 2px 6px;
+              border-radius: 4px;
+              font-size: 0.7vw;
+              font-weight: bold;
+              animation: scale-pulse 2s infinite;
+            "
+            >indexed</span
+          >
+        </div>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+          "
+        >
+          <span>📄 todo-app/report.md</span>
+          <span
+            style="
+              background: rgba(16, 185, 129, 0.15);
+              border: 1px solid #10b981;
+              color: #10b981;
+              padding: 2px 6px;
+              border-radius: 4px;
+              font-size: 0.7vw;
+              font-weight: bold;
+              animation: scale-pulse 2s infinite;
+            "
+            >indexed</span
+          >
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span>📄 todo-app/wiki.md</span>
+          <span
+            style="
+              background: rgba(16, 185, 129, 0.15);
+              border: 1px solid #10b981;
+              color: #10b981;
+              padding: 2px 6px;
+              border-radius: 4px;
+              font-size: 0.7vw;
+              font-weight: bold;
+              animation: scale-pulse 2s infinite;
+            "
+            >indexed</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        🟢 `[new]` 신규 주황색 배지에서 `[indexed]` 에메랄드로의 변환
+      </h3>
+
+      <div
+        style="
+          font-size: 0.9vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          데모에서 커밋되어 새로 생성되었던 미색인 주황색 `[new]` 파일 목록들이,<br />
+          SwarmVault 컴파일 스캔 완료 후 산뜻하고 화려한 초록색 `[indexed]` 상태 배지로 역동적으로
+          천이됩니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong>직관적인 상태 가시성 보장</strong>:<br />
+            어느 파일이 현재 전사 AI 에이전트의 단기 기억(Citations RAG)으로 주입될 수 있는 상태인지
+            시각 판별
+          </li>
+          <li>
+            <strong>마이크로 트랜지션 연출</strong>:<br />
+            색인 성공 시 배지 컬러가 부드럽게 페이드 아웃/인 되는 고급 마이크로 모션 이식 완료
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

@@ -1,135 +1,450 @@
 <section>
-                <div class="slide-counter">SLIDE 05 / 28</div>
-                <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">하이라이트: 소스 리버스 엔지니어링 의존과 인적 단일 장애점(SPOF)</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 8px; position: relative;">
-                        <!-- Glowing aura -->
-                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(244,63,94,0.12) 0%, rgba(244,63,94,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <!-- 1:1 Matching Card 1: Staggered Vertical Unified Layout in SVG (Large) -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-start; margin-left: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 125" style="overflow: visible; overflow: visible;">
-                                <g>
+  <div class="slide-counter">SLIDE 05 / 28</div>
+  <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
 
-                                    <!-- Rotating cog wheels -->
-                                    <g style="animation: spin-gear-reverse 6s linear infinite; transform-origin: 50px 60px;">
-                                        <circle cx="50" cy="60" r="24" fill="none" stroke="rgba(244,63,94,0.5)" stroke-width="4"/>
-                                        <rect x="46" y="30" width="8" height="12" fill="var(--accent-rose)" rx="2"/>
-                                        <rect x="46" y="78" width="8" height="12" fill="var(--accent-rose)" rx="2"/>
-                                        <rect x="20" y="56" width="12" height="8" fill="var(--accent-rose)" rx="2"/>
-                                        <rect x="68" y="56" width="12" height="8" fill="var(--accent-rose)" rx="2"/>
-                                    </g>
-                                    <g style="animation: spin-gear 4s linear infinite; transform-origin: 95px 80px;">
-                                        <circle cx="95" cy="80" r="16" fill="none" stroke="rgba(244,63,94,0.4)" stroke-width="3"/>
-                                        <rect x="92" y="60" width="6" height="8" fill="var(--accent-rose)" rx="1.5"/>
-                                        <rect x="92" y="92" width="6" height="8" fill="var(--accent-rose)" rx="1.5"/>
-                                        <rect x="76" y="77" width="8" height="6" fill="var(--accent-rose)" rx="1.5"/>
-                                        <rect x="108" y="77" width="8" height="6" fill="var(--accent-rose)" rx="1.5"/>
-                                    </g>
-                                    <!-- Reverse flow arrow -->
-                                    <path d="M 130 90 A 45 45 0 0 0 130 30" fill="none" stroke="#ff4b72" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 2" marker-end="url(#arrow-rev)"/>
-                                    <!-- Hourglass -->
-                                    <g transform="translate(130, 60)" style="animation: pulse 1s infinite alternate;">
-                                        <text x="0" y="4" fill="var(--accent-rose)" font-size="20">⏳</text>
-                                    </g>
-                                    <defs>
-                                        <marker id="arrow-rev" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
-                                            <path d="M 0 1 L 10 5 L 0 9 Z" fill="#ff4b72" />
-                                        </marker>
-                                    </defs>
-                                                                </g>
-                                <foreignObject x="5" y="108" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        코드 역해킹으로 인한 분석 비용 5배 폭증
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    하이라이트: 소스 리버스 엔지니어링 의존과 인적 단일 장애점(SPOF)
+  </h2>
 
-                        <!-- 1:1 Matching Card 2: Staggered Vertical Unified Layout in SVG (Large) -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-end; margin-right: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 125" style="overflow: visible; overflow: visible;">
-                                <g>
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+        position: relative;
+      "
+    >
+      <!-- Glowing aura -->
+      <div
+        style="
+          position: absolute;
+          width: 250px;
+          height: 250px;
+          background: radial-gradient(circle, rgba(244, 63, 94, 0.12) 0%, rgba(244, 63, 94, 0) 70%);
+          filter: blur(40px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
 
-                                    <!-- Central Key Developer Node -->
-                                    <circle cx="80" cy="60" r="14" fill="rgba(244,63,94,0.3)" stroke="#ff4b72" stroke-width="2.5" style="animation: heat-pulse 2s infinite;"/>
-                                    <text x="80" y="63" fill="#ffffff" font-size="8" font-weight="extrabold" text-anchor="middle">SPOF</text>
-                                    
-                                    <!-- Surrounding nodes -->
-                                    <circle cx="30" cy="30" r="7" fill="rgba(14,165,233,0.1)" stroke="#0ea5e9" stroke-width="1.2"/>
-                                    <line x1="36" y1="34" x2="68" y2="50" stroke="#ff4b72" stroke-width="1" stroke-dasharray="2 2" marker-end="url(#arrow-in)"/>
-                                    
-                                    <circle cx="130" cy="30" r="7" fill="rgba(14,165,233,0.1)" stroke="#0ea5e9" stroke-width="1.2"/>
-                                    <line x1="124" y1="34" x2="92" y2="50" stroke="#ff4b72" stroke-width="1" stroke-dasharray="2 2" marker-end="url(#arrow-in)"/>
+      <!-- 1:1 Matching Card 1: Staggered Vertical Unified Layout in SVG (Large) -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-start;
+          margin-left: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 125"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Rotating cog wheels -->
+            <g style="animation: spin-gear-reverse 6s linear infinite; transform-origin: 50px 60px">
+              <circle
+                cx="50"
+                cy="60"
+                r="24"
+                fill="none"
+                stroke="rgba(244,63,94,0.5)"
+                stroke-width="4"
+              />
+              <rect x="46" y="30" width="8" height="12" fill="var(--accent-rose)" rx="2" />
+              <rect x="46" y="78" width="8" height="12" fill="var(--accent-rose)" rx="2" />
+              <rect x="20" y="56" width="12" height="8" fill="var(--accent-rose)" rx="2" />
+              <rect x="68" y="56" width="12" height="8" fill="var(--accent-rose)" rx="2" />
+            </g>
+            <g style="animation: spin-gear 4s linear infinite; transform-origin: 95px 80px">
+              <circle
+                cx="95"
+                cy="80"
+                r="16"
+                fill="none"
+                stroke="rgba(244,63,94,0.4)"
+                stroke-width="3"
+              />
+              <rect x="92" y="60" width="6" height="8" fill="var(--accent-rose)" rx="1.5" />
+              <rect x="92" y="92" width="6" height="8" fill="var(--accent-rose)" rx="1.5" />
+              <rect x="76" y="77" width="8" height="6" fill="var(--accent-rose)" rx="1.5" />
+              <rect x="108" y="77" width="8" height="6" fill="var(--accent-rose)" rx="1.5" />
+            </g>
+            <!-- Reverse flow arrow -->
+            <path
+              d="M 130 90 A 45 45 0 0 0 130 30"
+              fill="none"
+              stroke="#ff4b72"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-dasharray="4 2"
+              marker-end="url(#arrow-rev)"
+            />
+            <!-- Hourglass -->
+            <g transform="translate(130, 60)" style="animation: pulse 1s infinite alternate">
+              <text x="0" y="4" fill="var(--accent-rose)" font-size="20">⏳</text>
+            </g>
+            <defs>
+              <marker
+                id="arrow-rev"
+                viewBox="0 0 10 10"
+                refX="6"
+                refY="5"
+                markerWidth="4"
+                markerHeight="4"
+                orient="auto-start-reverse"
+              >
+                <path d="M 0 1 L 10 5 L 0 9 Z" fill="#ff4b72" />
+              </marker>
+            </defs>
+          </g>
+          <foreignObject x="5" y="108" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              코드 역해킹으로 인한 분석 비용 5배 폭증
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
 
-                                    <circle cx="30" cy="90" r="7" fill="rgba(14,165,233,0.1)" stroke="#0ea5e9" stroke-width="1.2"/>
-                                    <line x1="36" y1="86" x2="68" y2="70" stroke="#ff4b72" stroke-width="1" stroke-dasharray="2 2" marker-end="url(#arrow-in)"/>
-                                    
-                                    <circle cx="130" cy="90" r="7" fill="rgba(14,165,233,0.1)" stroke="#0ea5e9" stroke-width="1.2"/>
-                                    <line x1="124" y1="86" x2="92" y2="70" stroke="#ff4b72" stroke-width="1" stroke-dasharray="2 2" marker-end="url(#arrow-in)"/>
+      <!-- 1:1 Matching Card 2: Staggered Vertical Unified Layout in SVG (Large) -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-end;
+          margin-right: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 125"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Central Key Developer Node -->
+            <circle
+              cx="80"
+              cy="60"
+              r="14"
+              fill="rgba(244,63,94,0.3)"
+              stroke="#ff4b72"
+              stroke-width="2.5"
+              style="animation: heat-pulse 2s infinite"
+            />
+            <text
+              x="80"
+              y="63"
+              fill="#ffffff"
+              font-size="8"
+              font-weight="extrabold"
+              text-anchor="middle"
+            >
+              SPOF
+            </text>
 
-                                    <text x="80" y="38" fill="var(--accent-rose)" font-family="'JetBrains Mono'" font-size="7" font-weight="900" text-anchor="middle" style="animation: soft-blink 1s infinite;">🚨 QUESTION OVERFLOW</text>
-                                    
-                                    <defs>
-                                        <marker id="arrow-in" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3" markerHeight="3" orient="auto-start-reverse">
-                                            <path d="M 0 1 L 10 5 L 0 9 Z" fill="#ff4b72" />
-                                        </marker>
-                                    </defs>
-                                                                </g>
-                                <foreignObject x="5" y="108" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        특정 1인에게만 모든 사내 기술 지식 및 질문 쏠림
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            🚨 역공학 분석 리소스 낭비 및 인적 SPOF의 폐해
-                        </h3>
-                        
-                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center; width: 100%;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                문서가 배포되지 않은 상태에서 유지보수를 수행하기 위해,<br>
-                                엔지니어들이 모든 코드를 일일이 소스 역공학하는 극도의 리소스 낭비가 발생합니다.
-                            </p>
-                            
-                            <div style="display: flex; flex-direction: column; gap: 16px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px; margin-top: 5px; width: 100%; text-align: center; align-items: center;">
-                                <div style="display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; width: 95%;">
-                                    <div style="font-weight: 800; color: var(--accent-rose); font-size: 0.95vw; display: flex; align-items: center; gap: 6px;">
-                                        🔍 소스코드 직접 분석으로 인한 리소스 낭비
-                                    </div>
-                                    <div style="text-align: center; font-size: 0.8vw; line-height: 1.55; color: #cbd5e1; max-width: 95%;">
-                                        신규 피처를 개발하기 위해 기존의 수천 줄 레거시 파일을 거꾸로 해킹하며<br>
-                                        설계 의도와 주석을 수동으로 파악해야 하므로 분석 시간이 5배 이상 증가합니다.
-                                    </div>
-                                </div>
-                                
-                                <div style="display: flex; flex-direction: column; gap: 6px; align-items: center; justify-content: center; width: 95%;">
-                                    <div style="font-weight: 800; color: var(--accent-rose); font-size: 0.95vw; display: flex; align-items: center; gap: 6px;">
-                                        👥 특정 개발자 의존성 및 업무 병목 편중 (SPOF)
-                                    </div>
-                                    <div style="text-align: center; font-size: 0.8vw; line-height: 1.55; color: #cbd5e1; max-width: 95%;">
-                                        시스템 핵심 히스토리를 아는 단 한 사람(인적 단일 장애점)에게 전사의 질문이 쏠려<br>
-                                        해당 개발자의 작업 중단을 유발하고 팀 생산성의 파괴적인 병목을 일으킵니다.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-                
-                <aside class="notes">
-                    "현재 사내 시스템 레포지토리를 가보면 문서가 전무해 결국 신규 팀원이 들어오거나 다른 파트의 개발자가 유지보수하려고 하면 기댈 문서가 없습니다. 결국 수천 라인의 코드를 분석해 내는 리버스 엔지니어링에 전적으로 의존하게 됩니다. 특정 인원에게 업무 병목이 발생하고, 시스템 변경 시 예기치 못한 에러가 일어날 위험성이 온전히 조직의 리스크가 됩니다."
-                </aside>
-            </section>
+            <!-- Surrounding nodes -->
+            <circle
+              cx="30"
+              cy="30"
+              r="7"
+              fill="rgba(14,165,233,0.1)"
+              stroke="#0ea5e9"
+              stroke-width="1.2"
+            />
+            <line
+              x1="36"
+              y1="34"
+              x2="68"
+              y2="50"
+              stroke="#ff4b72"
+              stroke-width="1"
+              stroke-dasharray="2 2"
+              marker-end="url(#arrow-in)"
+            />
+
+            <circle
+              cx="130"
+              cy="30"
+              r="7"
+              fill="rgba(14,165,233,0.1)"
+              stroke="#0ea5e9"
+              stroke-width="1.2"
+            />
+            <line
+              x1="124"
+              y1="34"
+              x2="92"
+              y2="50"
+              stroke="#ff4b72"
+              stroke-width="1"
+              stroke-dasharray="2 2"
+              marker-end="url(#arrow-in)"
+            />
+
+            <circle
+              cx="30"
+              cy="90"
+              r="7"
+              fill="rgba(14,165,233,0.1)"
+              stroke="#0ea5e9"
+              stroke-width="1.2"
+            />
+            <line
+              x1="36"
+              y1="86"
+              x2="68"
+              y2="70"
+              stroke="#ff4b72"
+              stroke-width="1"
+              stroke-dasharray="2 2"
+              marker-end="url(#arrow-in)"
+            />
+
+            <circle
+              cx="130"
+              cy="90"
+              r="7"
+              fill="rgba(14,165,233,0.1)"
+              stroke="#0ea5e9"
+              stroke-width="1.2"
+            />
+            <line
+              x1="124"
+              y1="86"
+              x2="92"
+              y2="70"
+              stroke="#ff4b72"
+              stroke-width="1"
+              stroke-dasharray="2 2"
+              marker-end="url(#arrow-in)"
+            />
+
+            <text
+              x="80"
+              y="38"
+              fill="var(--accent-rose)"
+              font-family="'JetBrains Mono'"
+              font-size="7"
+              font-weight="900"
+              text-anchor="middle"
+              style="animation: soft-blink 1s infinite"
+            >
+              🚨 QUESTION OVERFLOW
+            </text>
+
+            <defs>
+              <marker
+                id="arrow-in"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="3"
+                markerHeight="3"
+                orient="auto-start-reverse"
+              >
+                <path d="M 0 1 L 10 5 L 0 9 Z" fill="#ff4b72" />
+              </marker>
+            </defs>
+          </g>
+          <foreignObject x="5" y="108" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              특정 1인에게만 모든 사내 기술 지식 및 질문 쏠림
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        🚨 역공학 분석 리소스 낭비 및 인적 SPOF의 폐해
+      </h3>
+
+      <div
+        style="
+          font-size: 0.85vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+          width: 100%;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          문서가 배포되지 않은 상태에서 유지보수를 수행하기 위해,<br />
+          엔지니어들이 모든 코드를 일일이 소스 역공학하는 극도의 리소스 낭비가 발생합니다.
+        </p>
+
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 20px;
+            margin-top: 5px;
+            width: 100%;
+            text-align: center;
+            align-items: center;
+          "
+        >
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+              align-items: center;
+              justify-content: center;
+              width: 95%;
+            "
+          >
+            <div
+              style="
+                font-weight: 800;
+                color: var(--accent-rose);
+                font-size: 0.95vw;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+              "
+            >
+              🔍 소스코드 직접 분석으로 인한 리소스 낭비
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 0.8vw;
+                line-height: 1.55;
+                color: #cbd5e1;
+                max-width: 95%;
+              "
+            >
+              신규 피처를 개발하기 위해 기존의 수천 줄 레거시 파일을 거꾸로 해킹하며<br />
+              설계 의도와 주석을 수동으로 파악해야 하므로 분석 시간이 5배 이상 증가합니다.
+            </div>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+              align-items: center;
+              justify-content: center;
+              width: 95%;
+            "
+          >
+            <div
+              style="
+                font-weight: 800;
+                color: var(--accent-rose);
+                font-size: 0.95vw;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+              "
+            >
+              👥 특정 개발자 의존성 및 업무 병목 편중 (SPOF)
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 0.8vw;
+                line-height: 1.55;
+                color: #cbd5e1;
+                max-width: 95%;
+              "
+            >
+              시스템 핵심 히스토리를 아는 단 한 사람(인적 단일 장애점)에게 전사의 질문이 쏠려<br />
+              해당 개발자의 작업 중단을 유발하고 팀 생산성의 파괴적인 병목을 일으킵니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+
+  <aside class="notes">
+    "현재 사내 시스템 레포지토리를 가보면 문서가 전무해 결국 신규 팀원이 들어오거나 다른 파트의
+    개발자가 유지보수하려고 하면 기댈 문서가 없습니다. 결국 수천 라인의 코드를 분석해 내는 리버스
+    엔지니어링에 전적으로 의존하게 됩니다. 특정 인원에게 업무 병목이 발생하고, 시스템 변경 시 예기치
+    못한 에러가 일어날 위험성이 온전히 조직의 리스크가 됩니다."
+  </aside>
+</section>

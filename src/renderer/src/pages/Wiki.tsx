@@ -31,10 +31,14 @@ import {
   FolderTree,
   ExternalLink,
   PanelLeftClose,
-  PanelLeftOpen,
+  PanelLeftOpen
 } from 'lucide-react'
 import { WikiGraph } from './WikiGraph'
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@renderer/components/ui/resizable'
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle
+} from '@renderer/components/ui/resizable'
 import type { PanelImperativeHandle } from 'react-resizable-panels'
 
 // ── Types ──
@@ -45,16 +49,26 @@ interface TreeNode {
   children?: TreeNode[]
   file?: DocumentFile
   // Logical view enhancements
-  nodeKind?: 'project' | 'task' | 'doc-order' | 'doc-report' | 'doc-knowledge' | 'system-root' | 'system-dir'
+  nodeKind?:
+    | 'project'
+    | 'task'
+    | 'doc-order'
+    | 'doc-report'
+    | 'doc-knowledge'
+    | 'system-root'
+    | 'system-dir'
   logicalLabel?: string
   issueUrl?: string | null
 }
 
 // Doc type → 논리 레이블/아이콘 매핑
-const DOC_TYPE_META: Record<string, { label: string; icon: React.FC<{ className?: string }>; kind: TreeNode['nodeKind'] }> = {
-  order:     { label: '작업계획서', icon: ClipboardList,  kind: 'doc-order' },
-  report:    { label: '완료보고서',  icon: CheckCircle2,   kind: 'doc-report' },
-  knowledge: { label: '지식문서',    icon: Brain,          kind: 'doc-knowledge' },
+const DOC_TYPE_META: Record<
+  string,
+  { label: string; icon: React.FC<{ className?: string }>; kind: TreeNode['nodeKind'] }
+> = {
+  order: { label: '작업계획서', icon: ClipboardList, kind: 'doc-order' },
+  report: { label: '완료보고서', icon: CheckCircle2, kind: 'doc-report' },
+  knowledge: { label: '지식문서', icon: Brain, kind: 'doc-knowledge' }
 }
 const DOC_TYPE_ORDER = ['order', 'report', 'knowledge']
 
@@ -67,18 +81,24 @@ interface WikiViewerProps {
   onSearchHistoryClick: (query: string) => void
 }
 
-function WikiViewer({ file, history, onClose, onWikiLinkClick, onSearchHistoryClick }: WikiViewerProps) {
+function WikiViewer({
+  file,
+  history,
+  onClose,
+  onWikiLinkClick,
+  onSearchHistoryClick
+}: WikiViewerProps) {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['doc-content', file.path],
     queryFn: () => api.getDocumentContent(file.path),
-    staleTime: 60_000,
+    staleTime: 60_000
   })
 
   const filename = file.path.split('/').pop() ?? file.path
 
   const matchedHistory = useMemo(() => {
     if (!file.slug || !history) return []
-    return history.filter(item => item.task_slug === file.slug)
+    return history.filter((item) => item.task_slug === file.slug)
   }, [file.slug, history])
 
   const processedContent = useMemo(() => {
@@ -106,7 +126,7 @@ function WikiViewer({ file, history, onClose, onWikiLinkClick, onSearchHistoryCl
               onClick={(e) => {
                 e.preventDefault()
                 if (window.electron && (window.electron as any).openExternal) {
-                  (window.electron as any).openExternal(file.issue_url!)
+                  ;(window.electron as any).openExternal(file.issue_url!)
                 } else {
                   window.open(file.issue_url!, '_blank', 'noopener,noreferrer')
                 }
@@ -170,7 +190,7 @@ function WikiViewer({ file, history, onClose, onWikiLinkClick, onSearchHistoryCl
                         if (isExternal) {
                           e.preventDefault()
                           if (window.electron && (window.electron as any).openExternal) {
-                            (window.electron as any).openExternal(href!)
+                            ;(window.electron as any).openExternal(href!)
                           } else {
                             window.open(href!, '_blank', 'noopener,noreferrer')
                           }
@@ -193,11 +213,11 @@ function WikiViewer({ file, history, onClose, onWikiLinkClick, onSearchHistoryCl
             {matchedHistory.length > 0 && (
               <div className="mt-12 pt-6 border-t border-border/80 select-none">
                 <h5 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-                  <History className="w-3.5 h-3.5 text-indigo-400" />
-                  이 작업에 대한 탐색 이력 ({matchedHistory.length}건)
+                  <History className="w-3.5 h-3.5 text-indigo-400" />이 작업에 대한 탐색 이력 (
+                  {matchedHistory.length}건)
                 </h5>
                 <div className="space-y-3">
-                  {matchedHistory.map(item => (
+                  {matchedHistory.map((item) => (
                     <div
                       key={item.id}
                       onClick={() => onSearchHistoryClick(item.query_text)}
@@ -208,7 +228,9 @@ function WikiViewer({ file, history, onClose, onWikiLinkClick, onSearchHistoryCl
                           "{item.query_text}"
                         </p>
                         {item.user_name && (
-                          <span className="text-[10px] text-muted-foreground">담당: {item.user_name}</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            담당: {item.user_name}
+                          </span>
                         )}
                       </div>
                       <span className="text-[9px] text-muted-foreground/60 shrink-0 font-mono">
@@ -236,7 +258,14 @@ interface TreeItemProps {
   onSelectFile: (file: DocumentFile) => void
 }
 
-function TreeItem({ node, level, expandedFolders, toggleFolder, selectedFile, onSelectFile }: TreeItemProps) {
+function TreeItem({
+  node,
+  level,
+  expandedFolders,
+  toggleFolder,
+  selectedFile,
+  onSelectFile
+}: TreeItemProps) {
   const isExpanded = expandedFolders.has(node.path)
   const isSelected = selectedFile?.path === node.file?.path
   const paddingLeft = `${level * 12}px`
@@ -250,17 +279,25 @@ function TreeItem({ node, level, expandedFolders, toggleFolder, selectedFile, on
           className="flex items-center gap-1.5 py-1 px-2 cursor-pointer hover:bg-muted/10 text-xs font-semibold text-slate-300 hover:text-foreground transition-all duration-150"
         >
           <span className="text-muted-foreground/60">
-            {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-indigo-400" /> : <ChevronRight className="w-3.5 h-3.5" />}
+            {isExpanded ? (
+              <ChevronDown className="w-3.5 h-3.5 text-indigo-400" />
+            ) : (
+              <ChevronRight className="w-3.5 h-3.5" />
+            )}
           </span>
           <span className="text-indigo-400/70">
-            {isExpanded ? <FolderOpen className="w-3.5 h-3.5" /> : <Folder className="w-3.5 h-3.5" />}
+            {isExpanded ? (
+              <FolderOpen className="w-3.5 h-3.5" />
+            ) : (
+              <Folder className="w-3.5 h-3.5" />
+            )}
           </span>
           <span className="truncate">{node.name}</span>
         </div>
 
         {isExpanded && node.children && (
           <div className="space-y-0.5">
-            {node.children.map(child => (
+            {node.children.map((child) => (
               <TreeItem
                 key={child.path}
                 node={child}
@@ -288,7 +325,9 @@ function TreeItem({ node, level, expandedFolders, toggleFolder, selectedFile, on
       }`}
     >
       <div className="flex items-center gap-2 min-w-0">
-        <FileText className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'text-indigo-400' : 'text-muted-foreground/50'}`} />
+        <FileText
+          className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'text-indigo-400' : 'text-muted-foreground/50'}`}
+        />
         <span className="truncate font-mono">{node.name}</span>
       </div>
       {node.file && <StatusBadge status={node.file.status} />}
@@ -297,7 +336,14 @@ function TreeItem({ node, level, expandedFolders, toggleFolder, selectedFile, on
 }
 
 // ── Logical View TreeItem ──
-function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedFile, onSelectFile }: TreeItemProps) {
+function LogicalTreeItem({
+  node,
+  level,
+  expandedFolders,
+  toggleFolder,
+  selectedFile,
+  onSelectFile
+}: TreeItemProps) {
   const isExpanded = expandedFolders.has(node.path)
   const isSelected = node.file ? selectedFile?.path === node.file.path : false
   const paddingLeft = `${level * 14}px`
@@ -313,14 +359,20 @@ function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedF
             className="flex items-center gap-2 py-1.5 px-2 cursor-pointer rounded-md hover:bg-indigo-950/30 transition-all duration-150 group"
           >
             <span className="text-muted-foreground/60">
-              {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-indigo-400" /> : <ChevronRight className="w-3.5 h-3.5 text-slate-500" />}
+              {isExpanded ? (
+                <ChevronDown className="w-3.5 h-3.5 text-indigo-400" />
+              ) : (
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+              )}
             </span>
             <Briefcase className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
-            <span className="text-xs font-bold text-slate-200 group-hover:text-white truncate">{node.name}</span>
+            <span className="text-xs font-bold text-slate-200 group-hover:text-white truncate">
+              {node.name}
+            </span>
           </div>
           {isExpanded && node.children && (
             <div className="space-y-0.5 mt-0.5">
-              {node.children.map(child => (
+              {node.children.map((child) => (
                 <LogicalTreeItem
                   key={child.path}
                   node={child}
@@ -348,12 +400,20 @@ function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedF
           >
             <div className="flex items-center gap-1.5 min-w-0">
               <span className="text-muted-foreground/50">
-                {isExpanded ? <ChevronDown className="w-3 h-3 text-amber-400/70" /> : <ChevronRight className="w-3 h-3" />}
+                {isExpanded ? (
+                  <ChevronDown className="w-3 h-3 text-amber-400/70" />
+                ) : (
+                  <ChevronRight className="w-3 h-3" />
+                )}
               </span>
               <Tag className="w-3 h-3 text-amber-400/80 flex-shrink-0" />
-              <span className="text-[11px] font-semibold text-slate-300 group-hover:text-slate-100 truncate font-mono">{node.name}</span>
+              <span className="text-[11px] font-semibold text-slate-300 group-hover:text-slate-100 truncate font-mono">
+                {node.name}
+              </span>
               {node.logicalLabel && (
-                <span className="text-[9px] text-muted-foreground/50 ml-1 truncate hidden group-hover:block">{node.logicalLabel}</span>
+                <span className="text-[9px] text-muted-foreground/50 ml-1 truncate hidden group-hover:block">
+                  {node.logicalLabel}
+                </span>
               )}
             </div>
             {node.issueUrl && (
@@ -361,7 +421,7 @@ function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedF
                 onClick={(e) => {
                   e.stopPropagation()
                   if (window.electron && (window.electron as any).openExternal) {
-                    (window.electron as any).openExternal(node.issueUrl!)
+                    ;(window.electron as any).openExternal(node.issueUrl!)
                   } else {
                     window.open(node.issueUrl!, '_blank', 'noopener,noreferrer')
                   }
@@ -375,7 +435,7 @@ function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedF
           </div>
           {isExpanded && node.children && (
             <div className="space-y-0.5">
-              {node.children.map(child => (
+              {node.children.map((child) => (
                 <LogicalTreeItem
                   key={child.path}
                   node={child}
@@ -402,22 +462,30 @@ function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedF
           className={`flex items-center gap-1.5 py-1 px-2 cursor-pointer transition-all duration-150 group ${isSysRoot ? 'rounded-md hover:bg-violet-950/30' : 'hover:bg-muted/10'}`}
         >
           <span className="text-muted-foreground/60">
-            {isExpanded
-              ? <ChevronDown className={`w-3.5 h-3.5 ${isSysRoot ? 'text-violet-400' : 'text-muted-foreground/60'}`} />
-              : <ChevronRight className="w-3.5 h-3.5 text-slate-500" />}
+            {isExpanded ? (
+              <ChevronDown
+                className={`w-3.5 h-3.5 ${isSysRoot ? 'text-violet-400' : 'text-muted-foreground/60'}`}
+              />
+            ) : (
+              <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+            )}
           </span>
-          {isSysRoot
-            ? <Brain className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
-            : isExpanded
-              ? <FolderOpen className="w-3.5 h-3.5 text-violet-400/60 flex-shrink-0" />
-              : <Folder className="w-3.5 h-3.5 text-violet-400/50 flex-shrink-0" />}
-          <span className={`text-xs truncate ${isSysRoot ? 'font-bold text-violet-300 group-hover:text-violet-200' : 'font-semibold text-slate-400 group-hover:text-slate-200'}`}>
+          {isSysRoot ? (
+            <Brain className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
+          ) : isExpanded ? (
+            <FolderOpen className="w-3.5 h-3.5 text-violet-400/60 flex-shrink-0" />
+          ) : (
+            <Folder className="w-3.5 h-3.5 text-violet-400/50 flex-shrink-0" />
+          )}
+          <span
+            className={`text-xs truncate ${isSysRoot ? 'font-bold text-violet-300 group-hover:text-violet-200' : 'font-semibold text-slate-400 group-hover:text-slate-200'}`}
+          >
             {node.name}
           </span>
         </div>
         {isExpanded && node.children && (
           <div className="space-y-0.5">
-            {node.children.map(child => (
+            {node.children.map((child) => (
               <LogicalTreeItem
                 key={child.path}
                 node={child}
@@ -437,7 +505,7 @@ function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedF
   // File leaf — logical doc type rendering
   const meta = node.file?.doc_type ? DOC_TYPE_META[node.file.doc_type] : null
   const DocIcon = meta?.icon ?? FileText
-  const docLabel = meta?.label ?? (node.file?.path.split('/').pop() ?? node.name)
+  const docLabel = meta?.label ?? node.file?.path.split('/').pop() ?? node.name
   const fileIssueUrl = node.file?.issue_url
 
   return (
@@ -451,13 +519,19 @@ function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedF
       }`}
     >
       <div className="flex items-center gap-2 min-w-0">
-        <DocIcon className={`w-3.5 h-3.5 flex-shrink-0 ${
-          isSelected ? 'text-indigo-400'
-          : meta?.kind === 'doc-order' ? 'text-sky-400/70'
-          : meta?.kind === 'doc-report' ? 'text-emerald-400/70'
-          : meta?.kind === 'doc-knowledge' ? 'text-amber-400/60'
-          : 'text-muted-foreground/50'
-        }`} />
+        <DocIcon
+          className={`w-3.5 h-3.5 flex-shrink-0 ${
+            isSelected
+              ? 'text-indigo-400'
+              : meta?.kind === 'doc-order'
+                ? 'text-sky-400/70'
+                : meta?.kind === 'doc-report'
+                  ? 'text-emerald-400/70'
+                  : meta?.kind === 'doc-knowledge'
+                    ? 'text-amber-400/60'
+                    : 'text-muted-foreground/50'
+          }`}
+        />
         <span className="truncate">{docLabel}</span>
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -465,7 +539,7 @@ function LogicalTreeItem({ node, level, expandedFolders, toggleFolder, selectedF
           <button
             onClick={() => {
               if (window.electron && (window.electron as any).openExternal) {
-                (window.electron as any).openExternal(fileIssueUrl)
+                ;(window.electron as any).openExternal(fileIssueUrl)
               } else {
                 window.open(fileIssueUrl, '_blank', 'noopener,noreferrer')
               }
@@ -502,12 +576,12 @@ export function Wiki() {
   const checkDateMatch = (modifiedAt: string | null, filter: string) => {
     if (filter === 'all') return true
     if (!modifiedAt) return false
-    
+
     try {
       const fileDate = new Date(modifiedAt)
       const diffMs = Date.now() - fileDate.getTime()
       const diffDays = diffMs / (1000 * 60 * 60 * 24)
-      
+
       if (filter === '1week') return diffDays <= 7
       if (filter === '2weeks') return diffDays <= 14
       if (filter === '1month') return diffDays <= 30
@@ -523,15 +597,21 @@ export function Wiki() {
   const { data, isLoading, isError, error, refetch, isFetching } = useQuery<DocumentsResponse>({
     queryKey: ['documents'],
     queryFn: api.getDocuments,
-    refetchInterval: 30_000,
+    refetchInterval: 30_000
   })
 
   // Dynamic filter options extraction
   const { projects, users } = useMemo(() => {
     const files = data?.files ?? []
     return {
-      projects: ['all', ...Array.from(new Set(files.map(f => f.project).filter(Boolean) as string[])).sort()],
-      users: ['all', ...Array.from(new Set(files.map(f => f.user).filter(Boolean) as string[])).sort()],
+      projects: [
+        'all',
+        ...Array.from(new Set(files.map((f) => f.project).filter(Boolean) as string[])).sort()
+      ],
+      users: [
+        'all',
+        ...Array.from(new Set(files.map((f) => f.user).filter(Boolean) as string[])).sort()
+      ]
     }
   }, [data])
 
@@ -539,7 +619,7 @@ export function Wiki() {
   const { data: historyData } = useQuery({
     queryKey: ['task-history'],
     queryFn: api.getTaskHistory,
-    refetchInterval: 30_000,
+    refetchInterval: 30_000
   })
 
   const handleSearchHistoryClick = (queryText: string) => {
@@ -553,13 +633,17 @@ export function Wiki() {
   useEffect(() => {
     const saved = localStorage.getItem('natlas_recent_wiki_docs')
     if (saved) {
-      try { setRecentDocs(JSON.parse(saved)) } catch { /* ignore */ }
+      try {
+        setRecentDocs(JSON.parse(saved))
+      } catch {
+        /* ignore */
+      }
     }
   }, [])
 
   const addRecentDoc = (file: DocumentFile) => {
-    setRecentDocs(prev => {
-      const filtered = prev.filter(d => d.path !== file.path)
+    setRecentDocs((prev) => {
+      const filtered = prev.filter((d) => d.path !== file.path)
       const next = [file, ...filtered].slice(0, 5)
       localStorage.setItem('natlas_recent_wiki_docs', JSON.stringify(next))
       return next
@@ -570,7 +654,7 @@ export function Wiki() {
   useEffect(() => {
     if (data?.files && expandedFolders.size === 0) {
       const topFolders = new Set<string>()
-      data.files.forEach(f => {
+      data.files.forEach((f) => {
         const top = f.path.split('/')[0]
         if (top) topFolders.add(top)
       })
@@ -585,9 +669,9 @@ export function Wiki() {
     for (let i = 1; i < parts.length; i++) {
       foldersToExpand.push(parts.slice(0, i).join('/'))
     }
-    setExpandedFolders(prev => {
+    setExpandedFolders((prev) => {
       const next = new Set(prev)
-      foldersToExpand.forEach(f => next.add(f))
+      foldersToExpand.forEach((f) => next.add(f))
       return next
     })
   }
@@ -608,9 +692,9 @@ export function Wiki() {
         toExpand.push(`__sysdir__${parts.slice(0, i).join('/')}`)
       }
     }
-    setExpandedFolders(prev => {
+    setExpandedFolders((prev) => {
       const next = new Set(prev)
-      toExpand.forEach(k => next.add(k))
+      toExpand.forEach((k) => next.add(k))
       return next
     })
   }
@@ -627,7 +711,7 @@ export function Wiki() {
   useEffect(() => {
     if (!selectedWikiPath || !data?.files) return
 
-    const target = data.files.find(f => f.path === selectedWikiPath)
+    const target = data.files.find((f) => f.path === selectedWikiPath)
     if (target) {
       setSelectedFile(target)
       addRecentDoc(target)
@@ -651,7 +735,7 @@ export function Wiki() {
     const files = data?.files ?? []
     const root: TreeNode = { name: 'Root', path: '', type: 'directory', children: [] }
 
-    files.forEach(file => {
+    files.forEach((file) => {
       if (searchTerm && !file.path.toLowerCase().includes(searchTerm.toLowerCase())) return
       if (projectFilter !== 'all' && file.project !== projectFilter) return
       if (userFilter !== 'all' && file.user !== userFilter) return
@@ -670,7 +754,7 @@ export function Wiki() {
           current.children.push({ name: part, path: file.path, type: 'file', file })
         } else {
           current.children = current.children || []
-          let dirNode = current.children.find(c => c.name === part && c.type === 'directory')
+          let dirNode = current.children.find((c) => c.name === part && c.type === 'directory')
           if (!dirNode) {
             dirNode = { name: part, path: pathSoFar, type: 'directory', children: [] }
             current.children.push(dirNode)
@@ -685,7 +769,9 @@ export function Wiki() {
         if (a.type !== b.type) return a.type === 'directory' ? -1 : 1
         return a.name.localeCompare(b.name)
       })
-      nodes.forEach(n => { if (n.children) sortTree(n.children) })
+      nodes.forEach((n) => {
+        if (n.children) sortTree(n.children)
+      })
     }
 
     if (root.children) sortTree(root.children)
@@ -697,7 +783,7 @@ export function Wiki() {
     const files = data?.files ?? []
 
     // Partition: project files vs system/non-project files
-    const projectFiles = files.filter(f => {
+    const projectFiles = files.filter((f) => {
       if (searchTerm && !file_matches_search(f, searchTerm)) return false
       if (projectFilter !== 'all' && f.project !== projectFilter) return false
       if (userFilter !== 'all' && f.user !== userFilter) return false
@@ -705,7 +791,7 @@ export function Wiki() {
       if (!checkDateMatch(f.modified_at, periodFilter)) return false
       return f.category === 'Logs' && f.project && f.slug
     })
-    const systemFiles = files.filter(f => {
+    const systemFiles = files.filter((f) => {
       if (searchTerm && !file_matches_search(f, searchTerm)) return false
       if (docTypeFilter !== 'all' && f.doc_type !== docTypeFilter) return false
       if (!checkDateMatch(f.modified_at, periodFilter)) return false
@@ -714,7 +800,7 @@ export function Wiki() {
 
     // Group: project → slug → files
     const projectMap = new Map<string, Map<string, DocumentFile[]>>()
-    projectFiles.forEach(f => {
+    projectFiles.forEach((f) => {
       const pName = f.project!
       const sName = f.slug!
       if (!projectMap.has(pName)) projectMap.set(pName, new Map())
@@ -740,16 +826,17 @@ export function Wiki() {
         const developer = taskFiles[0]?.user ?? null
 
         // order.md 또는 타 문서에서 title 및 issue_url 획득
-        const orderFile = taskFiles.find(f => f.doc_type === 'order')
+        const orderFile = taskFiles.find((f) => f.doc_type === 'order')
         const taskTitle = orderFile?.title || null
-        const issueUrl = orderFile?.issue_url || taskFiles.find(f => f.issue_url)?.issue_url || null
+        const issueUrl =
+          orderFile?.issue_url || taskFiles.find((f) => f.issue_url)?.issue_url || null
 
         // 타이틀에서 불필요한 접두사 (feat:, fix:, 현재 작업:, [Order] 등) 제거하여 순수 작업내용 추출
-        let cleanTitle = taskTitle;
+        let cleanTitle = taskTitle
         if (cleanTitle) {
-          cleanTitle = cleanTitle.replace(/^(feat|fix|chore|refactor|docs|현재\s*작업)\s*:\s*/i, '');
-          cleanTitle = cleanTitle.replace(/^\[[^\]]+\]\s*/, '');
-          cleanTitle = cleanTitle.trim();
+          cleanTitle = cleanTitle.replace(/^(feat|fix|chore|refactor|docs|현재\s*작업)\s*:\s*/i, '')
+          cleanTitle = cleanTitle.replace(/^\[[^\]]+\]\s*/, '')
+          cleanTitle = cleanTitle.trim()
         }
 
         // 📁 작업내용 (작업자: 담당자) 형태로 표시 이름 다듬기
@@ -758,14 +845,14 @@ export function Wiki() {
           taskLabel = `${taskLabel} (작업자: ${developer})`
         }
 
-        const docNodes: TreeNode[] = sorted.map(f => {
+        const docNodes: TreeNode[] = sorted.map((f) => {
           const meta = f.doc_type ? DOC_TYPE_META[f.doc_type] : null
           return {
             name: meta?.label ?? f.path.split('/').pop() ?? f.path,
             path: f.path,
             type: 'file',
             file: f,
-            nodeKind: meta?.kind,
+            nodeKind: meta?.kind
           }
         })
 
@@ -776,7 +863,7 @@ export function Wiki() {
           nodeKind: 'task',
           logicalLabel: developer ?? undefined,
           issueUrl: issueUrl,
-          children: docNodes,
+          children: docNodes
         })
       })
 
@@ -788,7 +875,7 @@ export function Wiki() {
         path: `__project__${projectName}`,
         type: 'directory',
         nodeKind: 'project',
-        children: taskNodes,
+        children: taskNodes
       })
     })
 
@@ -803,10 +890,10 @@ export function Wiki() {
         path: '__system__',
         type: 'directory',
         nodeKind: 'system-root',
-        children: [],
+        children: []
       }
 
-      systemFiles.forEach(f => {
+      systemFiles.forEach((f) => {
         const parts = f.path.split('/')
         let current = sysRoot
 
@@ -816,12 +903,24 @@ export function Wiki() {
 
           if (isLast) {
             current.children = current.children || []
-            current.children.push({ name: part, path: f.path, type: 'file', file: f, nodeKind: undefined })
+            current.children.push({
+              name: part,
+              path: f.path,
+              type: 'file',
+              file: f,
+              nodeKind: undefined
+            })
           } else {
             current.children = current.children || []
-            let dirNode = current.children.find(c => c.path === pathKey && c.type === 'directory')
+            let dirNode = current.children.find((c) => c.path === pathKey && c.type === 'directory')
             if (!dirNode) {
-              dirNode = { name: part, path: pathKey, type: 'directory', nodeKind: 'system-dir', children: [] }
+              dirNode = {
+                name: part,
+                path: pathKey,
+                type: 'directory',
+                nodeKind: 'system-dir',
+                children: []
+              }
               current.children.push(dirNode)
             }
             current = dirNode
@@ -849,20 +948,23 @@ export function Wiki() {
   }
 
   const toggleFolder = (path: string) => {
-    setExpandedFolders(prev => {
+    setExpandedFolders((prev) => {
       const next = new Set(prev)
-      if (next.has(path)) { next.delete(path) } else { next.add(path) }
+      if (next.has(path)) {
+        next.delete(path)
+      } else {
+        next.add(path)
+      }
       return next
     })
   }
 
-
   // Wiki Link Click Routing
   const handleWikiLinkClick = (slug: string) => {
     const files = data?.files ?? []
-    const matching = files.filter(f => f.slug === slug)
+    const matching = files.filter((f) => f.slug === slug)
     if (matching.length === 0) return
-    const orderFile = matching.find(f => f.doc_type === 'order')
+    const orderFile = matching.find((f) => f.doc_type === 'order')
     const targetFile = orderFile || matching[0]
     setSelectedFile(targetFile)
     addRecentDoc(targetFile)
@@ -870,7 +972,7 @@ export function Wiki() {
   }
 
   const handleSelectFile = (file: DocumentFile, forceOpen?: boolean) => {
-    setSelectedFile(prev => {
+    setSelectedFile((prev) => {
       if (prev?.path === file.path && !forceOpen) {
         return null
       }
@@ -934,10 +1036,11 @@ export function Wiki() {
                     : 'bg-transparent border-border/60 text-slate-500 hover:text-slate-200 hover:bg-white/5 hover:border-border'
                 }`}
               >
-                {sidebarCollapsed
-                  ? <PanelLeftOpen className="w-4 h-4" />
-                  : <PanelLeftClose className="w-4 h-4" />
-                }
+                {sidebarCollapsed ? (
+                  <PanelLeftOpen className="w-4 h-4" />
+                ) : (
+                  <PanelLeftClose className="w-4 h-4" />
+                )}
               </button>
               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1.5 text-[10px] font-semibold text-slate-100 bg-slate-900 border border-slate-700/80 rounded-md shadow-xl opacity-0 group-hover/sidebar-btn:opacity-100 transition-opacity duration-150 pointer-events-none whitespace-nowrap z-50">
                 {sidebarCollapsed ? '메뉴 펴기' : '메뉴 접기'}
@@ -979,9 +1082,13 @@ export function Wiki() {
                   : 'bg-muted/20 border-border text-muted-foreground hover:text-slate-200 hover:bg-muted/40'
               }`}
             >
-              <Brain className={`w-3.5 h-3.5 ${showGraph ? 'animate-pulse text-indigo-400' : ''}`} />
+              <Brain
+                className={`w-3.5 h-3.5 ${showGraph ? 'animate-pulse text-indigo-400' : ''}`}
+              />
               <span>지식 그래프</span>
-              <span className={`w-1.5 h-1.5 rounded-full ml-0.5 ${showGraph ? 'bg-indigo-400 animate-ping' : 'bg-muted-foreground/45'}`} />
+              <span
+                className={`w-1.5 h-1.5 rounded-full ml-0.5 ${showGraph ? 'bg-indigo-400 animate-ping' : 'bg-muted-foreground/45'}`}
+              />
             </button>
           </div>
           <Button
@@ -1003,8 +1110,10 @@ export function Wiki() {
           <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <Input
             value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            placeholder={viewMode === 'project' ? '프로젝트·슬러그·담당자 검색...' : '문서명 및 경로 검색...'}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={
+              viewMode === 'project' ? '프로젝트·슬러그·담당자 검색...' : '문서명 및 경로 검색...'
+            }
             className="pl-8 h-9 text-xs bg-muted/20 border-border focus-visible:ring-indigo-500/50"
           />
         </div>
@@ -1012,44 +1121,70 @@ export function Wiki() {
           <>
             <select
               value={projectFilter}
-              onChange={e => setProjectFilter(e.target.value)}
+              onChange={(e) => setProjectFilter(e.target.value)}
               className="h-9 px-2 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer"
             >
-              <option value="all" className="bg-[#0d1117] text-slate-300">전체 프로젝트</option>
-              {projects.map(p => (
-                <option key={p} value={p} className="bg-[#0d1117] text-slate-300">{p}</option>
+              <option value="all" className="bg-[#0d1117] text-slate-300">
+                전체 프로젝트
+              </option>
+              {projects.map((p) => (
+                <option key={p} value={p} className="bg-[#0d1117] text-slate-300">
+                  {p}
+                </option>
               ))}
             </select>
             <select
               value={userFilter}
-              onChange={e => setUserFilter(e.target.value)}
+              onChange={(e) => setUserFilter(e.target.value)}
               className="h-9 px-2 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer"
             >
-              <option value="all" className="bg-[#0d1117] text-slate-300">전체 담당자</option>
-              {users.map(u => (
-                <option key={u} value={u} className="bg-[#0d1117] text-slate-300">{u}</option>
+              <option value="all" className="bg-[#0d1117] text-slate-300">
+                전체 담당자
+              </option>
+              {users.map((u) => (
+                <option key={u} value={u} className="bg-[#0d1117] text-slate-300">
+                  {u}
+                </option>
               ))}
             </select>
             <select
               value={docTypeFilter}
-              onChange={e => setDocTypeFilter(e.target.value)}
+              onChange={(e) => setDocTypeFilter(e.target.value)}
               className="h-9 px-2 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer"
             >
-              <option value="all" className="bg-[#0d1117] text-slate-300">모든 문서</option>
-              <option value="order" className="bg-[#0d1117] text-sky-400">작업계획서</option>
-              <option value="report" className="bg-[#0d1117] text-emerald-400">완료보고서</option>
-              <option value="knowledge" className="bg-[#0d1117] text-amber-400">지식문서</option>
+              <option value="all" className="bg-[#0d1117] text-slate-300">
+                모든 문서
+              </option>
+              <option value="order" className="bg-[#0d1117] text-sky-400">
+                작업계획서
+              </option>
+              <option value="report" className="bg-[#0d1117] text-emerald-400">
+                완료보고서
+              </option>
+              <option value="knowledge" className="bg-[#0d1117] text-amber-400">
+                지식문서
+              </option>
             </select>
             <select
               value={periodFilter}
-              onChange={e => setPeriodFilter(e.target.value)}
+              onChange={(e) => setPeriodFilter(e.target.value)}
               className="h-9 px-2 py-0.5 rounded text-[10px] bg-muted/25 border border-border text-slate-300 font-medium focus:outline-none focus:border-indigo-500/50 cursor-pointer"
             >
-              <option value="all" className="bg-[#0d1117] text-slate-300">전체 기간</option>
-              <option value="1week" className="bg-[#0d1117] text-slate-300">최근 1주</option>
-              <option value="2weeks" className="bg-[#0d1117] text-slate-300">최근 2주</option>
-              <option value="1month" className="bg-[#0d1117] text-slate-300">최근 1달</option>
-              <option value="3months" className="bg-[#0d1117] text-slate-300">최근 3달</option>
+              <option value="all" className="bg-[#0d1117] text-slate-300">
+                전체 기간
+              </option>
+              <option value="1week" className="bg-[#0d1117] text-slate-300">
+                최근 1주
+              </option>
+              <option value="2weeks" className="bg-[#0d1117] text-slate-300">
+                최근 2주
+              </option>
+              <option value="1month" className="bg-[#0d1117] text-slate-300">
+                최근 1달
+              </option>
+              <option value="3months" className="bg-[#0d1117] text-slate-300">
+                최근 3달
+              </option>
             </select>
           </>
         )}
@@ -1075,14 +1210,16 @@ export function Wiki() {
                 최근 방문 문서
               </p>
               <div className="flex flex-wrap gap-1">
-                {recentDocs.map(doc => {
+                {recentDocs.map((doc) => {
                   const label = doc.slug || doc.path.split('/').pop() || doc.path
                   return (
                     <button
                       key={doc.path}
                       onClick={() => handleSelectFile(doc)}
                       className={`text-[10px] px-2 py-1 rounded bg-muted/30 border border-border hover:bg-indigo-900/10 hover:border-indigo-500/30 transition-all font-mono truncate max-w-[140px] ${
-                        selectedFile?.path === doc.path ? 'bg-indigo-900/20 border-indigo-500/50 text-indigo-300' : 'text-slate-300'
+                        selectedFile?.path === doc.path
+                          ? 'bg-indigo-900/20 border-indigo-500/50 text-indigo-300'
+                          : 'text-slate-300'
                       }`}
                     >
                       {label}
@@ -1110,7 +1247,7 @@ export function Wiki() {
               </div>
             ) : (
               <div className="space-y-0.5 pr-2 pb-4">
-                {activeTree.map(node => (
+                {activeTree.map((node) => (
                   <ActiveTreeItem
                     key={node.path}
                     node={node}
@@ -1126,118 +1263,145 @@ export function Wiki() {
           </div>
         </ResizablePanel>
 
-        <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
+        <ResizableHandle
+          withHandle
+          className="bg-border/60 hover:bg-indigo-500/50 transition-colors"
+        />
 
         {/* Right Content Area */}
         <ResizablePanel defaultSize="78%" className="h-full overflow-hidden">
-        <ResizablePanelGroup key={showGraph ? 'with-graph' : 'no-graph'} orientation="horizontal" className="h-full w-full bg-[#0a0f1d]">
-          {/* Main Document Viewer or Empty State */}
-          <ResizablePanel defaultSize="60%" minSize="30%" className="h-full overflow-hidden">
-            {selectedFile ? (
-              <WikiViewer
-                file={selectedFile}
-                history={historyData ?? []}
-                onClose={() => setSelectedFile(null)}
-                onWikiLinkClick={handleWikiLinkClick}
-                onSearchHistoryClick={handleSearchHistoryClick}
-              />
-            ) : (
-              /* Beautiful Glassmorphic Empty State */
-              <div className="h-full w-full flex items-center justify-center p-8 bg-[#0b1019] relative overflow-hidden">
-                {/* Background ambient glow */}
-                <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+          <ResizablePanelGroup
+            key={showGraph ? 'with-graph' : 'no-graph'}
+            orientation="horizontal"
+            className="h-full w-full bg-[#0a0f1d]"
+          >
+            {/* Main Document Viewer or Empty State */}
+            <ResizablePanel defaultSize="60%" minSize="30%" className="h-full overflow-hidden">
+              {selectedFile ? (
+                <WikiViewer
+                  file={selectedFile}
+                  history={historyData ?? []}
+                  onClose={() => setSelectedFile(null)}
+                  onWikiLinkClick={handleWikiLinkClick}
+                  onSearchHistoryClick={handleSearchHistoryClick}
+                />
+              ) : (
+                /* Beautiful Glassmorphic Empty State */
+                <div className="h-full w-full flex items-center justify-center p-8 bg-[#0b1019] relative overflow-hidden">
+                  {/* Background ambient glow */}
+                  <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-pulse" />
+                  <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
 
-                <div className="max-w-2xl w-full p-8 border border-border/40 rounded-2xl bg-card/15 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center relative z-10 space-y-6">
-                  {/* Logo / Icon with Pulse */}
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
-                    <div className="w-16 h-16 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 flex items-center justify-center shadow-lg relative z-10">
-                      <Brain className="w-8 h-8 text-indigo-400 animate-pulse" />
+                  <div className="max-w-2xl w-full p-8 border border-border/40 rounded-2xl bg-card/15 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center relative z-10 space-y-6">
+                    {/* Logo / Icon with Pulse */}
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
+                      <div className="w-16 h-16 rounded-2xl bg-indigo-950/50 border border-indigo-500/30 flex items-center justify-center shadow-lg relative z-10">
+                        <Brain className="w-8 h-8 text-indigo-400 animate-pulse" />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <h2 className="text-2xl font-black bg-gradient-to-r from-slate-100 via-indigo-200 to-slate-300 bg-clip-text text-transparent">
-                      NAtlas 전사 지식 브라우저
-                    </h2>
-                    <p className="text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
-                      NAtlas는 NSoft America의 전사 지식 탐색기입니다. SwarmVault 제어, 작업계획서(order), 완료보고서(report), 지식문서(wiki) 간의 연계와 지식 흐름을 하나의 유기적인 인터페이스로 통합 제공합니다.
-                    </p>
-                  </div>
-
-                  {/* Feature Cards Grid */}
-                  <div className="grid grid-cols-2 gap-4 w-full text-left pt-4">
-                    <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-indigo-500/20 hover:bg-indigo-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setViewMode('project')}>
-                      <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
-                        <FolderTree className="w-3.5 h-3.5" />
-                        프로젝트 / 폴더 뷰 탐색
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        좌측 트리 사이드바를 통해 프로젝트 단위 및 실제 물리 폴더 구조(PARA) 단위로 문서를 자유롭게 선택하여 열람할 수 있습니다.
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-black bg-gradient-to-r from-slate-100 via-indigo-200 to-slate-300 bg-clip-text text-transparent">
+                        NAtlas 전사 지식 브라우저
+                      </h2>
+                      <p className="text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
+                        NAtlas는 NSoft America의 전사 지식 탐색기입니다. SwarmVault 제어,
+                        작업계획서(order), 완료보고서(report), 지식문서(wiki) 간의 연계와 지식
+                        흐름을 하나의 유기적인 인터페이스로 통합 제공합니다.
                       </p>
                     </div>
 
-                    <div className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-emerald-500/20 hover:bg-emerald-950/5 transition-all duration-200 space-y-1.5 cursor-pointer" onClick={() => setShowGraph(true)}>
-                      <h4 className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
-                        <Brain className="w-3.5 h-3.5" />
-                        지식 네트워크 그래프
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground leading-relaxed">
-                        문서와 작업 간의 계층적 연계 구조와 `[[wiki]]` 링크를 통한 지식의 흐름을 네트워크 노드 그래프 형태로 시각화하여 탐색을 돕습니다.
-                      </p>
+                    {/* Feature Cards Grid */}
+                    <div className="grid grid-cols-2 gap-4 w-full text-left pt-4">
+                      <div
+                        className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-indigo-500/20 hover:bg-indigo-950/5 transition-all duration-200 space-y-1.5 cursor-pointer"
+                        onClick={() => setViewMode('project')}
+                      >
+                        <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                          <FolderTree className="w-3.5 h-3.5" />
+                          프로젝트 / 폴더 뷰 탐색
+                        </h4>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                          좌측 트리 사이드바를 통해 프로젝트 단위 및 실제 물리 폴더 구조(PARA)
+                          단위로 문서를 자유롭게 선택하여 열람할 수 있습니다.
+                        </p>
+                      </div>
+
+                      <div
+                        className="p-4 border border-border/40 rounded-xl bg-card/10 backdrop-blur-md hover:border-emerald-500/20 hover:bg-emerald-950/5 transition-all duration-200 space-y-1.5 cursor-pointer"
+                        onClick={() => setShowGraph(true)}
+                      >
+                        <h4 className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+                          <Brain className="w-3.5 h-3.5" />
+                          지식 네트워크 그래프
+                        </h4>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">
+                          문서와 작업 간의 계층적 연계 구조와 `[[wiki]]` 링크를 통한 지식의 흐름을
+                          네트워크 노드 그래프 형태로 시각화하여 탐색을 돕습니다.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="pt-4 flex items-center justify-center gap-3">
+                      <button
+                        onClick={() => setShowGraph(true)}
+                        className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+                      >
+                        <Brain className="w-4 h-4 animate-bounce" />
+                        지식 네트워크 그래프 탐색 시작
+                      </button>
                     </div>
                   </div>
+                </div>
+              )}
+            </ResizablePanel>
 
-                  {/* Actions */}
-                  <div className="pt-4 flex items-center justify-center gap-3">
+            {/* Graph Panel (ResizablePanel, shown when showGraph) */}
+            {showGraph && (
+              <>
+                <ResizableHandle
+                  withHandle
+                  className="bg-border/60 hover:bg-indigo-500/50 transition-colors"
+                />
+                <ResizablePanel
+                  defaultSize="40%"
+                  minSize="20%"
+                  maxSize="70%"
+                  className="h-full flex flex-col bg-[#0b0e14]/98"
+                >
+                  {/* Graph Panel Header */}
+                  <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/40 flex-shrink-0">
+                    <div className="flex items-center gap-2">
+                      <Brain className="w-4 h-4 text-indigo-400 animate-pulse" />
+                      <div>
+                        <h3 className="text-xs font-bold text-slate-200">지식 네트워크 그래프</h3>
+                        <p className="text-[10px] text-muted-foreground">
+                          프로젝트 클릭 → 태스크 → 문서 순으로 탐색
+                        </p>
+                      </div>
+                    </div>
                     <button
-                      onClick={() => setShowGraph(true)}
-                      className="px-6 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
+                      onClick={() => setShowGraph(false)}
+                      className="p-1.5 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-colors"
+                      title="그래프 닫기"
                     >
-                      <Brain className="w-4 h-4 animate-bounce" />
-                      지식 네트워크 그래프 탐색 시작
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
-                </div>
-              </div>
-            )}
-          </ResizablePanel>
-
-          {/* Graph Panel (ResizablePanel, shown when showGraph) */}
-          {showGraph && (
-            <>
-              <ResizableHandle withHandle className="bg-border/60 hover:bg-indigo-500/50 transition-colors" />
-              <ResizablePanel defaultSize="40%" minSize="20%" maxSize="70%" className="h-full flex flex-col bg-[#0b0e14]/98">
-                {/* Graph Panel Header */}
-                <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-card/40 flex-shrink-0">
-                  <div className="flex items-center gap-2">
-                    <Brain className="w-4 h-4 text-indigo-400 animate-pulse" />
-                    <div>
-                      <h3 className="text-xs font-bold text-slate-200">지식 네트워크 그래프</h3>
-                      <p className="text-[10px] text-muted-foreground">프로젝트 클릭 → 태스크 → 문서 순으로 탐색</p>
-                    </div>
+                  {/* Graph Content */}
+                  <div className="flex-1 min-h-0 w-full p-3 bg-[#090d13]">
+                    <WikiGraph
+                      files={data?.files ?? []}
+                      history={historyData ?? []}
+                      onSelectFile={(file) => handleSelectFile(file, true)}
+                    />
                   </div>
-                  <button
-                    onClick={() => setShowGraph(false)}
-                    className="p-1.5 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-colors"
-                    title="그래프 닫기"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-                {/* Graph Content */}
-                <div className="flex-1 min-h-0 w-full p-3 bg-[#090d13]">
-                  <WikiGraph
-                    files={data?.files ?? []}
-                    history={historyData ?? []}
-                    onSelectFile={(file) => handleSelectFile(file, true)}
-                  />
-                </div>
-              </ResizablePanel>
-            </>
-          )}
-        </ResizablePanelGroup>
+                </ResizablePanel>
+              </>
+            )}
+          </ResizablePanelGroup>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

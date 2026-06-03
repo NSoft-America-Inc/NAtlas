@@ -19,11 +19,11 @@ NAtlas 작업을 이어서 진행한다.
 
 ### 오늘 완료한 작업
 
-| 이슈 | 작업 | 결과 |
-|---|---|---|
-| #17 | NAtlas Resizable Panels 드래그 영역 조절 UX 고도화 및 Layout.tsx 핫픽스 | ✅ 완료 (Closed) |
-| LLMWiki#17 | E2E 지식 파이프라인 아티팩트 3종 세트 (`order.md`, `report.md`, `wiki.md`) 생성 및 무결성 린터 자가 검증 통과 | ✅ 완료 |
-| NOffice | NOffice 공식 업무일지 (`docs/noffice/2026-05-21.md`) 등록 및 원격 푸시 | ✅ 완료 |
+| 이슈       | 작업                                                                                                          | 결과             |
+| ---------- | ------------------------------------------------------------------------------------------------------------- | ---------------- |
+| #17        | NAtlas Resizable Panels 드래그 영역 조절 UX 고도화 및 Layout.tsx 핫픽스                                       | ✅ 완료 (Closed) |
+| LLMWiki#17 | E2E 지식 파이프라인 아티팩트 3종 세트 (`order.md`, `report.md`, `wiki.md`) 생성 및 무결성 린터 자가 검증 통과 | ✅ 완료          |
+| NOffice    | NOffice 공식 업무일지 (`docs/noffice/2026-05-21.md`) 등록 및 원격 푸시                                        | ✅ 완료          |
 
 ### 다음 할 작업: #9 Query 탭 구현 — SwarmVault query API 연동 질의 인터페이스
 
@@ -32,12 +32,14 @@ NAtlas 작업을 이어서 진행한다.
 **API**: SwarmVault `POST /swarmvault/query` 또는 `GET /swarmvault/search` (백엔드 `src/python/routers/swarmvault.py` 내 검색/질의 엔드포인트 상태 확인 필요)
 
 **작업 내용**:
+
 1. 로컬 저장소에 미커밋 상태로 대기 중인 `Query.tsx` 초안 소스코드를 확보 및 분석합니다.
 2. `src/renderer/src/lib/api.ts`에 SwarmVault query API 호출 함수를 정의합니다.
 3. `Query.tsx` 내 질의 입력 폼과 매칭 문서/텍스트 조각 및 요약 결과 리스트가 출력되는 렌더링 영역을 완성합니다.
 4. 영역 가변 상태와 결합하여, 리사이징 Panel 드래그 시에도 입력 창 포커스나 검색 결과 오프셋이 무결하게 유지되도록 예외 처리합니다.
 
 **완료 조건**:
+
 - [ ] Query 탭 질의 입력창에 텍스트 입력 후 전송 시 SwarmVault query API를 연동 호출
 - [ ] 반환된 매칭 문서 목록 및 텍스트 조각 본문 내용을 뷰어 및 리스트 영역에 정밀하게 시각화
 - [ ] `npx tsc --noEmit` 0 errors

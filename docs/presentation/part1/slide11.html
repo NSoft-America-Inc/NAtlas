@@ -1,100 +1,295 @@
 <section>
-                <div class="slide-counter">SLIDE 11 / 28</div>
-                <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">해결책 2: Harness & Token 최적화의 결합 아키텍처</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
-                            <svg viewBox="0 0 350 350" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="var(--accent-blue)" stop-opacity="0.8"/>
-                                        <stop offset="50%" stop-color="var(--accent-rose)" stop-opacity="0.8"/>
-                                        <stop offset="100%" stop-color="var(--accent-emerald)" stop-opacity="0.8"/>
-                                    </linearGradient>
-                                    <radialGradient id="glowG" cx="50%" cy="50%" r="50%">
-                                        <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
-                                        <stop offset="100%" stop-color="var(--accent-blue)" stop-opacity="0"/>
-                                    </radialGradient>
-                                </defs>
-                                
-                                <!-- 3D Connection Pipe -->
-                                <path d="M 60 195 Q 175 110 290 195" fill="none" stroke="url(#pipeGrad)" stroke-width="8" stroke-linecap="round" filter="drop-shadow(0 0 12px var(--accent-indigo))" opacity="0.3"/>
-                                <path d="M 60 195 Q 175 110 290 195" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-dasharray="8 12" style="animation: rotate-slow 25s linear infinite;"/>
-                                
-                                <!-- Flowing pulses along the pipe -->
-                                <circle cx="0" cy="0" r="6" fill="url(#glowG)">
-                                    <animateMotion path="M 60 195 Q 175 110 290 195" dur="3s" repeatCount="indefinite" rotate="auto"/>
-                                </circle>
-                                <circle cx="0" cy="0" r="4" fill="#ffffff" style="filter: drop-shadow(0 0 5px #ffffff);">
-                                    <animateMotion path="M 60 195 Q 175 110 290 195" dur="3s" begin="1.5s" repeatCount="indefinite" rotate="auto"/>
-                                </circle>
-                                
-                                <!-- Step 1: Git Node -->
-                                <g transform="translate(60, 195)">
-                                    <circle cx="0" cy="0" r="28" fill="#080c14" stroke="var(--accent-blue)" stroke-width="2.5" filter="drop-shadow(0 0 10px var(--accent-blue))"/>
-                                    <circle cx="0" cy="0" r="10" fill="var(--accent-blue)" style="animation: soft-blink 2s infinite;"/>
-                                    <text x="0" y="-38" fill="var(--accent-blue)" font-family="monospace" font-size="10" font-weight="extrabold" text-anchor="middle">1. Git Push</text>
-                                </g>
-                                
-                                <!-- Step 2: NStack Core Node -->
-                                <g transform="translate(175, 140)">
-                                    <circle cx="0" cy="0" r="32" fill="#080c14" stroke="var(--accent-rose)" stroke-width="3" filter="drop-shadow(0 0 15px var(--accent-rose))"/>
-                                    <polygon points="0,-12 11,6 -11,6" fill="var(--accent-rose)" style="animation: heat-pulse 1.5s infinite;"/>
-                                    <text x="0" y="-42" fill="var(--accent-rose)" font-family="monospace" font-size="10" font-weight="extrabold" text-anchor="middle">2. NStack Linter</text>
-                                </g>
-                                
-                                <!-- Step 3: LLMWiki Node -->
-                                <g transform="translate(290, 195)">
-                                    <circle cx="0" cy="0" r="28" fill="#080c14" stroke="var(--accent-emerald)" stroke-width="2.5" filter="drop-shadow(0 0 10px var(--accent-emerald))"/>
-                                    <rect x="-8" y="-8" width="16" height="16" rx="3" fill="var(--accent-emerald)" style="animation: scale-pulse 2s infinite;"/>
-                                    <text x="0" y="-38" fill="var(--accent-emerald)" font-family="monospace" font-size="10" font-weight="extrabold" text-anchor="middle">3. LLMWiki RAG</text>
-                                </g>
-                                
-                                <text x="175" y="260" fill="rgba(255,255,255,0.3)" font-family="Outfit" font-size="10" font-weight="bold" text-anchor="middle" letter-spacing="0.05em">E2E KNOWLEDGE PIPELINE FLOW</text>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            🛡️ 에이전트 하네스 통제와 RAG 다이어트의 융합
-                        </h3>
-                        
-                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                에이전트가 지정된 가이드라인과 완료 조건 바운더리 내에서만 움직이도록 봉인(Harness)하고,<br>
-                                SwarmVault RAG를 융합하여 비용 극감과 코드 안전성을 동시에 달성합니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong style="color: var(--accent-indigo);">하네스 기반 에이전트 작업 가두기</strong>:<br>
-                                    `order.md`가 쳐 놓은 완료 조건(Criteria) 테두리 내에서만 코드 변형을 수행하도록 제어
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-indigo);">오작동 및 사이드이펙트의 원천 배제</strong>:<br>
-                                    엉뚱한 모듈을 임의 수정하는 폭주 현상을 하네스 쉴드로 100% 물리 차단
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-indigo);">인프라 비용 95% 이상 극적 감축</strong>:<br>
-                                    SwarmVault가 엄선해 주입한 경량 지식 조각만을 활용함으로써 토큰 세이빙 시너지 창출
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-                
-                <aside class="notes">
-                    "NStack이 제공하는 궁극의 해결책은 'Harness Engineering'과 'Token Optimization'의 결합입니다. AI 에이전트가 `order.md`라는 명확한 하네스 테두리 안에서만 작동하도록 제어하는 동시에, SwarmVault RAG가 고밀도 지식만을 엄선 주입하여 전체 구조 분석에 낭비되는 토큰 소모를 기계적으로 차단합니다. 이로 인해 에이전트의 오작동율이 0%로 수렴하게 됩니다."
-                </aside>
-            </section>
+  <div class="slide-counter">SLIDE 11 / 28</div>
+  <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
+
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    해결책 2: Harness & Token 최적화의 결합 아키텍처
+  </h2>
+
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 340px;
+          height: 340px;
+          background: radial-gradient(
+            circle,
+            rgba(99, 102, 241, 0.15) 0%,
+            rgba(99, 102, 241, 0) 70%
+          );
+          filter: blur(55px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+
+      <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35)">
+        <svg viewBox="0 0 350 350" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="var(--accent-blue)" stop-opacity="0.8" />
+              <stop offset="50%" stop-color="var(--accent-rose)" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="var(--accent-emerald)" stop-opacity="0.8" />
+            </linearGradient>
+            <radialGradient id="glowG" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+              <stop offset="100%" stop-color="var(--accent-blue)" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <!-- 3D Connection Pipe -->
+          <path
+            d="M 60 195 Q 175 110 290 195"
+            fill="none"
+            stroke="url(#pipeGrad)"
+            stroke-width="8"
+            stroke-linecap="round"
+            filter="drop-shadow(0 0 12px var(--accent-indigo))"
+            opacity="0.3"
+          />
+          <path
+            d="M 60 195 Q 175 110 290 195"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-dasharray="8 12"
+            style="animation: rotate-slow 25s linear infinite"
+          />
+
+          <!-- Flowing pulses along the pipe -->
+          <circle cx="0" cy="0" r="6" fill="url(#glowG)">
+            <animateMotion
+              path="M 60 195 Q 175 110 290 195"
+              dur="3s"
+              repeatCount="indefinite"
+              rotate="auto"
+            />
+          </circle>
+          <circle cx="0" cy="0" r="4" fill="#ffffff" style="filter: drop-shadow(0 0 5px #ffffff)">
+            <animateMotion
+              path="M 60 195 Q 175 110 290 195"
+              dur="3s"
+              begin="1.5s"
+              repeatCount="indefinite"
+              rotate="auto"
+            />
+          </circle>
+
+          <!-- Step 1: Git Node -->
+          <g transform="translate(60, 195)">
+            <circle
+              cx="0"
+              cy="0"
+              r="28"
+              fill="#080c14"
+              stroke="var(--accent-blue)"
+              stroke-width="2.5"
+              filter="drop-shadow(0 0 10px var(--accent-blue))"
+            />
+            <circle
+              cx="0"
+              cy="0"
+              r="10"
+              fill="var(--accent-blue)"
+              style="animation: soft-blink 2s infinite"
+            />
+            <text
+              x="0"
+              y="-38"
+              fill="var(--accent-blue)"
+              font-family="monospace"
+              font-size="10"
+              font-weight="extrabold"
+              text-anchor="middle"
+            >
+              1. Git Push
+            </text>
+          </g>
+
+          <!-- Step 2: NStack Core Node -->
+          <g transform="translate(175, 140)">
+            <circle
+              cx="0"
+              cy="0"
+              r="32"
+              fill="#080c14"
+              stroke="var(--accent-rose)"
+              stroke-width="3"
+              filter="drop-shadow(0 0 15px var(--accent-rose))"
+            />
+            <polygon
+              points="0,-12 11,6 -11,6"
+              fill="var(--accent-rose)"
+              style="animation: heat-pulse 1.5s infinite"
+            />
+            <text
+              x="0"
+              y="-42"
+              fill="var(--accent-rose)"
+              font-family="monospace"
+              font-size="10"
+              font-weight="extrabold"
+              text-anchor="middle"
+            >
+              2. NStack Linter
+            </text>
+          </g>
+
+          <!-- Step 3: LLMWiki Node -->
+          <g transform="translate(290, 195)">
+            <circle
+              cx="0"
+              cy="0"
+              r="28"
+              fill="#080c14"
+              stroke="var(--accent-emerald)"
+              stroke-width="2.5"
+              filter="drop-shadow(0 0 10px var(--accent-emerald))"
+            />
+            <rect
+              x="-8"
+              y="-8"
+              width="16"
+              height="16"
+              rx="3"
+              fill="var(--accent-emerald)"
+              style="animation: scale-pulse 2s infinite"
+            />
+            <text
+              x="0"
+              y="-38"
+              fill="var(--accent-emerald)"
+              font-family="monospace"
+              font-size="10"
+              font-weight="extrabold"
+              text-anchor="middle"
+            >
+              3. LLMWiki RAG
+            </text>
+          </g>
+
+          <text
+            x="175"
+            y="260"
+            fill="rgba(255,255,255,0.3)"
+            font-family="Outfit"
+            font-size="10"
+            font-weight="bold"
+            text-anchor="middle"
+            letter-spacing="0.05em"
+          >
+            E2E KNOWLEDGE PIPELINE FLOW
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        🛡️ 에이전트 하네스 통제와 RAG 다이어트의 융합
+      </h3>
+
+      <div
+        style="
+          font-size: 0.85vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          에이전트가 지정된 가이드라인과 완료 조건 바운더리 내에서만 움직이도록
+          봉인(Harness)하고,<br />
+          SwarmVault RAG를 융합하여 비용 극감과 코드 안전성을 동시에 달성합니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong style="color: var(--accent-indigo)">하네스 기반 에이전트 작업 가두기</strong
+            >:<br />
+            `order.md`가 쳐 놓은 완료 조건(Criteria) 테두리 내에서만 코드 변형을 수행하도록 제어
+          </li>
+          <li>
+            <strong style="color: var(--accent-indigo)">오작동 및 사이드이펙트의 원천 배제</strong
+            >:<br />
+            엉뚱한 모듈을 임의 수정하는 폭주 현상을 하네스 쉴드로 100% 물리 차단
+          </li>
+          <li>
+            <strong style="color: var(--accent-indigo)">인프라 비용 95% 이상 극적 감축</strong
+            >:<br />
+            SwarmVault가 엄선해 주입한 경량 지식 조각만을 활용함으로써 토큰 세이빙 시너지 창출
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+
+  <aside class="notes">
+    "NStack이 제공하는 궁극의 해결책은 'Harness Engineering'과 'Token Optimization'의 결합입니다. AI
+    에이전트가 `order.md`라는 명확한 하네스 테두리 안에서만 작동하도록 제어하는 동시에, SwarmVault
+    RAG가 고밀도 지식만을 엄선 주입하여 전체 구조 분석에 낭비되는 토큰 소모를 기계적으로 차단합니다.
+    이로 인해 에이전트의 오작동율이 0%로 수렴하게 됩니다."
+  </aside>
+</section>

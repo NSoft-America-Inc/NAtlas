@@ -1,84 +1,313 @@
 <section>
-                <div class="slide-counter">SLIDE 01 / 28</div>
-                <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                        <div style="position: absolute; width: 320px; height: 320px; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(99,102,241,0) 70%); filter: blur(45px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
-                            <svg viewBox="0 0 350 350" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <radialGradient id="titleGlow1" cx="50%" cy="50%" r="50%">
-                                        <stop offset="0%" stop-color="#6366f1" stop-opacity="0.45"/>
-                                        <stop offset="60%" stop-color="#0ea5e9" stop-opacity="0.15"/>
-                                        <stop offset="100%" stop-color="#030408" stop-opacity="0"/>
-                                    </radialGradient>
-                                    <linearGradient id="orbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#6366f1"/>
-                                        <stop offset="50%" stop-color="#a855f7"/>
-                                        <stop offset="100%" stop-color="#0ea5e9"/>
-                                    </linearGradient>
-                                </defs>
-                                <!-- Outer glowing aura -->
-                                <circle cx="175" cy="175" r="140" fill="url(#titleGlow1)" opacity="0.9"/>
-                                
-                                <!-- Multiple layered dynamic rotating orbit paths (3D perspective illusion) -->
-                                <ellipse cx="175" cy="175" rx="130" ry="45" fill="none" stroke="url(#orbitGrad)" stroke-width="1.5" stroke-dasharray="6 8" opacity="0.4" style="transform-origin: 175px 175px; transform: rotate(-30deg); animation: rotate-slow 25s linear infinite;"/>
-                                <ellipse cx="175" cy="175" rx="110" ry="35" fill="none" stroke="var(--accent-blue)" stroke-width="1.2" stroke-dasharray="4 6" opacity="0.6" style="transform-origin: 175px 175px; transform: rotate(45deg); animation: rotate-slow 15s linear reverse infinite;"/>
-                                <ellipse cx="175" cy="175" rx="80" ry="25" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5" opacity="0.5" style="transform-origin: 175px 175px; transform: rotate(15deg); animation: rotate-slow 10s linear infinite;"/>
-                                
-                                <!-- Connection Constellation Lines -->
-                                <line x1="175" y1="175" x2="65" y2="110" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-dasharray="2 3"/>
-                                <line x1="175" y1="175" x2="285" y2="240" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-dasharray="2 3"/>
-                                <line x1="175" y1="175" x2="110" y2="260" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-dasharray="2 3"/>
-                                <line x1="175" y1="175" x2="240" y2="90" stroke="rgba(255,255,255,0.18)" stroke-width="1.2" stroke-dasharray="2 3"/>
-                                
-                                <!-- Orbiting Node Spheres -->
-                                <circle cx="65" cy="110" r="8" fill="var(--accent-blue)" filter="drop-shadow(0 0 10px var(--accent-blue))"/>
-                                <circle cx="285" cy="240" r="10" fill="var(--accent-indigo)" filter="drop-shadow(0 0 12px var(--accent-indigo))"/>
-                                <circle cx="110" cy="260" r="7" fill="var(--accent-purple)" filter="drop-shadow(0 0 8px var(--accent-purple))"/>
-                                <circle cx="240" cy="90" r="9" fill="var(--accent-emerald)" filter="drop-shadow(0 0 10px var(--accent-emerald))"/>
-                                
-                                <!-- Core Knowledge Sphere -->
-                                <circle cx="175" cy="175" r="22" fill="#080c14" stroke="url(#orbitGrad)" stroke-width="3" filter="drop-shadow(0 0 18px rgba(99,102,241,0.85))"/>
-                                <circle cx="175" cy="175" r="8" fill="var(--accent-indigo)" filter="drop-shadow(0 0 8px var(--accent-indigo))" style="animation: soft-blink 2s infinite;"/>
-                                
-                                <!-- Text labels for nodes -->
-                                <text x="65" y="93" fill="var(--accent-blue)" font-family="monospace" font-size="9.5" font-weight="bold" text-anchor="middle">Git Raw</text>
-                                <text x="285" y="263" fill="var(--accent-indigo)" font-family="monospace" font-size="9.5" font-weight="bold" text-anchor="middle">NStack L/H</text>
-                                <text x="110" y="282" fill="var(--accent-purple)" font-family="monospace" font-size="9.5" font-weight="bold" text-anchor="middle">SQLite</text>
-                                <text x="240" y="73" fill="var(--accent-emerald)" font-family="monospace" font-size="9.5" font-weight="bold" text-anchor="middle">NAtlas UI</text>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-57 glass-panel" style="padding: 45px 50px; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center;">
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 0.85vw; color: var(--accent-indigo); font-weight: 800; letter-spacing: 0.15em;">NStack ➔ NAtlas E2E 지식 파이프라인</span>
-                        
-                        <h1 style="font-size: 2.1vw !important; line-height: 1.35 !important; font-weight: 800; background: linear-gradient(135deg, #ffffff 40%, var(--accent-indigo) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            AI 에이전트 협업 시대의<br>전사 지식 컴파일러 표준
-                        </h1>
-                        
-                        <p style="font-size: 0.9vw; color: var(--text-muted); line-height: 1.6; max-width: 90%; margin: 0 auto;">
-                            코드의 고속 대량 생성을 넘어,<br>
-                            설계와 구현 맥락을 영구 축적하는 기술 표준 패러다임
-                        </p>
-                        
-                        <div style="font-family: 'Outfit', sans-serif; font-size: 0.75vw; color: rgba(255,255,255,0.25); display: flex; justify-content: center; gap: 15px; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 18px;">
-                            <span>발표자: Antigravity</span>
-                            <span>|</span>
-                            <span>NSoft America, Inc.</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-                
-                <aside class="notes">
-                    "우리는 오늘 AI 에이전트 도입 이후 당면한 '기술 맥락의 소실'과 대화형 코딩의 한계를 어떻게 객관적이고 체계적인 방식으로 해결했는지 소개하려 합니다. 본문에서는 NStack과 NAtlas가 제안하는 기계 가독형 지식 아키텍처의 이론과 설계를 소개하겠습니다."
-                </aside>
-            </section>
+  <div class="slide-counter">SLIDE 01 / 28</div>
+  <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
+
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 320px;
+          height: 320px;
+          background: radial-gradient(
+            circle,
+            rgba(99, 102, 241, 0.15) 0%,
+            rgba(99, 102, 241, 0) 70%
+          );
+          filter: blur(45px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+
+      <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35)">
+        <svg viewBox="0 0 350 350" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="titleGlow1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#6366f1" stop-opacity="0.45" />
+              <stop offset="60%" stop-color="#0ea5e9" stop-opacity="0.15" />
+              <stop offset="100%" stop-color="#030408" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="orbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6366f1" />
+              <stop offset="50%" stop-color="#a855f7" />
+              <stop offset="100%" stop-color="#0ea5e9" />
+            </linearGradient>
+          </defs>
+          <!-- Outer glowing aura -->
+          <circle cx="175" cy="175" r="140" fill="url(#titleGlow1)" opacity="0.9" />
+
+          <!-- Multiple layered dynamic rotating orbit paths (3D perspective illusion) -->
+          <ellipse
+            cx="175"
+            cy="175"
+            rx="130"
+            ry="45"
+            fill="none"
+            stroke="url(#orbitGrad)"
+            stroke-width="1.5"
+            stroke-dasharray="6 8"
+            opacity="0.4"
+            style="
+              transform-origin: 175px 175px;
+              transform: rotate(-30deg);
+              animation: rotate-slow 25s linear infinite;
+            "
+          />
+          <ellipse
+            cx="175"
+            cy="175"
+            rx="110"
+            ry="35"
+            fill="none"
+            stroke="var(--accent-blue)"
+            stroke-width="1.2"
+            stroke-dasharray="4 6"
+            opacity="0.6"
+            style="
+              transform-origin: 175px 175px;
+              transform: rotate(45deg);
+              animation: rotate-slow 15s linear reverse infinite;
+            "
+          />
+          <ellipse
+            cx="175"
+            cy="175"
+            rx="80"
+            ry="25"
+            fill="none"
+            stroke="var(--accent-emerald)"
+            stroke-width="1.5"
+            opacity="0.5"
+            style="
+              transform-origin: 175px 175px;
+              transform: rotate(15deg);
+              animation: rotate-slow 10s linear infinite;
+            "
+          />
+
+          <!-- Connection Constellation Lines -->
+          <line
+            x1="175"
+            y1="175"
+            x2="65"
+            y2="110"
+            stroke="rgba(255,255,255,0.18)"
+            stroke-width="1.2"
+            stroke-dasharray="2 3"
+          />
+          <line
+            x1="175"
+            y1="175"
+            x2="285"
+            y2="240"
+            stroke="rgba(255,255,255,0.18)"
+            stroke-width="1.2"
+            stroke-dasharray="2 3"
+          />
+          <line
+            x1="175"
+            y1="175"
+            x2="110"
+            y2="260"
+            stroke="rgba(255,255,255,0.18)"
+            stroke-width="1.2"
+            stroke-dasharray="2 3"
+          />
+          <line
+            x1="175"
+            y1="175"
+            x2="240"
+            y2="90"
+            stroke="rgba(255,255,255,0.18)"
+            stroke-width="1.2"
+            stroke-dasharray="2 3"
+          />
+
+          <!-- Orbiting Node Spheres -->
+          <circle
+            cx="65"
+            cy="110"
+            r="8"
+            fill="var(--accent-blue)"
+            filter="drop-shadow(0 0 10px var(--accent-blue))"
+          />
+          <circle
+            cx="285"
+            cy="240"
+            r="10"
+            fill="var(--accent-indigo)"
+            filter="drop-shadow(0 0 12px var(--accent-indigo))"
+          />
+          <circle
+            cx="110"
+            cy="260"
+            r="7"
+            fill="var(--accent-purple)"
+            filter="drop-shadow(0 0 8px var(--accent-purple))"
+          />
+          <circle
+            cx="240"
+            cy="90"
+            r="9"
+            fill="var(--accent-emerald)"
+            filter="drop-shadow(0 0 10px var(--accent-emerald))"
+          />
+
+          <!-- Core Knowledge Sphere -->
+          <circle
+            cx="175"
+            cy="175"
+            r="22"
+            fill="#080c14"
+            stroke="url(#orbitGrad)"
+            stroke-width="3"
+            filter="drop-shadow(0 0 18px rgba(99,102,241,0.85))"
+          />
+          <circle
+            cx="175"
+            cy="175"
+            r="8"
+            fill="var(--accent-indigo)"
+            filter="drop-shadow(0 0 8px var(--accent-indigo))"
+            style="animation: soft-blink 2s infinite"
+          />
+
+          <!-- Text labels for nodes -->
+          <text
+            x="65"
+            y="93"
+            fill="var(--accent-blue)"
+            font-family="monospace"
+            font-size="9.5"
+            font-weight="bold"
+            text-anchor="middle"
+          >
+            Git Raw
+          </text>
+          <text
+            x="285"
+            y="263"
+            fill="var(--accent-indigo)"
+            font-family="monospace"
+            font-size="9.5"
+            font-weight="bold"
+            text-anchor="middle"
+          >
+            NStack L/H
+          </text>
+          <text
+            x="110"
+            y="282"
+            fill="var(--accent-purple)"
+            font-family="monospace"
+            font-size="9.5"
+            font-weight="bold"
+            text-anchor="middle"
+          >
+            SQLite
+          </text>
+          <text
+            x="240"
+            y="73"
+            fill="var(--accent-emerald)"
+            font-family="monospace"
+            font-size="9.5"
+            font-weight="bold"
+            text-anchor="middle"
+          >
+            NAtlas UI
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-57 glass-panel"
+      style="
+        padding: 45px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 24px;
+        text-align: center;
+      "
+    >
+      <span
+        style="
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 0.85vw;
+          color: var(--accent-indigo);
+          font-weight: 800;
+          letter-spacing: 0.15em;
+        "
+        >NStack ➔ NAtlas E2E 지식 파이프라인</span
+      >
+
+      <h1
+        style="
+          font-size: 2.1vw !important;
+          line-height: 1.35 !important;
+          font-weight: 800;
+          background: linear-gradient(135deg, #ffffff 40%, var(--accent-indigo) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        "
+      >
+        AI 에이전트 협업 시대의<br />전사 지식 컴파일러 표준
+      </h1>
+
+      <p
+        style="
+          font-size: 0.9vw;
+          color: var(--text-muted);
+          line-height: 1.6;
+          max-width: 90%;
+          margin: 0 auto;
+        "
+      >
+        코드의 고속 대량 생성을 넘어,<br />
+        설계와 구현 맥락을 영구 축적하는 기술 표준 패러다임
+      </p>
+
+      <div
+        style="
+          font-family: 'Outfit', sans-serif;
+          font-size: 0.75vw;
+          color: rgba(255, 255, 255, 0.25);
+          display: flex;
+          justify-content: center;
+          gap: 15px;
+          margin-top: 15px;
+          border-top: 1px solid rgba(255, 255, 255, 0.06);
+          padding-top: 18px;
+        "
+      >
+        <span>발표자: Antigravity</span>
+        <span>|</span>
+        <span>NSoft America, Inc.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+
+  <aside class="notes">
+    "우리는 오늘 AI 에이전트 도입 이후 당면한 '기술 맥락의 소실'과 대화형 코딩의 한계를 어떻게
+    객관적이고 체계적인 방식으로 해결했는지 소개하려 합니다. 본문에서는 NStack과 NAtlas가 제안하는
+    기계 가독형 지식 아키텍처의 이론과 설계를 소개하겠습니다."
+  </aside>
+</section>

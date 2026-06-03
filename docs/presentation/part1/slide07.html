@@ -1,137 +1,461 @@
 <section>
-                <div class="slide-counter">SLIDE 07 / 28</div>
-                <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">안드레 카파시의 통찰: 소스코드와 기계 가독형 지식의 차이</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 6px; position: relative;">
-                        <!-- Glowing aura -->
-                        <div style="position: absolute; width: 250px; height: 250px; background: rgba(99,102,241,0.08); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <!-- Karpathy Tweet Box (Scaled slightly) -->
-                        <div style="width: 100%; background: rgba(9,12,22,0.95); border: 1.5px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 12px 18px; box-shadow: 0 10px 20px rgba(0,0,0,0.6); text-align: left; box-sizing: border-box;">
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <div style="width: 28px; height: 28px; border-radius: 50%; background: #1d9bf0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; color: white;">AK</div>
-                                <div>
-                                    <div style="font-size: 0.75vw; font-weight: 800; color: #ffffff;">Andre Karpathy</div>
-                                    <div style="font-size: 0.55vw; color: #64748b;">@karpathy</div>
-                                </div>
-                            </div>
-                            <p style="font-size: 0.68vw; color: #cbd5e1; line-height: 1.4; margin: 0; font-family: sans-serif;">
-                                "Raw codebase is NOT a great map for LLMs. LLMs need condensed, structured <strong style="color: var(--accent-indigo);">Machine-readable Knowledge</strong>."
-                            </p>
-                        </div>
+  <div class="slide-counter">SLIDE 07 / 28</div>
+  <div class="slide-subtitle">AI 시대의 위기와 지식의 소멸</div>
 
-                        <!-- 1:1 Matching Card 1: Staggered Vertical Unified Layout in SVG -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-start; margin-left: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 84" style="overflow: visible; overflow: visible;">
-                                <g>
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    안드레 카파시의 통찰: 소스코드와 기계 가독형 지식의 차이
+  </h2>
 
-                                    <!-- Source files on left -->
-                                    <g transform="translate(15, 20)">
-                                        <rect x="0" y="0" width="12" height="16" rx="2" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
-                                        <rect x="4" y="6" width="12" height="16" rx="2" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
-                                        <rect x="8" y="12" width="12" height="16" rx="2" fill="rgba(99,102,241,0.1)" stroke="var(--accent-indigo)" stroke-width="1.2"/>
-                                        <text x="-6" y="-5" fill="rgba(255,255,255,0.4)" font-size="5" font-family="'JetBrains Mono'">Files</text>
-                                    </g>
-                                    
-                                    <!-- Funnel cone -->
-                                    <polygon points="65,20 100,20 87,48 78,48" fill="rgba(99,102,241,0.15)" stroke="var(--accent-indigo)" stroke-width="1.5"/>
-                                    
-                                    <!-- Particle beam going left-to-right -->
-                                    <path d="M 38,36 Q 60,25 72,32" fill="none" stroke="var(--accent-indigo)" stroke-width="1.5" stroke-dasharray="2 2" stroke-linecap="round"/>
-                                    
-                                    <!-- Dense Neon Cube on right -->
-                                    <g transform="translate(120, 25)" style="animation: scale-pulse 2s infinite;">
-                                        <rect x="0" y="0" width="22" height="22" rx="4" fill="rgba(99,102,241,0.3)" stroke="#ffffff" stroke-width="1.5" filter="drop-shadow(0 0 8px var(--accent-indigo))"/>
-                                        <text x="11" y="14" fill="#ffffff" font-family="Outfit" font-size="12" font-weight="900" text-anchor="middle">📚</text>
-                                    </g>
-                                    <text x="131" y="58" fill="var(--accent-indigo)" font-family="'JetBrains Mono'" font-size="5" font-weight="bold" text-anchor="middle">CORE MAP</text>
-                                                                </g>
-                                <foreignObject x="5" y="67" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        장황한 레거시 ➔ 고농축 지식 응축
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        position: relative;
+      "
+    >
+      <!-- Glowing aura -->
+      <div
+        style="
+          position: absolute;
+          width: 250px;
+          height: 250px;
+          background: rgba(99, 102, 241, 0.08);
+          filter: blur(95px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
 
-                        <!-- 1:1 Matching Card 2: Staggered Vertical Unified Layout in SVG -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-end; margin-right: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 84" style="overflow: visible; overflow: visible;">
-                                <g>
+      <!-- Karpathy Tweet Box (Scaled slightly) -->
+      <div
+        style="
+          width: 100%;
+          background: rgba(9, 12, 22, 0.95);
+          border: 1.5px solid rgba(255, 255, 255, 0.06);
+          border-radius: 12px;
+          padding: 12px 18px;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+          text-align: left;
+          box-sizing: border-box;
+        "
+      >
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px">
+          <div
+            style="
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+              background: #1d9bf0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 13px;
+              font-weight: bold;
+              color: white;
+            "
+          >
+            AK
+          </div>
+          <div>
+            <div style="font-size: 0.75vw; font-weight: 800; color: #ffffff">Andre Karpathy</div>
+            <div style="font-size: 0.55vw; color: #64748b">@karpathy</div>
+          </div>
+        </div>
+        <p
+          style="
+            font-size: 0.68vw;
+            color: #cbd5e1;
+            line-height: 1.4;
+            margin: 0;
+            font-family: sans-serif;
+          "
+        >
+          "Raw codebase is NOT a great map for LLMs. LLMs need condensed, structured
+          <strong style="color: var(--accent-indigo)">Machine-readable Knowledge</strong>."
+        </p>
+      </div>
 
-                                    <!-- Dual track pipeline -->
-                                    <!-- Source track -->
-                                    <line x1="20" y1="28" x2="140" y2="28" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-                                    <text x="32" y="22" fill="#00f0ff" font-family="'JetBrains Mono'" font-size="5" font-weight="bold">SOURCE</text>
-                                    
-                                    <!-- Wiki track -->
-                                    <line x1="20" y1="52" x2="140" y2="52" stroke="var(--accent-indigo)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-                                    <text x="32" y="47" fill="var(--accent-indigo)" font-family="'JetBrains Mono'" font-size="5" font-weight="bold">LLMWIKI</text>
-                                    
-                                    <!-- Flowing pulses -->
-                                    <circle cx="60" cy="28" r="3" fill="#ffffff" style="filter: drop-shadow(0 0 4px #00f0ff);">
-                                        <animate attributeName="cx" values="20;140" dur="2s" repeatCount="indefinite"/>
-                                    </circle>
-                                    <circle cx="100" cy="52" r="3" fill="#ffffff" style="filter: drop-shadow(0 0 4px var(--accent-indigo));">
-                                        <animate attributeName="cx" values="20;140" dur="2s" begin="0.8s" repeatCount="indefinite"/>
-                                    </circle>
-                                    
-                                    <!-- Sync bridges -->
-                                    <line x1="50" y1="28" x2="50" y2="52" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="2 2"/>
-                                    <line x1="90" y1="28" x2="90" y2="52" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="2 2"/>
-                                    <line x1="130" y1="28" x2="130" y2="52" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="2 2"/>
-                                    
-                                    <circle cx="50" cy="40" r="2" fill="#ffffff"/>
-                                    <circle cx="90" cy="40" r="2" fill="#ffffff"/>
-                                    <circle cx="130" cy="40" r="2" fill="#ffffff"/>
-                                                                </g>
-                                <foreignObject x="5" y="67" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        소스 ↔ 위키 문서의 나란한 실시간 연계
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            📖 안드레 카파시의 LLMWiki 비전과 아카이브 필요성
-                        </h3>
-                        
-                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                테슬라 AI 디렉터이자 OpenAI 창립자인 안드레 카파시는 일찍이<br>
-                                소스코드에만 의존하는 AI 코딩의 물리적 한계를 정면으로 경고한 바 있습니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong style="color: var(--accent-indigo);">기계 가독형 지식(Machine-readable Knowledge)</strong>:<br>
-                                    LLM이 거대한 레거시를 읽는 대신 압축 요약된 아키텍처 맥락을 소화하게 함
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-indigo);">병렬형 기술 위키(LLMWiki) 축적</strong>:<br>
-                                    소스 코드와 나란히 흐르는 전사 지식 3종 아티팩트를 SQLite/Markdown으로 영구 보존
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-indigo);">NStack 구현체의 탄생 근거</strong>:<br>
-                                    카파시의 지식 맵 철학을 전사 Git 훅과 RAG 시스템에 정식 탑재하여 실현화
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-                
-                <aside class="notes">
-                    "안드레 카파시는 일찍이 소스코드에만 의존하는 AI 코딩의 구조적 한계를 지적했습니다. LLM은 수천 줄의 날것 그대로의 코드를 통째로 읽어 분석하는 것보다, 코드의 역사, 의도, 트레이드오프를 압축 요약해놓은 'LLM 전용 기술 마크다운 위키(LLMWiki)'를 코드와 병렬로 영구 축적하는 것이 에이전트 효율성 제고에 필수적이라고 분석했습니다."
-                </aside>
-            </section>
+      <!-- 1:1 Matching Card 1: Staggered Vertical Unified Layout in SVG -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-start;
+          margin-left: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 84"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Source files on left -->
+            <g transform="translate(15, 20)">
+              <rect
+                x="0"
+                y="0"
+                width="12"
+                height="16"
+                rx="2"
+                fill="none"
+                stroke="rgba(255,255,255,0.2)"
+                stroke-width="1.2"
+              />
+              <rect
+                x="4"
+                y="6"
+                width="12"
+                height="16"
+                rx="2"
+                fill="none"
+                stroke="rgba(255,255,255,0.15)"
+                stroke-width="1.2"
+              />
+              <rect
+                x="8"
+                y="12"
+                width="12"
+                height="16"
+                rx="2"
+                fill="rgba(99,102,241,0.1)"
+                stroke="var(--accent-indigo)"
+                stroke-width="1.2"
+              />
+              <text
+                x="-6"
+                y="-5"
+                fill="rgba(255,255,255,0.4)"
+                font-size="5"
+                font-family="'JetBrains Mono'"
+              >
+                Files
+              </text>
+            </g>
+
+            <!-- Funnel cone -->
+            <polygon
+              points="65,20 100,20 87,48 78,48"
+              fill="rgba(99,102,241,0.15)"
+              stroke="var(--accent-indigo)"
+              stroke-width="1.5"
+            />
+
+            <!-- Particle beam going left-to-right -->
+            <path
+              d="M 38,36 Q 60,25 72,32"
+              fill="none"
+              stroke="var(--accent-indigo)"
+              stroke-width="1.5"
+              stroke-dasharray="2 2"
+              stroke-linecap="round"
+            />
+
+            <!-- Dense Neon Cube on right -->
+            <g transform="translate(120, 25)" style="animation: scale-pulse 2s infinite">
+              <rect
+                x="0"
+                y="0"
+                width="22"
+                height="22"
+                rx="4"
+                fill="rgba(99,102,241,0.3)"
+                stroke="#ffffff"
+                stroke-width="1.5"
+                filter="drop-shadow(0 0 8px var(--accent-indigo))"
+              />
+              <text
+                x="11"
+                y="14"
+                fill="#ffffff"
+                font-family="Outfit"
+                font-size="12"
+                font-weight="900"
+                text-anchor="middle"
+              >
+                📚
+              </text>
+            </g>
+            <text
+              x="131"
+              y="58"
+              fill="var(--accent-indigo)"
+              font-family="'JetBrains Mono'"
+              font-size="5"
+              font-weight="bold"
+              text-anchor="middle"
+            >
+              CORE MAP
+            </text>
+          </g>
+          <foreignObject x="5" y="67" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              장황한 레거시 ➔ 고농축 지식 응축
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
+
+      <!-- 1:1 Matching Card 2: Staggered Vertical Unified Layout in SVG -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-end;
+          margin-right: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 84"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Dual track pipeline -->
+            <!-- Source track -->
+            <line
+              x1="20"
+              y1="28"
+              x2="140"
+              y2="28"
+              stroke="#00f0ff"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.6"
+            />
+            <text
+              x="32"
+              y="22"
+              fill="#00f0ff"
+              font-family="'JetBrains Mono'"
+              font-size="5"
+              font-weight="bold"
+            >
+              SOURCE
+            </text>
+
+            <!-- Wiki track -->
+            <line
+              x1="20"
+              y1="52"
+              x2="140"
+              y2="52"
+              stroke="var(--accent-indigo)"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.6"
+            />
+            <text
+              x="32"
+              y="47"
+              fill="var(--accent-indigo)"
+              font-family="'JetBrains Mono'"
+              font-size="5"
+              font-weight="bold"
+            >
+              LLMWIKI
+            </text>
+
+            <!-- Flowing pulses -->
+            <circle
+              cx="60"
+              cy="28"
+              r="3"
+              fill="#ffffff"
+              style="filter: drop-shadow(0 0 4px #00f0ff)"
+            >
+              <animate attributeName="cx" values="20;140" dur="2s" repeatCount="indefinite" />
+            </circle>
+            <circle
+              cx="100"
+              cy="52"
+              r="3"
+              fill="#ffffff"
+              style="filter: drop-shadow(0 0 4px var(--accent-indigo))"
+            >
+              <animate
+                attributeName="cx"
+                values="20;140"
+                dur="2s"
+                begin="0.8s"
+                repeatCount="indefinite"
+              />
+            </circle>
+
+            <!-- Sync bridges -->
+            <line
+              x1="50"
+              y1="28"
+              x2="50"
+              y2="52"
+              stroke="rgba(255,255,255,0.2)"
+              stroke-width="1"
+              stroke-dasharray="2 2"
+            />
+            <line
+              x1="90"
+              y1="28"
+              x2="90"
+              y2="52"
+              stroke="rgba(255,255,255,0.2)"
+              stroke-width="1"
+              stroke-dasharray="2 2"
+            />
+            <line
+              x1="130"
+              y1="28"
+              x2="130"
+              y2="52"
+              stroke="rgba(255,255,255,0.2)"
+              stroke-width="1"
+              stroke-dasharray="2 2"
+            />
+
+            <circle cx="50" cy="40" r="2" fill="#ffffff" />
+            <circle cx="90" cy="40" r="2" fill="#ffffff" />
+            <circle cx="130" cy="40" r="2" fill="#ffffff" />
+          </g>
+          <foreignObject x="5" y="67" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              소스 ↔ 위키 문서의 나란한 실시간 연계
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        📖 안드레 카파시의 LLMWiki 비전과 아카이브 필요성
+      </h3>
+
+      <div
+        style="
+          font-size: 0.85vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          테슬라 AI 디렉터이자 OpenAI 창립자인 안드레 카파시는 일찍이<br />
+          소스코드에만 의존하는 AI 코딩의 물리적 한계를 정면으로 경고한 바 있습니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong style="color: var(--accent-indigo)"
+              >기계 가독형 지식(Machine-readable Knowledge)</strong
+            >:<br />
+            LLM이 거대한 레거시를 읽는 대신 압축 요약된 아키텍처 맥락을 소화하게 함
+          </li>
+          <li>
+            <strong style="color: var(--accent-indigo)">병렬형 기술 위키(LLMWiki) 축적</strong
+            >:<br />
+            소스 코드와 나란히 흐르는 전사 지식 3종 아티팩트를 SQLite/Markdown으로 영구 보존
+          </li>
+          <li>
+            <strong style="color: var(--accent-indigo)">NStack 구현체의 탄생 근거</strong>:<br />
+            카파시의 지식 맵 철학을 전사 Git 훅과 RAG 시스템에 정식 탑재하여 실현화
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 소개</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+
+  <aside class="notes">
+    "안드레 카파시는 일찍이 소스코드에만 의존하는 AI 코딩의 구조적 한계를 지적했습니다. LLM은 수천
+    줄의 날것 그대로의 코드를 통째로 읽어 분석하는 것보다, 코드의 역사, 의도, 트레이드오프를 압축
+    요약해놓은 'LLM 전용 기술 마크다운 위키(LLMWiki)'를 코드와 병렬로 영구 축적하는 것이 에이전트
+    효율성 제고에 필수적이라고 분석했습니다."
+  </aside>
+</section>

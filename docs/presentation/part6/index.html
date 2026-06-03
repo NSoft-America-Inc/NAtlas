@@ -1,440 +1,520 @@
 <!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>NStack ➔ NAtlas E2E 지식 파이프라인</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
     <!-- Reveal.js CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
-    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css"
+    />
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
+      :root {
+        --background-color: #030408;
+        --accent-blue: #0ea5e9;
+        --accent-indigo: #6366f1;
+        --accent-purple: #a855f7;
+        --accent-emerald: #10b981;
+        --accent-rose: #f43f5e;
+        --accent-amber: #f59e0b;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --glass-bg: rgba(9, 12, 22, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.05);
+        --glass-border-glow: rgba(99, 102, 241, 0.1);
+      }
 
+      body {
+        background-color: var(--background-color) !important;
+        background-image: radial-gradient(
+          rgba(99, 102, 241, 0.04) 1.5px,
+          transparent 1.5px
+        ) !important;
+        background-size: 24px 24px !important;
+        font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
+        color: var(--text-main) !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+      }
 
-        :root {
-            --background-color: #030408;
-            --accent-blue: #0ea5e9;
-            --accent-indigo: #6366f1;
-            --accent-purple: #a855f7;
-            --accent-emerald: #10b981;
-            --accent-rose: #f43f5e;
-            --accent-amber: #f59e0b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --glass-bg: rgba(9, 12, 22, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --glass-border-glow: rgba(99, 102, 241, 0.1);
-        }
-        
-        body {
-            background-color: var(--background-color) !important;
-            background-image: radial-gradient(rgba(99, 102, 241, 0.04) 1.5px, transparent 1.5px) !important;
-            background-size: 24px 24px !important;
-            font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
-            color: var(--text-main) !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-        }
-        
-        .reveal {
-            font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
-            color: var(--text-main) !important;
-        }
-        
-        .reveal .slides {
-            width: 100vw !important;
-            height: 100vh !important;
-            inset: 0 !important;
-            margin: 0 !important;
-            transform: none !important;
-        }
-        
-        .reveal section {
-            width: 100% !important;
-            height: 100% !important;
-            padding: 0 !important;
-            box-sizing: border-box;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-        }
-        
-        .slide-counter {
-            position: absolute;
-            top: 30px;
-            right: 40px;
-            font-size: 0.8vw;
-            color: rgba(255, 255, 255, 0.25);
-            font-weight: 800;
-            letter-spacing: 0.05em;
-            z-index: 50;
-        }
-        
-        .slide-subtitle {
-            position: absolute;
-            top: 30px;
-            left: 40px;
-            font-size: 0.8vw;
-            color: var(--accent-indigo);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            font-weight: 800;
-            z-index: 50;
-        }
-        
-        .reveal h1, .reveal h2, .reveal h3 {
-            font-weight: 800 !important;
-            text-transform: none !important;
-            margin: 0;
-            padding: 0;
-            word-break: keep-all !important;
-            white-space: normal !important;
-        }
-        
-        .reveal h2 {
-            font-size: 2.0vw !important;
-            line-height: 1.3 !important;
-            color: #ffffff;
-            letter-spacing: -0.02em;
-        }
-        
-        .reveal p, .reveal li {
-            font-family: 'Inter', 'Noto Sans KR', sans-serif !important;
-            color: #cbd5e1 !important;
-            line-height: 1.7 !important;
-            word-break: keep-all !important;
-            white-space: normal !important;
-        }
-        
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1.5px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 45px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            box-sizing: border-box;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center;    
-            text-align: center;
-        }
-        
-        .glass-panel:hover {
-            border-color: rgba(99, 102, 241, 0.25);
-            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.05);
-        }
+      .reveal {
+        font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
+        color: var(--text-main) !important;
+      }
 
-        .split-container-2col {
-            width: 92%;
-            height: 70%;
-            display: flex;
-            gap: 75px; 
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-            margin-top: 65px;
-            margin-bottom: 10px;
-        }
-        
-        .col-40 { width: 40%; flex-shrink: 0; }
-        .col-43 { width: 43%; flex-shrink: 0; }
-        .col-45 { width: 45%; flex-shrink: 0; }
-        .col-50 { width: 50%; flex-shrink: 0; }
-        .col-55 { width: 55%; }
-        .col-57 { width: 57%; }
-        .col-60 { width: 60%; }
-        
-        .perspective-wrapper {
-            perspective: 1200px;
-            width: 92%;
-            height: 68%;
-            display: flex;
-            gap: 30px;
-            align-items: center;
-            box-sizing: border-box;
-            margin-top: 65px;
-            margin-bottom: 10px;
-        }
-        
-        .three-d-card {
-            flex: 1;
-            height: 100%;
-            background: rgba(8, 11, 20, 0.7);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-radius: 24px;
-            padding: 40px 35px 85px 35px; 
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center;    
-            gap: 25px;
-            position: relative;     
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            transform-style: preserve-3d;
-        }
+      .reveal .slides {
+        width: 100vw !important;
+        height: 100vh !important;
+        inset: 0 !important;
+        margin: 0 !important;
+        transform: none !important;
+      }
 
-        .card-bottom-graphic {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%) translateZ(15px);
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 12px;
-            pointer-events: none;
-            width: calc(100% - 70px);
-            box-sizing: border-box;
-        }
-        
-        .pros-card {
-            border: 1.5px solid rgba(14, 165, 233, 0.15);
-            transform: rotateY(6deg) translateZ(5px);
-            box-shadow: -15px 20px 40px rgba(0,0,0,0.6), -5px 0 20px rgba(14, 165, 233, 0.02);
-        }
-        
-        .cons-card {
-            border: 1.5px solid rgba(244, 63, 94, 0.15);
-            transform: rotateY(-6deg) translateZ(5px);
-            box-shadow: 15px 20px 40px rgba(0,0,0,0.6), 5px 0 20px rgba(244, 63, 94, 0.02);
-        }
-        
-        .pros-card:hover {
-            transform: rotateY(0deg) scale(1.02) translateZ(25px) !important;
-            border-color: rgba(14, 165, 233, 0.6) !important;
-            box-shadow: 0 25px 50px rgba(14, 165, 233, 0.15) !important;
-        }
-        
-        .cons-card:hover {
-            transform: rotateY(0deg) scale(1.02) translateZ(25px) !important;
-            border-color: rgba(244, 63, 94, 0.6) !important;
-            box-shadow: 0 25px 50px rgba(244, 63, 94, 0.15) !important;
-        }
-        
-        .thread-canvas-container {
-            width: 92%;
-            height: 70%;
-            display: flex;
-            gap: 75px;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-            margin-top: 65px;
-            margin-bottom: 10px;
-        }
+      .reveal section {
+        width: 100% !important;
+        height: 100% !important;
+        padding: 0 !important;
+        box-sizing: border-box;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+      }
 
-        .vscode-sim-box {
-            height: 100%;
-            background: #090c12;
-            border: 1.5px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.75);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        @keyframes text-shine {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        @keyframes soft-blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-        @keyframes scale-pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-        @keyframes rotate-slow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes float-slow {
-            0%, 100% { transform: translateY(0px) rotate(var(--rot, -1.5deg)); }
-            50% { transform: translateY(-8px) rotate(var(--rot, -1.5deg)); }
-        }
-        @keyframes heat-pulse {
-            0%, 100% { filter: drop-shadow(0 0 5px rgba(244,63,94,0.3)); }
-            50% { filter: drop-shadow(0 0 20px rgba(244,63,94,0.8)); }
-        }
-        @keyframes laser-glow {
-            0%, 100% { stroke-opacity: 0.3; stroke-width: 1.5; }
-            50% { stroke-opacity: 0.9; stroke-width: 3.5; }
-        }
-        @keyframes spin-gear {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes spin-gear-reverse {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
-        }
-        
-        .slide-master-footer {
-            width: 90%;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding: 15px 0 25px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-        
-        .slide-master-footer span {
-            font-size: 0.75vw;
-            color: rgba(255,255,255,0.2);
-        }
-        
-        .reveal .controls {
-            z-index: 99999 !important;
-            pointer-events: auto !important;
-            color: var(--accent-indigo) !important;
-        }
-        
-        .neon-nav-bar {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(6, 8, 15, 0.75);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1.5px solid rgba(99, 102, 241, 0.25);
-            border-radius: 50px;
-            padding: 6px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(99, 102, 241, 0.1);
-            z-index: 100000;
-            pointer-events: auto;
-            user-select: none;
-        }
-        
-        .neon-nav-btn {
-            background: transparent;
-            border: none;
-            color: #ffffff;
-            font-family: 'Outfit', sans-serif;
-            font-weight: 800;
-            font-size: 0.85vw;
-            letter-spacing: 0.08em;
-            padding: 6px 14px;
-            border-radius: 30px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid transparent;
-        }
-        
-        .neon-nav-btn-prev:hover {
-            background: rgba(244, 63, 94, 0.12);
-            border-color: rgba(244, 63, 94, 0.4);
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
-            transform: scale(1.04);
-        }
-        
-        .neon-nav-btn-next:hover {
-            background: rgba(16, 185, 129, 0.12);
-            border-color: rgba(16, 185, 129, 0.4);
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
-            transform: scale(1.04);
-        }
-        
-        .neon-nav-btn-toc:hover {
-            background: rgba(99, 102, 241, 0.12);
-            border-color: rgba(99, 102, 241, 0.4);
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
-            transform: scale(1.04);
-        }
-        
-        .neon-nav-btn:active {
-            transform: scale(0.96);
-        }
-        
-        .neon-nav-indicator {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85vw;
-            color: var(--accent-indigo);
-            font-weight: 800;
-            min-width: 80px;
-            text-align: center;
-            letter-spacing: 0.05em;
-            border-left: 1px solid rgba(255,255,255,0.06);
-            border-right: 1px solid rgba(255,255,255,0.06);
-            padding: 0 12px;
-        }
-    
-        /* 좌측 하단 TOC 미니 버튼 스타일 */
-        .neon-nav-btn-toc-mini {
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            color: rgba(255, 255, 255, 0.7);
-            font-family: 'Outfit', sans-serif;
-            font-weight: 700;
-            font-size: 0.6vw !important;
-            letter-spacing: 0.05em;
-            padding: 3px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            display: inline-flex;
-            align-items: center;
-            line-height: 1;
-            z-index: 100000;
-            pointer-events: auto;
-        }
-        
-        .neon-nav-btn-toc-mini:hover {
-            background: rgba(99, 102, 241, 0.25);
-            border-color: rgba(99, 102, 241, 0.7);
-            color: #ffffff;
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
-            transform: translateY(-1px);
-        }
+      .slide-counter {
+        position: absolute;
+        top: 30px;
+        right: 40px;
+        font-size: 0.8vw;
+        color: rgba(255, 255, 255, 0.25);
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        z-index: 50;
+      }
 
-    
+      .slide-subtitle {
+        position: absolute;
+        top: 30px;
+        left: 40px;
+        font-size: 0.8vw;
+        color: var(--accent-indigo);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-weight: 800;
+        z-index: 50;
+      }
+
+      .reveal h1,
+      .reveal h2,
+      .reveal h3 {
+        font-weight: 800 !important;
+        text-transform: none !important;
+        margin: 0;
+        padding: 0;
+        word-break: keep-all !important;
+        white-space: normal !important;
+      }
+
+      .reveal h2 {
+        font-size: 2vw !important;
+        line-height: 1.3 !important;
+        color: #ffffff;
+        letter-spacing: -0.02em;
+      }
+
+      .reveal p,
+      .reveal li {
+        font-family: 'Inter', 'Noto Sans KR', sans-serif !important;
+        color: #cbd5e1 !important;
+        line-height: 1.7 !important;
+        word-break: keep-all !important;
+        white-space: normal !important;
+      }
+
+      .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border: 1.5px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 45px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        box-sizing: border-box;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .glass-panel:hover {
+        border-color: rgba(99, 102, 241, 0.25);
+        box-shadow: 0 30px 60px rgba(99, 102, 241, 0.05);
+      }
+
+      .split-container-2col {
+        width: 92%;
+        height: 70%;
+        display: flex;
+        gap: 75px;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        margin-top: 65px;
+        margin-bottom: 10px;
+      }
+
+      .col-40 {
+        width: 40%;
+        flex-shrink: 0;
+      }
+      .col-43 {
+        width: 43%;
+        flex-shrink: 0;
+      }
+      .col-45 {
+        width: 45%;
+        flex-shrink: 0;
+      }
+      .col-50 {
+        width: 50%;
+        flex-shrink: 0;
+      }
+      .col-55 {
+        width: 55%;
+      }
+      .col-57 {
+        width: 57%;
+      }
+      .col-60 {
+        width: 60%;
+      }
+
+      .perspective-wrapper {
+        perspective: 1200px;
+        width: 92%;
+        height: 68%;
+        display: flex;
+        gap: 30px;
+        align-items: center;
+        box-sizing: border-box;
+        margin-top: 65px;
+        margin-bottom: 10px;
+      }
+
+      .three-d-card {
+        flex: 1;
+        height: 100%;
+        background: rgba(8, 11, 20, 0.7);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
+        border-radius: 24px;
+        padding: 40px 35px 85px 35px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 25px;
+        position: relative;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        transform-style: preserve-3d;
+      }
+
+      .card-bottom-graphic {
+        position: absolute;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateZ(15px);
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 12px;
+        pointer-events: none;
+        width: calc(100% - 70px);
+        box-sizing: border-box;
+      }
+
+      .pros-card {
+        border: 1.5px solid rgba(14, 165, 233, 0.15);
+        transform: rotateY(6deg) translateZ(5px);
+        box-shadow:
+          -15px 20px 40px rgba(0, 0, 0, 0.6),
+          -5px 0 20px rgba(14, 165, 233, 0.02);
+      }
+
+      .cons-card {
+        border: 1.5px solid rgba(244, 63, 94, 0.15);
+        transform: rotateY(-6deg) translateZ(5px);
+        box-shadow:
+          15px 20px 40px rgba(0, 0, 0, 0.6),
+          5px 0 20px rgba(244, 63, 94, 0.02);
+      }
+
+      .pros-card:hover {
+        transform: rotateY(0deg) scale(1.02) translateZ(25px) !important;
+        border-color: rgba(14, 165, 233, 0.6) !important;
+        box-shadow: 0 25px 50px rgba(14, 165, 233, 0.15) !important;
+      }
+
+      .cons-card:hover {
+        transform: rotateY(0deg) scale(1.02) translateZ(25px) !important;
+        border-color: rgba(244, 63, 94, 0.6) !important;
+        box-shadow: 0 25px 50px rgba(244, 63, 94, 0.15) !important;
+      }
+
+      .thread-canvas-container {
+        width: 92%;
+        height: 70%;
+        display: flex;
+        gap: 75px;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        margin-top: 65px;
+        margin-bottom: 10px;
+      }
+
+      .vscode-sim-box {
+        height: 100%;
+        background: #090c12;
+        border: 1.5px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      @keyframes text-shine {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      @keyframes soft-blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+      @keyframes scale-pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+      }
+      @keyframes rotate-slow {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes float-slow {
+        0%,
+        100% {
+          transform: translateY(0px) rotate(var(--rot, -1.5deg));
+        }
+        50% {
+          transform: translateY(-8px) rotate(var(--rot, -1.5deg));
+        }
+      }
+      @keyframes heat-pulse {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 5px rgba(244, 63, 94, 0.3));
+        }
+        50% {
+          filter: drop-shadow(0 0 20px rgba(244, 63, 94, 0.8));
+        }
+      }
+      @keyframes laser-glow {
+        0%,
+        100% {
+          stroke-opacity: 0.3;
+          stroke-width: 1.5;
+        }
+        50% {
+          stroke-opacity: 0.9;
+          stroke-width: 3.5;
+        }
+      }
+      @keyframes spin-gear {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes spin-gear-reverse {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(-360deg);
+        }
+      }
+
+      .slide-master-footer {
+        width: 90%;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 15px 0 25px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+      }
+
+      .slide-master-footer span {
+        font-size: 0.75vw;
+        color: rgba(255, 255, 255, 0.2);
+      }
+
+      .reveal .controls {
+        z-index: 99999 !important;
+        pointer-events: auto !important;
+        color: var(--accent-indigo) !important;
+      }
+
+      .neon-nav-bar {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(6, 8, 15, 0.75);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1.5px solid rgba(99, 102, 241, 0.25);
+        border-radius: 50px;
+        padding: 6px 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow:
+          0 15px 35px rgba(0, 0, 0, 0.7),
+          0 0 25px rgba(99, 102, 241, 0.1);
+        z-index: 100000;
+        pointer-events: auto;
+        user-select: none;
+      }
+
+      .neon-nav-btn {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 0.85vw;
+        letter-spacing: 0.08em;
+        padding: 6px 14px;
+        border-radius: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid transparent;
+      }
+
+      .neon-nav-btn-prev:hover {
+        background: rgba(244, 63, 94, 0.12);
+        border-color: rgba(244, 63, 94, 0.4);
+        color: #ffffff;
+        box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
+        transform: scale(1.04);
+      }
+
+      .neon-nav-btn-next:hover {
+        background: rgba(16, 185, 129, 0.12);
+        border-color: rgba(16, 185, 129, 0.4);
+        color: #ffffff;
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+        transform: scale(1.04);
+      }
+
+      .neon-nav-btn-toc:hover {
+        background: rgba(99, 102, 241, 0.12);
+        border-color: rgba(99, 102, 241, 0.4);
+        color: #ffffff;
+        box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+        transform: scale(1.04);
+      }
+
+      .neon-nav-btn:active {
+        transform: scale(0.96);
+      }
+
+      .neon-nav-indicator {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85vw;
+        color: var(--accent-indigo);
+        font-weight: 800;
+        min-width: 80px;
+        text-align: center;
+        letter-spacing: 0.05em;
+        border-left: 1px solid rgba(255, 255, 255, 0.06);
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 0 12px;
+      }
+
+      /* 좌측 하단 TOC 미니 버튼 스타일 */
+      .neon-nav-btn-toc-mini {
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        color: rgba(255, 255, 255, 0.7);
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 0.6vw !important;
+        letter-spacing: 0.05em;
+        padding: 3px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+        z-index: 100000;
+        pointer-events: auto;
+      }
+
+      .neon-nav-btn-toc-mini:hover {
+        background: rgba(99, 102, 241, 0.25);
+        border-color: rgba(99, 102, 241, 0.7);
+        color: #ffffff;
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+        transform: translateY(-1px);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="reveal">
-        <div class="slides">
-            <!-- AJAX 동적 슬라이드 주입 컨테이너 -->
-        </div>
+      <div class="slides">
+        <!-- AJAX 동적 슬라이드 주입 컨테이너 -->
+      </div>
     </div>
 
     <!-- 글로벌 네온 글래스모피즘 내비게이션 바 -->
     <div class="neon-nav-bar">
-        <button class="neon-nav-btn neon-nav-btn-prev" onclick="Reveal.prev()">◀ PREV</button>
-        <div class="neon-nav-indicator" id="globalSlideIndex">01 / 6</div>
-        <button class="neon-nav-btn neon-nav-btn-next">NEXT ▶</button>
+      <button class="neon-nav-btn neon-nav-btn-prev" onclick="Reveal.prev()">◀ PREV</button>
+      <div class="neon-nav-indicator" id="globalSlideIndex">01 / 6</div>
+      <button class="neon-nav-btn neon-nav-btn-next">NEXT ▶</button>
     </div>
 
     <!-- Reveal.js & Plugins -->
@@ -442,41 +522,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.min.js"></script>
 
     <script>
-        const slideCount = 6;
-        const partKey = "presentation_vision";
-        const partTitle = "전사 도입 성과 및 미래 비전 로드맵";
-        
-        const slideFiles = Array.from({length: slideCount}, (_, i) => `slide${String(i + 1).padStart(2, '0')}.html`);
-        
-        async function loadSlides() {
-            const container = document.querySelector('.slides');
-            
-            const promises = slideFiles.map(file => 
-                fetch(file)
-                    .then(res => {
-                        if (!res.ok) throw new Error(`${file} 로드 실패 (Status: ${res.status})`);
-                        return res.text();
-                    })
-            );
-            
-            try {
-                const contents = await Promise.all(promises);
-                contents.forEach(html => {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = html.trim();
-                    const section = tempDiv.querySelector('section');
-                    if (section) {
-                        container.appendChild(section);
-                    }
-                });
-                
-                // Reveal.js 초기화 기동
-                initReveal();
-            } catch (err) {
-                console.error("슬라이드 렌더링 에러:", err);
-                
-                // 로컬 file:/// CORS 에러 또는 404 로딩 실패 안내 모달 시각화
-                container.innerHTML = `
+      const slideCount = 6
+      const partKey = 'presentation_vision'
+      const partTitle = '전사 도입 성과 및 미래 비전 로드맵'
+
+      const slideFiles = Array.from(
+        { length: slideCount },
+        (_, i) => `slide${String(i + 1).padStart(2, '0')}.html`
+      )
+
+      async function loadSlides() {
+        const container = document.querySelector('.slides')
+
+        const promises = slideFiles.map((file) =>
+          fetch(file).then((res) => {
+            if (!res.ok) throw new Error(`${file} 로드 실패 (Status: ${res.status})`)
+            return res.text()
+          })
+        )
+
+        try {
+          const contents = await Promise.all(promises)
+          contents.forEach((html) => {
+            const tempDiv = document.createElement('div')
+            tempDiv.innerHTML = html.trim()
+            const section = tempDiv.querySelector('section')
+            if (section) {
+              container.appendChild(section)
+            }
+          })
+
+          // Reveal.js 초기화 기동
+          initReveal()
+        } catch (err) {
+          console.error('슬라이드 렌더링 에러:', err)
+
+          // 로컬 file:/// CORS 에러 또는 404 로딩 실패 안내 모달 시각화
+          container.innerHTML = `
                     <section style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; height: 100vh; box-sizing: border-box; width: 100vw;">
                         <div class="glass-panel" style="max-width: 650px; border: 1.5px solid var(--accent-rose); background: rgba(244,63,94,0.06); padding: 45px; border-radius: 20px; box-shadow: 0 15px 45px rgba(244,63,94,0.25); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 20px;">
                             <h2 style="color: #ffffff !important; font-size: 1.8vw !important; margin: 0; font-weight: 900; text-shadow: 0 0 10px rgba(244,63,94,0.5);">🔒 로컬 CORS 보안 제한 감지됨</h2>
@@ -492,101 +574,104 @@
                             </p>
                         </div>
                     </section>
-                `;
-            }
+                `
         }
-        
-        function initReveal() {
-            Reveal.initialize({
-                hash: true,
-                controls: true,
-                progress: true,
-                center: true,
-                transition: 'fade',
-                transitionSpeed: 'fast',
-                width: "100%",
-                height: "100%",
-                margin: 0,
-                minScale: 1.0,
-                maxScale: 1.0,
-                plugins: [ RevealNotes ]
-            });
-            
-            Reveal.on('slidechanged', event => {
-                const index = String(event.indexh + 1).padStart(2, '0');
-                const total = String(Reveal.getTotalSlides()).padStart(2, '0');
-                document.getElementById('globalSlideIndex').textContent = `${index} / ${total}`;
-                
-                const nextBtn = document.querySelector('.neon-nav-btn-next');
-                if (nextBtn) {
-                    if (Reveal.isLastSlide()) {
-                        nextBtn.textContent = "NEXT SECTION ▶";
-                        nextBtn.style.color = "var(--accent-emerald)";
-                        nextBtn.style.textShadow = "0 0 8px rgba(16,185,129,0.5)";
-                    } else {
-                        nextBtn.textContent = "NEXT ▶";
-                        nextBtn.style.color = "#ffffff";
-                        nextBtn.style.textShadow = "none";
-                    }
-                }
-            });
-            
-            // 내비게이션 바 NEXT 버튼 가로채기 훅
-            const nextBtn = document.querySelector('.neon-nav-btn-next');
-            if (nextBtn) {
-                nextBtn.removeAttribute('onclick');
-                nextBtn.addEventListener('click', () => {
-                    if (Reveal.isLastSlide()) {
-                        completeAndGoTo("../presentation_index.html?completed=" + partKey, partKey);
-                    } else {
-                        Reveal.next();
-                    }
-                });
+      }
+
+      function initReveal() {
+        Reveal.initialize({
+          hash: true,
+          controls: true,
+          progress: true,
+          center: true,
+          transition: 'fade',
+          transitionSpeed: 'fast',
+          width: '100%',
+          height: '100%',
+          margin: 0,
+          minScale: 1.0,
+          maxScale: 1.0,
+          plugins: [RevealNotes]
+        })
+
+        Reveal.on('slidechanged', (event) => {
+          const index = String(event.indexh + 1).padStart(2, '0')
+          const total = String(Reveal.getTotalSlides()).padStart(2, '0')
+          document.getElementById('globalSlideIndex').textContent = `${index} / ${total}`
+
+          const nextBtn = document.querySelector('.neon-nav-btn-next')
+          if (nextBtn) {
+            if (Reveal.isLastSlide()) {
+              nextBtn.textContent = 'NEXT SECTION ▶'
+              nextBtn.style.color = 'var(--accent-emerald)'
+              nextBtn.style.textShadow = '0 0 8px rgba(16,185,129,0.5)'
+            } else {
+              nextBtn.textContent = 'NEXT ▶'
+              nextBtn.style.color = '#ffffff'
+              nextBtn.style.textShadow = 'none'
             }
-            
-            // 키보드 훅
-            document.addEventListener('keydown', event => {
-                if (Reveal.isLastSlide() && (event.code === 'Space' || event.code === 'ArrowRight' || event.code === 'Enter')) {
-                    event.preventDefault();
-                    completeAndGoTo("../presentation_index.html?completed=" + partKey, partKey);
-                }
-            });
-            
-            // 좌측 하단 TOC 미니 버튼 동적 이식
-            document.querySelectorAll('.slide-master-footer').forEach(footer => {
-                const firstSpan = footer.querySelector('span');
-                if (firstSpan) {
-                    const wrapper = document.createElement('div');
-                    wrapper.style.display = 'inline-flex';
-                    wrapper.style.alignItems = 'center';
-                    wrapper.style.gap = '8px';
-                    
-                    firstSpan.parentNode.insertBefore(wrapper, firstSpan);
-                    wrapper.appendChild(firstSpan);
-                    
-                    const tocBtn = document.createElement('button');
-                    tocBtn.className = 'neon-nav-btn-toc-mini';
-                    tocBtn.innerHTML = 'TOC ☰';
-                    tocBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        window.location.href = '../presentation_index.html';
-                    };
-                    wrapper.appendChild(tocBtn);
-                }
-            });
-        }
-        
-        function completeAndGoTo(nextUrl, currentKey) {
-            let completed = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]');
-            if (!completed.includes(currentKey)) {
-                completed.push(currentKey);
-                localStorage.setItem('natlas_completed_tracks', JSON.stringify(completed));
+          }
+        })
+
+        // 내비게이션 바 NEXT 버튼 가로채기 훅
+        const nextBtn = document.querySelector('.neon-nav-btn-next')
+        if (nextBtn) {
+          nextBtn.removeAttribute('onclick')
+          nextBtn.addEventListener('click', () => {
+            if (Reveal.isLastSlide()) {
+              completeAndGoTo('../presentation_index.html?completed=' + partKey, partKey)
+            } else {
+              Reveal.next()
             }
-            window.location.href = nextUrl;
+          })
         }
-        
-        // 실행
-        window.addEventListener('DOMContentLoaded', loadSlides);
+
+        // 키보드 훅
+        document.addEventListener('keydown', (event) => {
+          if (
+            Reveal.isLastSlide() &&
+            (event.code === 'Space' || event.code === 'ArrowRight' || event.code === 'Enter')
+          ) {
+            event.preventDefault()
+            completeAndGoTo('../presentation_index.html?completed=' + partKey, partKey)
+          }
+        })
+
+        // 좌측 하단 TOC 미니 버튼 동적 이식
+        document.querySelectorAll('.slide-master-footer').forEach((footer) => {
+          const firstSpan = footer.querySelector('span')
+          if (firstSpan) {
+            const wrapper = document.createElement('div')
+            wrapper.style.display = 'inline-flex'
+            wrapper.style.alignItems = 'center'
+            wrapper.style.gap = '8px'
+
+            firstSpan.parentNode.insertBefore(wrapper, firstSpan)
+            wrapper.appendChild(firstSpan)
+
+            const tocBtn = document.createElement('button')
+            tocBtn.className = 'neon-nav-btn-toc-mini'
+            tocBtn.innerHTML = 'TOC ☰'
+            tocBtn.onclick = (e) => {
+              e.stopPropagation()
+              window.location.href = '../presentation_index.html'
+            }
+            wrapper.appendChild(tocBtn)
+          }
+        })
+      }
+
+      function completeAndGoTo(nextUrl, currentKey) {
+        let completed = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]')
+        if (!completed.includes(currentKey)) {
+          completed.push(currentKey)
+          localStorage.setItem('natlas_completed_tracks', JSON.stringify(completed))
+        }
+        window.location.href = nextUrl
+      }
+
+      // 실행
+      window.addEventListener('DOMContentLoaded', loadSlides)
     </script>
-</body>
+  </body>
 </html>

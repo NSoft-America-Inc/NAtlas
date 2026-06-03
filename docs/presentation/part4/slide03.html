@@ -1,131 +1,442 @@
 <section>
-                <div class="slide-counter">SLIDE 03 / 11</div>
-                <div class="slide-subtitle">NStack 실전 워크플로우와 차단 복구</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">[시연 1단계] 신규 개발: Vanilla JS Todo Dashboard</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 6px; position: relative;">
-                        <!-- Glowing aura -->
-                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <!-- 1:1 Matching Card 1: Staggered Vertical Unified Layout in SVG -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-start; margin-left: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 84" style="overflow: visible; overflow: visible;">
-                                <g>
+  <div class="slide-counter">SLIDE 03 / 11</div>
+  <div class="slide-subtitle">NStack 실전 워크플로우와 차단 복구</div>
 
-                                    <!-- Gear & Disk Database -->
-                                    <circle cx="50" cy="40" r="15" fill="none" stroke="var(--accent-emerald)" stroke-width="2"/>
-                                    <g style="animation: spin-gear 10s linear infinite; transform-origin: 50px 40px;">
-                                        <rect x="47" y="20" width="6" height="6" fill="var(--accent-emerald)" rx="1"/>
-                                        <rect x="47" y="54" width="6" height="6" fill="var(--accent-emerald)" rx="1"/>
-                                        <rect x="30" y="37" width="6" height="6" fill="var(--accent-emerald)" rx="1"/>
-                                        <rect x="64" y="37" width="6" height="6" fill="var(--accent-emerald)" rx="1"/>
-                                    </g>
-                                    
-                                    <path d="M 75 40 L 105 40" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2 2" stroke-linecap="round"/>
-                                    <circle cx="90" cy="40" r="2.5" fill="#ffffff">
-                                        <animate attributeName="cx" values="75;105" dur="1.5s" repeatCount="indefinite"/>
-                                    </circle>
-                                    
-                                    <!-- Storage cylinder -->
-                                    <g transform="translate(110, 20)">
-                                        <rect x="0" y="6" width="25" height="30" rx="3" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                        <line x1="4" y1="14" x2="21" y2="14" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                        <line x1="4" y1="22" x2="21" y2="22" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                        <line x1="4" y1="30" x2="21" y2="30" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                    </g>
-                                    <text x="122.5" y="17" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="5" font-weight="bold" text-anchor="middle">STORAGE</text>
-                                                                </g>
-                                <foreignObject x="5" y="67" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        추가/토글/삭제 & LocalStorage 데이터
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    [시연 1단계] 신규 개발: Vanilla JS Todo Dashboard
+  </h2>
 
-                        <!-- 1:1 Matching Card 2: Staggered Vertical Unified Layout in SVG -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-end; margin-right: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 84" style="overflow: visible; overflow: visible;">
-                                <g>
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        position: relative;
+      "
+    >
+      <!-- Glowing aura -->
+      <div
+        style="
+          position: absolute;
+          width: 250px;
+          height: 250px;
+          background: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.12) 0%,
+            rgba(16, 185, 129, 0) 70%
+          );
+          filter: blur(40px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
 
-                                    <!-- 3 mini indicator dials -->
-                                    <!-- All: 5 -->
-                                    <circle cx="35" cy="40" r="14" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
-                                    <path d="M 35 26 A 14 14 0 1 1 21 40" fill="none" stroke="var(--accent-blue)" stroke-width="3"/>
-                                    <text x="35" y="43" fill="#ffffff" font-family="'JetBrains Mono'" font-size="6.5" font-weight="900" text-anchor="middle">5</text>
-                                    <text x="35" y="64" fill="rgba(255,255,255,0.4)" font-family="sans-serif" font-size="5" text-anchor="middle">ALL</text>
+      <!-- 1:1 Matching Card 1: Staggered Vertical Unified Layout in SVG -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-start;
+          margin-left: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 84"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Gear & Disk Database -->
+            <circle
+              cx="50"
+              cy="40"
+              r="15"
+              fill="none"
+              stroke="var(--accent-emerald)"
+              stroke-width="2"
+            />
+            <g style="animation: spin-gear 10s linear infinite; transform-origin: 50px 40px">
+              <rect x="47" y="20" width="6" height="6" fill="var(--accent-emerald)" rx="1" />
+              <rect x="47" y="54" width="6" height="6" fill="var(--accent-emerald)" rx="1" />
+              <rect x="30" y="37" width="6" height="6" fill="var(--accent-emerald)" rx="1" />
+              <rect x="64" y="37" width="6" height="6" fill="var(--accent-emerald)" rx="1" />
+            </g>
 
-                                    <!-- Active: 3 -->
-                                    <circle cx="80" cy="40" r="14" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
-                                    <path d="M 80 26 A 14 14 0 0 1 94 40" fill="none" stroke="var(--accent-blue)" stroke-width="3"/>
-                                    <text x="80" y="43" fill="#ffffff" font-family="'JetBrains Mono'" font-size="6.5" font-weight="900" text-anchor="middle">3</text>
-                                    <text x="80" y="64" fill="rgba(255,255,255,0.4)" font-family="sans-serif" font-size="5" text-anchor="middle">PEND</text>
+            <path
+              d="M 75 40 L 105 40"
+              stroke="#ffffff"
+              stroke-width="1.5"
+              stroke-dasharray="2 2"
+              stroke-linecap="round"
+            />
+            <circle cx="90" cy="40" r="2.5" fill="#ffffff">
+              <animate attributeName="cx" values="75;105" dur="1.5s" repeatCount="indefinite" />
+            </circle>
 
-                                    <!-- Done: 2 -->
-                                    <circle cx="125" cy="40" r="14" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3"/>
-                                    <path d="M 125 26 A 14 14 0 0 1 139 40" fill="none" stroke="var(--accent-emerald)" stroke-width="3"/>
-                                    <text x="125" y="43" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="6.5" font-weight="900" text-anchor="middle">2</text>
-                                    <text x="125" y="64" fill="var(--accent-emerald)" font-family="sans-serif" font-size="5" text-anchor="middle">DONE</text>
-                                                                </g>
-                                <foreignObject x="5" y="67" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        전체/진행/완료 수치 실시간 계측
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
+            <!-- Storage cylinder -->
+            <g transform="translate(110, 20)">
+              <rect
+                x="0"
+                y="6"
+                width="25"
+                height="30"
+                rx="3"
+                fill="rgba(16,185,129,0.15)"
+                stroke="var(--accent-emerald)"
+                stroke-width="1.5"
+              />
+              <line
+                x1="4"
+                y1="14"
+                x2="21"
+                y2="14"
+                stroke="var(--accent-emerald)"
+                stroke-width="1.5"
+              />
+              <line
+                x1="4"
+                y1="22"
+                x2="21"
+                y2="22"
+                stroke="var(--accent-emerald)"
+                stroke-width="1.5"
+              />
+              <line
+                x1="4"
+                y1="30"
+                x2="21"
+                y2="30"
+                stroke="var(--accent-emerald)"
+                stroke-width="1.5"
+              />
+            </g>
+            <text
+              x="122.5"
+              y="17"
+              fill="var(--accent-emerald)"
+              font-family="'JetBrains Mono'"
+              font-size="5"
+              font-weight="bold"
+              text-anchor="middle"
+            >
+              STORAGE
+            </text>
+          </g>
+          <foreignObject x="5" y="67" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              추가/토글/삭제 & LocalStorage 데이터
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
 
-                        <!-- 1:1 Matching Card 3: Staggered Vertical Unified Layout in SVG -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-start; margin-left: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 84" style="overflow: visible; overflow: visible;">
-                                <g>
+      <!-- 1:1 Matching Card 2: Staggered Vertical Unified Layout in SVG -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-end;
+          margin-right: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 84"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- 3 mini indicator dials -->
+            <!-- All: 5 -->
+            <circle
+              cx="35"
+              cy="40"
+              r="14"
+              fill="none"
+              stroke="rgba(255,255,255,0.05)"
+              stroke-width="3"
+            />
+            <path
+              d="M 35 26 A 14 14 0 1 1 21 40"
+              fill="none"
+              stroke="var(--accent-blue)"
+              stroke-width="3"
+            />
+            <text
+              x="35"
+              y="43"
+              fill="#ffffff"
+              font-family="'JetBrains Mono'"
+              font-size="6.5"
+              font-weight="900"
+              text-anchor="middle"
+            >
+              5
+            </text>
+            <text
+              x="35"
+              y="64"
+              fill="rgba(255,255,255,0.4)"
+              font-family="sans-serif"
+              font-size="5"
+              text-anchor="middle"
+            >
+              ALL
+            </text>
 
-                                    <!-- Harness Shield Neon Gate -->
-                                    <path d="M 80,15 L 115,28 L 115,52 L 80,68 L 45,52 L 45,28 Z" fill="rgba(244,63,94,0.12)" stroke="var(--accent-rose)" stroke-width="2" filter="drop-shadow(0 0 8px var(--accent-rose))"/>
-                                    <text x="80" y="46" fill="#ffffff" font-size="16" text-anchor="middle">🛡️</text>
-                                                                    </g>
-                                <foreignObject x="5" y="67" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        작업 착수 전 설계 계획서 강제 장치
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            📝 1단계 Vanilla JS 신규 개발 요구사항 명세
-                        </h3>
-                        
-                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                외부 모듈 의존성 없이 완전히 고립된 바닐라 HTML/JS 파일만으로<br>
-                                실시간 상태 토글 및 집계 기능을 갖춘 심플 대시보드를 코딩합니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong>핵심 비즈니스 로직 설계</strong>:<br>
-                                    할 일 추가, 토글 완료 처리, 삭제 및 로컬 스토리지에 데이터 영구 저장
-                                </li>
-                                <li>
-                                    <strong>실시간 집계 판넬</strong>:<br>
-                                    전체 할 일 개수, 완료된 개수, 진행 중 개수 수치를 DOM에 즉시 반영
-                                </li>
-                                <li>
-                                    <strong>NStack 하네스 적용</strong>:<br>
-                                    개발 진입 전에 린트가 실패하지 않도록 `order.md` 기재 규격 선언 필요
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+            <!-- Active: 3 -->
+            <circle
+              cx="80"
+              cy="40"
+              r="14"
+              fill="none"
+              stroke="rgba(255,255,255,0.05)"
+              stroke-width="3"
+            />
+            <path
+              d="M 80 26 A 14 14 0 0 1 94 40"
+              fill="none"
+              stroke="var(--accent-blue)"
+              stroke-width="3"
+            />
+            <text
+              x="80"
+              y="43"
+              fill="#ffffff"
+              font-family="'JetBrains Mono'"
+              font-size="6.5"
+              font-weight="900"
+              text-anchor="middle"
+            >
+              3
+            </text>
+            <text
+              x="80"
+              y="64"
+              fill="rgba(255,255,255,0.4)"
+              font-family="sans-serif"
+              font-size="5"
+              text-anchor="middle"
+            >
+              PEND
+            </text>
+
+            <!-- Done: 2 -->
+            <circle
+              cx="125"
+              cy="40"
+              r="14"
+              fill="none"
+              stroke="rgba(255,255,255,0.05)"
+              stroke-width="3"
+            />
+            <path
+              d="M 125 26 A 14 14 0 0 1 139 40"
+              fill="none"
+              stroke="var(--accent-emerald)"
+              stroke-width="3"
+            />
+            <text
+              x="125"
+              y="43"
+              fill="var(--accent-emerald)"
+              font-family="'JetBrains Mono'"
+              font-size="6.5"
+              font-weight="900"
+              text-anchor="middle"
+            >
+              2
+            </text>
+            <text
+              x="125"
+              y="64"
+              fill="var(--accent-emerald)"
+              font-family="sans-serif"
+              font-size="5"
+              text-anchor="middle"
+            >
+              DONE
+            </text>
+          </g>
+          <foreignObject x="5" y="67" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              전체/진행/완료 수치 실시간 계측
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
+
+      <!-- 1:1 Matching Card 3: Staggered Vertical Unified Layout in SVG -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-start;
+          margin-left: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 84"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Harness Shield Neon Gate -->
+            <path
+              d="M 80,15 L 115,28 L 115,52 L 80,68 L 45,52 L 45,28 Z"
+              fill="rgba(244,63,94,0.12)"
+              stroke="var(--accent-rose)"
+              stroke-width="2"
+              filter="drop-shadow(0 0 8px var(--accent-rose))"
+            />
+            <text x="80" y="46" fill="#ffffff" font-size="16" text-anchor="middle">🛡️</text>
+          </g>
+          <foreignObject x="5" y="67" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              작업 착수 전 설계 계획서 강제 장치
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        📝 1단계 Vanilla JS 신규 개발 요구사항 명세
+      </h3>
+
+      <div
+        style="
+          font-size: 0.9vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          외부 모듈 의존성 없이 완전히 고립된 바닐라 HTML/JS 파일만으로<br />
+          실시간 상태 토글 및 집계 기능을 갖춘 심플 대시보드를 코딩합니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong>핵심 비즈니스 로직 설계</strong>:<br />
+            할 일 추가, 토글 완료 처리, 삭제 및 로컬 스토리지에 데이터 영구 저장
+          </li>
+          <li>
+            <strong>실시간 집계 판넬</strong>:<br />
+            전체 할 일 개수, 완료된 개수, 진행 중 개수 수치를 DOM에 즉시 반영
+          </li>
+          <li>
+            <strong>NStack 하네스 적용</strong>:<br />
+            개발 진입 전에 린트가 실패하지 않도록 `order.md` 기재 규격 선언 필요
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

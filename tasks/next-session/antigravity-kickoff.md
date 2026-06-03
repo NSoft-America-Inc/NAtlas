@@ -29,6 +29,7 @@ Electron + React + Python FastAPI로 만들고, Mac/Windows 둘 다 지원해.
 문서를 다 읽고 나서 `/task` 스킬로 Phase 1 작업지시서를 직접 만들어줘.
 
 작업 범위: `docs/spec/phase1.md`에 정의된 Phase 1 전체
+
 - 프로젝트 초기화 (electron-vite 셋업)
 - Python FastAPI sidecar
 - Documents 탭

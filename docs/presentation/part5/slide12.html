@@ -1,104 +1,398 @@
 <section>
-                <div class="slide-counter">SLIDE 12 / 13</div>
-                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+  <div class="slide-counter">SLIDE 12 / 13</div>
+  <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
 
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">프로젝트 관리자는 NAtlas를 어떻게 쓰는가 — 회의 없이 현황 파악</h2>
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    프로젝트 관리자는 NAtlas를 어떻게 쓰는가 — 회의 없이 현황 파악
+  </h2>
 
-                <div class="split-container-2col">
-                    <div class="col-45" style="display: flex; flex-direction: column; gap: 14px; height: 100%; justify-content: center; transform: scale(1.05);">
+  <div class="split-container-2col">
+    <div
+      class="col-45"
+      style="
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        height: 100%;
+        justify-content: center;
+        transform: scale(1.05);
+      "
+    >
+      <!-- Scenario 1 -->
+      <div
+        class="glass-panel"
+        style="
+          padding: 14px 18px;
+          border-color: rgba(14, 165, 233, 0.3);
+          background: rgba(14, 165, 233, 0.015);
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          width: 100%;
+          box-sizing: border-box;
+          text-align: left;
+          justify-content: flex-start;
+          border-radius: 14px;
+        "
+      >
+        <svg
+          viewBox="0 0 100 70"
+          width="80"
+          height="56"
+          xmlns="http://www.w3.org/2000/svg"
+          style="flex-shrink: 0"
+        >
+          <!-- Search bar -->
+          <rect
+            x="5"
+            y="10"
+            width="90"
+            height="50"
+            rx="4"
+            fill="#090c12"
+            stroke="var(--accent-blue)"
+            stroke-width="1.5"
+          />
+          <rect
+            x="10"
+            y="18"
+            width="60"
+            height="10"
+            rx="3"
+            fill="rgba(14,165,233,0.1)"
+            stroke="var(--accent-blue)"
+            stroke-width="1"
+          />
+          <circle
+            cx="78"
+            cy="23"
+            r="6"
+            fill="none"
+            stroke="var(--accent-blue)"
+            stroke-width="1.5"
+          />
+          <line x1="82" y1="27" x2="86" y2="31" stroke="var(--accent-blue)" stroke-width="1.5" />
+          <!-- Result rows -->
+          <rect
+            x="10"
+            y="34"
+            width="80"
+            height="6"
+            rx="1.5"
+            fill="rgba(14,165,233,0.15)"
+            style="animation: soft-blink 2s infinite"
+          />
+          <rect x="10" y="44" width="55" height="6" rx="1.5" fill="rgba(255,255,255,0.06)" />
+        </svg>
+        <div>
+          <span
+            style="
+              font-size: 0.82vw;
+              font-weight: 800;
+              color: #ffffff;
+              display: block;
+              margin-bottom: 3px;
+            "
+            >🔍 "이 기능, 왜 이렇게 만들어진 거야?"</span
+          >
+          <span style="font-size: 0.65vw; color: var(--text-muted)"
+            >Documents 탭 검색 → 담당자 order.md + wiki.md 즉시 확인</span
+          >
+        </div>
+      </div>
 
-                        <!-- Scenario 1 -->
-                        <div class="glass-panel" style="padding: 14px 18px; border-color: rgba(14,165,233,0.3); background: rgba(14,165,233,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 14px;">
-                            <svg viewBox="0 0 100 70" width="80" height="56" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
-                                <!-- Search bar -->
-                                <rect x="5" y="10" width="90" height="50" rx="4" fill="#090c12" stroke="var(--accent-blue)" stroke-width="1.5"/>
-                                <rect x="10" y="18" width="60" height="10" rx="3" fill="rgba(14,165,233,0.1)" stroke="var(--accent-blue)" stroke-width="1"/>
-                                <circle cx="78" cy="23" r="6" fill="none" stroke="var(--accent-blue)" stroke-width="1.5"/>
-                                <line x1="82" y1="27" x2="86" y2="31" stroke="var(--accent-blue)" stroke-width="1.5"/>
-                                <!-- Result rows -->
-                                <rect x="10" y="34" width="80" height="6" rx="1.5" fill="rgba(14,165,233,0.15)" style="animation: soft-blink 2s infinite;"/>
-                                <rect x="10" y="44" width="55" height="6" rx="1.5" fill="rgba(255,255,255,0.06)"/>
-                            </svg>
-                            <div>
-                                <span style="font-size: 0.82vw; font-weight: 800; color: #ffffff; display: block; margin-bottom: 3px;">🔍 "이 기능, 왜 이렇게 만들어진 거야?"</span>
-                                <span style="font-size: 0.65vw; color: var(--text-muted);">Documents 탭 검색 → 담당자 order.md + wiki.md 즉시 확인</span>
-                            </div>
-                        </div>
+      <!-- Scenario 2 -->
+      <div
+        class="glass-panel"
+        style="
+          padding: 14px 18px;
+          border-color: rgba(168, 85, 247, 0.3);
+          background: rgba(168, 85, 247, 0.015);
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          width: 100%;
+          box-sizing: border-box;
+          text-align: left;
+          justify-content: flex-start;
+          border-radius: 14px;
+        "
+      >
+        <svg
+          viewBox="0 0 100 70"
+          width="80"
+          height="56"
+          xmlns="http://www.w3.org/2000/svg"
+          style="flex-shrink: 0"
+        >
+          <!-- 3D graph mini -->
+          <circle
+            cx="50"
+            cy="35"
+            r="10"
+            fill="rgba(168,85,247,0.2)"
+            stroke="var(--accent-purple)"
+            stroke-width="1.5"
+            style="animation: scale-pulse 3s infinite"
+          />
+          <circle
+            cx="22"
+            cy="20"
+            r="7"
+            fill="rgba(168,85,247,0.1)"
+            stroke="var(--accent-purple)"
+            stroke-width="1.2"
+          />
+          <circle
+            cx="78"
+            cy="20"
+            r="7"
+            fill="rgba(168,85,247,0.1)"
+            stroke="var(--accent-purple)"
+            stroke-width="1.2"
+          />
+          <circle
+            cx="22"
+            cy="50"
+            r="7"
+            fill="rgba(168,85,247,0.1)"
+            stroke="var(--accent-purple)"
+            stroke-width="1.2"
+          />
+          <circle
+            cx="78"
+            cy="50"
+            r="7"
+            fill="rgba(168,85,247,0.1)"
+            stroke="var(--accent-purple)"
+            stroke-width="1.2"
+          />
+          <line
+            x1="50"
+            y1="35"
+            x2="22"
+            y2="20"
+            stroke="rgba(168,85,247,0.4)"
+            stroke-width="1.2"
+            stroke-dasharray="3 2"
+          />
+          <line
+            x1="50"
+            y1="35"
+            x2="78"
+            y2="20"
+            stroke="rgba(168,85,247,0.4)"
+            stroke-width="1.2"
+            stroke-dasharray="3 2"
+          />
+          <line
+            x1="50"
+            y1="35"
+            x2="22"
+            y2="50"
+            stroke="rgba(168,85,247,0.4)"
+            stroke-width="1.2"
+            stroke-dasharray="3 2"
+          />
+          <line
+            x1="50"
+            y1="35"
+            x2="78"
+            y2="50"
+            stroke="rgba(168,85,247,0.4)"
+            stroke-width="1.2"
+            stroke-dasharray="3 2"
+          />
+        </svg>
+        <div>
+          <span
+            style="
+              font-size: 0.82vw;
+              font-weight: 800;
+              color: #ffffff;
+              display: block;
+              margin-bottom: 3px;
+            "
+            >🗺️ "이 모듈들이 어떻게 연결되어 있지?"</span
+          >
+          <span style="font-size: 0.65vw; color: var(--text-muted)"
+            >3D 지식 지도 → 프로젝트 간 연결 관계 시각화</span
+          >
+        </div>
+      </div>
 
-                        <!-- Scenario 2 -->
-                        <div class="glass-panel" style="padding: 14px 18px; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 14px;">
-                            <svg viewBox="0 0 100 70" width="80" height="56" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
-                                <!-- 3D graph mini -->
-                                <circle cx="50" cy="35" r="10" fill="rgba(168,85,247,0.2)" stroke="var(--accent-purple)" stroke-width="1.5" style="animation: scale-pulse 3s infinite;"/>
-                                <circle cx="22" cy="20" r="7" fill="rgba(168,85,247,0.1)" stroke="var(--accent-purple)" stroke-width="1.2"/>
-                                <circle cx="78" cy="20" r="7" fill="rgba(168,85,247,0.1)" stroke="var(--accent-purple)" stroke-width="1.2"/>
-                                <circle cx="22" cy="50" r="7" fill="rgba(168,85,247,0.1)" stroke="var(--accent-purple)" stroke-width="1.2"/>
-                                <circle cx="78" cy="50" r="7" fill="rgba(168,85,247,0.1)" stroke="var(--accent-purple)" stroke-width="1.2"/>
-                                <line x1="50" y1="35" x2="22" y2="20" stroke="rgba(168,85,247,0.4)" stroke-width="1.2" stroke-dasharray="3 2"/>
-                                <line x1="50" y1="35" x2="78" y2="20" stroke="rgba(168,85,247,0.4)" stroke-width="1.2" stroke-dasharray="3 2"/>
-                                <line x1="50" y1="35" x2="22" y2="50" stroke="rgba(168,85,247,0.4)" stroke-width="1.2" stroke-dasharray="3 2"/>
-                                <line x1="50" y1="35" x2="78" y2="50" stroke="rgba(168,85,247,0.4)" stroke-width="1.2" stroke-dasharray="3 2"/>
-                            </svg>
-                            <div>
-                                <span style="font-size: 0.82vw; font-weight: 800; color: #ffffff; display: block; margin-bottom: 3px;">🗺️ "이 모듈들이 어떻게 연결되어 있지?"</span>
-                                <span style="font-size: 0.65vw; color: var(--text-muted);">3D 지식 지도 → 프로젝트 간 연결 관계 시각화</span>
-                            </div>
-                        </div>
+      <!-- Scenario 3 -->
+      <div
+        class="glass-panel"
+        style="
+          padding: 14px 18px;
+          border-color: rgba(16, 185, 129, 0.3);
+          background: rgba(16, 185, 129, 0.015);
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          width: 100%;
+          box-sizing: border-box;
+          text-align: left;
+          justify-content: flex-start;
+          border-radius: 14px;
+        "
+      >
+        <svg
+          viewBox="0 0 100 70"
+          width="80"
+          height="56"
+          xmlns="http://www.w3.org/2000/svg"
+          style="flex-shrink: 0"
+        >
+          <!-- Calendar/filter view -->
+          <rect
+            x="5"
+            y="8"
+            width="90"
+            height="54"
+            rx="4"
+            fill="#090c12"
+            stroke="var(--accent-emerald)"
+            stroke-width="1.5"
+          />
+          <rect x="5" y="8" width="90" height="14" fill="rgba(16,185,129,0.1)" />
+          <text
+            x="20"
+            y="18"
+            fill="var(--accent-emerald)"
+            font-family="monospace"
+            font-size="6.5"
+            font-weight="bold"
+          >
+            이번 주 완료
+          </text>
+          <rect
+            x="10"
+            y="27"
+            width="80"
+            height="7"
+            rx="2"
+            fill="rgba(16,185,129,0.2)"
+            style="animation: soft-blink 2.5s infinite"
+          />
+          <rect x="10" y="38" width="65" height="7" rx="2" fill="rgba(16,185,129,0.12)" />
+          <rect x="10" y="49" width="72" height="7" rx="2" fill="rgba(16,185,129,0.12)" />
+        </svg>
+        <div>
+          <span
+            style="
+              font-size: 0.82vw;
+              font-weight: 800;
+              color: #ffffff;
+              display: block;
+              margin-bottom: 3px;
+            "
+            >📋 "이번 주 어떤 작업이 완료됐지?"</span
+          >
+          <span style="font-size: 0.65vw; color: var(--text-muted)"
+            >날짜 필터 → 완료된 wiki.md 목록 즉시 확인</span
+          >
+        </div>
+      </div>
+    </div>
 
-                        <!-- Scenario 3 -->
-                        <div class="glass-panel" style="padding: 14px 18px; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.015); display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; text-align: left; justify-content: flex-start; border-radius: 14px;">
-                            <svg viewBox="0 0 100 70" width="80" height="56" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
-                                <!-- Calendar/filter view -->
-                                <rect x="5" y="8" width="90" height="54" rx="4" fill="#090c12" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                <rect x="5" y="8" width="90" height="14" fill="rgba(16,185,129,0.1)"/>
-                                <text x="20" y="18" fill="var(--accent-emerald)" font-family="monospace" font-size="6.5" font-weight="bold">이번 주 완료</text>
-                                <rect x="10" y="27" width="80" height="7" rx="2" fill="rgba(16,185,129,0.2)" style="animation: soft-blink 2.5s infinite;"/>
-                                <rect x="10" y="38" width="65" height="7" rx="2" fill="rgba(16,185,129,0.12)"/>
-                                <rect x="10" y="49" width="72" height="7" rx="2" fill="rgba(16,185,129,0.12)"/>
-                            </svg>
-                            <div>
-                                <span style="font-size: 0.82vw; font-weight: 800; color: #ffffff; display: block; margin-bottom: 3px;">📋 "이번 주 어떤 작업이 완료됐지?"</span>
-                                <span style="font-size: 0.65vw; color: var(--text-muted);">날짜 필터 → 완료된 wiki.md 목록 즉시 확인</span>
-                            </div>
-                        </div>
-                    </div>
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        📊 하루에 한 번 NAtlas를 열면
+      </h3>
 
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            📊 하루에 한 번 NAtlas를 열면
-                        </h3>
+      <div
+        style="
+          font-size: 0.9vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          매일 아침 팀원에게<br />
+          <strong>"어디까지 됐어요?"</strong>라고<br />
+          물어보는 대신 NAtlas를 열면 됩니다.
+        </p>
 
-                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 18px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                매일 아침 팀원에게<br>
-                                <strong>"어디까지 됐어요?"</strong>라고<br>
-                                물어보는 대신 NAtlas를 열면 됩니다.
-                            </p>
+        <div
+          style="
+            width: 100%;
+            padding: 14px;
+            background: rgba(14, 165, 233, 0.06);
+            border: 1.5px solid rgba(14, 165, 233, 0.2);
+            border-radius: 10px;
+          "
+        >
+          <div style="font-size: 0.7vw; color: #cbd5e1; line-height: 1.6">
+            팀이 무엇을 했는지, 왜 그런 결정을 내렸는지,<br />
+            어떤 문제가 있었는지가<br />
+            <strong style="color: var(--accent-blue)">이미 기록</strong>되어 있습니다.
+          </div>
+        </div>
 
-                            <div style="width: 100%; padding: 14px; background: rgba(14,165,233,0.06); border: 1.5px solid rgba(14,165,233,0.2); border-radius: 10px;">
-                                <div style="font-size: 0.7vw; color: #cbd5e1; line-height: 1.6;">
-                                    팀이 무엇을 했는지, 왜 그런 결정을 내렸는지,<br>
-                                    어떤 문제가 있었는지가<br>
-                                    <strong style="color: var(--accent-blue);">이미 기록</strong>되어 있습니다.
-                                </div>
-                            </div>
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong>보고서 없이 현황 파악</strong>:<br />
+            별도 보고 없이도 진행 상황을 파악합니다.
+          </li>
+          <li>
+            <strong>개발자만의 도구가 아닙니다</strong>:<br />
+            PM, 팀장, 신입 모두 동일한 정보에 접근합니다.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong>보고서 없이 현황 파악</strong>:<br>
-                                    별도 보고 없이도 진행 상황을 파악합니다.
-                                </li>
-                                <li>
-                                    <strong>개발자만의 도구가 아닙니다</strong>:<br>
-                                    PM, 팀장, 신입 모두 동일한 정보에 접근합니다.
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

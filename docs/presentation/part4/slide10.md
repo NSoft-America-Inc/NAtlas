@@ -1,7 +1,7 @@
 ---
-title: "Slide 39: SQLite task_history 메타데이터 테이블 파싱 및 node 매핑"
-layout: "Metadata DB Mapper"
-part: "PART 5: NAtlas GUI 지식 탐색 및 아키텍처"
+title: 'Slide 39: SQLite task_history 메타데이터 테이블 파싱 및 node 매핑'
+layout: 'Metadata DB Mapper'
+part: 'PART 5: NAtlas GUI 지식 탐색 및 아키텍처'
 ---
 
 # Slide 39: SQLite task_history 메타데이터 테이블 파싱 및 node 매핑
@@ -26,4 +26,4 @@ NAtlas GUI가 3D dynamic 지식 지도를 초고속으로 펼쳐낼 수 있는 �
 
 ## 3. 스피치 노트 (Aside Speaker Notes)
 
-*"이번에 살펴볼 NAtlas GUI 내부 메커니즘은 'SQLite 메타데이터 테이블 파싱 및 노드 매핑' 아키텍처입니다. 우측의 3D dynamic 지식 노드맵이 날마다 살아 숨 쉬며 확장되는 비결이죠. NAtlas는 저장소에 보존된 지식 메타데이터들을 로컬 SQLite 데이터베이스의 `task_history` 릴레이션 테이블에 튜플 형태로 저장해 둡니다. 그리고 사이드카 백엔드가 가동되면, DB 실린더에서 날것의 관계 데이터 칩들을 로드해 0.05초 만에 D3 dynamic 그래프 엔진이 삼킬 수 있는 'nodes'와 'links'의 JSON 메모리 노드로 동적 사상 변환합니다. 문서 본문에 박혀 있는 이중 대괄호 인용 관계까지 파싱해 엣지 연결선 정보로 치환함으로써, DB 튜플이 둥실둥실 떠오르는 인터랙티브 지식 노드 트리로 우아하게 부활하게 만드는 핵심 매퍼 아키텍처입니다."*
+_"이번에 살펴볼 NAtlas GUI 내부 메커니즘은 'SQLite 메타데이터 테이블 파싱 및 노드 매핑' 아키텍처입니다. 우측의 3D dynamic 지식 노드맵이 날마다 살아 숨 쉬며 확장되는 비결이죠. NAtlas는 저장소에 보존된 지식 메타데이터들을 로컬 SQLite 데이터베이스의 `task_history` 릴레이션 테이블에 튜플 형태로 저장해 둡니다. 그리고 사이드카 백엔드가 가동되면, DB 실린더에서 날것의 관계 데이터 칩들을 로드해 0.05초 만에 D3 dynamic 그래프 엔진이 삼킬 수 있는 'nodes'와 'links'의 JSON 메모리 노드로 동적 사상 변환합니다. 문서 본문에 박혀 있는 이중 대괄호 인용 관계까지 파싱해 엣지 연결선 정보로 치환함으로써, DB 튜플이 둥실둥실 떠오르는 인터랙티브 지식 노드 트리로 우아하게 부활하게 만드는 핵심 매퍼 아키텍처입니다."_

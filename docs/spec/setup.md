@@ -60,6 +60,7 @@ npx shadcn init
 ```
 
 Phase 1에서 사용할 컴포넌트:
+
 ```bash
 npx shadcn add button
 npx shadcn add input
@@ -88,11 +89,7 @@ AI 에이전트(Claude Desktop, Cline, VS Code Cascade 등)가 SwarmVault RAG �
   "mcpServers": {
     "swarmvault": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@swarmvaultai/cli@latest",
-        "mcp"
-      ],
+      "args": ["-y", "@swarmvaultai/cli@latest", "mcp"],
       "env": {
         "LLMWIKI_ROOT": "/Users/yg/workspace/NAtlas"
       }
@@ -165,9 +162,9 @@ NAtlas/
 ```json
 {
   "scripts": {
-    "dev":       "electron-vite dev",
-    "build":     "electron-vite build",
-    "preview":   "electron-vite preview",
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
     "build:mac": "npm run build && electron-builder --mac",
     "build:win": "npm run build && electron-builder --win"
   }
@@ -236,13 +233,12 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // IPC 채널 목록 (main/index.ts와 반드시 일치)
 const IPC = {
-  OPEN_FOLDER_DIALOG: 'open-folder-dialog',
+  OPEN_FOLDER_DIALOG: 'open-folder-dialog'
 } as const
 
 contextBridge.exposeInMainWorld('electron', {
   ...electronAPI,
-  openFolderDialog: (): Promise<string | null> =>
-    ipcRenderer.invoke(IPC.OPEN_FOLDER_DIALOG),
+  openFolderDialog: (): Promise<string | null> => ipcRenderer.invoke(IPC.OPEN_FOLDER_DIALOG)
 })
 ```
 

@@ -1,52 +1,145 @@
 <section>
-                <div class="slide-counter">SLIDE 10 / 11</div>
-                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">실무적 혜택: 신입 사원 온보딩 시나리오</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative;">
-                        <!-- Glassmorphism slide-out panel mockup -->
-                        <div style="background: rgba(9,12,22,0.98); height: 100%; display: flex; flex-direction: column; justify-content: space-between; border-left: 2px solid rgba(167,139,250,0.4);">
-                            <div style="background: #0d1117; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); font-family: 'JetBrains Mono', monospace; font-size: 0.75vw; color: #a78bfa; font-weight: bold; text-align: left;">
-                                [Slide-out Panel: todo-app/wiki.md]
-                            </div>
-                            <div style="flex-grow: 1; padding: 18px; text-align: left; font-family: 'Inter', sans-serif; font-size: 0.8vw; color: #cbd5e1; line-height: 1.5; overflow: hidden;">
-                                <strong style="color: #a78bfa; display: block; margin-bottom: 5px;">## Decision / Zustand 채택 이유</strong>
-                                <div>Redux 대비 보일러플레이트 코드가 80% 적고, 에이전트가 경량 훅으로 소화하기 쉬워 채택함.</div>
-                                <strong style="color: #a78bfa; display: block; margin-top: 10px; margin-bottom: 5px;">## Caveats</strong>
-                                <div>포트 충돌 루프 회피를 위해 main/index.ts 수정 시 Sidecar 18420 bypass 필요.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            👥 클릭 한 번으로 모든 트레이드오프 본문 인수 수령
-                        </h3>
-                        
-                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                새로 영입된 엔지니어가 히스토리를 묻기 위해 사방을 헤매거나 슬랙을 뒤지지 않고,<br>
-                                NAtlas 위키 그래프 노드를 클릭해 우측 슬라이드-아웃 판넬로 설계 이유를 10초 만에 인수 수령합니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong>인수인계(Onboarding) 공수의 극적 40% 감축</strong>:<br>
-                                    설계를 주도했던 YG 개발자나 에이전트의 구두 전수 없이도 완벽한 비동기식 지식 인수
-                                </li>
-                                <li>
-                                    <strong>유지보수 시의 실시간 위험 감지</strong>:<br>
-                                    코드를 한 줄 수정하기 전에 이 위키를 열어 `Caveats (주의사항)`을 확인해 연쇄 사이드이펙트 방지
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+  <div class="slide-counter">SLIDE 10 / 11</div>
+  <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    실무적 혜택: 신입 사원 온보딩 시나리오
+  </h2>
+
+  <div class="split-container-2col">
+    <div class="col-45 vscode-sim-box" style="height: 100%; position: relative">
+      <!-- Glassmorphism slide-out panel mockup -->
+      <div
+        style="
+          background: rgba(9, 12, 22, 0.98);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          border-left: 2px solid rgba(167, 139, 250, 0.4);
+        "
+      >
+        <div
+          style="
+            background: #0d1117;
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75vw;
+            color: #a78bfa;
+            font-weight: bold;
+            text-align: left;
+          "
+        >
+          [Slide-out Panel: todo-app/wiki.md]
+        </div>
+        <div
+          style="
+            flex-grow: 1;
+            padding: 18px;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8vw;
+            color: #cbd5e1;
+            line-height: 1.5;
+            overflow: hidden;
+          "
+        >
+          <strong style="color: #a78bfa; display: block; margin-bottom: 5px"
+            >## Decision / Zustand 채택 이유</strong
+          >
+          <div>
+            Redux 대비 보일러플레이트 코드가 80% 적고, 에이전트가 경량 훅으로 소화하기 쉬워 채택함.
+          </div>
+          <strong style="color: #a78bfa; display: block; margin-top: 10px; margin-bottom: 5px"
+            >## Caveats</strong
+          >
+          <div>포트 충돌 루프 회피를 위해 main/index.ts 수정 시 Sidecar 18420 bypass 필요.</div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        👥 클릭 한 번으로 모든 트레이드오프 본문 인수 수령
+      </h3>
+
+      <div
+        style="
+          font-size: 0.9vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          새로 영입된 엔지니어가 히스토리를 묻기 위해 사방을 헤매거나 슬랙을 뒤지지 않고,<br />
+          NAtlas 위키 그래프 노드를 클릭해 우측 슬라이드-아웃 판넬로 설계 이유를 10초 만에 인수
+          수령합니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong>인수인계(Onboarding) 공수의 극적 40% 감축</strong>:<br />
+            설계를 주도했던 YG 개발자나 에이전트의 구두 전수 없이도 완벽한 비동기식 지식 인수
+          </li>
+          <li>
+            <strong>유지보수 시의 실시간 위험 감지</strong>:<br />
+            코드를 한 줄 수정하기 전에 이 위키를 열어 `Caveats (주의사항)`을 확인해 연쇄
+            사이드이펙트 방지
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

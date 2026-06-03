@@ -1,89 +1,270 @@
 <section>
-                <div class="slide-counter">SLIDE 01 / 11</div>
-                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
-                
-                <div class="split-container-2col">
-                    <div class="col-40" style="display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; transform: scale(1.35);">
-                        <div style="position: absolute; width: 220px; height: 220px; background: rgba(99,102,241,0.12); filter: blur(85px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="width: 100%; max-width: 280px; height: auto; animation: float-slow 5s ease-in-out infinite;">
-                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                    <linearGradient id="neon-indigo-glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#818cf8" stop-opacity="0.85" />
-                                        <stop offset="100%" stop-color="#4f46e5" stop-opacity="0.2" />
-                                    </linearGradient>
-                                    <filter id="neon-indigo-glow" x="-20%" y="-20%" width="140%" height="140%">
-                                        <feGaussianBlur stdDeviation="6" result="blur" />
-                                        <feMerge>
-                                            <feMergeNode in="blur" />
-                                            <feMergeNode in="SourceGraphic" />
-                                        </feMerge>
-                                    </filter>
-                                </defs>
-                                
-                                <!-- Decorative 3D Grid lines -->
-                                <path d="M 20,150 L 180,150 M 50,120 L 150,120 M 70,90 L 130,90" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="1"/>
-                                <path d="M 20,150 L 70,90 M 100,150 L 100,90 M 180,150 L 130,90" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="1"/>
-                                
-                                <!-- 3D Projecting Ray from bottom grid to the floating window -->
-                                <polygon points="100,150 50,85 150,85" fill="rgba(99,102,241,0.06)" style="mix-blend-mode: screen;"/>
-                                
-                                <!-- 3D Angled Desktop GUI Frame -->
-                                <g transform="perspective(600px) rotateY(-18deg) rotateX(10deg) translate(15, 20)">
-                                    <!-- Window shadow -->
-                                    <rect x="25" y="25" width="130" height="90" rx="6" fill="rgba(0,0,0,0.6)" filter="url(#neon-indigo-glow)" opacity="0.85"/>
-                                    <!-- Window body -->
-                                    <rect x="20" y="20" width="130" height="90" rx="6" fill="rgba(6,8,15,0.92)" stroke="var(--accent-indigo)" stroke-width="1.8" filter="url(#neon-indigo-glow)"/>
-                                    <!-- Title Bar -->
-                                    <rect x="20" y="20" width="130" height="15" rx="6" fill="rgba(99,102,241,0.15)" stroke="var(--accent-indigo)" stroke-width="1"/>
-                                    <!-- Window buttons -->
-                                    <circle cx="28" cy="27" r="2" fill="#ef4444"/>
-                                    <circle cx="34" cy="27" r="2" fill="#f59e0b"/>
-                                    <circle cx="40" cy="27" r="2" fill="#10b981"/>
-                                    <text x="85" y="30" fill="#a5b4fc" font-family="'Outfit', sans-serif" font-size="5.5" font-weight="800" text-anchor="middle">NAtlas Explorer</text>
-                                    
-                                    <!-- Main body layout wireframe inside window -->
-                                    <!-- Sidebar -->
-                                    <rect x="25" y="40" width="25" height="63" rx="2" fill="rgba(255,255,255,0.02)" stroke="rgba(99,102,241,0.2)" stroke-width="0.8"/>
-                                    <line x1="28" y1="46" x2="47" y2="46" stroke="rgba(99,102,241,0.4)" stroke-width="1"/>
-                                    <line x1="28" y1="52" x2="43" y2="52" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
-                                    <line x1="28" y1="57" x2="45" y2="57" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
-                                    
-                                    <!-- Main Panel showing interactive node connections -->
-                                    <rect x="55" y="40" width="90" height="63" rx="2" fill="rgba(255,255,255,0.01)" stroke="rgba(99,102,241,0.2)" stroke-width="0.8"/>
-                                    <!-- Nodes visualization -->
-                                    <circle cx="100" cy="70" r="5" fill="var(--accent-indigo)" filter="url(#neon-indigo-glow)"/>
-                                    <circle cx="75" cy="60" r="3.5" fill="var(--accent-blue)"/>
-                                    <circle cx="125" cy="62" r="3" fill="var(--accent-emerald)"/>
-                                    <circle cx="85" cy="85" r="3" fill="var(--accent-rose)"/>
-                                    <circle cx="115" cy="88" r="3.5" fill="var(--accent-amber)"/>
-                                    <!-- Links -->
-                                    <line x1="100" y1="70" x2="75" y2="60" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
-                                    <line x1="100" y1="70" x2="125" y2="62" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
-                                    <line x1="100" y1="70" x2="85" y2="85" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
-                                    <line x1="100" y1="70" x2="115" y2="88" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
-                                </g>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-60 glass-panel" style="padding: 45px 50px; display: flex; flex-direction: column; justify-content: center; gap: 24px; text-align: center;">
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 1.0vw; color: var(--accent-indigo); font-weight: 800; letter-spacing: 0.15em;">PART 5 & 6. NAtlas GUI 실물 시연</span>
-                        
-                        <h1 style="font-size: 2.3vw !important; line-height: 1.35 !important; font-weight: 800; background: linear-gradient(135deg, #ffffff 40%, var(--accent-indigo) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            데스크탑 GUI 앱 기동 및<br>실물 아티팩트 지식 시각화
-                        </h1>
-                        
-                        <p style="font-size: 1.0vw; color: var(--text-muted); line-height: 1.6; max-width: 90%; margin: 0 auto;">
-                            Electron + FastAPI 사이드카 아키텍처를 기동하고,<br>
-                            이전 투두/마이그레이션 생성 문서를 로드해 3D 인터랙티브 그래프 지형 탐색
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+  <div class="slide-counter">SLIDE 01 / 11</div>
+  <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+
+  <div class="split-container-2col">
+    <div
+      class="col-40"
+      style="
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        transform: scale(1.35);
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 220px;
+          height: 220px;
+          background: rgba(99, 102, 241, 0.12);
+          filter: blur(85px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+
+      <div
+        style="
+          width: 100%;
+          max-width: 280px;
+          height: auto;
+          animation: float-slow 5s ease-in-out infinite;
+        "
+      >
+        <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="neon-indigo-glow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#818cf8" stop-opacity="0.85" />
+              <stop offset="100%" stop-color="#4f46e5" stop-opacity="0.2" />
+            </linearGradient>
+            <filter id="neon-indigo-glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <!-- Decorative 3D Grid lines -->
+          <path
+            d="M 20,150 L 180,150 M 50,120 L 150,120 M 70,90 L 130,90"
+            fill="none"
+            stroke="rgba(99,102,241,0.15)"
+            stroke-width="1"
+          />
+          <path
+            d="M 20,150 L 70,90 M 100,150 L 100,90 M 180,150 L 130,90"
+            fill="none"
+            stroke="rgba(99,102,241,0.15)"
+            stroke-width="1"
+          />
+
+          <!-- 3D Projecting Ray from bottom grid to the floating window -->
+          <polygon
+            points="100,150 50,85 150,85"
+            fill="rgba(99,102,241,0.06)"
+            style="mix-blend-mode: screen"
+          />
+
+          <!-- 3D Angled Desktop GUI Frame -->
+          <g transform="perspective(600px) rotateY(-18deg) rotateX(10deg) translate(15, 20)">
+            <!-- Window shadow -->
+            <rect
+              x="25"
+              y="25"
+              width="130"
+              height="90"
+              rx="6"
+              fill="rgba(0,0,0,0.6)"
+              filter="url(#neon-indigo-glow)"
+              opacity="0.85"
+            />
+            <!-- Window body -->
+            <rect
+              x="20"
+              y="20"
+              width="130"
+              height="90"
+              rx="6"
+              fill="rgba(6,8,15,0.92)"
+              stroke="var(--accent-indigo)"
+              stroke-width="1.8"
+              filter="url(#neon-indigo-glow)"
+            />
+            <!-- Title Bar -->
+            <rect
+              x="20"
+              y="20"
+              width="130"
+              height="15"
+              rx="6"
+              fill="rgba(99,102,241,0.15)"
+              stroke="var(--accent-indigo)"
+              stroke-width="1"
+            />
+            <!-- Window buttons -->
+            <circle cx="28" cy="27" r="2" fill="#ef4444" />
+            <circle cx="34" cy="27" r="2" fill="#f59e0b" />
+            <circle cx="40" cy="27" r="2" fill="#10b981" />
+            <text
+              x="85"
+              y="30"
+              fill="#a5b4fc"
+              font-family="'Outfit', sans-serif"
+              font-size="5.5"
+              font-weight="800"
+              text-anchor="middle"
+            >
+              NAtlas Explorer
+            </text>
+
+            <!-- Main body layout wireframe inside window -->
+            <!-- Sidebar -->
+            <rect
+              x="25"
+              y="40"
+              width="25"
+              height="63"
+              rx="2"
+              fill="rgba(255,255,255,0.02)"
+              stroke="rgba(99,102,241,0.2)"
+              stroke-width="0.8"
+            />
+            <line x1="28" y1="46" x2="47" y2="46" stroke="rgba(99,102,241,0.4)" stroke-width="1" />
+            <line
+              x1="28"
+              y1="52"
+              x2="43"
+              y2="52"
+              stroke="rgba(255,255,255,0.15)"
+              stroke-width="0.8"
+            />
+            <line
+              x1="28"
+              y1="57"
+              x2="45"
+              y2="57"
+              stroke="rgba(255,255,255,0.15)"
+              stroke-width="0.8"
+            />
+
+            <!-- Main Panel showing interactive node connections -->
+            <rect
+              x="55"
+              y="40"
+              width="90"
+              height="63"
+              rx="2"
+              fill="rgba(255,255,255,0.01)"
+              stroke="rgba(99,102,241,0.2)"
+              stroke-width="0.8"
+            />
+            <!-- Nodes visualization -->
+            <circle
+              cx="100"
+              cy="70"
+              r="5"
+              fill="var(--accent-indigo)"
+              filter="url(#neon-indigo-glow)"
+            />
+            <circle cx="75" cy="60" r="3.5" fill="var(--accent-blue)" />
+            <circle cx="125" cy="62" r="3" fill="var(--accent-emerald)" />
+            <circle cx="85" cy="85" r="3" fill="var(--accent-rose)" />
+            <circle cx="115" cy="88" r="3.5" fill="var(--accent-amber)" />
+            <!-- Links -->
+            <line
+              x1="100"
+              y1="70"
+              x2="75"
+              y2="60"
+              stroke="rgba(255,255,255,0.25)"
+              stroke-width="0.6"
+            />
+            <line
+              x1="100"
+              y1="70"
+              x2="125"
+              y2="62"
+              stroke="rgba(255,255,255,0.25)"
+              stroke-width="0.6"
+            />
+            <line
+              x1="100"
+              y1="70"
+              x2="85"
+              y2="85"
+              stroke="rgba(255,255,255,0.25)"
+              stroke-width="0.6"
+            />
+            <line
+              x1="100"
+              y1="70"
+              x2="115"
+              y2="88"
+              stroke="rgba(255,255,255,0.25)"
+              stroke-width="0.6"
+            />
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-60 glass-panel"
+      style="
+        padding: 45px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 24px;
+        text-align: center;
+      "
+    >
+      <span
+        style="
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 1vw;
+          color: var(--accent-indigo);
+          font-weight: 800;
+          letter-spacing: 0.15em;
+        "
+        >PART 5 & 6. NAtlas GUI 실물 시연</span
+      >
+
+      <h1
+        style="
+          font-size: 2.3vw !important;
+          line-height: 1.35 !important;
+          font-weight: 800;
+          background: linear-gradient(135deg, #ffffff 40%, var(--accent-indigo) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        "
+      >
+        데스크탑 GUI 앱 기동 및<br />실물 아티팩트 지식 시각화
+      </h1>
+
+      <p
+        style="
+          font-size: 1vw;
+          color: var(--text-muted);
+          line-height: 1.6;
+          max-width: 90%;
+          margin: 0 auto;
+        "
+      >
+        Electron + FastAPI 사이드카 아키텍처를 기동하고,<br />
+        이전 투두/마이그레이션 생성 문서를 로드해 3D 인터랙티브 그래프 지형 탐색
+      </p>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

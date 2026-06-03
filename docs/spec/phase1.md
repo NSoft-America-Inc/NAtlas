@@ -2,11 +2,11 @@
 
 ## 범위
 
-| 탭 | Phase |
-|---|---|
-| Documents | ✅ Phase 1 |
-| Update | ✅ Phase 1 |
-| Settings | ✅ Phase 1 |
+| 탭                                 | Phase       |
+| ---------------------------------- | ----------- |
+| Documents                          | ✅ Phase 1  |
+| Update                             | ✅ Phase 1  |
+| Settings                           | ✅ Phase 1  |
 | Wiki / Query / History / Dashboard | ⬜ Phase 2+ |
 
 ---
@@ -16,9 +16,9 @@
 ```typescript
 // Documents
 export interface DocumentFile {
-  path: string                              // content/ 기준 상대경로
+  path: string // content/ 기준 상대경로
   status: 'indexed' | 'modified' | 'new'
-  modified_at: string                       // ISO 8601
+  modified_at: string // ISO 8601
 }
 
 export interface DocumentsSummary {
@@ -35,14 +35,14 @@ export interface DocumentsResponse {
 
 // SwarmVault 상태
 export interface SwarmVaultStatus {
-  python:      { ok: boolean; version: string | null; bin: string | null }
-  swarmvault:  { ok: boolean; version: string | null }
-  llmwiki:     { ok: boolean; file_count: number; error?: string }
+  python: { ok: boolean; version: string | null; bin: string | null }
+  swarmvault: { ok: boolean; version: string | null }
+  llmwiki: { ok: boolean; file_count: number; error?: string }
 }
 
 // Settings
 export interface Settings {
-  llmwiki_root: string    // LLMWiki 루트 경로 (swarmvault.config.json 있는 곳)
+  llmwiki_root: string // LLMWiki 루트 경로 (swarmvault.config.json 있는 곳)
 }
 
 // SSE Log
@@ -104,12 +104,14 @@ Response 500:
 ```
 
 **인덱싱 상태 판단 기준** (`state/manifests/*.json` 기반):
+
 - `state/manifests/` 에서 `repoRelativePath`가 해당 파일과 일치하는 manifest 검색
   - manifest 있음 + 해시 일치 → `indexed`
   - manifest 있음 + 해시 불일치 → `modified`
   - manifest 없음 → `new`
 
 manifest JSON 구조 참고:
+
 ```json
 {
   "sourceId": "feat-3d3cc488",
@@ -154,7 +156,7 @@ interface DocumentRowProps {
 const { data, isLoading, isError } = useQuery<DocumentsResponse>({
   queryKey: ['documents'],
   queryFn: api.getDocuments,
-  refetchInterval: 30_000,
+  refetchInterval: 30_000
 })
 ```
 
@@ -334,10 +336,10 @@ interface DiagnosticItemProps {
 
 ### 에러 힌트 텍스트
 
-| 항목 | ok=false 힌트 |
-|---|---|
-| Python | `🔴 Python 3.10+ 미설치 — brew install python@3.12` |
-| SwarmVault | `🔴 SwarmVault 미설치 — npm install -g @swarmvaultai/cli` |
+| 항목         | ok=false 힌트                                                       |
+| ------------ | ------------------------------------------------------------------- |
+| Python       | `🔴 Python 3.10+ 미설치 — brew install python@3.12`                 |
+| SwarmVault   | `🔴 SwarmVault 미설치 — npm install -g @swarmvaultai/cli`           |
 | LLMWiki 경로 | `🔴 swarmvault.config.json 없음 — LLMWiki 루트 경로를 재설정하세요` |
 
 ---
@@ -362,21 +364,19 @@ interface DiagnosticItemProps {
 const BASE = 'http://localhost:18420'
 
 export const api = {
-  getDocuments: (): Promise<DocumentsResponse> =>
-    fetch(`${BASE}/documents`).then(r => r.json()),
+  getDocuments: (): Promise<DocumentsResponse> => fetch(`${BASE}/documents`).then((r) => r.json()),
 
   getSwarmVaultStatus: (): Promise<SwarmVaultStatus> =>
-    fetch(`${BASE}/swarmvault/status`).then(r => r.json()),
+    fetch(`${BASE}/swarmvault/status`).then((r) => r.json()),
 
-  getSettings: (): Promise<Settings> =>
-    fetch(`${BASE}/settings`).then(r => r.json()),
+  getSettings: (): Promise<Settings> => fetch(`${BASE}/settings`).then((r) => r.json()),
 
   saveSettings: (body: Settings): Promise<{ ok: boolean }> =>
     fetch(`${BASE}/settings`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    }).then(r => r.json()),
+    }).then((r) => r.json())
 }
 ```
 
@@ -387,7 +387,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      staleTime: 10_000,
+      staleTime: 10_000
     }
   }
 })

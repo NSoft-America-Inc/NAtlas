@@ -10,24 +10,24 @@ NAtlas는 [NSoft-LLMWiki](https://github.com/NSoft-America-Inc/NSoft-LLMWiki)와
 
 ## 주요 기능
 
-| 탭 | 상태 | 기능 |
-|---|---|---|
-| Documents | ✅ Phase 1 | LLMWiki 문서 목록, 인덱싱 상태, 필터, 마크다운 뷰어 |
-| Update | ✅ Phase 1 | SwarmVault ingest + compile 실행, 실시간 로그 스트리밍 |
-| Settings | ✅ Phase 1 | Remote(GitHub API) / Local 경로 모드 전환, GitHub Token 관리 |
-| Wiki | 🔄 Phase 2 | 독립 위키 리더, 문서 네비게이션 |
-| Query | 🔄 Phase 2 | SwarmVault 기반 RAG 지식 질의 인터페이스 |
-| History | 🔄 Phase 2 | 작업이력 타임라인, 전직원 검색 |
-| Dashboard | 🔄 Phase 2 | 전사 지식 현황 및 인덱싱 통계 시각화 |
+| 탭        | 상태       | 기능                                                         |
+| --------- | ---------- | ------------------------------------------------------------ |
+| Documents | ✅ Phase 1 | LLMWiki 문서 목록, 인덱싱 상태, 필터, 마크다운 뷰어          |
+| Update    | ✅ Phase 1 | SwarmVault ingest + compile 실행, 실시간 로그 스트리밍       |
+| Settings  | ✅ Phase 1 | Remote(GitHub API) / Local 경로 모드 전환, GitHub Token 관리 |
+| Wiki      | 🔄 Phase 2 | 독립 위키 리더, 문서 네비게이션                              |
+| Query     | 🔄 Phase 2 | SwarmVault 기반 RAG 지식 질의 인터페이스                     |
+| History   | 🔄 Phase 2 | 작업이력 타임라인, 전직원 검색                               |
+| Dashboard | 🔄 Phase 2 | 전사 지식 현황 및 인덱싱 통계 시각화                         |
 
 ## LLMWiki 소스 모드
 
 NAtlas는 두 가지 소스 모드를 지원한다.
 
-| 모드 | 설명 |
-|---|---|
+| 모드       | 설명                                                                                          |
+| ---------- | --------------------------------------------------------------------------------------------- |
 | **Remote** | GitHub API로 NSoft-LLMWiki Private 리포지터리를 직접 조회. GitHub Personal Access Token 필요. |
-| **Local** | 로컬에 클론된 NSoft-LLMWiki 경로를 직접 읽음. SwarmVault Update 기능 사용 가능. |
+| **Local**  | 로컬에 클론된 NSoft-LLMWiki 경로를 직접 읽음. SwarmVault Update 기능 사용 가능.               |
 
 ## 실행 환경
 
@@ -56,7 +56,7 @@ npm run build:mac
 
 ## AI 에이전트 협업 환경 (MCP 연동)
 
-AI 에이전트(Cascade, Cline 등)가 SwarmVault RAG 엔진을 기반으로 로컬 저장소 지식을 자율 탐색하고 정합성 검증을 마칠 수 있도록 하려면, 에이전트의 MCP 환경 설정을 연동해 주어야 합니다. 
+AI 에이전트(Cascade, Cline 등)가 SwarmVault RAG 엔진을 기반으로 로컬 저장소 지식을 자율 탐색하고 정합성 검증을 마칠 수 있도록 하려면, 에이전트의 MCP 환경 설정을 연동해 주어야 합니다.
 구체적인 글로벌 CLI 의존성 설치 및 `mcp_config.json` 매핑 정보는 [프로젝트 셋업 스펙](file:///Users/yg/workspace/NAtlas/docs/spec/setup.md)의 **SwarmVault RAG & MCP 의존성** 단락을 참고하십시오.
 
 ## 프로젝트 구조

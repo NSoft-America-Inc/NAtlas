@@ -1,38 +1,36 @@
 // Documents
 export interface DocumentFile {
-  path: string                              // content/ 기준 상대경로
+  path: string // content/ 기준 상대경로
   status: 'indexed' | 'modified' | 'new'
-  modified_at: string | null               // ISO 8601 (remote는 null)
-  category: string                          // Logs | System | Resources | ...
-  project: string | null                    // 01-Logs 전용
-  user: string | null                       // 01-Logs 전용
-  slug: string | null                       // 01-Logs/archive 전용 (이슈 slug)
-  doc_type: string | null                   // order | report | knowledge
-  title?: string | null                     // 마크다운 파싱 제목
-  issue_url?: string | null                 // GitHub 이슈 링크 URL
+  modified_at: string | null // ISO 8601 (remote는 null)
+  category: string // Logs | System | Resources | ...
+  project: string | null // 01-Logs 전용
+  user: string | null // 01-Logs 전용
+  slug: string | null // 01-Logs/archive 전용 (이슈 slug)
+  doc_type: string | null // order | report | knowledge
+  title?: string | null // 마크다운 파싱 제목
+  issue_url?: string | null // GitHub 이슈 링크 URL
 }
 
-
 export interface DocumentSlugGroup {
-  id: string                                // "group:{project}:{user}:{slug}"
+  id: string // "group:{project}:{user}:{slug}"
   type: 'group'
   category: string
   project: string
   user: string
   slug: string
-  files: DocumentFile[]                     // 그룹 산하 3종 파일 (order, report, knowledge 등)
-  modified_at: string | null                // 하위 파일 중 가장 최신의 modified_at
-  status: 'indexed' | 'modified' | 'new'    // 우선순위 종합 상태
+  files: DocumentFile[] // 그룹 산하 3종 파일 (order, report, knowledge 등)
+  modified_at: string | null // 하위 파일 중 가장 최신의 modified_at
+  status: 'indexed' | 'modified' | 'new' // 우선순위 종합 상태
 }
 
 export interface DocumentSingleFile {
-  id: string                                // "single:{path}"
+  id: string // "single:{path}"
   type: 'single'
   file: DocumentFile
 }
 
 export type DocumentsListItem = DocumentSlugGroup | DocumentSingleFile
-
 
 export interface DocumentsSummary {
   total: number
@@ -48,9 +46,9 @@ export interface DocumentsResponse {
 
 // SwarmVault 상태
 export interface SwarmVaultStatus {
-  python:      { ok: boolean; version: string | null; bin: string | null }
-  swarmvault:  { ok: boolean; version: string | null }
-  llmwiki:     { ok: boolean; file_count: number; error?: string }
+  python: { ok: boolean; version: string | null; bin: string | null }
+  swarmvault: { ok: boolean; version: string | null }
+  llmwiki: { ok: boolean; file_count: number; error?: string }
   enable_auto_sync: boolean
   last_sync_time: string | null
 }
@@ -58,8 +56,8 @@ export interface SwarmVaultStatus {
 // Settings
 export interface Settings {
   source_mode: 'remote' | 'local'
-  github_token: string            // Remote 모드 전용
-  llmwiki_root: string            // Local 모드 전용
+  github_token: string // Remote 모드 전용
+  llmwiki_root: string // Local 모드 전용
   enable_auto_sync?: boolean
 }
 
@@ -117,5 +115,3 @@ export interface DashboardStats {
   top_contributors: TopCountItem[]
   daily_trends: DailyTrendItem[]
 }
-
-

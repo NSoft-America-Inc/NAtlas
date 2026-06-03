@@ -28,10 +28,29 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Resolve Best GitHub Token
+        id: resolve_token
+        run: |
+          TOKEN=$(python3 rotate_tokens.py)
+          if [ -z "$TOKEN" ]; then
+            TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          fi
+          echo "RESOLVED_TOKEN=$TOKEN" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN_1: ${{ secrets.GH_TOKEN_1 }}
+          GH_TOKEN_2: ${{ secrets.GH_TOKEN_2 }}
+          GH_TOKEN_3: ${{ secrets.GH_TOKEN_3 }}
+          GH_TOKEN_4: ${{ secrets.GH_TOKEN_4 }}
+          GH_TOKEN_5: ${{ secrets.GH_TOKEN_5 }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare Embedded Portable Runtimes
+        run: python3 prepare_embedded_runtimes.py
+
       - name: Build macOS Assets
         run: npm run build:mac
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.resolve_token.outputs.RESOLVED_TOKEN }}
 
       - name: Upload macOS Artifact
         uses: actions/upload-artifact@v4
@@ -59,10 +78,30 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Resolve Best GitHub Token
+        id: resolve_token
+        shell: bash
+        run: |
+          TOKEN=$(python rotate_tokens.py)
+          if [ -z "$TOKEN" ]; then
+            TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          fi
+          echo "RESOLVED_TOKEN=$TOKEN" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN_1: ${{ secrets.GH_TOKEN_1 }}
+          GH_TOKEN_2: ${{ secrets.GH_TOKEN_2 }}
+          GH_TOKEN_3: ${{ secrets.GH_TOKEN_3 }}
+          GH_TOKEN_4: ${{ secrets.GH_TOKEN_4 }}
+          GH_TOKEN_5: ${{ secrets.GH_TOKEN_5 }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare Embedded Portable Runtimes
+        run: python prepare_embedded_runtimes.py
+
       - name: Build Windows Assets
         run: npm run build:win
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.resolve_token.outputs.RESOLVED_TOKEN }}
 
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4

@@ -17,7 +17,7 @@ function cleanupExistingSidecar(): Promise<void> {
     console.log('Cleaning up existing sidecar processes on port 18420...')
     const isWin = process.platform === 'win32'
     const exec = require('child_process').exec
-    
+
     if (isWin) {
       // Windows: Find process by port 18420 and kill it
       const cmd = `for /f "tokens=5" %a in ('netstat -aon ^| findstr 18420') do taskkill /F /PID %a`
@@ -31,8 +31,8 @@ function cleanupExistingSidecar(): Promise<void> {
       })
     } else {
       // macOS/Linux: Kill by port using lsof and pkill
-      exec("lsof -t -i:18420 | xargs kill -9", () => {
-        exec("pkill -9 -f uvicorn", () => {
+      exec('lsof -t -i:18420 | xargs kill -9', () => {
+        exec('pkill -9 -f uvicorn', () => {
           console.log('Cleaned up existing macOS sidecar processes.')
           resolve()
         })
@@ -48,26 +48,26 @@ async function startPythonSidecar(): Promise<void> {
   await cleanupExistingSidecar()
 
   let pythonScript = join(app.getAppPath(), 'src/python/main.py')
-  
+
   if (pythonScript.includes('app.asar')) {
     pythonScript = pythonScript.replace('app.asar', 'app.asar.unpacked')
   }
 
   const fs = require('fs')
   const os = require('os')
-  
+
   const isWin = process.platform === 'win32'
   let pythonCmd = isWin ? 'python' : 'python3'
-  
+
   // 1. Local workspace .venv
   let localVenvDir = join(app.getAppPath(), 'src/python/.venv')
   if (localVenvDir.includes('app.asar')) {
     localVenvDir = localVenvDir.replace('app.asar', 'app.asar.unpacked')
   }
-  const localPythonBin = isWin 
+  const localPythonBin = isWin
     ? join(localVenvDir, 'Scripts/python.exe')
     : join(localVenvDir, 'bin/python')
-    
+
   // 2. Global user home .natlas/venv
   const globalVenvDir = join(os.homedir(), '.natlas/venv')
   const globalPythonBin = isWin
@@ -85,10 +85,10 @@ async function startPythonSidecar(): Promise<void> {
   }
 
   console.log(`Spawning Python sidecar: ${pythonCmd} ${pythonScript} --port ${PORT}`)
-  
+
   pythonProcess = spawn(pythonCmd, [pythonScript, '--port', PORT.toString()], {
-    env: { 
-      ...process.env, 
+    env: {
+      ...process.env,
       PYTHONUNBUFFERED: '1',
       NATLAS_VERSION: app.getVersion()
     }
@@ -109,8 +109,8 @@ async function startPythonSidecar(): Promise<void> {
       console.log("Retrying sidecar with fallback 'python' command...")
       pythonCmd = 'python'
       pythonProcess = spawn(pythonCmd, [pythonScript, '--port', PORT.toString()], {
-        env: { 
-          ...process.env, 
+        env: {
+          ...process.env,
           PYTHONUNBUFFERED: '1',
           NATLAS_VERSION: app.getVersion()
         }
@@ -121,7 +121,7 @@ async function startPythonSidecar(): Promise<void> {
   pythonProcess.on('close', (code) => {
     console.log(`Sidecar exited with code ${code}`)
     pythonProcess = null
-    
+
     // Auto restart up to 3 times if not quitting
     if (!isQuitting && restartCount < MAX_RESTARTS) {
       restartCount++
@@ -146,7 +146,7 @@ function stopPythonSidecar(): void {
 function pollHealthCheck(callback: () => void): void {
   let attempts = 0
   const maxAttempts = 10
-  
+
   const check = (): void => {
     attempts++
     console.log(`Polling sidecar health check (${attempts}/${maxAttempts})...`)
@@ -158,12 +158,12 @@ function pollHealthCheck(callback: () => void): void {
         retry()
       }
     })
-    
+
     req.on('error', () => {
       retry()
     })
   }
-  
+
   const retry = (): void => {
     if (attempts < maxAttempts) {
       setTimeout(check, 1000)
@@ -172,7 +172,7 @@ function pollHealthCheck(callback: () => void): void {
       callback()
     }
   }
-  
+
   check()
 }
 
@@ -182,8 +182,8 @@ function createWindow(): void {
     width: 1000,
     height: 750,
     title: 'NAtlas',
-    minWidth: 800,   // macOS 및 Windows에서 창 축소가 안 되는 현상을 방지하기 위해 최소 너비 제한 지정
-    minHeight: 600,  // macOS 및 Windows에서 창 축소가 안 되는 현상을 방지하기 위해 최소 높이 제한 지정
+    minWidth: 800, // macOS 및 Windows에서 창 축소가 안 되는 현상을 방지하기 위해 최소 너비 제한 지정
+    minHeight: 600, // macOS 및 Windows에서 창 축소가 안 되는 현상을 방지하기 위해 최소 높이 제한 지정
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -236,8 +236,37 @@ function createWindow(): void {
 // Set app name explicitly for macOS menu bar and integration
 app.setName('NAtlas')
 
+function initEmbeddedRuntime(): void {
+  const isWin = process.platform === 'win32'
+
+  // Resolve resources path
+  const resourcesDir = app.getAppPath().includes('app.asar')
+    ? join(app.getAppPath(), '..')
+    : join(app.getAppPath(), 'resources')
+
+  let embeddedNodeDir = isWin ? join(resourcesDir, 'node') : join(resourcesDir, 'node', 'bin')
+
+  let embeddedGitDir = isWin ? join(resourcesDir, 'git', 'cmd') : join(resourcesDir, 'git', 'bin')
+
+  if (embeddedNodeDir.includes('app.asar')) {
+    embeddedNodeDir = embeddedNodeDir.replace('app.asar', 'app.asar.unpacked')
+  }
+  if (embeddedGitDir.includes('app.asar')) {
+    embeddedGitDir = embeddedGitDir.replace('app.asar', 'app.asar.unpacked')
+  }
+
+  const pathSeparator = isWin ? ';' : ':'
+  const extraPaths = `${embeddedNodeDir}${pathSeparator}${embeddedGitDir}`
+
+  process.env.PATH = `${extraPaths}${pathSeparator}${process.env.PATH || ''}`
+  console.log(`Embedded PATH resolution initialized: ${process.env.PATH}`)
+}
+
 // This method will be called when Electron has finished initialization
 app.whenReady().then(() => {
+  // Initialize embedded Node/Git runtime path redirection
+  initEmbeddedRuntime()
+
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.nsoftamerica.natlas')
 
@@ -264,24 +293,24 @@ app.whenReady().then(() => {
   ipcMain.handle('run-core-installer', async (_, { scenario }) => {
     return new Promise((resolve) => {
       console.log(`IPC request to run core installer. Scenario: ${scenario}`)
-      
+
       const isWin = process.platform === 'win32'
       const shellCmd = isWin ? 'powershell.exe' : 'bash'
       const scriptFile = isWin ? 'install_unified.ps1' : 'install_unified.sh'
-      
+
       let installerScript = join(app.getAppPath(), scriptFile)
       if (installerScript.includes('app.asar')) {
         installerScript = installerScript.replace('app.asar', 'app.asar.unpacked')
       }
 
       console.log(`Running unified installer script: ${installerScript} using ${shellCmd}`)
-      
-      const runCwd = app.getAppPath().includes('app.asar') 
-        ? join(app.getAppPath(), '..') 
+
+      const runCwd = app.getAppPath().includes('app.asar')
+        ? join(app.getAppPath(), '..')
         : app.getAppPath()
 
-      const spawnArgs = isWin 
-        ? ['-ExecutionPolicy', 'Bypass', '-File', installerScript] 
+      const spawnArgs = isWin
+        ? ['-ExecutionPolicy', 'Bypass', '-File', installerScript]
         : [installerScript]
 
       let installModeEnv = '0'
@@ -295,9 +324,7 @@ app.whenReady().then(() => {
         installModeEnv = scenario.toString()
       }
 
-      const extraPaths = process.platform === 'darwin'
-        ? ':/opt/homebrew/bin:/usr/local/bin'
-        : ''
+      const extraPaths = process.platform === 'darwin' ? ':/opt/homebrew/bin:/usr/local/bin' : ''
       const systemPath = (process.env.PATH || '') + extraPaths
 
       const installerProcess = spawn(shellCmd, spawnArgs, {

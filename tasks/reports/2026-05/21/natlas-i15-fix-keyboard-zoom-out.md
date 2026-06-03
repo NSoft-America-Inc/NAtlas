@@ -1,6 +1,6 @@
 ---
-title: "NAtlas Keyboard Zoom Out Shortcut Fix / NAtlas 키보드 화면 줌아웃 단축키 작동 불량 해결"
-issue_url: "https://github.com/NSoft-America-Inc/NAtlas/issues/15"
+title: 'NAtlas Keyboard Zoom Out Shortcut Fix / NAtlas 키보드 화면 줌아웃 단축키 작동 불량 해결'
+issue_url: 'https://github.com/NSoft-America-Inc/NAtlas/issues/15'
 project: natlas
 type: single
 issue: https://github.com/NSoft-America-Inc/NAtlas/issues/15
@@ -22,8 +22,8 @@ llmwiki: indexed
 
 ## (1) Implementation Summary (구현 요약)
 
-- **해결 방식**: 
-  Electron의 메인 브라우저 윈도우(`mainWindow.webContents`) 상에 `before-input-event` 키보드 리스너를 결합했습니다. 
+- **해결 방식**:
+  Electron의 메인 브라우저 윈도우(`mainWindow.webContents`) 상에 `before-input-event` 키보드 리스너를 결합했습니다.
   사용자가 macOS 환경에서 `Command` (또는 Windows/Linux에서 `Control`) 키를 조합한 상태로 화면 확대/축소 키를 입력할 때 이를 감지하여, 브라우저 엔진의 줌 팩터를 즉각 증감 제어하는 로직을 삽입했습니다.
 - **수정 소스**:
   - [src/main/index.ts](file:///Users/yg/workspace/NAtlas/src/main/index.ts#L128-L148)
@@ -33,30 +33,33 @@ llmwiki: indexed
 ## (2) Detailed Changes (상세 변경 내역)
 
 ### (A) Electron 메인 프로세스 (`src/main/index.ts`)
-* `createWindow()` 함수 내부에 키보드 입력 가로채기(Intercept) 이벤트 추가:
+
+- `createWindow()` 함수 내부에 키보드 입력 가로채기(Intercept) 이벤트 추가:
+
 ```typescript
-  // Keyboard Zoom Shortcut Handler (Cmd/Ctrl + +, Cmd/Ctrl + -, Cmd/Ctrl + 0)
-  mainWindow.webContents.on('before-input-event', (event, input) => {
-    if (input.type === 'keyDown') {
-      const isCmdOrCtrl = process.platform === 'darwin' ? input.meta : input.control
-      if (isCmdOrCtrl) {
-        if (input.key === '-' || input.key === '_') {
-          event.preventDefault()
-          const currentZoom = mainWindow.webContents.getZoomLevel()
-          mainWindow.webContents.setZoomLevel(Math.max(-3, currentZoom - 0.5))
-        } else if (input.key === '=' || input.key === '+') {
-          event.preventDefault()
-          const currentZoom = mainWindow.webContents.getZoomLevel()
-          mainWindow.webContents.setZoomLevel(Math.min(3, currentZoom + 0.5))
-        } else if (input.key === '0') {
-          event.preventDefault()
-          mainWindow.webContents.setZoomLevel(0)
-        }
+// Keyboard Zoom Shortcut Handler (Cmd/Ctrl + +, Cmd/Ctrl + -, Cmd/Ctrl + 0)
+mainWindow.webContents.on('before-input-event', (event, input) => {
+  if (input.type === 'keyDown') {
+    const isCmdOrCtrl = process.platform === 'darwin' ? input.meta : input.control
+    if (isCmdOrCtrl) {
+      if (input.key === '-' || input.key === '_') {
+        event.preventDefault()
+        const currentZoom = mainWindow.webContents.getZoomLevel()
+        mainWindow.webContents.setZoomLevel(Math.max(-3, currentZoom - 0.5))
+      } else if (input.key === '=' || input.key === '+') {
+        event.preventDefault()
+        const currentZoom = mainWindow.webContents.getZoomLevel()
+        mainWindow.webContents.setZoomLevel(Math.min(3, currentZoom + 0.5))
+      } else if (input.key === '0') {
+        event.preventDefault()
+        mainWindow.webContents.setZoomLevel(0)
       }
     }
-  })
+  }
+})
 ```
-* **동작 범위 보장**:
+
+- **동작 범위 보장**:
   - `CmdOrCtrl + -` (또는 `_`): 줌레벨을 0.5씩 축소하여 최대 `-3`배까지 제한 축소 지원 (줌아웃 해결).
   - `CmdOrCtrl + +` (또는 `=`): 줌레벨을 0.5씩 확대하여 최대 `3`배까지 제한 확대 지원.
   - `CmdOrCtrl + 0`: 줌레벨을 즉시 `0`(원래 기본값)으로 리셋 지원.

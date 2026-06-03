@@ -1,479 +1,520 @@
 <!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title>NStack ➔ NAtlas E2E 지식 파이프라인 목차 컨트롤 타워</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-        :root {
-            --background-color: #030408;
-            --accent-blue: #0ea5e9;
-            --accent-indigo: #6366f1;
-            --accent-purple: #a855f7;
-            --accent-emerald: #10b981;
-            --accent-rose: #f43f5e;
-            --accent-amber: #f59e0b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --glass-bg: rgba(9, 12, 22, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --glass-border-glow: rgba(99, 102, 241, 0.15);
-        }
-        
-        body {
-            background-color: var(--background-color) !important;
-            background-image: radial-gradient(rgba(99, 102, 241, 0.04) 1.5px, transparent 1.5px) !important;
-            background-size: 24px 24px !important;
-            font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
-            color: var(--text-main) !important;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
-        }
-        
-        .header-section {
-            margin-top: 40px;
-            text-align: center;
-            z-index: 10;
-        }
-        
-        .header-subtitle {
-            font-size: 0.75vw;
-            color: var(--accent-indigo);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
-        }
-        
-        h1 {
-            font-size: 1.8vw;
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: -0.03em;
-            margin: 0;
-            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
+      :root {
+        --background-color: #030408;
+        --accent-blue: #0ea5e9;
+        --accent-indigo: #6366f1;
+        --accent-purple: #a855f7;
+        --accent-emerald: #10b981;
+        --accent-rose: #f43f5e;
+        --accent-amber: #f59e0b;
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+        --glass-bg: rgba(9, 12, 22, 0.65);
+        --glass-border: rgba(255, 255, 255, 0.05);
+        --glass-border-glow: rgba(99, 102, 241, 0.15);
+      }
 
-        /* Neon Progress Bar */
-        .progress-container {
-            width: 500px;
-            height: 5px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            margin: 15px auto 0 auto;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.02);
+      body {
+        background-color: var(--background-color) !important;
+        background-image: radial-gradient(
+          rgba(99, 102, 241, 0.04) 1.5px,
+          transparent 1.5px
+        ) !important;
+        background-size: 24px 24px !important;
+        font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
+        color: var(--text-main) !important;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+      }
+
+      .header-section {
+        margin-top: 40px;
+        text-align: center;
+        z-index: 10;
+      }
+
+      .header-subtitle {
+        font-size: 0.75vw;
+        color: var(--accent-indigo);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-weight: 800;
+        margin-bottom: 8px;
+        text-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+      }
+
+      h1 {
+        font-size: 1.8vw;
+        font-weight: 900;
+        color: #ffffff;
+        letter-spacing: -0.03em;
+        margin: 0;
+        text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Neon Progress Bar */
+      .progress-container {
+        width: 500px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        margin: 15px auto 0 auto;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.02);
+      }
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--accent-indigo), var(--accent-emerald));
+        border-radius: 10px;
+        box-shadow: 0 0 10px var(--accent-indigo);
+        transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .menu-container {
+        width: 82%;
+        max-width: 900px;
+        height: 60%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+        z-index: 10;
+        box-sizing: border-box;
+        margin-top: -10px;
+      }
+
+      .menu-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1.2px solid var(--glass-border);
+        border-radius: 12px;
+        padding: 12px 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Staged (Focus) Card Design */
+      .menu-card.staged {
+        border-color: var(--accent-indigo);
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.25);
+        background: rgba(99, 102, 241, 0.04);
+        animation: pulse-border 2.5s infinite;
+      }
+
+      @keyframes pulse-border {
+        0% {
+          border-color: rgba(99, 102, 241, 0.5);
+          box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
         }
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent-indigo), var(--accent-emerald));
-            border-radius: 10px;
-            box-shadow: 0 0 10px var(--accent-indigo);
-            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        50% {
+          border-color: rgba(99, 102, 241, 1);
+          box-shadow: 0 0 30px rgba(99, 102, 241, 0.35);
         }
-        
-        .menu-container {
-            width: 82%;
-            max-width: 900px;
-            height: 60%;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            justify-content: center;
-            z-index: 10;
-            box-sizing: border-box;
-            margin-top: -10px;
+        100% {
+          border-color: rgba(99, 102, 241, 0.5);
+          box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
         }
-        
-        .menu-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1.2px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 12px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            cursor: pointer;
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
+      }
+
+      /* Completed Card Design */
+      .menu-card.completed {
+        border-color: rgba(16, 185, 129, 0.25);
+        background: rgba(16, 185, 129, 0.02);
+      }
+
+      .menu-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .menu-card.staged:hover {
+        border-color: var(--accent-blue);
+        background: rgba(14, 165, 233, 0.06);
+        box-shadow: 0 0 35px rgba(14, 165, 233, 0.4);
+      }
+
+      .card-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .card-num {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 1vw;
+        font-weight: 800;
+        color: var(--text-muted);
+        width: 30px;
+      }
+
+      .staged .card-num {
+        color: var(--accent-indigo);
+        text-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+      }
+
+      .completed .card-num {
+        color: var(--accent-emerald);
+      }
+
+      .card-info {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .card-title {
+        font-size: 0.9vw;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.3px;
+      }
+
+      .staged .card-title {
+        color: #ffffff;
+      }
+
+      .completed .card-title {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .card-desc {
+        font-size: 0.65vw;
+        color: var(--text-muted);
+        margin-top: 3px;
+        font-family: 'Inter', 'Noto Sans KR', sans-serif;
+      }
+
+      /* Status Badges */
+      .status-badge {
+        font-size: 0.6vw;
+        font-weight: 800;
+        font-family: 'JetBrains Mono', monospace;
+        padding: 4px 10px;
+        border-radius: 6px;
+        letter-spacing: 0.05em;
+      }
+
+      .badge-pending {
+        background: rgba(255, 255, 255, 0.03);
+        color: rgba(255, 255, 255, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .badge-staged {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--accent-indigo);
+        border: 1px solid rgba(99, 102, 241, 0.4);
+        box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+        animation: pulse-glow 1.5s infinite alternate;
+      }
+
+      @keyframes pulse-glow {
+        from {
+          box-shadow: 0 0 4px rgba(99, 102, 241, 0.2);
         }
-        
-        /* Staged (Focus) Card Design */
-        .menu-card.staged {
-            border-color: var(--accent-indigo);
-            box-shadow: 0 0 25px rgba(99, 102, 241, 0.25);
-            background: rgba(99, 102, 241, 0.04);
-            animation: pulse-border 2.5s infinite;
+        to {
+          box-shadow: 0 0 12px rgba(99, 102, 241, 0.5);
         }
-        
-        @keyframes pulse-border {
-            0% { border-color: rgba(99, 102, 241, 0.5); box-shadow: 0 0 15px rgba(99, 102, 241, 0.15); }
-            50% { border-color: rgba(99, 102, 241, 1); box-shadow: 0 0 30px rgba(99, 102, 241, 0.35); }
-            100% { border-color: rgba(99, 102, 241, 0.5); box-shadow: 0 0 15px rgba(99, 102, 241, 0.15); }
-        }
-        
-        /* Completed Card Design */
-        .menu-card.completed {
-            border-color: rgba(16, 185, 129, 0.25);
-            background: rgba(16, 185, 129, 0.02);
-        }
-        
-        .menu-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.02);
-        }
-        
-        .menu-card.staged:hover {
-            border-color: var(--accent-blue);
-            background: rgba(14, 165, 233, 0.06);
-            box-shadow: 0 0 35px rgba(14, 165, 233, 0.4);
-        }
-        
-        .card-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .card-num {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1vw;
-            font-weight: 800;
-            color: var(--text-muted);
-            width: 30px;
-        }
-        
-        .staged .card-num {
-            color: var(--accent-indigo);
-            text-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
-        }
-        
-        .completed .card-num {
-            color: var(--accent-emerald);
-        }
-        
-        .card-info {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-        }
-        
-        .card-title {
-            font-size: 0.9vw;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -0.3px;
-        }
-        
-        .staged .card-title {
-            color: #ffffff;
-        }
-        
-        .completed .card-title {
-            color: rgba(255, 255, 255, 0.85);
-        }
-        
-        .card-desc {
-            font-size: 0.65vw;
-            color: var(--text-muted);
-            margin-top: 3px;
-            font-family: 'Inter', 'Noto Sans KR', sans-serif;
-        }
-        
-        /* Status Badges */
-        .status-badge {
-            font-size: 0.6vw;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 4px 10px;
-            border-radius: 6px;
-            letter-spacing: 0.05em;
-        }
-        
-        .badge-pending {
-            background: rgba(255,255,255,0.03);
-            color: rgba(255,255,255,0.25);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        
-        .badge-staged {
-            background: rgba(99, 102, 241, 0.15);
-            color: var(--accent-indigo);
-            border: 1px solid rgba(99, 102, 241, 0.4);
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
-            animation: pulse-glow 1.5s infinite alternate;
-        }
-        
-        @keyframes pulse-glow {
-            from { box-shadow: 0 0 4px rgba(99, 102, 241, 0.2); }
-            to { box-shadow: 0 0 12px rgba(99, 102, 241, 0.5); }
-        }
-        
-        .badge-completed {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--accent-emerald);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-        }
-        
-        /* Top Navigation Bar style */
-        .neon-nav-bar {
-            width: 100vw;
-            height: 60px;
-            background: rgba(2, 4, 8, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 40px;
-            box-sizing: border-box;
-            z-index: 100;
-        }
-        
-        .neon-nav-indicator {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8vw;
-            font-weight: 800;
-            color: var(--accent-indigo);
-            letter-spacing: 0.1em;
-            text-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
-        }
-        
-        .neon-nav-btn {
-            background: rgba(255,255,255,0.02);
-            border: 1.2px solid var(--glass-border);
-            color: #cbd5e1;
-            padding: 8px 24px;
-            border-radius: 8px;
-            font-size: 0.75vw;
-            font-weight: 800;
-            font-family: 'Outfit', sans-serif;
-            cursor: pointer;
-            letter-spacing: 0.05em;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .neon-nav-btn:hover {
-            border-color: var(--accent-indigo);
-            background: rgba(99, 102, 241, 0.1);
-            color: #ffffff;
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
-        }
-        
-        .neon-nav-btn-next {
-            border-color: var(--accent-indigo);
-            color: #ffffff;
-            background: rgba(99, 102, 241, 0.15);
-            box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
-        }
-        
-        .neon-nav-btn-next:hover {
-            border-color: var(--accent-blue);
-            background: rgba(14, 165, 233, 0.2);
-            box-shadow: 0 0 20px rgba(14, 165, 233, 0.45);
-        }
+      }
+
+      .badge-completed {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      /* Top Navigation Bar style */
+      .neon-nav-bar {
+        width: 100vw;
+        height: 60px;
+        background: rgba(2, 4, 8, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 40px;
+        box-sizing: border-box;
+        z-index: 100;
+      }
+
+      .neon-nav-indicator {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8vw;
+        font-weight: 800;
+        color: var(--accent-indigo);
+        letter-spacing: 0.1em;
+        text-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+      }
+
+      .neon-nav-btn {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1.2px solid var(--glass-border);
+        color: #cbd5e1;
+        padding: 8px 24px;
+        border-radius: 8px;
+        font-size: 0.75vw;
+        font-weight: 800;
+        font-family: 'Outfit', sans-serif;
+        cursor: pointer;
+        letter-spacing: 0.05em;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .neon-nav-btn:hover {
+        border-color: var(--accent-indigo);
+        background: rgba(99, 102, 241, 0.1);
+        color: #ffffff;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+      }
+
+      .neon-nav-btn-next {
+        border-color: var(--accent-indigo);
+        color: #ffffff;
+        background: rgba(99, 102, 241, 0.15);
+        box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+      }
+
+      .neon-nav-btn-next:hover {
+        border-color: var(--accent-blue);
+        background: rgba(14, 165, 233, 0.2);
+        box-shadow: 0 0 20px rgba(14, 165, 233, 0.45);
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="header-section">
-        <div class="header-subtitle">NStack ➔ NAtlas E2E Presentation Portal</div>
-        <h1>전사 지식 파이프라인 시연 목차 컨트롤 타워</h1>
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
+      <div class="header-subtitle">NStack ➔ NAtlas E2E Presentation Portal</div>
+      <h1>전사 지식 파이프라인 시연 목차 컨트롤 타워</h1>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
     </div>
-    
+
     <div class="menu-container">
-        <!-- Part 1 -->
-        <a class="menu-card" id="card_theory_part1" href="part1/index.html">
-            <div class="card-left">
-                <div class="card-num">01</div>
-                <div class="card-info">
-                    <div class="card-title">AI 시대의 위기와 지식의 소멸</div>
-                    <div class="card-desc">코드 주석 및 설계 맥락의 부재, 2년 전 빌드에 멈춘 구형 문서 방치로 인한 레거시 소실 실태 진단</div>
-                </div>
+      <!-- Part 1 -->
+      <a class="menu-card" id="card_theory_part1" href="part1/index.html">
+        <div class="card-left">
+          <div class="card-num">01</div>
+          <div class="card-info">
+            <div class="card-title">AI 시대의 위기와 지식의 소멸</div>
+            <div class="card-desc">
+              코드 주석 및 설계 맥락의 부재, 2년 전 빌드에 멈춘 구형 문서 방치로 인한 레거시 소실
+              실태 진단
             </div>
-            <div class="status-badge badge-pending" id="badge_theory_part1">PENDING</div>
-        </a>
+          </div>
+        </div>
+        <div class="status-badge badge-pending" id="badge_theory_part1">PENDING</div>
+      </a>
 
-        <!-- Part 2 -->
-        <a class="menu-card" id="card_theory_part2" href="part2/index.html">
-            <div class="card-left">
-                <div class="card-num">02</div>
-                <div class="card-info">
-                    <div class="card-title">NStack 지식 파이프라인의 필요성과 규격</div>
-                    <div class="card-desc">토큰 비용 급증 및 에이전트 장기 메모리 소실 문제를 해결하는 order/report/wiki 3종 아티팩트 해법</div>
-                </div>
+      <!-- Part 2 -->
+      <a class="menu-card" id="card_theory_part2" href="part2/index.html">
+        <div class="card-left">
+          <div class="card-num">02</div>
+          <div class="card-info">
+            <div class="card-title">NStack 지식 파이프라인의 필요성과 규격</div>
+            <div class="card-desc">
+              토큰 비용 급증 및 에이전트 장기 메모리 소실 문제를 해결하는 order/report/wiki 3종
+              아티팩트 해법
             </div>
-            <div class="status-badge badge-pending" id="badge_theory_part2">PENDING</div>
-        </a>
+          </div>
+        </div>
+        <div class="status-badge badge-pending" id="badge_theory_part2">PENDING</div>
+      </a>
 
-        <!-- Part 3 -->
-        <a class="menu-card" id="card_theory_part3" href="part3/index.html">
-            <div class="card-left">
-                <div class="card-num">03</div>
-                <div class="card-info">
-                    <div class="card-title">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
-                    <div class="card-desc">60초 스마트 백그라운드 색인 및 로컬 SQLite DB 기반의 실시간 설계 컨텍스트 주입 기전</div>
-                </div>
+      <!-- Part 3 -->
+      <a class="menu-card" id="card_theory_part3" href="part3/index.html">
+        <div class="card-left">
+          <div class="card-num">03</div>
+          <div class="card-info">
+            <div class="card-title">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
+            <div class="card-desc">
+              60초 스마트 백그라운드 색인 및 로컬 SQLite DB 기반의 실시간 설계 컨텍스트 주입 기전
             </div>
-            <div class="status-badge badge-pending" id="badge_theory_part3">PENDING</div>
-        </a>
+          </div>
+        </div>
+        <div class="status-badge badge-pending" id="badge_theory_part3">PENDING</div>
+      </a>
 
-        <!-- Part 4 -->
-        <a class="menu-card" id="card_demo_project" href="part4/index.html">
-            <div class="card-left">
-                <div class="card-num">04</div>
-                <div class="card-info">
-                    <div class="card-title">실전 라이브 데모: 마이그레이션 및 차단 복구</div>
-                    <div class="card-desc">바닐라 JS ➔ React/Zustand 이관 및 git pre-commit 린트 차단과 Healer 자동 복구 실전 시연</div>
-                </div>
+      <!-- Part 4 -->
+      <a class="menu-card" id="card_demo_project" href="part4/index.html">
+        <div class="card-left">
+          <div class="card-num">04</div>
+          <div class="card-info">
+            <div class="card-title">실전 라이브 데모: 마이그레이션 및 차단 복구</div>
+            <div class="card-desc">
+              바닐라 JS ➔ React/Zustand 이관 및 git pre-commit 린트 차단과 Healer 자동 복구 실전
+              시연
             </div>
-            <div class="status-badge badge-pending" id="badge_demo_project">PENDING</div>
-        </a>
+          </div>
+        </div>
+        <div class="status-badge badge-pending" id="badge_demo_project">PENDING</div>
+      </a>
 
-        <!-- Part 5 -->
-        <a class="menu-card" id="card_demo_natlas" href="part5/index.html">
-            <div class="card-left">
-                <div class="card-num">05</div>
-                <div class="card-info">
-                    <div class="card-title">GUI 공조 데모: 사이드카 아키텍처 및 D3 실시간 탐색</div>
-                    <div class="card-desc">FastAPI 사이드카 및 SSE 실시간 인덱싱 로그 추적, 지식 아티팩트의 D3 물리 자성 노드 탐색 시연</div>
-                </div>
+      <!-- Part 5 -->
+      <a class="menu-card" id="card_demo_natlas" href="part5/index.html">
+        <div class="card-left">
+          <div class="card-num">05</div>
+          <div class="card-info">
+            <div class="card-title">GUI 공조 데모: 사이드카 아키텍처 및 D3 실시간 탐색</div>
+            <div class="card-desc">
+              FastAPI 사이드카 및 SSE 실시간 인덱싱 로그 추적, 지식 아티팩트의 D3 물리 자성 노드
+              탐색 시연
             </div>
-            <div class="status-badge badge-pending" id="badge_demo_natlas">PENDING</div>
-        </a>
+          </div>
+        </div>
+        <div class="status-badge badge-pending" id="badge_demo_natlas">PENDING</div>
+      </a>
 
-        <!-- Part 6 -->
-        <a class="menu-card" id="card_presentation_vision" href="part6/index.html">
-            <div class="card-left">
-                <div class="card-num">06</div>
-                <div class="card-info">
-                    <div class="card-title">전사 도입 성과 및 미래 비전 로드맵</div>
-                    <div class="card-desc">Phase 1 개발 완료 대시보드 브리핑, Phase 2 SQLite 연동 및 Phase 3 AI 자율 협업 로드맵</div>
-                </div>
+      <!-- Part 6 -->
+      <a class="menu-card" id="card_presentation_vision" href="part6/index.html">
+        <div class="card-left">
+          <div class="card-num">06</div>
+          <div class="card-info">
+            <div class="card-title">전사 도입 성과 및 미래 비전 로드맵</div>
+            <div class="card-desc">
+              Phase 1 개발 완료 대시보드 브리핑, Phase 2 SQLite 연동 및 Phase 3 AI 자율 협업 로드맵
             </div>
-            <div class="status-badge badge-pending" id="badge_presentation_vision">PENDING</div>
-        </a>
+          </div>
+        </div>
+        <div class="status-badge badge-pending" id="badge_presentation_vision">PENDING</div>
+      </a>
     </div>
-    
+
     <div class="neon-nav-bar">
-        <button class="neon-nav-btn neon-nav-btn-prev" onclick="resetProgress()">RESET PROGRESS</button>
-        <div class="neon-nav-indicator" id="globalSlideIndex">TOC / MAIN CONTROL TOWER</div>
-        <button class="neon-nav-btn neon-nav-btn-next" onclick="launchStagedTrack()">LAUNCH STAGED SESSION ▶</button>
+      <button class="neon-nav-btn neon-nav-btn-prev" onclick="resetProgress()">
+        RESET PROGRESS
+      </button>
+      <div class="neon-nav-indicator" id="globalSlideIndex">TOC / MAIN CONTROL TOWER</div>
+      <button class="neon-nav-btn neon-nav-btn-next" onclick="launchStagedTrack()">
+        LAUNCH STAGED SESSION ▶
+      </button>
     </div>
 
     <script>
-        const tracks = [
-            "theory_part1",
-            "theory_part2",
-            "theory_part3",
-            "demo_project",
-            "demo_natlas",
-            "presentation_vision"
-        ];
-        
-        // Parse completed tracking from URL query
-        const urlParams = new URLSearchParams(window.location.search);
-        const completedParam = urlParams.get('completed');
-        
-        if (completedParam) {
-            // Save state to localStorage
-            let currentCompleted = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]');
-            if (!currentCompleted.includes(completedParam)) {
-                currentCompleted.push(completedParam);
-                localStorage.setItem('natlas_completed_tracks', JSON.stringify(currentCompleted));
-            }
+      const tracks = [
+        'theory_part1',
+        'theory_part2',
+        'theory_part3',
+        'demo_project',
+        'demo_natlas',
+        'presentation_vision'
+      ]
+
+      // Parse completed tracking from URL query
+      const urlParams = new URLSearchParams(window.location.search)
+      const completedParam = urlParams.get('completed')
+
+      if (completedParam) {
+        // Save state to localStorage
+        let currentCompleted = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]')
+        if (!currentCompleted.includes(completedParam)) {
+          currentCompleted.push(completedParam)
+          localStorage.setItem('natlas_completed_tracks', JSON.stringify(currentCompleted))
         }
-        
-        // Sync states to UI
-        const completedTracks = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]');
-        
-        // Determine the next staged track
-        let stagedTrack = null;
-        for (let t of tracks) {
-            if (completedTracks.includes(t)) {
-                // Completed UI
-                const cardNode = document.getElementById(`card_${t}`);
-                const badgeNode = document.getElementById(`badge_${t}`);
-                if (cardNode) cardNode.classList.add('completed');
-                if (badgeNode) {
-                    badgeNode.textContent = "COMPLETED";
-                    badgeNode.className = "status-badge badge-completed";
-                }
-            } else {
-                if (!stagedTrack) {
-                    stagedTrack = t;
-                    // Staged UI
-                    const cardNode = document.getElementById(`card_${t}`);
-                    const badgeNode = document.getElementById(`badge_${t}`);
-                    if (cardNode) cardNode.classList.add('staged');
-                    if (badgeNode) {
-                        badgeNode.textContent = "STAGED";
-                        badgeNode.className = "status-badge badge-staged";
-                    }
-                }
+      }
+
+      // Sync states to UI
+      const completedTracks = JSON.parse(localStorage.getItem('natlas_completed_tracks') || '[]')
+
+      // Determine the next staged track
+      let stagedTrack = null
+      for (let t of tracks) {
+        if (completedTracks.includes(t)) {
+          // Completed UI
+          const cardNode = document.getElementById(`card_${t}`)
+          const badgeNode = document.getElementById(`badge_${t}`)
+          if (cardNode) cardNode.classList.add('completed')
+          if (badgeNode) {
+            badgeNode.textContent = 'COMPLETED'
+            badgeNode.className = 'status-badge badge-completed'
+          }
+        } else {
+          if (!stagedTrack) {
+            stagedTrack = t
+            // Staged UI
+            const cardNode = document.getElementById(`card_${t}`)
+            const badgeNode = document.getElementById(`badge_${t}`)
+            if (cardNode) cardNode.classList.add('staged')
+            if (badgeNode) {
+              badgeNode.textContent = 'STAGED'
+              badgeNode.className = 'status-badge badge-staged'
             }
+          }
         }
-        
-        // Render Neon Progress Bar
-        const completionRate = Math.round((completedTracks.length / tracks.length) * 100);
-        document.getElementById('progressBar').style.width = `${completionRate}%`;
-        
-        // Launch focused session
-        function launchStagedTrack() {
-            if (stagedTrack) {
-                const urlMap = {
-                    "theory_part1": "part1/index.html",
-                    "theory_part2": "part2/index.html",
-                    "theory_part3": "part3/index.html",
-                    "demo_project": "part4/index.html",
-                    "demo_natlas": "part5/index.html",
-                    "presentation_vision": "part6/index.html"
-                };
-                window.location.href = urlMap[stagedTrack];
-            } else {
-                // All completed
-                alert("🎉 모든 발표 세션 세그먼트가 성공적으로 완료되었습니다!");
-                resetProgress();
-            }
+      }
+
+      // Render Neon Progress Bar
+      const completionRate = Math.round((completedTracks.length / tracks.length) * 100)
+      document.getElementById('progressBar').style.width = `${completionRate}%`
+
+      // Launch focused session
+      function launchStagedTrack() {
+        if (stagedTrack) {
+          const urlMap = {
+            theory_part1: 'part1/index.html',
+            theory_part2: 'part2/index.html',
+            theory_part3: 'part3/index.html',
+            demo_project: 'part4/index.html',
+            demo_natlas: 'part5/index.html',
+            presentation_vision: 'part6/index.html'
+          }
+          window.location.href = urlMap[stagedTrack]
+        } else {
+          // All completed
+          alert('🎉 모든 발표 세션 세그먼트가 성공적으로 완료되었습니다!')
+          resetProgress()
         }
-        
-        // Reset progress
-        function resetProgress() {
-            localStorage.removeItem('natlas_completed_tracks');
-            window.location.href = "presentation_index.html";
+      }
+
+      // Reset progress
+      function resetProgress() {
+        localStorage.removeItem('natlas_completed_tracks')
+        window.location.href = 'presentation_index.html'
+      }
+
+      // Keyboard mapping for immediate launch
+      document.addEventListener('keydown', (event) => {
+        if (event.code === 'Space' || event.code === 'Enter' || event.code === 'ArrowRight') {
+          event.preventDefault()
+          launchStagedTrack()
         }
-        
-        // Keyboard mapping for immediate launch
-        document.addEventListener('keydown', event => {
-            if (event.code === 'Space' || event.code === 'Enter' || event.code === 'ArrowRight') {
-                event.preventDefault();
-                launchStagedTrack();
-            }
-        });
+      })
     </script>
-</body>
+  </body>
 </html>

@@ -51,14 +51,14 @@ export function Query() {
   const { data: status, isLoading: isStatusLoading } = useQuery({
     queryKey: ['swarmvault-status'],
     queryFn: api.getSwarmVaultStatus,
-    refetchInterval: 10_000,
+    refetchInterval: 10_000
   })
 
   // 2. Fetch documents (to map citations to real wiki paths)
   const { data: docsData } = useQuery({
     queryKey: ['documents'],
     queryFn: api.getDocuments,
-    staleTime: 30_000,
+    staleTime: 30_000
   })
 
   // Load history from SQLite
@@ -95,7 +95,9 @@ export function Query() {
   // Inbound path parsing helper
   const parseCitationPath = (citPath: string) => {
     const normalizedPath = citPath.replace(/\\/g, '/')
-    const relPath = normalizedPath.startsWith('content/') ? normalizedPath.substring(8) : normalizedPath
+    const relPath = normalizedPath.startsWith('content/')
+      ? normalizedPath.substring(8)
+      : normalizedPath
     const parts = relPath.split('/')
     if (parts[0] === '01-Logs' && parts[1] === 'archive' && parts.length >= 5) {
       return {
@@ -177,12 +179,17 @@ export function Query() {
   // Get matching order/report/knowledge/wiki files from docsData
   const getTaskFiles = (slug: string) => {
     if (!docsData?.files) return { order: null, report: null, knowledge: null }
-    const taskFiles = docsData.files.filter(f => f.slug === slug)
+    const taskFiles = docsData.files.filter((f) => f.slug === slug)
 
     return {
-      order: taskFiles.find(f => f.doc_type === 'order') || null,
-      report: taskFiles.find(f => f.doc_type === 'report') || null,
-      knowledge: taskFiles.find(f => f.doc_type === 'wiki') || taskFiles.find(f => f.doc_type === 'knowledge' || (!['order', 'report'].includes(f.doc_type || ''))) || null
+      order: taskFiles.find((f) => f.doc_type === 'order') || null,
+      report: taskFiles.find((f) => f.doc_type === 'report') || null,
+      knowledge:
+        taskFiles.find((f) => f.doc_type === 'wiki') ||
+        taskFiles.find(
+          (f) => f.doc_type === 'knowledge' || !['order', 'report'].includes(f.doc_type || '')
+        ) ||
+        null
     }
   }
 
@@ -226,7 +233,8 @@ export function Query() {
               <h3 className="text-lg font-bold text-rose-400">SwarmVault 컴파일 필요</h3>
               <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
                 현재 SwarmVault 벡터 인덱스가 존재하지 않거나 빌드되지 않았습니다.
-                <strong>Update</strong> 탭으로 이동하여 [업데이트 실행]을 수행하여 인덱스를 컴파일해 주세요.
+                <strong>Update</strong> 탭으로 이동하여 [업데이트 실행]을 수행하여 인덱스를 컴파일해
+                주세요.
               </p>
             </div>
             <Button
@@ -338,23 +346,35 @@ export function Query() {
                   <div className="px-6 py-4 border-b border-border bg-muted/20 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-2">
                       {currentTask.project ? (
-                        <Badge variant="secondary" className="bg-indigo-950 text-indigo-400 border border-indigo-900/60 font-semibold px-2.5 py-0.5 text-xs flex items-center gap-1">
+                        <Badge
+                          variant="secondary"
+                          className="bg-indigo-950 text-indigo-400 border border-indigo-900/60 font-semibold px-2.5 py-0.5 text-xs flex items-center gap-1"
+                        >
                           <Folder className="w-3.5 h-3.5" />
                           {currentTask.project}
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="text-muted-foreground border-border text-xs px-2.5 py-0.5">
+                        <Badge
+                          variant="outline"
+                          className="text-muted-foreground border-border text-xs px-2.5 py-0.5"
+                        >
                           프로젝트 미정
                         </Badge>
                       )}
 
                       {currentTask.user ? (
-                        <Badge variant="secondary" className="bg-emerald-950 text-emerald-400 border border-emerald-900/60 font-semibold px-2.5 py-0.5 text-xs flex items-center gap-1">
+                        <Badge
+                          variant="secondary"
+                          className="bg-emerald-950 text-emerald-400 border border-emerald-900/60 font-semibold px-2.5 py-0.5 text-xs flex items-center gap-1"
+                        >
                           <User className="w-3.5 h-3.5" />
                           {currentTask.user}
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="text-muted-foreground border-border text-xs px-2.5 py-0.5">
+                        <Badge
+                          variant="outline"
+                          className="text-muted-foreground border-border text-xs px-2.5 py-0.5"
+                        >
                           담당자 미정
                         </Badge>
                       )}
@@ -498,7 +518,9 @@ export function Query() {
                             </div>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground text-[10px] sm:text-right shrink-0">
-                            <span>{new Date(item.created_at).toLocaleString('ko-KR', { hour12: false })}</span>
+                            <span>
+                              {new Date(item.created_at).toLocaleString('ko-KR', { hour12: false })}
+                            </span>
                             <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/40" />
                           </div>
                         </div>
@@ -514,9 +536,12 @@ export function Query() {
                   <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-900/10 text-indigo-400 border border-indigo-500/20 shadow-inner mx-auto mb-6">
                     <Search className="w-8 h-8 text-indigo-400" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground">작업 명세 탐색을 시작해 보세요</h3>
+                  <h3 className="text-lg font-bold text-foreground">
+                    작업 명세 탐색을 시작해 보세요
+                  </h3>
                   <p className="text-xs text-muted-foreground mt-2 max-w-sm mx-auto leading-relaxed">
-                    프로젝트(memo, nstack), 담당자(developer-a) 또는 작업 내용을 검색하면 SwarmVault 벡터 데이터로부터 최적화된 마크다운 산출물 3종 세트가 매칭됩니다.
+                    프로젝트(memo, nstack), 담당자(developer-a) 또는 작업 내용을 검색하면 SwarmVault
+                    벡터 데이터로부터 최적화된 마크다운 산출물 3종 세트가 매칭됩니다.
                   </p>
                 </div>
               )}

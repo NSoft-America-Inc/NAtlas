@@ -1,7 +1,7 @@
 ---
-title: "Slide 46: Documents / Update / Settings 탭 컴포넌트 간 유기적 반응 데모 요약"
-layout: "3-Tab Interaction Demo"
-part: "PART 5: NAtlas GUI 지식 탐색 및 아키텍처"
+title: 'Slide 46: Documents / Update / Settings 탭 컴포넌트 간 유기적 반응 데모 요약'
+layout: '3-Tab Interaction Demo'
+part: 'PART 5: NAtlas GUI 지식 탐색 및 아키텍처'
 ---
 
 # Slide 46: Documents / Update / Settings 탭 컴포넌트 간 유기적 반응 데모 요약
@@ -28,4 +28,4 @@ NAtlas 데스크탑 GUI는 각각 독립된 탭 컴포넌트들이 파편화되�
 
 ## 3. 스피치 노트 (Aside Speaker Notes)
 
-*"이번 슬라이드는 NAtlas GUI 아키텍처의 총정리이자, 3대 핵심 탭 컴포넌트들이 어떻게 하나의 유기적 생명체처럼 맞물려 도는지 보여주는 '3-Tab 유기적 반응 데모 요약'입니다. NAtlas는 각각의 탭이 따로 국밥처럼 작동하는 단순 템플릿 앱이 아닙니다. 화면 좌측의 삼각 순환 모션처럼, Settings에서 위키 경로를 'PUT' 저장하면, Update 탭의 RAG 엔진이 이를 감지해 최신 마크다운 지식 결합을 'POST' 재빌드하고, 이 성공 신호가 Documents의 useQuery 캐시로 스무스하게 전파되어 D3 3D 물리 그래프를 실시간 dynamic 새로고침합니다. 사용자가 드래그로 스플리터를 밀거나, 노드를 더블클릭해 탭 순간이동을 하더라도, 단 하나의 Zustand 중앙 스토어가 모든 상태를 실시간 보존 및 동기화하므로, 크래시나 버벅임이 없는 무결성의 데스크탑 GUI 시너지를 실증해 냅니다."*
+_"이번 슬라이드는 NAtlas GUI 아키텍처의 총정리이자, 3대 핵심 탭 컴포넌트들이 어떻게 하나의 유기적 생명체처럼 맞물려 도는지 보여주는 '3-Tab 유기적 반응 데모 요약'입니다. NAtlas는 각각의 탭이 따로 국밥처럼 작동하는 단순 템플릿 앱이 아닙니다. 화면 좌측의 삼각 순환 모션처럼, Settings에서 위키 경로를 'PUT' 저장하면, Update 탭의 RAG 엔진이 이를 감지해 최신 마크다운 지식 결합을 'POST' 재빌드하고, 이 성공 신호가 Documents의 useQuery 캐시로 스무스하게 전파되어 D3 3D 물리 그래프를 실시간 dynamic 새로고침합니다. 사용자가 드래그로 스플리터를 밀거나, 노드를 더블클릭해 탭 순간이동을 하더라도, 단 하나의 Zustand 중앙 스토어가 모든 상태를 실시간 보존 및 동기화하므로, 크래시나 버벅임이 없는 무결성의 데스크탑 GUI 시너지를 실증해 냅니다."_

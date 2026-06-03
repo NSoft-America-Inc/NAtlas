@@ -4,7 +4,8 @@ import { Maximize2, Minimize2, RefreshCw, HelpCircle, Pause, Play, Layers } from
 
 function drawNodeShape(
   ctx: CanvasRenderingContext2D,
-  x: number, y: number,
+  x: number,
+  y: number,
   type: 'project' | 'task' | 'document',
   docType: string | null | undefined,
   r: number
@@ -26,7 +27,7 @@ function drawNodeShape(
   } else if (docType === 'report') {
     // Pentagon
     for (let i = 0; i < 5; i++) {
-      const a = (i * 2 * Math.PI / 5) - Math.PI / 2
+      const a = (i * 2 * Math.PI) / 5 - Math.PI / 2
       if (i === 0) ctx.moveTo(x + r * Math.cos(a), y + r * Math.sin(a))
       else ctx.lineTo(x + r * Math.cos(a), y + r * Math.sin(a))
     }
@@ -91,14 +92,15 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
 
   // HTML 오버레이 툴팁 (프로젝트 호버)
   const [tooltip, setTooltip] = useState<{
-    x: number; y: number;
-    projectId: string;
-    name: string;
-    taskCount: number;
-    orderCount: number;
-    reportCount: number;
-    wikiCount: number;
-    recentTasks: string[];
+    x: number
+    y: number
+    projectId: string
+    name: string
+    taskCount: number
+    orderCount: number
+    reportCount: number
+    wikiCount: number
+    recentTasks: string[]
   } | null>(null)
 
   // Physics alpha decay
@@ -107,9 +109,9 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
   const expandedNodesRef = useRef<Set<string>>(new Set())
   // 줌/팬 lerp용 refs (draw는 render*, 입력은 target*을 각각 사용)
   const renderZoomRef = useRef<number>(0.85)
-  const renderPanRef  = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const renderPanRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const targetZoomRef = useRef<number>(0.85)
-  const targetPanRef  = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const targetPanRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
   const isDraggingCanvas = useRef<boolean>(false)
   const dragStart = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -125,37 +127,48 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     const nodes: GraphNode[] = []
     const edges: GraphEdge[] = []
     const nodeMap = new Map<string, GraphNode>()
-    const childrenMap = new Map<string, string[]>()   // parentId → [childId, ...]
-    const parentMap = new Map<string, string>()        // childId → parentId
+    const childrenMap = new Map<string, string[]>() // parentId → [childId, ...]
+    const parentMap = new Map<string, string>() // childId → parentId
 
     const projectSet = new Set<string>()
-    const taskMap = new Map<string, { project: string; slug: string; user: string; title?: string }>()
+    const taskMap = new Map<
+      string,
+      { project: string; slug: string; user: string; title?: string }
+    >()
     const slugToFileMap = new Map<string, DocumentFile>()
 
-    files.forEach(f => {
+    files.forEach((f) => {
       if (f.slug) slugToFileMap.set(f.slug, f)
       if (f.category === 'Logs' && f.project && f.slug) {
         projectSet.add(f.project)
         const taskKey = `${f.project}__${f.slug}`
         if (!taskMap.has(taskKey) || (f.doc_type === 'order' && f.title)) {
-          taskMap.set(taskKey, { project: f.project, slug: f.slug, user: f.user ?? 'developer', title: f.title ?? undefined })
+          taskMap.set(taskKey, {
+            project: f.project,
+            slug: f.slug,
+            user: f.user ?? 'developer',
+            title: f.title ?? undefined
+          })
         }
       }
     })
 
     const searchCountMap = new Map<string, number>()
-    history.forEach(h => {
+    history.forEach((h) => {
       if (h.task_slug) searchCountMap.set(h.task_slug, (searchCountMap.get(h.task_slug) ?? 0) + 1)
     })
     const projectSearchCountMap = new Map<string, number>()
     const slugToProject = new Map<string, string>()
-    files.forEach(f => { if (f.slug && f.project) slugToProject.set(f.slug, f.project) })
-    history.forEach(h => {
+    files.forEach((f) => {
+      if (f.slug && f.project) slugToProject.set(f.slug, f.project)
+    })
+    history.forEach((h) => {
       const p = h.project || (h.task_slug ? slugToProject.get(h.task_slug) : null)
       if (p) projectSearchCountMap.set(p, (projectSearchCountMap.get(p) ?? 0) + 1)
     })
 
-    const W = 800, H = 600
+    const W = 800,
+      H = 600
 
     // A. Project 노드 — 원형 배치
     const projectArr = Array.from(projectSet)
@@ -167,10 +180,14 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       const dist = Math.min(W, H) * 0.28
 
       const node: GraphNode = {
-        id, label: p, type: 'project',
+        id,
+        label: p,
+        type: 'project',
         x: W / 2 + Math.cos(angle) * dist,
         y: H / 2 + Math.sin(angle) * dist,
-        vx: 0, vy: 0, radius,
+        vx: 0,
+        vy: 0,
+        radius,
         color: '#6366f1',
         glowColor: `rgba(99, 102, 241, ${Math.min(0.9, 0.45 + pSearchCount * 0.12)})`
       }
@@ -186,16 +203,25 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       const parent = nodeMap.get(pId)
       const searchCount = searchCountMap.get(t.slug) ?? 0
       const radius = 13 + Math.min(9, searchCount * 2.5)
-      const taskLabel = t.title ? `[${t.slug.split('-').slice(0,2).join('-')}] ${t.title}` : t.slug
+      const taskLabel = t.title ? `[${t.slug.split('-').slice(0, 2).join('-')}] ${t.title}` : t.slug
 
-      const taskFiles = files.filter(f => f.category === 'Logs' && f.project === t.project && f.slug === t.slug)
-      const issueUrl = taskFiles.find(f => f.doc_type === 'order')?.issue_url || taskFiles.find(f => f.issue_url)?.issue_url || null
+      const taskFiles = files.filter(
+        (f) => f.category === 'Logs' && f.project === t.project && f.slug === t.slug
+      )
+      const issueUrl =
+        taskFiles.find((f) => f.doc_type === 'order')?.issue_url ||
+        taskFiles.find((f) => f.issue_url)?.issue_url ||
+        null
 
       const node: GraphNode = {
-        id, label: taskLabel, type: 'task',
+        id,
+        label: taskLabel,
+        type: 'task',
         x: (parent?.x ?? W / 2) + (Math.random() - 0.5) * 60,
         y: (parent?.y ?? H / 2) + (Math.random() - 0.5) * 60,
-        vx: 0, vy: 0, radius,
+        vx: 0,
+        vy: 0,
+        radius,
         color: '#f59e0b',
         glowColor: `rgba(245, 158, 11, ${Math.min(0.85, 0.35 + searchCount * 0.15)})`,
         issueUrl
@@ -212,14 +238,22 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     })
 
     // C. Document 노드
-    files.forEach(f => {
+    files.forEach((f) => {
       const isLogs = f.category === 'Logs' && f.project && f.slug
       const id = `doc:${f.path}`
 
-      let color = '#38bdf8', glow = 'rgba(56, 189, 248, 0.3)'
-      if (f.doc_type === 'order')     { color = '#0ea5e9'; glow = 'rgba(14, 165, 233, 0.35)' }
-      else if (f.doc_type === 'report')    { color = '#10b981'; glow = 'rgba(16, 185, 129, 0.35)' }
-      else if (f.doc_type === 'knowledge') { color = '#f43f5e'; glow = 'rgba(244, 63, 94, 0.4)' }
+      let color = '#38bdf8',
+        glow = 'rgba(56, 189, 248, 0.3)'
+      if (f.doc_type === 'order') {
+        color = '#0ea5e9'
+        glow = 'rgba(14, 165, 233, 0.35)'
+      } else if (f.doc_type === 'report') {
+        color = '#10b981'
+        glow = 'rgba(16, 185, 129, 0.35)'
+      } else if (f.doc_type === 'knowledge') {
+        color = '#f43f5e'
+        glow = 'rgba(244, 63, 94, 0.4)'
+      }
 
       let parentId: string | null = null
       if (isLogs) {
@@ -236,8 +270,11 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         file: f,
         x: (parentNode?.x ?? W / 2) + (Math.random() - 0.5) * 40,
         y: (parentNode?.y ?? H / 2) + (Math.random() - 0.5) * 40,
-        vx: 0, vy: 0, radius: 8,
-        color, glowColor: glow,
+        vx: 0,
+        vy: 0,
+        radius: 8,
+        color,
+        glowColor: glow,
         issueUrl: f.issue_url || null
       }
       nodes.push(node)
@@ -252,20 +289,26 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     })
 
     // D. 공통/시스템 지식
-    const systemFiles = files.filter(f => !(f.category === 'Logs' && f.project && f.slug))
+    const systemFiles = files.filter((f) => !(f.category === 'Logs' && f.project && f.slug))
     if (systemFiles.length > 0) {
       const sysRootId = 'system:root'
       const sysRootNode: GraphNode = {
-        id: sysRootId, label: '🧠 공통 및 시스템 지식', type: 'project',
-        x: W / 2 - 250, y: H / 2 + 150,
-        vx: 0, vy: 0, radius: 15,
-        color: '#a855f7', glowColor: 'rgba(168, 85, 247, 0.4)'
+        id: sysRootId,
+        label: '🧠 공통 및 시스템 지식',
+        type: 'project',
+        x: W / 2 - 250,
+        y: H / 2 + 150,
+        vx: 0,
+        vy: 0,
+        radius: 15,
+        color: '#a855f7',
+        glowColor: 'rgba(168, 85, 247, 0.4)'
       }
       nodes.push(sysRootNode)
       nodeMap.set(sysRootId, sysRootNode)
       childrenMap.set(sysRootId, [])
 
-      systemFiles.forEach(f => {
+      systemFiles.forEach((f) => {
         const id = `doc:${f.path}`
         if (nodeMap.has(id)) {
           edges.push({ source: sysRootId, target: id, type: 'hierarchy' })
@@ -277,37 +320,51 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
 
     // E. Wiki Link 연결선
     const slugGroups = new Map<string, DocumentFile[]>()
-    files.forEach(f => {
+    files.forEach((f) => {
       if (f.slug) {
         if (!slugGroups.has(f.slug)) slugGroups.set(f.slug, [])
         slugGroups.get(f.slug)!.push(f)
       }
     })
     slugGroups.forEach((group) => {
-      const order = group.find(f => f.doc_type === 'order')
-      const report = group.find(f => f.doc_type === 'report')
-      const knowledge = group.find(f => f.doc_type === 'knowledge')
-      if (order && report) edges.push({ source: `doc:${order.path}`, target: `doc:${report.path}`, type: 'wiki-link' })
-      if (report && knowledge) edges.push({ source: `doc:${report.path}`, target: `doc:${knowledge.path}`, type: 'wiki-link' })
+      const order = group.find((f) => f.doc_type === 'order')
+      const report = group.find((f) => f.doc_type === 'report')
+      const knowledge = group.find((f) => f.doc_type === 'knowledge')
+      if (order && report)
+        edges.push({ source: `doc:${order.path}`, target: `doc:${report.path}`, type: 'wiki-link' })
+      if (report && knowledge)
+        edges.push({
+          source: `doc:${report.path}`,
+          target: `doc:${knowledge.path}`,
+          type: 'wiki-link'
+        })
     })
 
     // F. 프로젝트별 통계 (툴팁용)
-    const projectStats = new Map<string, {
-      taskCount: number; orderCount: number; reportCount: number; wikiCount: number; recentTasks: string[]
-    }>()
-    const projectSet2 = new Set(nodes.filter(n => n.type === 'project').map(n => n.label))
-    projectSet2.forEach(p => {
-      const pFiles = files.filter(f => f.category === 'Logs' && f.project === p)
-      const slugSet = new Set(pFiles.map(f => f.slug).filter(Boolean))
+    const projectStats = new Map<
+      string,
+      {
+        taskCount: number
+        orderCount: number
+        reportCount: number
+        wikiCount: number
+        recentTasks: string[]
+      }
+    >()
+    const projectSet2 = new Set(nodes.filter((n) => n.type === 'project').map((n) => n.label))
+    projectSet2.forEach((p) => {
+      const pFiles = files.filter((f) => f.category === 'Logs' && f.project === p)
+      const slugSet = new Set(pFiles.map((f) => f.slug).filter(Boolean))
       const recentTasks = Array.from(
-        new Map(pFiles.filter(f => f.doc_type === 'order' && f.title)
-          .map(f => [f.slug, f.title!])).values()
+        new Map(
+          pFiles.filter((f) => f.doc_type === 'order' && f.title).map((f) => [f.slug, f.title!])
+        ).values()
       ).slice(0, 4)
       projectStats.set(`project:${p}`, {
         taskCount: slugSet.size,
-        orderCount: pFiles.filter(f => f.doc_type === 'order').length,
-        reportCount: pFiles.filter(f => f.doc_type === 'report').length,
-        wikiCount: pFiles.filter(f => f.doc_type === 'knowledge').length,
+        orderCount: pFiles.filter((f) => f.doc_type === 'order').length,
+        reportCount: pFiles.filter((f) => f.doc_type === 'report').length,
+        wikiCount: pFiles.filter((f) => f.doc_type === 'knowledge').length,
         recentTasks
       })
     })
@@ -328,27 +385,29 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       visibleIds.add(focused)
     } else {
       // 기본: 모든 프로젝트 표시
-      nodes.forEach(n => { if (n.type === 'project') visibleIds.add(n.id) })
+      nodes.forEach((n) => {
+        if (n.type === 'project') visibleIds.add(n.id)
+      })
     }
 
     // 확장된 노드의 자식 표시 (재귀)
     const addChildren = (parentId: string) => {
       const children = childrenMap.get(parentId) ?? []
-      children.forEach(childId => {
+      children.forEach((childId) => {
         visibleIds.add(childId)
         if (expanded.has(childId)) addChildren(childId)
       })
     }
-    expanded.forEach(id => addChildren(id))
+    expanded.forEach((id) => addChildren(id))
 
-    const visibleNodes = nodes.filter(n => visibleIds.has(n.id))
-    const visibleNodeSet = new Set(visibleNodes.map(n => n.id))
-    const visibleEdges = edges.filter(e =>
-      visibleNodeSet.has(e.source) && visibleNodeSet.has(e.target)
+    const visibleNodes = nodes.filter((n) => visibleIds.has(n.id))
+    const visibleNodeSet = new Set(visibleNodes.map((n) => n.id))
+    const visibleEdges = edges.filter(
+      (e) => visibleNodeSet.has(e.source) && visibleNodeSet.has(e.target)
     )
 
     const expandableIds = new Set<string>()
-    nodes.forEach(n => {
+    nodes.forEach((n) => {
       if ((n.type === 'project' || n.type === 'task') && (childrenMap.get(n.id)?.length ?? 0) > 0) {
         expandableIds.add(n.id)
       }
@@ -364,8 +423,8 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    let width = canvas.width = containerRef.current?.clientWidth ?? 800
-    let height = canvas.height = containerRef.current?.clientHeight ?? 500
+    let width = (canvas.width = containerRef.current?.clientWidth ?? 800)
+    let height = (canvas.height = containerRef.current?.clientHeight ?? 500)
 
     const resizeObserver = new ResizeObserver(() => {
       if (canvas && containerRef.current) {
@@ -389,7 +448,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       const gravity = 0.018 * alpha
       const friction = 0.86
 
-      visibleNodes.forEach(node => {
+      visibleNodes.forEach((node) => {
         if (node === activeDragNode.current) return
         node.vx += (width / 2 - node.x) * gravity
         node.vy += (height / 2 - node.y) * gravity
@@ -406,13 +465,19 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
             const force = (kRepulsion * (nodeA.radius + nodeB.radius)) / (dist * dist)
             const fx = (dx / dist) * force
             const fy = (dy / dist) * force
-            if (nodeA !== activeDragNode.current) { nodeA.vx -= fx; nodeA.vy -= fy }
-            if (nodeB !== activeDragNode.current) { nodeB.vx += fx; nodeB.vy += fy }
+            if (nodeA !== activeDragNode.current) {
+              nodeA.vx -= fx
+              nodeA.vy -= fy
+            }
+            if (nodeB !== activeDragNode.current) {
+              nodeB.vx += fx
+              nodeB.vy += fy
+            }
           }
         }
       }
 
-      visibleEdges.forEach(edge => {
+      visibleEdges.forEach((edge) => {
         const sNode = graphData.nodeMap.get(edge.source)
         const tNode = graphData.nodeMap.get(edge.target)
         if (!sNode || !tNode) return
@@ -424,14 +489,22 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         const force = (dist - targetDist) * strength
         const fx = (dx / dist) * force
         const fy = (dy / dist) * force
-        if (sNode !== activeDragNode.current) { sNode.vx += fx; sNode.vy += fy }
-        if (tNode !== activeDragNode.current) { tNode.vx -= fx; tNode.vy -= fy }
+        if (sNode !== activeDragNode.current) {
+          sNode.vx += fx
+          sNode.vy += fy
+        }
+        if (tNode !== activeDragNode.current) {
+          tNode.vx -= fx
+          tNode.vy -= fy
+        }
       })
 
-      visibleNodes.forEach(node => {
+      visibleNodes.forEach((node) => {
         if (node === activeDragNode.current) return
-        node.vx *= friction; node.vy *= friction
-        node.x += node.vx; node.y += node.vy
+        node.vx *= friction
+        node.vy *= friction
+        node.x += node.vx
+        node.y += node.vy
         node.x = Math.max(60, Math.min(width - 60, node.x))
         node.y = Math.max(60, Math.min(height - 60, node.y))
       })
@@ -447,11 +520,13 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       ctx.scale(renderZoomRef.current, renderZoomRef.current)
 
       // 1. Edges
-      visibleEdges.forEach(edge => {
+      visibleEdges.forEach((edge) => {
         const s = graphData.nodeMap.get(edge.source)
         const t = graphData.nodeMap.get(edge.target)
         if (!s || !t) return
-        const isHovered = hoveredNodeRef.current && (hoveredNodeRef.current.id === s.id || hoveredNodeRef.current.id === t.id)
+        const isHovered =
+          hoveredNodeRef.current &&
+          (hoveredNodeRef.current.id === s.id || hoveredNodeRef.current.id === t.id)
         ctx.beginPath()
         ctx.moveTo(s.x, s.y)
         ctx.lineTo(t.x, t.y)
@@ -469,7 +544,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       })
 
       // 2. Nodes
-      visibleNodes.forEach(node => {
+      visibleNodes.forEach((node) => {
         const isHovered = hoveredNodeRef.current?.id === node.id
         const isExpanded = expandedNodesRef.current.has(node.id)
         const isExpandable = expandableIds.has(node.id)
@@ -477,12 +552,23 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         const isFocused = focusedProjectRef.current === node.id
 
         ctx.shadowColor = node.glowColor
-        ctx.shadowBlur = isHovered ? 22 : (isExpanded || isFocused) ? 14 : 8
-        drawNodeShape(ctx, node.x, node.y, node.type, node.docType, node.radius + (isHovered ? 2 : 0))
+        ctx.shadowBlur = isHovered ? 22 : isExpanded || isFocused ? 14 : 8
+        drawNodeShape(
+          ctx,
+          node.x,
+          node.y,
+          node.type,
+          node.docType,
+          node.radius + (isHovered ? 2 : 0)
+        )
         ctx.fillStyle = node.color
         ctx.fill()
-        ctx.strokeStyle = isHovered ? '#ffffff' : (isExpanded || isFocused) ? 'rgba(255,255,255,0.55)' : 'rgba(255, 255, 255, 0.18)'
-        ctx.lineWidth = isHovered ? 2 : (isExpanded || isFocused) ? 2 : 1
+        ctx.strokeStyle = isHovered
+          ? '#ffffff'
+          : isExpanded || isFocused
+            ? 'rgba(255,255,255,0.55)'
+            : 'rgba(255, 255, 255, 0.18)'
+        ctx.lineWidth = isHovered ? 2 : isExpanded || isFocused ? 2 : 1
         ctx.stroke()
         ctx.shadowBlur = 0
 
@@ -533,7 +619,8 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
 
         // 노드 레이블
         ctx.font = node.type === 'project' ? 'bold 11px sans-serif' : '10px monospace'
-        ctx.fillStyle = node.type === 'project' ? '#e2e8f0' : node.type === 'task' ? '#cbd5e1' : '#94a3b8'
+        ctx.fillStyle =
+          node.type === 'project' ? '#e2e8f0' : node.type === 'task' ? '#cbd5e1' : '#94a3b8'
         const maxLen = node.type === 'project' ? 22 : node.type === 'task' ? 30 : 26
         const label = node.label.length > maxLen ? node.label.slice(0, maxLen) + '…' : node.label
         const textWidth = ctx.measureText(label).width
@@ -543,7 +630,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       ctx.restore()
     }
 
-    const LERP = 0.1  // 보간 계수 (낮을수록 더 부드럽고 느림)
+    const LERP = 0.1 // 보간 계수 (낮을수록 더 부드럽고 느림)
     const tick = () => {
       // zoom/pan lerp — render refs가 target refs를 부드럽게 추적
       const dz = targetZoomRef.current - renderZoomRef.current
@@ -570,7 +657,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       resizeObserver.disconnect()
       if (animationRef.current) cancelAnimationFrame(animationRef.current)
     }
-  }, [graphData, visibleData])  // zoom/pan 제거 → 스크롤 시 루프 재시작 없음
+  }, [graphData, visibleData]) // zoom/pan 제거 → 스크롤 시 루프 재시작 없음
 
   // ── 4. 마우스 조작 ──
   const getTransformedCoords = (clientX: number, clientY: number) => {
@@ -579,7 +666,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     const rect = canvas.getBoundingClientRect()
     return {
       x: (clientX - rect.left - renderPanRef.current.x) / renderZoomRef.current,
-      y: (clientY - rect.top  - renderPanRef.current.y) / renderZoomRef.current
+      y: (clientY - rect.top - renderPanRef.current.y) / renderZoomRef.current
     }
   }
 
@@ -590,7 +677,9 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     return null
   }
 
-  const hideHint = () => { if (hintContainerRef.current) hintContainerRef.current.style.opacity = '0' }
+  const hideHint = () => {
+    if (hintContainerRef.current) hintContainerRef.current.style.opacity = '0'
+  }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     hideHint()
@@ -603,7 +692,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       alphaRef.current = Math.max(alphaRef.current, 0.4)
     } else {
       isDraggingCanvas.current = true
-      dragStart.current = { x: e.clientX - renderPanRef.current.x, y: e.clientY - renderPanRef.current.y }
+      dragStart.current = {
+        x: e.clientX - renderPanRef.current.x,
+        y: e.clientY - renderPanRef.current.y
+      }
       canvasRef.current!.style.cursor = 'move'
     }
   }
@@ -636,11 +728,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         const sx = foundHover.x * rz + rp.x + rect.left
         const sy = foundHover.y * rz + rp.y + rect.top + foundHover.radius * rz + 11
         const isFocused = focusedProjectRef.current === foundHover.id
-        const hintText = (foundHover.type === 'project' && isFocused)
-          ? '← 전체로 돌아가기'
-          : '→ 들어가기'
+        const hintText =
+          foundHover.type === 'project' && isFocused ? '← 전체로 돌아가기' : '→ 들어가기'
         hintContainerRef.current.style.left = `${sx}px`
-        hintContainerRef.current.style.top  = `${sy}px`
+        hintContainerRef.current.style.top = `${sy}px`
         hintContainerRef.current.style.opacity = '1'
         hintTextRef.current.textContent = hintText
       } else {
@@ -666,9 +757,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
           const tooltipW = 240
           const tooltipH = 230
           const rawX = screenX + foundHover.radius * rz + 12
-          const adjustedX = rawX + tooltipW > window.innerWidth - 8
-            ? screenX - foundHover.radius * rz - tooltipW - 12
-            : rawX
+          const adjustedX =
+            rawX + tooltipW > window.innerWidth - 8
+              ? screenX - foundHover.radius * rz - tooltipW - 12
+              : rawX
           const rawY = screenY - 20
           const adjustedY = Math.min(window.innerHeight - tooltipH - 8, Math.max(8, rawY))
           setTooltip({
@@ -703,9 +795,12 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
 
           if (isAlreadyFocused) {
             // 이미 포커스된 프로젝트 재클릭 → 접기
-            setExpandedNodes(prev => {
+            setExpandedNodes((prev) => {
               const next = new Set(prev)
-              const collapse = (id: string) => { next.delete(id); (graphData.childrenMap.get(id) ?? []).forEach(collapse) }
+              const collapse = (id: string) => {
+                next.delete(id)
+                ;(graphData.childrenMap.get(id) ?? []).forEach(collapse)
+              }
               collapse(nodeId)
               expandedNodesRef.current = next
               return next
@@ -717,7 +812,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
             setFocusedProject(nodeId)
             focusedProjectRef.current = nodeId
 
-            setExpandedNodes(prev => {
+            setExpandedNodes((prev) => {
               const next = new Set(prev)
               next.add(nodeId)
               const children = graphData.childrenMap.get(nodeId) ?? []
@@ -729,7 +824,8 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
                     const angle = (i / children.length) * 2 * Math.PI - Math.PI / 2
                     child.x = parent.x + Math.cos(angle) * 150
                     child.y = parent.y + Math.sin(angle) * 150
-                    child.vx = 0; child.vy = 0
+                    child.vx = 0
+                    child.vy = 0
                   }
                 })
               }
@@ -745,10 +841,13 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
           const canvas = canvasRef.current
           const wasExpanded = expandedNodesRef.current.has(nodeId)
 
-          setExpandedNodes(prev => {
+          setExpandedNodes((prev) => {
             const next = new Set(prev)
             if (next.has(nodeId)) {
-              const collapse = (id: string) => { next.delete(id); (graphData.childrenMap.get(id) ?? []).forEach(collapse) }
+              const collapse = (id: string) => {
+                next.delete(id)
+                ;(graphData.childrenMap.get(id) ?? []).forEach(collapse)
+              }
               collapse(nodeId)
             } else {
               next.add(nodeId)
@@ -762,9 +861,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
                   ? Math.atan2(taskNode.y - projectNode.y, taskNode.x - projectNode.x)
                   : -Math.PI / 2
                 // 자식 수에 따라 호 각도 조정 (최소 60°, 최대 150°)
-                const arcSpread = children.length > 1
-                  ? Math.min(Math.PI * 0.83, children.length * (Math.PI / 5))
-                  : 0
+                const arcSpread =
+                  children.length > 1
+                    ? Math.min(Math.PI * 0.83, children.length * (Math.PI / 5))
+                    : 0
                 children.forEach((childId, i) => {
                   const child = graphData.nodeMap.get(childId)
                   if (child) {
@@ -772,7 +872,8 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
                     const angle = outwardAngle + (t - 0.5) * arcSpread
                     child.x = taskNode.x + Math.cos(angle) * 130
                     child.y = taskNode.y + Math.sin(angle) * 130
-                    child.vx = 0; child.vy = 0
+                    child.vx = 0
+                    child.vy = 0
                   }
                 })
               }
@@ -799,13 +900,20 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     }
     activeDragNode.current = null
     isDraggingCanvas.current = false
-    if (canvasRef.current) canvasRef.current.style.cursor = hoveredNodeRef.current ? 'pointer' : 'default'
+    if (canvasRef.current)
+      canvasRef.current.style.cursor = hoveredNodeRef.current ? 'pointer' : 'default'
   }
 
   // ── Ref 동기화 ──
-  useEffect(() => { isSimPausedRef.current = isSimPaused }, [isSimPaused])
-  useEffect(() => { expandedNodesRef.current = expandedNodes }, [expandedNodes])
-  useEffect(() => { focusedProjectRef.current = focusedProject }, [focusedProject])
+  useEffect(() => {
+    isSimPausedRef.current = isSimPaused
+  }, [isSimPaused])
+  useEffect(() => {
+    expandedNodesRef.current = expandedNodes
+  }, [expandedNodes])
+  useEffect(() => {
+    focusedProjectRef.current = focusedProject
+  }, [focusedProject])
 
   // 캔버스 중앙 기준 줌 (툴바 +/- 버튼: 즉시 반응, lerp 없음)
   const handleZoom = (factor: number) => {
@@ -814,7 +922,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     const newZoom = Math.min(2.5, Math.max(0.25, prevZoom * factor))
     const ratio = newZoom / prevZoom
     targetZoomRef.current = newZoom
-    renderZoomRef.current = newZoom  // 버튼은 즉각 반응
+    renderZoomRef.current = newZoom // 버튼은 즉각 반응
     setZoom(newZoom)
     if (canvas) {
       const cx = canvas.width / 2
@@ -829,7 +937,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
   }
 
   const toggleSimulation = () => {
-    setIsSimPaused(prev => {
+    setIsSimPaused((prev) => {
       if (prev) alphaRef.current = 0.6 // 재개 시 재가열
       return !prev
     })
@@ -848,13 +956,15 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
     setTooltip(null)
     const canvas = canvasRef.current
     if (canvas) {
-      const W = canvas.width, H = canvas.height
-      const projects = graphData.nodes.filter(n => n.type === 'project')
+      const W = canvas.width,
+        H = canvas.height
+      const projects = graphData.nodes.filter((n) => n.type === 'project')
       projects.forEach((node, pi) => {
         const angle = (pi / projects.length) * 2 * Math.PI
         node.x = W / 2 + Math.cos(angle) * Math.min(W, H) * 0.28
         node.y = H / 2 + Math.sin(angle) * Math.min(W, H) * 0.28
-        node.vx = 0; node.vy = 0
+        node.vx = 0
+        node.vy = 0
       })
     }
     alphaRef.current = 1.0
@@ -865,7 +975,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault()
     hideHint()
-    const factor = e.deltaY < 0 ? 1.04 : 0.962  // 4%/틱으로 낮춤
+    const factor = e.deltaY < 0 ? 1.04 : 0.962 // 4%/틱으로 낮춤
     const canvas = canvasRef.current
     if (!canvas) return
     const rect = canvas.getBoundingClientRect()
@@ -894,7 +1004,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={() => { hideHint(); handleMouseUp() }}
+        onMouseLeave={() => {
+          hideHint()
+          handleMouseUp()
+        }}
         onWheel={handleWheel}
         className="w-full h-full block"
       />
@@ -918,32 +1031,42 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
             <button
               onClick={() => handleZoom(0.9)}
               className="px-2 py-1.5 text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors text-sm font-bold leading-none"
-            >−</button>
+            >
+              −
+            </button>
             <input
               type="text"
               value={editingZoom ? zoomText : `${Math.round(zoom * 100)}%`}
-              onFocus={() => { setEditingZoom(true); setZoomText(String(Math.round(zoom * 100))) }}
-              onChange={e => setZoomText(e.target.value.replace(/[^0-9]/g, ''))}
+              onFocus={() => {
+                setEditingZoom(true)
+                setZoomText(String(Math.round(zoom * 100)))
+              }}
+              onChange={(e) => setZoomText(e.target.value.replace(/[^0-9]/g, ''))}
               onBlur={() => {
                 const v = parseInt(zoomText)
                 if (!isNaN(v) && v >= 25 && v <= 250) setZoom(v / 100)
                 setEditingZoom(false)
               }}
-              onKeyDown={e => {
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   const v = parseInt(zoomText)
                   if (!isNaN(v)) setZoom(Math.min(2.5, Math.max(0.25, v / 100)))
                   setEditingZoom(false)
                   e.currentTarget.blur()
                 }
-                if (e.key === 'Escape') { setEditingZoom(false); e.currentTarget.blur() }
+                if (e.key === 'Escape') {
+                  setEditingZoom(false)
+                  e.currentTarget.blur()
+                }
               }}
               className="w-12 text-center text-[10px] bg-transparent text-slate-300 border-0 focus:outline-none py-1.5 font-mono tabular-nums"
             />
             <button
               onClick={() => handleZoom(1.1)}
               className="px-2 py-1.5 text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors text-sm font-bold leading-none"
-            >+</button>
+            >
+              +
+            </button>
           </div>
           <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/zoom:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
             확대/축소 (숫자 직접 입력 가능)
@@ -965,7 +1088,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         <div className="w-px h-4 bg-border/60 mx-0.5" />
         {/* 초기화 */}
         <div className="relative group/btn-reset">
-          <button onClick={resetView} className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
+          <button
+            onClick={resetView}
+            className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all"
+          >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>
           <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/btn-reset:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
@@ -974,8 +1100,15 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         </div>
         {/* 전체화면 */}
         <div className="relative group/btn-fs">
-          <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all">
-            {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 text-indigo-400" /> : <Maximize2 className="w-3.5 h-3.5" />}
+          <button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className="p-2 rounded hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all"
+          >
+            {isFullscreen ? (
+              <Minimize2 className="w-3.5 h-3.5 text-indigo-400" />
+            ) : (
+              <Maximize2 className="w-3.5 h-3.5" />
+            )}
           </button>
           <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/btn-fs:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
             {isFullscreen ? '창 모드로 전환' : '전체화면'}
@@ -984,7 +1117,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         {/* 범례 토글 */}
         <div className="relative group/btn-legend">
           <button
-            onClick={() => setShowLegend(prev => !prev)}
+            onClick={() => setShowLegend((prev) => !prev)}
             className={`p-2 rounded transition-all ${showLegend ? 'bg-indigo-500/15 text-indigo-400 hover:bg-indigo-500/25' : 'hover:bg-muted/40 text-muted-foreground hover:text-foreground'}`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -995,7 +1128,10 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         </div>
         {/* 도움말 */}
         <div className="relative group/btn-help">
-          <button onClick={() => setShowHelp(!showHelp)} className={`p-2 rounded transition-all ${showHelp ? 'bg-indigo-500/15 text-indigo-400 hover:bg-indigo-500/25' : 'hover:bg-muted/40 text-muted-foreground hover:text-foreground'}`}>
+          <button
+            onClick={() => setShowHelp(!showHelp)}
+            className={`p-2 rounded transition-all ${showHelp ? 'bg-indigo-500/15 text-indigo-400 hover:bg-indigo-500/25' : 'hover:bg-muted/40 text-muted-foreground hover:text-foreground'}`}
+          >
             <HelpCircle className="w-3.5 h-3.5" />
           </button>
           <div className="absolute top-full right-0 mt-2 px-2.5 py-1 text-[10px] font-medium text-slate-100 bg-slate-900/95 border border-slate-700/60 rounded-md shadow-lg opacity-0 group-hover/btn-help:opacity-100 transition-opacity duration-150 whitespace-nowrap pointer-events-none z-50">
@@ -1007,27 +1143,37 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
       {/* 범례 (우측 하단) */}
       {showLegend && (
         <div className="absolute bottom-4 right-4 p-3 bg-card/60 border border-border/60 backdrop-blur-md rounded-lg text-[10px] text-muted-foreground space-y-1.5 shadow-lg select-none z-10 pointer-events-none">
-          <p className="font-bold text-slate-200 border-b border-border/30 pb-1 mb-1 tracking-wider uppercase">지식 범례</p>
+          <p className="font-bold text-slate-200 border-b border-border/30 pb-1 mb-1 tracking-wider uppercase">
+            지식 범례
+          </p>
           <div className="flex items-center gap-2">
-            <svg width="12" height="12" className="flex-shrink-0"><circle cx="6" cy="6" r="5" fill="#6366f1"/></svg>
+            <svg width="12" height="12" className="flex-shrink-0">
+              <circle cx="6" cy="6" r="5" fill="#6366f1" />
+            </svg>
             <span>💼 Project</span>
           </div>
           <div className="flex items-center gap-2">
-            <svg width="12" height="12" className="flex-shrink-0"><polygon points="6,0 11,6 6,12 1,6" fill="#f59e0b"/></svg>
+            <svg width="12" height="12" className="flex-shrink-0">
+              <polygon points="6,0 11,6 6,12 1,6" fill="#f59e0b" />
+            </svg>
             <span>📁 Task Slug</span>
           </div>
           <div className="flex items-center gap-2">
-            <svg width="12" height="12" className="flex-shrink-0"><rect x="1" y="1" width="10" height="10" fill="#0ea5e9"/></svg>
+            <svg width="12" height="12" className="flex-shrink-0">
+              <rect x="1" y="1" width="10" height="10" fill="#0ea5e9" />
+            </svg>
             <span>📋 작업계획서</span>
           </div>
           <div className="flex items-center gap-2">
             <svg width="12" height="12" viewBox="0 0 12 12" className="flex-shrink-0">
-              <polygon points="6,0.5 11.3,4.6 9.3,11 2.7,11 0.7,4.6" fill="#10b981"/>
+              <polygon points="6,0.5 11.3,4.6 9.3,11 2.7,11 0.7,4.6" fill="#10b981" />
             </svg>
             <span>✅ 완료보고서</span>
           </div>
           <div className="flex items-center gap-2">
-            <svg width="12" height="12" className="flex-shrink-0"><polygon points="6,0.5 12,11.5 0,11.5" fill="#f43f5e"/></svg>
+            <svg width="12" height="12" className="flex-shrink-0">
+              <polygon points="6,0.5 12,11.5 0,11.5" fill="#f43f5e" />
+            </svg>
             <span>🧠 지식 자산</span>
           </div>
           <div className="flex items-center gap-3 mt-1 border-t border-border/30 pt-1.5 text-indigo-400">
@@ -1047,12 +1193,18 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
           onClick={resetView}
           className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-2 bg-[#0d1527]/90 border border-indigo-500/40 backdrop-blur-md rounded-lg text-[11px] text-indigo-300 font-medium hover:bg-indigo-500/15 hover:border-indigo-500/60 transition-all select-none z-10 shadow-lg"
         >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            className="w-3.5 h-3.5"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M10 12L6 8l4-4" />
           </svg>
-          {focusedProject
-            ? `전체 프로젝트로 돌아가기`
-            : '전체 초기화'}
+          {focusedProject ? `전체 프로젝트로 돌아가기` : '전체 초기화'}
         </button>
       )}
 
@@ -1066,10 +1218,7 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
 
       {/* ── 프로젝트 호버 툴팁 ── */}
       {tooltip && (
-        <div
-          className="fixed z-50 pointer-events-none"
-          style={{ left: tooltip.x, top: tooltip.y }}
-        >
+        <div className="fixed z-50 pointer-events-none" style={{ left: tooltip.x, top: tooltip.y }}>
           <div className="bg-[#0d1527]/96 border border-indigo-500/35 backdrop-blur-xl rounded-xl shadow-2xl p-3.5 w-56 space-y-2.5">
             {/* 프로젝트 이름 */}
             <div className="flex items-center gap-2 border-b border-border/40 pb-2">
@@ -1079,36 +1228,50 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
             {/* 통계 그리드 */}
             <div className="grid grid-cols-2 gap-1.5">
               <div className="flex flex-col items-center p-2 rounded-lg bg-amber-500/8 border border-amber-500/15">
-                <span className="text-lg font-black text-amber-400 leading-none">{tooltip.taskCount}</span>
+                <span className="text-lg font-black text-amber-400 leading-none">
+                  {tooltip.taskCount}
+                </span>
                 <span className="text-[9px] text-slate-400 mt-0.5">태스크</span>
               </div>
               <div className="flex flex-col items-center p-2 rounded-lg bg-sky-500/8 border border-sky-500/15">
-                <span className="text-lg font-black text-sky-400 leading-none">{tooltip.orderCount}</span>
+                <span className="text-lg font-black text-sky-400 leading-none">
+                  {tooltip.orderCount}
+                </span>
                 <span className="text-[9px] text-slate-400 mt-0.5">작업계획서</span>
               </div>
               <div className="flex flex-col items-center p-2 rounded-lg bg-emerald-500/8 border border-emerald-500/15">
-                <span className="text-lg font-black text-emerald-400 leading-none">{tooltip.reportCount}</span>
+                <span className="text-lg font-black text-emerald-400 leading-none">
+                  {tooltip.reportCount}
+                </span>
                 <span className="text-[9px] text-slate-400 mt-0.5">완료보고서</span>
               </div>
               <div className="flex flex-col items-center p-2 rounded-lg bg-rose-500/8 border border-rose-500/15">
-                <span className="text-lg font-black text-rose-400 leading-none">{tooltip.wikiCount}</span>
+                <span className="text-lg font-black text-rose-400 leading-none">
+                  {tooltip.wikiCount}
+                </span>
                 <span className="text-[9px] text-slate-400 mt-0.5">지식 wiki</span>
               </div>
             </div>
             {/* 최근 태스크 */}
             {tooltip.recentTasks.length > 0 && (
               <div className="space-y-1">
-                <p className="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">최근 태스크</p>
+                <p className="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">
+                  최근 태스크
+                </p>
                 {tooltip.recentTasks.map((t, i) => (
                   <div key={i} className="flex items-start gap-1.5">
                     <span className="w-1 h-1 rounded-full bg-amber-400/60 flex-shrink-0 mt-1.5" />
-                    <span className="text-[10px] text-slate-300 leading-snug line-clamp-1">{t}</span>
+                    <span className="text-[10px] text-slate-300 leading-snug line-clamp-1">
+                      {t}
+                    </span>
                   </div>
                 ))}
               </div>
             )}
             {/* 힌트 */}
-            <p className="text-[9px] text-indigo-400/70 border-t border-border/30 pt-1.5">클릭하면 이 프로젝트만 집중 탐색</p>
+            <p className="text-[9px] text-indigo-400/70 border-t border-border/30 pt-1.5">
+              클릭하면 이 프로젝트만 집중 탐색
+            </p>
           </div>
         </div>
       )}
@@ -1118,14 +1281,30 @@ export function WikiGraph({ files, history, onSelectFile }: WikiGraphProps) {
         <div className="absolute top-16 right-4 p-4 bg-[#0d1527]/95 border border-indigo-500/40 backdrop-blur-lg rounded-lg text-[11px] text-slate-300 w-64 shadow-2xl z-20 space-y-2">
           <p className="font-bold text-indigo-300">💡 조작법</p>
           <ul className="list-disc list-inside space-y-1 text-slate-400 leading-relaxed">
-            <li><b>프로젝트 클릭</b>: 하위 태스크 펼치기/접기</li>
-            <li><b>태스크 클릭</b>: 하위 문서 펼치기/접기</li>
-            <li><b>문서 클릭</b>: 문서 뷰어에서 열기</li>
-            <li><b>노드 드래그</b>: 위치 재조정</li>
-            <li><b>빈 공간 드래그</b>: 화면 이동(패닝)</li>
-            <li><b>마우스 휠</b>: 확대/축소</li>
-            <li><b>⏸ 버튼</b>: 노드 움직임 고정</li>
-            <li><b>🔄 버튼</b>: 전체 초기화</li>
+            <li>
+              <b>프로젝트 클릭</b>: 하위 태스크 펼치기/접기
+            </li>
+            <li>
+              <b>태스크 클릭</b>: 하위 문서 펼치기/접기
+            </li>
+            <li>
+              <b>문서 클릭</b>: 문서 뷰어에서 열기
+            </li>
+            <li>
+              <b>노드 드래그</b>: 위치 재조정
+            </li>
+            <li>
+              <b>빈 공간 드래그</b>: 화면 이동(패닝)
+            </li>
+            <li>
+              <b>마우스 휠</b>: 확대/축소
+            </li>
+            <li>
+              <b>⏸ 버튼</b>: 노드 움직임 고정
+            </li>
+            <li>
+              <b>🔄 버튼</b>: 전체 초기화
+            </li>
           </ul>
         </div>
       )}

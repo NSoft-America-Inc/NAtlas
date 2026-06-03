@@ -1,52 +1,171 @@
 <section>
-                <div class="slide-counter">SLIDE 11 / 11</div>
-                <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NAtlas Resizable Panels UX & 지식 흐름의 귀착 완결</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 260px; height: 260px; background: rgba(99,102,241,0.08); filter: blur(95px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15);">
-                            <!-- Resizable observer logic SVG -->
-                            <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="30" y="30" width="140" height="140" rx="8" fill="none" stroke="var(--accent-indigo)" stroke-width="2"/>
-                                <line x1="110" y1="30" x2="110" y2="170" stroke="var(--accent-indigo)" stroke-width="2.5" style="animation: laser-glow 2s infinite;"/>
-                                <path d="M 98 100 L 92 100 M 122 100 L 128 100" fill="none" stroke="var(--accent-indigo)" stroke-width="2.2" style="animation: scale-pulse 2s infinite;"/>
-                                <text x="70" y="103" fill="#cbd5e1" font-family="sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">3D Canvas</text>
-                                <text x="145" y="103" fill="#cbd5e1" font-family="sans-serif" font-size="7.5" font-weight="bold" text-anchor="middle">Doc View</text>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            ⚛️ 가변 드래그 패널과 React 리사이징 해상도 보호 UX
-                        </h3>
-                        
-                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                Shadcn UI `ResizablePanel`을 가동해 마우스로 드래그할 때,<br>
-                                `ResizeObserver` 가 반응해 3D Canvas 해상도 깨짐이나 찌그러짐을 300ms 이내에 정밀 자동 리셋 보호합니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong>가변 멀티패널 가독성 확보</strong>:<br>
-                                    마우스 드래그 조절을 통해 본인이 읽고 싶은 문서의 폭을 언제나 자유롭고 세련되게 조절
-                                </li>
-                                <li>
-                                    <strong>E2E 지식 파이프라인의 환원 완결</strong>:<br>
-                                    이중 대괄호 링크를 타고 React 마이그레이션 노드가 3D 지도에 수려히 안착하며 데모의 1개 지식 피드백 고리가 최종 완결
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+  <div class="slide-counter">SLIDE 11 / 11</div>
+  <div class="slide-subtitle">NAtlas GUI 시스템 및 실시간 지식 탐색</div>
+
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    NAtlas Resizable Panels UX & 지식 흐름의 귀착 완결
+  </h2>
+
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 260px;
+          height: 260px;
+          background: rgba(99, 102, 241, 0.08);
+          filter: blur(95px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+
+      <div style="position: relative; text-align: center; z-index: 1; transform: scale(1.15)">
+        <!-- Resizable observer logic SVG -->
+        <svg viewBox="0 0 200 200" width="220" height="220" xmlns="http://www.w3.org/2000/svg">
+          <rect
+            x="30"
+            y="30"
+            width="140"
+            height="140"
+            rx="8"
+            fill="none"
+            stroke="var(--accent-indigo)"
+            stroke-width="2"
+          />
+          <line
+            x1="110"
+            y1="30"
+            x2="110"
+            y2="170"
+            stroke="var(--accent-indigo)"
+            stroke-width="2.5"
+            style="animation: laser-glow 2s infinite"
+          />
+          <path
+            d="M 98 100 L 92 100 M 122 100 L 128 100"
+            fill="none"
+            stroke="var(--accent-indigo)"
+            stroke-width="2.2"
+            style="animation: scale-pulse 2s infinite"
+          />
+          <text
+            x="70"
+            y="103"
+            fill="#cbd5e1"
+            font-family="sans-serif"
+            font-size="7.5"
+            font-weight="bold"
+            text-anchor="middle"
+          >
+            3D Canvas
+          </text>
+          <text
+            x="145"
+            y="103"
+            fill="#cbd5e1"
+            font-family="sans-serif"
+            font-size="7.5"
+            font-weight="bold"
+            text-anchor="middle"
+          >
+            Doc View
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        ⚛️ 가변 드래그 패널과 React 리사이징 해상도 보호 UX
+      </h3>
+
+      <div
+        style="
+          font-size: 0.9vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          Shadcn UI `ResizablePanel`을 가동해 마우스로 드래그할 때,<br />
+          `ResizeObserver` 가 반응해 3D Canvas 해상도 깨짐이나 찌그러짐을 300ms 이내에 정밀 자동
+          리셋 보호합니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong>가변 멀티패널 가독성 확보</strong>:<br />
+            마우스 드래그 조절을 통해 본인이 읽고 싶은 문서의 폭을 언제나 자유롭고 세련되게 조절
+          </li>
+          <li>
+            <strong>E2E 지식 파이프라인의 환원 완결</strong>:<br />
+            이중 대괄호 링크를 타고 React 마이그레이션 노드가 3D 지도에 수려히 안착하며 데모의 1개
+            지식 피드백 고리가 최종 완결
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

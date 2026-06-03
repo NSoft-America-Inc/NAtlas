@@ -12,9 +12,9 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
+      refetchOnWindowFocus: false
+    }
+  }
 })
 
 function App(): React.JSX.Element {
@@ -41,9 +41,7 @@ function App(): React.JSX.Element {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Layout>
-        {renderContent()}
-      </Layout>
+      <Layout>{renderContent()}</Layout>
     </QueryClientProvider>
   )
 }

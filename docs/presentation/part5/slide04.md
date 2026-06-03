@@ -1,7 +1,7 @@
 ---
-title: "Slide 44: Update 탭 — 버튼 하나로 AI 지식 갱신"
-layout: "TanStack Mutation Flow"
-part: "PART 5: NAtlas GUI 지식 탐색 및 아키텍처"
+title: 'Slide 44: Update 탭 — 버튼 하나로 AI 지식 갱신'
+layout: 'TanStack Mutation Flow'
+part: 'PART 5: NAtlas GUI 지식 탐색 및 아키텍처'
 ---
 
 # Slide 44: Update 탭 — 버튼 하나로 AI 지식 갱신
@@ -28,4 +28,4 @@ NAtlas GUI는 읽기 중심의 useQuery 구조에서 더 나아가, 백엔드 �
 
 ## 3. 스피치 노트 (Aside Speaker Notes)
 
-*"이번 장표는 NAtlas GUI가 지식 데이터의 동적 변경을 안전하고 확실하게 트리거하는 설계, 바로 'useMutation 기반 RAG 인덱스 재생성 POST 파이프라인'입니다. 사용자가 로컬에 신규 마크다운 위키나 작업 완료 보고서를 추가한 뒤, '이 최신 지식을 AI 에이전트의 RAG 컨텍스트 브레인에 탑재하고 싶다'고 느낄 때 'Update' 탭으로 들어옵니다. 그곳의 재생성 버튼을 탭하면, TanStack Query의 useMutation 훅이 즉시 백엔드 18420 포트로 'POST /swarmvault/update' 요청을 비동기 타격합니다. 화면 좌측처럼 버튼이 돌아가며 로딩 처리를 해 중복 클릭을 완벽하게 차단하고, 백그라운드에서는 SwarmVault 엔진이 기동하여 로컬 위키 폴더 전체를 레이저 스캔하듯 초고속 파싱해 RAG 벡터 인덱스를 재정비합니다. 그리고 인덱싱이 끝나는 찰나, useMutation의 onSuccess 콜백이 번개처럼 발동하여 documents 쿼리를 강제 만료 처리합니다. 이 신호에 따라 클라이언트의 D3 물리 캔버스는 즉시 최신 지식 데이터를 리로드하여 새로 생성된 지식 노드가 자석 고무줄에 묶인 채 캔버스 중심에 둥실 안착하는 실시간 UI 리플로우의 감동을 선사합니다."*
+_"이번 장표는 NAtlas GUI가 지식 데이터의 동적 변경을 안전하고 확실하게 트리거하는 설계, 바로 'useMutation 기반 RAG 인덱스 재생성 POST 파이프라인'입니다. 사용자가 로컬에 신규 마크다운 위키나 작업 완료 보고서를 추가한 뒤, '이 최신 지식을 AI 에이전트의 RAG 컨텍스트 브레인에 탑재하고 싶다'고 느낄 때 'Update' 탭으로 들어옵니다. 그곳의 재생성 버튼을 탭하면, TanStack Query의 useMutation 훅이 즉시 백엔드 18420 포트로 'POST /swarmvault/update' 요청을 비동기 타격합니다. 화면 좌측처럼 버튼이 돌아가며 로딩 처리를 해 중복 클릭을 완벽하게 차단하고, 백그라운드에서는 SwarmVault 엔진이 기동하여 로컬 위키 폴더 전체를 레이저 스캔하듯 초고속 파싱해 RAG 벡터 인덱스를 재정비합니다. 그리고 인덱싱이 끝나는 찰나, useMutation의 onSuccess 콜백이 번개처럼 발동하여 documents 쿼리를 강제 만료 처리합니다. 이 신호에 따라 클라이언트의 D3 물리 캔버스는 즉시 최신 지식 데이터를 리로드하여 새로 생성된 지식 노드가 자석 고무줄에 묶인 채 캔버스 중심에 둥실 안착하는 실시간 UI 리플로우의 감동을 선사합니다."_

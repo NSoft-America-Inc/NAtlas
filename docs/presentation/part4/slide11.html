@@ -1,119 +1,410 @@
 <section>
-                <div class="slide-counter">SLIDE 11 / 11</div>
-                <div class="slide-subtitle">NStack 실전 워크플로우와 차단 복구</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">터미널 자동 복구 명령 --heal 기동 시나리오 및 통과</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 6px; position: relative;">
-                        <!-- Glowing aura -->
-                        <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 70%); filter: blur(40px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <!-- 1:1 Matching Card 1: Staggered Vertical Unified Layout in SVG -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-start; margin-left: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 84" style="overflow: visible; overflow: visible;">
-                                <g>
+  <div class="slide-counter">SLIDE 11 / 11</div>
+  <div class="slide-subtitle">NStack 실전 워크플로우와 차단 복구</div>
 
-                                    <!-- Typo input on left -->
-                                    <rect x="15" y="28" width="42" height="24" rx="3" fill="rgba(8,12,22,0.9)" stroke="var(--accent-rose)" stroke-width="1"/>
-                                    <text x="36" y="42" fill="var(--accent-rose)" font-family="'JetBrains Mono'" font-size="5" text-anchor="middle">## 깃 설정</text>
-                                    
-                                    <!-- Resolution gear in middle -->
-                                    <circle cx="80" cy="40" r="10" fill="rgba(16,185,129,0.15)" stroke="var(--accent-emerald)" stroke-width="1.5" style="animation: spin-gear 8s linear infinite; transform-origin: 80px 40px;"/>
-                                    <text x="80" y="43" fill="var(--accent-emerald)" font-size="7" font-weight="extrabold" text-anchor="middle">🩹</text>
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    터미널 자동 복구 명령 --heal 기동 시나리오 및 통과
+  </h2>
 
-                                    <!-- Cleansed output on right -->
-                                    <rect x="103" y="28" width="42" height="24" rx="3" fill="rgba(8,12,22,0.9)" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                    <text x="124" y="42" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="5" font-weight="bold" text-anchor="middle">## Git Setup</text>
-                                                                </g>
-                                <foreignObject x="5" y="67" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        오타/뒤틀린 헤더 자동 정렬 매핑
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        position: relative;
+      "
+    >
+      <!-- Glowing aura -->
+      <div
+        style="
+          position: absolute;
+          width: 250px;
+          height: 250px;
+          background: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.12) 0%,
+            rgba(16, 185, 129, 0) 70%
+          );
+          filter: blur(40px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
 
-                        <!-- 1:1 Matching Card 2: Staggered Vertical Unified Layout in SVG -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-end; margin-right: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 84" style="overflow: visible; overflow: visible;">
-                                <g>
+      <!-- 1:1 Matching Card 1: Staggered Vertical Unified Layout in SVG -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-start;
+          margin-left: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 84"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Typo input on left -->
+            <rect
+              x="15"
+              y="28"
+              width="42"
+              height="24"
+              rx="3"
+              fill="rgba(8,12,22,0.9)"
+              stroke="var(--accent-rose)"
+              stroke-width="1"
+            />
+            <text
+              x="36"
+              y="42"
+              fill="var(--accent-rose)"
+              font-family="'JetBrains Mono'"
+              font-size="5"
+              text-anchor="middle"
+            >
+              ## 깃 설정
+            </text>
 
-                                    <!-- Secure Safe Box -->
-                                    <rect x="55" y="20" width="50" height="40" rx="4" fill="rgba(8,12,22,0.9)" stroke="var(--accent-emerald)" stroke-width="2" style="animation: scale-pulse 2.2s infinite;"/>
-                                    <circle cx="80" cy="40" r="10" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                    <!-- Dial needle -->
-                                    <line x1="80" y1="40" x2="88" y2="34" stroke="var(--accent-emerald)" stroke-width="1.8"/>
-                                    <text x="80" y="15" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="5" font-weight="black" text-anchor="middle">CONTENT PRESERVED</text>
-                                                                </g>
-                                <foreignObject x="5" y="67" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        기재한 국문 서술 본문 데이터 100% 보존
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
+            <!-- Resolution gear in middle -->
+            <circle
+              cx="80"
+              cy="40"
+              r="10"
+              fill="rgba(16,185,129,0.15)"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.5"
+              style="animation: spin-gear 8s linear infinite; transform-origin: 80px 40px"
+            />
+            <text
+              x="80"
+              y="43"
+              fill="var(--accent-emerald)"
+              font-size="7"
+              font-weight="extrabold"
+              text-anchor="middle"
+            >
+              🩹
+            </text>
 
-                        <!-- 1:1 Matching Card 3: Staggered Vertical Unified Layout in SVG -->
-                        <div style="width: 100%; max-width: 420px; align-self: flex-start; margin-left: 4%; display: flex; justify-content: center;">
-                            <svg width="100%" height="auto" viewBox="15 0 130 84" style="overflow: visible; overflow: visible;">
-                                <g>
+            <!-- Cleansed output on right -->
+            <rect
+              x="103"
+              y="28"
+              width="42"
+              height="24"
+              rx="3"
+              fill="rgba(8,12,22,0.9)"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.5"
+            />
+            <text
+              x="124"
+              y="42"
+              fill="var(--accent-emerald)"
+              font-family="'JetBrains Mono'"
+              font-size="5"
+              font-weight="bold"
+              text-anchor="middle"
+            >
+              ## Git Setup
+            </text>
+          </g>
+          <foreignObject x="5" y="67" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              오타/뒤틀린 헤더 자동 정렬 매핑
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
 
-                                    <!-- Ingestion path pipeline -->
-                                    <line x1="20" y1="40" x2="140" y2="40" stroke="var(--accent-blue)" stroke-width="2"/>
-                                    <!-- Flowing data block -->
-                                    <rect x="0" y="36" width="12" height="8" rx="2" fill="#ffffff" style="filter: drop-shadow(0 0 4px var(--accent-blue));">
-                                        <animate attributeName="x" values="20;120" dur="2s" repeatCount="indefinite"/>
-                                    </rect>
-                                    <!-- Target Storage Cylinder -->
-                                    <g transform="translate(125, 22)">
-                                        <rect x="0" y="5" width="18" height="26" rx="2" fill="rgba(8,12,22,0.9)" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                        <ellipse cx="9" cy="5" rx="9" ry="3" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                    </g>
-                                    <!-- Pass checkmark -->
-                                    <path d="M 85,32 L 90,37 L 98,28" fill="none" stroke="var(--accent-emerald)" stroke-width="2" stroke-linecap="round"/>
-                                    <text x="90" y="20" fill="var(--accent-emerald)" font-family="'JetBrains Mono'" font-size="5" font-weight="black" text-anchor="middle">PASS</text>
-                                                                </g>
-                                <foreignObject x="5" y="67" width="150" height="15">
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: center; justify-content: center; height: 100%; font-family: 'Outfit', 'Pretendard', sans-serif; font-size: 4.4px; font-weight: 700; color: #cbd5e1; line-height: 1.35; text-align: center;">
-                                        pre-commit 승인 완료 및 RAG 자동 인덱싱 귀착
-                                    </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            ⚡ `--heal` 자동 포맷 치유로 본문 보존 및 커밋 패스
-                        </h3>
-                        
-                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                힐러 알고리즘이 가동되어, 개발자가 어설프게 남겨둔 플레이스홀더를 지워내고<br>
-                                Fuzzy 헤더 매칭으로 골격을 칼같이 복원하여 1초 만에 안전한 자동 복구를 끝마칩니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">알맹이(국문 서술) 데이터의 100% 보존</strong>:<br>
-                                    작성한 알짜배기 기술 의사결정 내용은 전혀 손대지 않는 영리한 힐링 기전
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">Fuzzy Header 정상화 매핑</strong>:<br>
-                                    국문이나 오타로 틀어진 H2 섹션을 영문 정식 H2 골격으로 재배치 자동 조치
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">E2E 지식 파이프라인의 안전 진입</strong>:<br>
-                                    안정적으로 린트 패스를 받고, 커밋에 최종 골인하여 SwarmVault RAG 색인을 위해 귀착
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+      <!-- 1:1 Matching Card 2: Staggered Vertical Unified Layout in SVG -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-end;
+          margin-right: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 84"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Secure Safe Box -->
+            <rect
+              x="55"
+              y="20"
+              width="50"
+              height="40"
+              rx="4"
+              fill="rgba(8,12,22,0.9)"
+              stroke="var(--accent-emerald)"
+              stroke-width="2"
+              style="animation: scale-pulse 2.2s infinite"
+            />
+            <circle
+              cx="80"
+              cy="40"
+              r="10"
+              fill="none"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.5"
+            />
+            <!-- Dial needle -->
+            <line
+              x1="80"
+              y1="40"
+              x2="88"
+              y2="34"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.8"
+            />
+            <text
+              x="80"
+              y="15"
+              fill="var(--accent-emerald)"
+              font-family="'JetBrains Mono'"
+              font-size="5"
+              font-weight="black"
+              text-anchor="middle"
+            >
+              CONTENT PRESERVED
+            </text>
+          </g>
+          <foreignObject x="5" y="67" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              기재한 국문 서술 본문 데이터 100% 보존
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
+
+      <!-- 1:1 Matching Card 3: Staggered Vertical Unified Layout in SVG -->
+      <div
+        style="
+          width: 100%;
+          max-width: 420px;
+          align-self: flex-start;
+          margin-left: 4%;
+          display: flex;
+          justify-content: center;
+        "
+      >
+        <svg
+          width="100%"
+          height="auto"
+          viewBox="15 0 130 84"
+          style="overflow: visible; overflow: visible"
+        >
+          <g>
+            <!-- Ingestion path pipeline -->
+            <line x1="20" y1="40" x2="140" y2="40" stroke="var(--accent-blue)" stroke-width="2" />
+            <!-- Flowing data block -->
+            <rect
+              x="0"
+              y="36"
+              width="12"
+              height="8"
+              rx="2"
+              fill="#ffffff"
+              style="filter: drop-shadow(0 0 4px var(--accent-blue))"
+            >
+              <animate attributeName="x" values="20;120" dur="2s" repeatCount="indefinite" />
+            </rect>
+            <!-- Target Storage Cylinder -->
+            <g transform="translate(125, 22)">
+              <rect
+                x="0"
+                y="5"
+                width="18"
+                height="26"
+                rx="2"
+                fill="rgba(8,12,22,0.9)"
+                stroke="var(--accent-emerald)"
+                stroke-width="1.5"
+              />
+              <ellipse
+                cx="9"
+                cy="5"
+                rx="9"
+                ry="3"
+                fill="none"
+                stroke="var(--accent-emerald)"
+                stroke-width="1.5"
+              />
+            </g>
+            <!-- Pass checkmark -->
+            <path
+              d="M 85,32 L 90,37 L 98,28"
+              fill="none"
+              stroke="var(--accent-emerald)"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <text
+              x="90"
+              y="20"
+              fill="var(--accent-emerald)"
+              font-family="'JetBrains Mono'"
+              font-size="5"
+              font-weight="black"
+              text-anchor="middle"
+            >
+              PASS
+            </text>
+          </g>
+          <foreignObject x="5" y="67" width="150" height="15">
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+                font-family: 'Outfit', 'Pretendard', sans-serif;
+                font-size: 4.4px;
+                font-weight: 700;
+                color: #cbd5e1;
+                line-height: 1.35;
+                text-align: center;
+              "
+            >
+              pre-commit 승인 완료 및 RAG 자동 인덱싱 귀착
+            </div>
+          </foreignObject>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        ⚡ `--heal` 자동 포맷 치유로 본문 보존 및 커밋 패스
+      </h3>
+
+      <div
+        style="
+          font-size: 0.9vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          힐러 알고리즘이 가동되어, 개발자가 어설프게 남겨둔 플레이스홀더를 지워내고<br />
+          Fuzzy 헤더 매칭으로 골격을 칼같이 복원하여 1초 만에 안전한 자동 복구를 끝마칩니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong style="color: var(--accent-emerald)"
+              >알맹이(국문 서술) 데이터의 100% 보존</strong
+            >:<br />
+            작성한 알짜배기 기술 의사결정 내용은 전혀 손대지 않는 영리한 힐링 기전
+          </li>
+          <li>
+            <strong style="color: var(--accent-emerald)">Fuzzy Header 정상화 매핑</strong>:<br />
+            국문이나 오타로 틀어진 H2 섹션을 영문 정식 H2 골격으로 재배치 자동 조치
+          </li>
+          <li>
+            <strong style="color: var(--accent-emerald)">E2E 지식 파이프라인의 안전 진입</strong
+            >:<br />
+            안정적으로 린트 패스를 받고, 커밋에 최종 골인하여 SwarmVault RAG 색인을 위해 귀착
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>NStack ➔ NAtlas E2E 지식 파이프라인 시연</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

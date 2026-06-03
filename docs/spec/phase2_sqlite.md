@@ -7,11 +7,13 @@
 ## 1. 기획 의도 (Background & Business Goal)
 
 ### 1.1. 도입 배경 및 문제점
+
 - **메모리 휘발성**: NAtlas Phase 1(MVP)에서는 RAG 탐색 질문-답변 내역과 SwarmVault의 빌드/동기화 SSE(Server-Sent Events) 로그가 프론트엔드 React 컴포넌트의 로컬 상태(useState) 및 상태 관리 모듈(Zustand)로만 관리되었습니다.
 - **사용자 경험(UX) 저하**: 이로 인해 사용자가 다른 탭으로 이동하거나 앱을 새로고침/재시작하면 소중한 과거 지식 탐색 맥락(Context)이 완전히 지워져, 동일한 질문을 다시 던져야만 하는 심각한 비효율이 발생하였습니다.
 - **빌드 이력 추적 불가**: SwarmVault의 Ingest 및 Compile 동기화 빌드가 실패하더라도 과거 실패 기록이나 타임라인 로그를 확인할 수 없어, 어느 시점에 지식 베이스 동기화가 중단되었는지 원인 규명이 극히 곤란하였습니다.
 
 ### 1.2. 비즈니스 목적
+
 - **지식 탐색 지속성 보장**: 데스크탑 로컬 디바이스에 독립적이고 영구적인 초경량 데이터베이스(SQLite)를 내장하여, 사용자가 과거에 탐색했던 자연어 질의 기록을 온전히 복원하고 지식 추적 생산성을 200% 이상 향상시킵니다.
 - ** RAG 신뢰성 진단 지원**: 빌드 성패 로그를 영구 보존하여 지식베이스 인덱싱 문제 발생 시 타임라인 단위로 상태를 역추적하고 자가 진단할 수 있도록 지원합니다.
 - **보안 및 규정 준수**: 클라우드가 아닌 전사 직원 각자의 **로컬 샌드박스 영역(`~/.natlas/natlas.db`)**에 격리하여 보존함으로써 전사 기밀 지식의 외부 누출 경로를 원천 차단합니다.
@@ -84,7 +86,7 @@ sequenceDiagram
 
     UI->>BE: 1. POST /swarmvault/update 요청
     Note over BE: SSE Event-Stream 생성 및 반환 시작
-    
+
     %% Ingest 루프
     loop 변경/신규 파일 Ingest 실행
         BE->>SV: 2. subprocess("swarmvault ingest <file>") 실행
@@ -116,26 +118,28 @@ sequenceDiagram
 로컬 SQLite 데이터베이스 파일은 사용자 디렉터리 경로인 `~/.natlas/natlas.db`에 생성되며 아래의 두 가지 핵심 릴레이션으로 구성됩니다.
 
 ### 4.1. `chats` 테이블 (대화 히스토리 백업)
+
 자연어 질문과 답변, 그리고 출처를 보존하기 위한 테이블입니다.
 
-| 컬럼명 | 데이터 타입 | 제약 조건 | 설명 |
-| :--- | :--- | :--- | :--- |
-| **`id`** | `INTEGER` | `PRIMARY KEY AUTOINCREMENT` | 고유 식별자 (자동 증가 일련번호) |
-| **`question`** | `TEXT` | `NOT NULL` | 사용자가 입력한 자연어 질문 본문 |
-| **`answer`** | `TEXT` | `NOT NULL` | SwarmVault RAG 엔진 또는 시스템이 생성한 마크다운 답변 본문 |
-| **`citations`** | `TEXT` | `DEFAULT NULL` | 참조한 로컬 문서 파일 경로 배열 (`string[]`)을 JSON 문자열로 직렬화하여 적재 |
-| **`created_at`** | `TIMESTAMP` | `DEFAULT CURRENT_TIMESTAMP` | 레코드 생성 시간 및 날짜 (ISO 8601 형식 변환 대상) |
+| 컬럼명           | 데이터 타입 | 제약 조건                   | 설명                                                                         |
+| :--------------- | :---------- | :-------------------------- | :--------------------------------------------------------------------------- |
+| **`id`**         | `INTEGER`   | `PRIMARY KEY AUTOINCREMENT` | 고유 식별자 (자동 증가 일련번호)                                             |
+| **`question`**   | `TEXT`      | `NOT NULL`                  | 사용자가 입력한 자연어 질문 본문                                             |
+| **`answer`**     | `TEXT`      | `NOT NULL`                  | SwarmVault RAG 엔진 또는 시스템이 생성한 마크다운 답변 본문                  |
+| **`citations`**  | `TEXT`      | `DEFAULT NULL`              | 참조한 로컬 문서 파일 경로 배열 (`string[]`)을 JSON 문자열로 직렬화하여 적재 |
+| **`created_at`** | `TIMESTAMP` | `DEFAULT CURRENT_TIMESTAMP` | 레코드 생성 시간 및 날짜 (ISO 8601 형식 변환 대상)                           |
 
 ### 4.2. `build_logs` 테이블 (빌드/컴파일 히스토리 타임라인)
+
 위키 지식 동기화 과정의 타임라인을 보존하기 위한 로그 테이블입니다.
 
-| 컬럼명 | 데이터 타입 | 제약 조건 | 설명 |
-| :--- | :--- | :--- | :--- |
-| **`id`** | `INTEGER` | `PRIMARY KEY AUTOINCREMENT` | 고유 식별자 (자동 증가 일련번호) |
-| **`action`** | `TEXT` | `NOT NULL` | 수행 작업 종류 (`ingest` 또는 `compile` 문자열 저장) |
-| **`status`** | `TEXT` | `NOT NULL` | 수행 작업 상태 (`done` 또는 `error` 문자열 저장) |
-| **`log_message`**| `TEXT` | `DEFAULT NULL` | 에러 상세 메시지 또는 성공에 대한 요약 이력 텍스트 |
-| **`created_at`** | `TIMESTAMP` | `DEFAULT CURRENT_TIMESTAMP` | 레코드 생성 및 로그 기록 시각 |
+| 컬럼명            | 데이터 타입 | 제약 조건                   | 설명                                                 |
+| :---------------- | :---------- | :-------------------------- | :--------------------------------------------------- |
+| **`id`**          | `INTEGER`   | `PRIMARY KEY AUTOINCREMENT` | 고유 식별자 (자동 증가 일련번호)                     |
+| **`action`**      | `TEXT`      | `NOT NULL`                  | 수행 작업 종류 (`ingest` 또는 `compile` 문자열 저장) |
+| **`status`**      | `TEXT`      | `NOT NULL`                  | 수행 작업 상태 (`done` 또는 `error` 문자열 저장)     |
+| **`log_message`** | `TEXT`      | `DEFAULT NULL`              | 에러 상세 메시지 또는 성공에 대한 요약 이력 텍스트   |
+| **`created_at`**  | `TIMESTAMP` | `DEFAULT CURRENT_TIMESTAMP` | 레코드 생성 및 로그 기록 시각                        |
 
 ---
 
@@ -144,6 +148,7 @@ sequenceDiagram
 FastAPI 사이드카 백엔드가 외부에 노출하는 DB 연동용 웹 인터페이스 명세입니다.
 
 ### 5.1. `GET /swarmvault/history`
+
 - **설명**: 최근에 수행된 Q&A 이력을 최대 50개까지 시간순(오름차순)으로 정렬하여 반환합니다.
 - **Request Headers**: `Content-Type: application/json`
 - **Response Body (200 OK)**:
@@ -167,6 +172,7 @@ FastAPI 사이드카 백엔드가 외부에 노출하는 DB 연동용 웹 인터
   ```
 
 ### 5.2. `DELETE /swarmvault/history`
+
 - **설명**: 로컬 DB에 누적된 대화 히스토리 레코드를 모두 청소(DELETE)합니다.
 - **Response Body (200 OK)**:
   ```json
@@ -177,6 +183,7 @@ FastAPI 사이드카 백엔드가 외부에 노출하는 DB 연동용 웹 인터
   ```
 
 ### 5.3. `POST /swarmvault/query` (RAG 질의 & DB Ingestion)
+
 - **설명**: 자연어 질문을 받아 SwarmVault를 호출하고 결과를 DB에 자동 적재 후 반환합니다.
 - **Request Body**:
   ```json

@@ -1,98 +1,388 @@
 <section>
-                <div class="slide-counter">SLIDE 01 / 11</div>
-                <div class="slide-subtitle">NStack 설계 사상 및 아티팩트 규격</div>
+  <div class="slide-counter">SLIDE 01 / 11</div>
+  <div class="slide-subtitle">NStack 설계 사상 및 아티팩트 규격</div>
 
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">NStack = AI와 협업하는 올바른 방법</h2>
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    NStack = AI와 협업하는 올바른 방법
+  </h2>
 
-                <div class="split-container-2col">
-                    <div class="col-55" style="position: relative; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; box-sizing: border-box; padding-right: 10px;">
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        box-sizing: border-box;
+        padding-right: 10px;
+      "
+    >
+      <!-- 3-step flow cards -->
+      <div style="display: flex; align-items: stretch; gap: 6px; width: 100%">
+        <div
+          class="glass-panel"
+          style="
+            flex: 1;
+            padding: 18px 10px;
+            border-color: rgba(14, 165, 233, 0.45);
+            background: rgba(14, 165, 233, 0.05);
+            border-radius: 14px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          "
+        >
+          <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+            <rect
+              x="10"
+              y="8"
+              width="40"
+              height="44"
+              rx="4"
+              fill="none"
+              stroke="var(--accent-blue)"
+              stroke-width="2"
+            />
+            <line x1="17" y1="20" x2="43" y2="20" stroke="var(--accent-blue)" stroke-width="1.5" />
+            <line
+              x1="17"
+              y1="28"
+              x2="43"
+              y2="28"
+              stroke="var(--accent-blue)"
+              stroke-width="1.5"
+              stroke-dasharray="2 2"
+            />
+            <line
+              x1="17"
+              y1="36"
+              x2="35"
+              y2="36"
+              stroke="var(--accent-blue)"
+              stroke-width="1.5"
+              stroke-dasharray="2 2"
+            />
+            <circle
+              cx="43"
+              cy="44"
+              r="8"
+              fill="var(--accent-blue)"
+              style="animation: scale-pulse 2s infinite"
+            />
+            <text
+              x="43"
+              y="47"
+              fill="#fff"
+              font-family="monospace"
+              font-size="9"
+              font-weight="bold"
+              text-anchor="middle"
+            >
+              ✔
+            </text>
+          </svg>
+          <div style="font-size: 0.8vw; font-weight: 800; color: var(--accent-blue)">① 계획</div>
+          <div style="font-size: 0.6vw; color: #94a3b8; line-height: 1.4">
+            order.md<br />작업지시서
+          </div>
+        </div>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 1.4vw;
+            padding: 0 4px;
+          "
+        >
+          →
+        </div>
+        <div
+          class="glass-panel"
+          style="
+            flex: 1;
+            padding: 18px 10px;
+            border-color: rgba(168, 85, 247, 0.45);
+            background: rgba(168, 85, 247, 0.05);
+            border-radius: 14px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          "
+        >
+          <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+            <circle
+              cx="30"
+              cy="22"
+              r="14"
+              fill="none"
+              stroke="var(--accent-purple)"
+              stroke-width="2"
+            />
+            <circle
+              cx="30"
+              cy="22"
+              r="6"
+              fill="var(--accent-purple)"
+              style="animation: scale-pulse 3s infinite"
+            />
+            <line x1="22" y1="38" x2="16" y2="50" stroke="var(--accent-purple)" stroke-width="2" />
+            <line x1="38" y1="38" x2="44" y2="50" stroke="var(--accent-purple)" stroke-width="2" />
+            <line x1="25" y1="36" x2="35" y2="36" stroke="var(--accent-purple)" stroke-width="2" />
+          </svg>
+          <div style="font-size: 0.8vw; font-weight: 800; color: var(--accent-purple)">
+            ② AI 실행
+          </div>
+          <div style="font-size: 0.6vw; color: #94a3b8; line-height: 1.4">
+            에이전트<br />구현 위임
+          </div>
+        </div>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 1.4vw;
+            padding: 0 4px;
+          "
+        >
+          →
+        </div>
+        <div
+          class="glass-panel"
+          style="
+            flex: 1;
+            padding: 18px 10px;
+            border-color: rgba(16, 185, 129, 0.45);
+            background: rgba(16, 185, 129, 0.05);
+            border-radius: 14px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          "
+        >
+          <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+            <rect
+              x="8"
+              y="8"
+              width="28"
+              height="36"
+              rx="3"
+              fill="none"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.5"
+            />
+            <rect
+              x="16"
+              y="8"
+              width="28"
+              height="36"
+              rx="3"
+              fill="#080c14"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.5"
+            />
+            <line
+              x1="22"
+              y1="20"
+              x2="38"
+              y2="20"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.2"
+            />
+            <line
+              x1="22"
+              y1="27"
+              x2="38"
+              y2="27"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.2"
+            />
+            <line
+              x1="22"
+              y1="34"
+              x2="32"
+              y2="34"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.2"
+            />
+            <circle
+              cx="46"
+              cy="46"
+              r="9"
+              fill="rgba(16,185,129,0.2)"
+              stroke="var(--accent-emerald)"
+              stroke-width="1.5"
+              style="animation: soft-blink 2s infinite"
+            />
+            <text
+              x="46"
+              y="50"
+              fill="var(--accent-emerald)"
+              font-family="sans-serif"
+              font-size="10"
+              font-weight="bold"
+              text-anchor="middle"
+            >
+              +
+            </text>
+          </svg>
+          <div style="font-size: 0.8vw; font-weight: 800; color: var(--accent-emerald)">
+            ③ 지식 보존
+          </div>
+          <div style="font-size: 0.6vw; color: #94a3b8; line-height: 1.4">
+            wiki.md<br />자동 기록
+          </div>
+        </div>
+      </div>
 
-                        <!-- 3-step flow cards -->
-                        <div style="display: flex; align-items: stretch; gap: 6px; width: 100%;">
-                            <div class="glass-panel" style="flex: 1; padding: 18px 10px; border-color: rgba(14,165,233,0.45); background: rgba(14,165,233,0.05); border-radius: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-                                <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="10" y="8" width="40" height="44" rx="4" fill="none" stroke="var(--accent-blue)" stroke-width="2"/>
-                                    <line x1="17" y1="20" x2="43" y2="20" stroke="var(--accent-blue)" stroke-width="1.5"/>
-                                    <line x1="17" y1="28" x2="43" y2="28" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="2 2"/>
-                                    <line x1="17" y1="36" x2="35" y2="36" stroke="var(--accent-blue)" stroke-width="1.5" stroke-dasharray="2 2"/>
-                                    <circle cx="43" cy="44" r="8" fill="var(--accent-blue)" style="animation: scale-pulse 2s infinite;"/>
-                                    <text x="43" y="47" fill="#fff" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle">✔</text>
-                                </svg>
-                                <div style="font-size: 0.8vw; font-weight: 800; color: var(--accent-blue);">① 계획</div>
-                                <div style="font-size: 0.6vw; color: #94a3b8; line-height: 1.4;">order.md<br>작업지시서</div>
-                            </div>
-                            <div style="display: flex; align-items: center; color: rgba(255,255,255,0.25); font-size: 1.4vw; padding: 0 4px;">→</div>
-                            <div class="glass-panel" style="flex: 1; padding: 18px 10px; border-color: rgba(168,85,247,0.45); background: rgba(168,85,247,0.05); border-radius: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-                                <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="30" cy="22" r="14" fill="none" stroke="var(--accent-purple)" stroke-width="2"/>
-                                    <circle cx="30" cy="22" r="6" fill="var(--accent-purple)" style="animation: scale-pulse 3s infinite;"/>
-                                    <line x1="22" y1="38" x2="16" y2="50" stroke="var(--accent-purple)" stroke-width="2"/>
-                                    <line x1="38" y1="38" x2="44" y2="50" stroke="var(--accent-purple)" stroke-width="2"/>
-                                    <line x1="25" y1="36" x2="35" y2="36" stroke="var(--accent-purple)" stroke-width="2"/>
-                                </svg>
-                                <div style="font-size: 0.8vw; font-weight: 800; color: var(--accent-purple);">② AI 실행</div>
-                                <div style="font-size: 0.6vw; color: #94a3b8; line-height: 1.4;">에이전트<br>구현 위임</div>
-                            </div>
-                            <div style="display: flex; align-items: center; color: rgba(255,255,255,0.25); font-size: 1.4vw; padding: 0 4px;">→</div>
-                            <div class="glass-panel" style="flex: 1; padding: 18px 10px; border-color: rgba(16,185,129,0.45); background: rgba(16,185,129,0.05); border-radius: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-                                <svg viewBox="0 0 60 60" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="8" y="8" width="28" height="36" rx="3" fill="none" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                    <rect x="16" y="8" width="28" height="36" rx="3" fill="#080c14" stroke="var(--accent-emerald)" stroke-width="1.5"/>
-                                    <line x1="22" y1="20" x2="38" y2="20" stroke="var(--accent-emerald)" stroke-width="1.2"/>
-                                    <line x1="22" y1="27" x2="38" y2="27" stroke="var(--accent-emerald)" stroke-width="1.2"/>
-                                    <line x1="22" y1="34" x2="32" y2="34" stroke="var(--accent-emerald)" stroke-width="1.2"/>
-                                    <circle cx="46" cy="46" r="9" fill="rgba(16,185,129,0.2)" stroke="var(--accent-emerald)" stroke-width="1.5" style="animation: soft-blink 2s infinite;"/>
-                                    <text x="46" y="50" fill="var(--accent-emerald)" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">+</text>
-                                </svg>
-                                <div style="font-size: 0.8vw; font-weight: 800; color: var(--accent-emerald);">③ 지식 보존</div>
-                                <div style="font-size: 0.6vw; color: #94a3b8; line-height: 1.4;">wiki.md<br>자동 기록</div>
-                            </div>
-                        </div>
+      <!-- Problem vs Solution -->
+      <div style="display: flex; gap: 12px; width: 100%">
+        <div
+          style="
+            flex: 1;
+            padding: 14px 16px;
+            border: 1.5px solid rgba(244, 63, 94, 0.3);
+            border-radius: 10px;
+            background: rgba(244, 63, 94, 0.03);
+          "
+        >
+          <div
+            style="
+              font-size: 0.7vw;
+              font-weight: 700;
+              color: var(--accent-rose);
+              margin-bottom: 6px;
+            "
+          >
+            지금의 문제
+          </div>
+          <div style="font-size: 0.62vw; color: #94a3b8; line-height: 1.5">
+            AI가 코드를 짜 줬는데,<br />왜 이렇게 만들었는지<br />설명이 어디에도 없다.
+          </div>
+        </div>
+        <div
+          style="
+            flex: 1;
+            padding: 14px 16px;
+            border: 1.5px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.03);
+          "
+        >
+          <div
+            style="
+              font-size: 0.7vw;
+              font-weight: 700;
+              color: var(--accent-emerald);
+              margin-bottom: 6px;
+            "
+          >
+            NStack의 해결
+          </div>
+          <div style="font-size: 0.62vw; color: #94a3b8; line-height: 1.5">
+            개발할 때마다<br />지식이 자동으로 쌓여<br />팀 전체 자산이 된다.
+          </div>
+        </div>
+      </div>
+    </div>
 
-                        <!-- Problem vs Solution -->
-                        <div style="display: flex; gap: 12px; width: 100%;">
-                            <div style="flex: 1; padding: 14px 16px; border: 1.5px solid rgba(244,63,94,0.3); border-radius: 10px; background: rgba(244,63,94,0.03);">
-                                <div style="font-size: 0.7vw; font-weight: 700; color: var(--accent-rose); margin-bottom: 6px;">지금의 문제</div>
-                                <div style="font-size: 0.62vw; color: #94a3b8; line-height: 1.5;">AI가 코드를 짜 줬는데,<br>왜 이렇게 만들었는지<br>설명이 어디에도 없다.</div>
-                            </div>
-                            <div style="flex: 1; padding: 14px 16px; border: 1.5px solid rgba(16,185,129,0.3); border-radius: 10px; background: rgba(16,185,129,0.03);">
-                                <div style="font-size: 0.7vw; font-weight: 700; color: var(--accent-emerald); margin-bottom: 6px;">NStack의 해결</div>
-                                <div style="font-size: 0.62vw; color: #94a3b8; line-height: 1.5;">개발할 때마다<br>지식이 자동으로 쌓여<br>팀 전체 자산이 된다.</div>
-                            </div>
-                        </div>
-                    </div>
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        🧭 AI가 만들어도, 왜 만들었는지를 남기는 방법
+      </h3>
 
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            🧭 AI가 만들어도, 왜 만들었는지를 남기는 방법
-                        </h3>
+      <div
+        style="
+          font-size: 0.9vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          AI는 빠르게 코드를 만들어 줍니다.<br />
+          하지만 <strong>왜 이런 구조로 만들었는지</strong>는<br />어디에도 남지 않습니다.
+        </p>
 
-                        <div style="font-size: 0.9vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 16px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                AI는 빠르게 코드를 만들어 줍니다.<br>
-                                하지만 <strong>왜 이런 구조로 만들었는지</strong>는<br>어디에도 남지 않습니다.
-                            </p>
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong style="color: var(--accent-blue)">① 계획 — order.md</strong>:<br />
+            "무엇을 왜 만드는지"를 한 장의 문서로 정리. AI가 이걸 보고 작업합니다.
+          </li>
+          <li>
+            <strong style="color: var(--accent-purple)">② AI 실행</strong>:<br />
+            지시서 범위 안에서만 동작해 엉뚱한 방향으로 흘러가지 않습니다.
+          </li>
+          <li>
+            <strong style="color: var(--accent-emerald)">③ 지식 보존 — wiki.md</strong>:<br />
+            작업 결과와 결정 사항을 남겨 팀 전체의 지식 자산이 됩니다.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 14px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong style="color: var(--accent-blue);">① 계획 — order.md</strong>:<br>
-                                    "무엇을 왜 만드는지"를 한 장의 문서로 정리. AI가 이걸 보고 작업합니다.
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-purple);">② AI 실행</strong>:<br>
-                                    지시서 범위 안에서만 동작해 엉뚱한 방향으로 흘러가지 않습니다.
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">③ 지식 보존 — wiki.md</strong>:<br>
-                                    작업 결과와 결정 사항을 남겨 팀 전체의 지식 자산이 됩니다.
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="slide-master-footer">
-                    <span>NStack — AI 협업의 올바른 방법</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-            </section>
+  <div class="slide-master-footer">
+    <span>NStack — AI 협업의 올바른 방법</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+</section>

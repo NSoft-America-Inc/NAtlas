@@ -16,7 +16,7 @@ flowchart TB
             Sidecar["sidecar.ts<br/>(Child Process Spawn & Guard)"]
             Main -->|Spawns & Monitors| Sidecar
         end
-        
+
         React <-->|1. contextBridge / IPC| Main
     end
 
@@ -70,11 +70,11 @@ flowchart TB
 
 3개 Vite 번들러가 독립적으로 동작:
 
-| 번들 대상 | 진입점 | 설명 |
-|---|---|---|
-| main | `src/main/index.ts` | Node.js 환경, externalizeDeps |
-| preload | `src/preload/index.ts` | contextBridge API 정의 |
-| renderer | `src/renderer/src/main.tsx` | React 앱, HMR 지원 |
+| 번들 대상 | 진입점                      | 설명                          |
+| --------- | --------------------------- | ----------------------------- |
+| main      | `src/main/index.ts`         | Node.js 환경, externalizeDeps |
+| preload   | `src/preload/index.ts`      | contextBridge API 정의        |
+| renderer  | `src/renderer/src/main.tsx` | React 앱, HMR 지원            |
 
 개발 시: `electron-vite dev` → 3개 동시 실행
 프로덕션: `electron-vite build` → `dist/` 에 각 번들 생성 → electron-builder 패키징
@@ -95,7 +95,7 @@ window.electron   →   contextBridge.expose   →   ipcMain.handle
 ```typescript
 // preload/index.ts
 contextBridge.exposeInMainWorld('electron', {
-  openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog'),
+  openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog')
 })
 
 // main/index.ts
@@ -110,8 +110,8 @@ const path = await window.electron.openFolderDialog()
 
 **IPC 채널 목록** (preload ↔ main 반드시 일치):
 
-| 채널명 | 방향 | 설명 |
-|---|---|---|
+| 채널명               | 방향            | 설명                 |
+| -------------------- | --------------- | -------------------- |
 | `open-folder-dialog` | renderer → main | 폴더 선택 다이얼로그 |
 
 ---
@@ -148,14 +148,18 @@ while (true) {
   const text = decoder.decode(value)
   for (const line of text.split('\n')) {
     if (!line.startsWith('data: ')) continue
-    const log = JSON.parse(line.slice(6))  // { type, message }
+    const log = JSON.parse(line.slice(6)) // { type, message }
     appendLog(log)
-    if (log.type === 'done' || log.type === 'error') { setIsUpdating(false); return }
+    if (log.type === 'done' || log.type === 'error') {
+      setIsUpdating(false)
+      return
+    }
   }
 }
 ```
 
 FastAPI SSE — ingest 변경 파일 → compile 순서로 실행:
+
 ```python
 async def stream(llmwiki_root: str):
     # 1. 변경/신규 파일 ingest (파일 1개씩)
@@ -188,7 +192,7 @@ return StreamingResponse(stream(settings.llmwiki_root), media_type='text/event-s
 ### 3. IPC (시스템 기능만)
 
 폴더 선택 다이얼로그처럼 Electron API가 필요한 경우만 IPC 사용.
- 나머지는 모두 FastAPI 직접 호출.
+나머지는 모두 FastAPI 직접 호출.
 
 ---
 
@@ -218,11 +222,11 @@ return StreamingResponse(stream(settings.llmwiki_root), media_type='text/event-s
 
 ### TanStack Query (서버 상태)
 
-| queryKey | 갱신 주기 | 용도 |
-|---|---|---|
-| `['documents']` | 30초 자동 | Documents 탭 파일 목록 |
-| `['swarmvault-status']` | 버튼 클릭 시 수동 | Settings 진단 |
-| `['settings']` | stale 10초 | 설정값 |
+| queryKey                | 갱신 주기         | 용도                   |
+| ----------------------- | ----------------- | ---------------------- |
+| `['documents']`         | 30초 자동         | Documents 탭 파일 목록 |
+| `['swarmvault-status']` | 버튼 클릭 시 수동 | Settings 진단          |
+| `['settings']`          | stale 10초        | 설정값                 |
 
 ### Zustand (UI 상태, `store/ui.ts`)
 
@@ -277,14 +281,14 @@ def get_file_status(llmwiki_root: str, rel_path: str) -> str:
 
 ## 에러 핸들링 전략
 
-| 상황 | 처리 방식 |
-|---|---|
-| FastAPI 연결 불가 (앱 시작 시) | 헬스체크 실패 → 앱 종료 + 에러 다이얼로그 |
-| FastAPI 연결 불가 (실행 중) | TanStack Query isError → 배너 표시 |
-| SwarmVault 미설치 | `/swarmvault/status` → ok: false → Settings에서 힌트 표시 |
-| LLMWiki 경로 없음 | `/documents` → 500 → Documents 탭 에러 + Settings 이동 버튼 |
-| swarmvault update 실패 | SSE `type: error` → 로그 빨간색 + 버튼 재활성화 |
-| Python 크래시 | 자동 재시작 3회 → 실패 시 에러 다이얼로그 |
+| 상황                           | 처리 방식                                                   |
+| ------------------------------ | ----------------------------------------------------------- |
+| FastAPI 연결 불가 (앱 시작 시) | 헬스체크 실패 → 앱 종료 + 에러 다이얼로그                   |
+| FastAPI 연결 불가 (실행 중)    | TanStack Query isError → 배너 표시                          |
+| SwarmVault 미설치              | `/swarmvault/status` → ok: false → Settings에서 힌트 표시   |
+| LLMWiki 경로 없음              | `/documents` → 500 → Documents 탭 에러 + Settings 이동 버튼 |
+| swarmvault update 실패         | SSE `type: error` → 로그 빨간색 + 버튼 재활성화             |
+| Python 크래시                  | 자동 재시작 3회 → 실패 시 에러 다이얼로그                   |
 
 ---
 
@@ -320,7 +324,7 @@ graph TD
         SV -->|4. compile & index 갱신| State["RAG & D3 Graph State"]
         State -->|5. 지식 소비 & 탐색| UI["NAtlas GUI 브라우저<br/>(Query / WikiGraph 탭)"]
     end
-    
+
     Setup -.->|로컬 에이전트 자율 연동| P1
     Setup -.->|로컬 에이전트 자율 연동| P2
 ```
@@ -328,22 +332,22 @@ graph TD
 ### 2. E2E 지식 파이프라인의 실시간 연동 원리
 
 1. **분산된 지식의 생산 및 린팅 (NStack)**:
-   * 개발자는 로컬 디바이스의 임의의 NStack 프로젝트 저장소에서 작업을 개별 진행합니다.
-   * 작업 완료 시 에이전트(Antigravity 또는 Claude Code)와 협업하여 **3종 아티팩트(`order.md`, `report.md`, `wiki.md`)**를 생산하며, 로컬 pre-commit 훅과 정합성 린터(`verify_nstack_pipeline.py`)를 통해 무결성을 정적 검증받습니다.
+   - 개발자는 로컬 디바이스의 임의의 NStack 프로젝트 저장소에서 작업을 개별 진행합니다.
+   - 작업 완료 시 에이전트(Antigravity 또는 Claude Code)와 협업하여 **3종 아티팩트(`order.md`, `report.md`, `wiki.md`)**를 생산하며, 로컬 pre-commit 훅과 정합성 린터(`verify_nstack_pipeline.py`)를 통해 무결성을 정적 검증받습니다.
 
 2. **중앙 지식 아카이브로의 자동 이관**:
-   * 검증이 완료된 아티팩트들은 각 개발자 프로젝트 내부에 고립되지 않고, 설정된 공통 경로인 **중앙 로컬 LLMWiki content/ 디렉토리**(`llmwiki/content/01-Logs/archive/{project}/{git_username}/{slug}/`)로 자동으로 안전하게 이관 및 복사됩니다.
+   - 검증이 완료된 아티팩트들은 각 개발자 프로젝트 내부에 고립되지 않고, 설정된 공통 경로인 **중앙 로컬 LLMWiki content/ 디렉토리**(`llmwiki/content/01-Logs/archive/{project}/{git_username}/{slug}/`)로 자동으로 안전하게 이관 및 복사됩니다.
 
 3. **NAtlas 백엔드(FastAPI)의 실시간 컴파일**:
-   * NAtlas 데스크탑 앱 백엔드는 중앙 로컬 LLMWiki 디렉토리(`llmwiki_root`)의 파일 변경 내역을 실시간 모니터링합니다.
-   * 새로운 지식 문서가 이관되거나 기존 문서가 수정되면, `swarmvault.py` 백엔드 라우터가 즉시 `swarmvault ingest <file>` 및 `swarmvault compile`을 자동화하여 벡터 인덱스를 갱신합니다.
+   - NAtlas 데스크탑 앱 백엔드는 중앙 로컬 LLMWiki 디렉토리(`llmwiki_root`)의 파일 변경 내역을 실시간 모니터링합니다.
+   - 새로운 지식 문서가 이관되거나 기존 문서가 수정되면, `swarmvault.py` 백엔드 라우터가 즉시 `swarmvault ingest <file>` 및 `swarmvault compile`을 자동화하여 벡터 인덱스를 갱신합니다.
 
 4. **전사 지식 탐색 및 소비**:
-   * 컴파일 완료 즉시, 전사 직원은 NAtlas GUI 앱의 **Query 탭**을 통해 자연어 질문으로 새 지식을 탐색할 수 있으며, **WikiGraph 탭**에서 D3 물리 Force 그래프 형태로 다차원 지식 지도를 시각적으로 브라우징할 수 있습니다.
+   - 컴파일 완료 즉시, 전사 직원은 NAtlas GUI 앱의 **Query 탭**을 통해 자연어 질문으로 새 지식을 탐색할 수 있으며, **WikiGraph 탭**에서 D3 물리 Force 그래프 형태로 다차원 지식 지도를 시각적으로 브라우징할 수 있습니다.
 
 ### 3. Windows 크로스플랫폼 GUI 온보딩 고도화
 
 Windows 환경의 개발자들에게 복잡한 연동 환경을 Seamless하게 자동화하기 위해 다음 메커니즘을 지원합니다.
 
-* **원클릭 통합 인스톨러 (`install_unified.ps1`)**: Windows 파워쉘 환경에서 Node 의존성, 격리 가상환경(.venv), Git 훅 연동, RAG 자가 진단까지의 9단계 설치 시퀀스를 단 한 번의 버튼 클릭으로 네이티브 처리하고 GUI 상에 실시간 시각화합니다.
-* **Claude Desktop 글로벌 MCP 자가 치유**: `%APPDATA%\Claude\claude_desktop_config.json`을 자동 감지하여 SwarmVault MCP 설정을 주입해 줌으로써, AI 에이전트가 로컬 지식 RAG 탐색 도구들을 자율적으로 활용할 수 있도록 지원합니다.
+- **원클릭 통합 인스톨러 (`install_unified.ps1`)**: Windows 파워쉘 환경에서 Node 의존성, 격리 가상환경(.venv), Git 훅 연동, RAG 자가 진단까지의 9단계 설치 시퀀스를 단 한 번의 버튼 클릭으로 네이티브 처리하고 GUI 상에 실시간 시각화합니다.
+- **Claude Desktop 글로벌 MCP 자가 치유**: `%APPDATA%\Claude\claude_desktop_config.json`을 자동 감지하여 SwarmVault MCP 설정을 주입해 줌으로써, AI 에이전트가 로컬 지식 RAG 탐색 도구들을 자율적으로 활용할 수 있도록 지원합니다.

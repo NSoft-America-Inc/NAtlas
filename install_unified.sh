@@ -15,6 +15,12 @@ YELLOW='\033[0;33m'
 RED='\033[0;31m'
 RESET='\033[0m'
 
+# Ensure NSTACK_GITHUB_TOKEN is exported and mapped to GITHUB_TOKEN for subshells
+export NSTACK_GITHUB_TOKEN
+if [ -n "$NSTACK_GITHUB_TOKEN" ]; then
+  export GITHUB_TOKEN="$NSTACK_GITHUB_TOKEN"
+fi
+
 # 상태 헬퍼 함수
 ok()   { echo -e "  ${GREEN}✓${RESET} $*"; }
 warn() { echo -e "  ${YELLOW}⚠${RESET} $*"; }
@@ -30,7 +36,7 @@ spinner() {
   
   # API 호출 모드이거나 비대화형/TTY가 없는 환경인 경우 스피너 출력을 전면 바이패스하고 조용히 wait합니다.
   if [ "$INSTALL_MODE" = "api" ] || [ ! -t 0 ] || [ ! -c /dev/tty ]; then
-    log "  ➔ %s (배경 작업 대기 중...)" "$label"
+    log "  ➔ $label (배경 작업 대기 중...)"
     wait "$pid"
     return 0
   fi
@@ -186,7 +192,15 @@ install_natlas() {
   
   spinner "$install_pid" "Node 의존성 복원 및격리 Python 가상환경(.venv) 구축 중..."
   
-  wait "$install_pid"
+  if ! wait "$install_pid"; then
+    br
+    warn "NAtlas 개발 및 사이드카 가상환경 구축 중 오류가 발생했습니다. 로그 출력:"
+    br
+    if [ -f /tmp/natlas_install.log ]; then
+      cat /tmp/natlas_install.log >&2
+    fi
+    fail "NAtlas setup failed."
+  fi
   ok "NAtlas 개발 및 사이드카 가상환경 빌드 완수!"
 }
 
@@ -237,15 +251,23 @@ install_nstack() {
     log "지정된 부모 디렉토리로 이동: $parent_dir"
     mkdir -p "$parent_dir"
     cd "$parent_dir"
-    bash "$nstack_setup_abs" --project "$PROJECT_NAME" --quiet > /tmp/nstack_install.log 2>&1 &
+    bash -x "$nstack_setup_abs" --project "$PROJECT_NAME" --quiet > /tmp/nstack_install.log 2>&1 &
   else
-    bash "$nstack_setup_abs" --quiet > /tmp/nstack_install.log 2>&1 &
+    bash -x "$nstack_setup_abs" --quiet > /tmp/nstack_install.log 2>&1 &
   fi
   local nstack_pid=$!
 
   spinner "$nstack_pid" "LLMWiki Sparse Checkout 및 Antigravity 에이전트 룰 주입 중..."
 
-  wait "$nstack_pid"
+  if ! wait "$nstack_pid"; then
+    br
+    warn "NStack 셋업 실행 중 오류가 발생했습니다. 로그 출력:"
+    br
+    if [ -f /tmp/nstack_install.log ]; then
+      cat /tmp/nstack_install.log >&2
+    fi
+    fail "NStack setup failed."
+  fi
   ok "NStack 에이전트 룰 규격 및 지식 아카이브 연동 완수!"
 }
 

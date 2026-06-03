@@ -1,66 +1,193 @@
 <section>
-                <div class="slide-counter">SLIDE 05 / 09</div>
-                <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
-                
-                <h2 style="align-self: center; width: 100%; margin-top: 45px; margin-bottom: -20px; text-align: center;">60초 Smart Background Scheduler 자동 빌드</h2>
-                
-                <div class="split-container-2col">
-                    <div class="col-55" style="position: relative; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                        <div style="position: absolute; width: 340px; height: 340px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0) 70%); filter: blur(55px); pointer-events: none; z-index: -1;"></div>
-                        
-                        <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35);">
-                            <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="125" cy="125" r="95" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1.2"/>
-                                
-                                <!-- Rotating scheduler ring -->
-                                <circle cx="125" cy="125" r="70" fill="none" stroke="var(--accent-emerald)" stroke-width="2.5" stroke-dasharray="20 40" style="animation: rotate-slow 10s linear infinite; transform-origin: 125px 125px;"/>
-                                
-                                <g transform="translate(125, 125)">
-                                    <circle cx="0" cy="0" r="30" fill="#080c14" stroke="var(--accent-emerald)" stroke-width="2" filter="drop-shadow(0 0 10px var(--accent-emerald))"/>
-                                    <!-- 60s text -->
-                                    <text x="0" y="6" fill="#ffffff" font-family="monospace" font-size="12" font-weight="extrabold" text-anchor="middle">60s</text>
-                                </g>
-                                
-                                <text x="125" y="225" fill="var(--accent-emerald)" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle">AUTO SCAN RUNNING</text>
-                            </svg>
-                        </div>
-                    </div>
-                    
-                    <div class="col-40 glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 20px; text-align: center; align-items: center; padding: 30px 30px;">
-                        <h3 style="font-size: 1.3vw !important; color: #ffffff !important; margin: 0; border-bottom: 1.5px solid rgba(255, 255, 255, 0.08); padding-bottom: 10px; text-align: center; width: 100%;">
-                            ⏰ 수동 명령어 입력 없는 60초 주기 무중단 자동 동기화
-                        </h3>
-                        
-                        <div style="font-size: 0.85vw; color: #cbd5e1; line-height: 1.7; display: flex; flex-direction: column; gap: 20px; text-align: center; align-items: center;">
-                            <p style="margin: 0; text-align: center; max-width: 95%;">
-                                개발자가 의식해서 색인 명령어(ingest/compile)를 매번 실행할 필요가 전혀 없도록,<br>
-                                NAtlas Python 백엔드 내부의 데몬 스레드가 60초마다 스마트 자동 컴파일을 가동합니다.
-                            </p>
-                            
-                            <ul style="margin: 0; padding-left: 15px; text-align: left; display: flex; flex-direction: column; gap: 12px; width: 90%; color: #cbd5e1;">
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">LLMWiki 디렉토리 무중단 스캔</strong>:<br>
-                                    백그라운드 스케줄러가 파일 시스템의 위키 수정 사항을 60초 간격으로 조용히 자동 감지.
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">자동 증분 컴파일 기전</strong>:<br>
-                                    변경점이 확인되는 순간 자동으로 uvicorn 백엔드가 `ingest` + `compile`을 실행하여, 로컬 지식 Vault 데이터 베이스를 실시간 최신화.
-                                </li>
-                                <li>
-                                    <strong style="color: var(--accent-emerald);">개발자 방해 제로(Frictionless)</strong>:<br>
-                                    터미널에 명령어를 칠 필요 없이, 코드를 수정한 뒤 1분 이내에 NAtlas에 모든 시맨틱 지식과 그래프가 반영 완료되는 고도화된 자동화.
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="slide-master-footer">
-                    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
-                    <span>NSoft America, Inc.</span>
-                </div>
-                
-                <aside class="notes">
-                    "개발자가 일일이 수동 색인을 명령할 필요가 없습니다. FastAPI 백엔드의 데몬 스케줄러가 60초 주기로 변경 사항을 자동 증분 수집 및 컴파일하여 NAtlas UI의 무중단 실시간 동기화를 완수합니다."
-                </aside>
-            </section>
+  <div class="slide-counter">SLIDE 05 / 09</div>
+  <div class="slide-subtitle">SwarmVault RAG 기반 로컬 지식 색인 아키텍처</div>
+
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 45px;
+      margin-bottom: -20px;
+      text-align: center;
+    "
+  >
+    60초 Smart Background Scheduler 자동 빌드
+  </h2>
+
+  <div class="split-container-2col">
+    <div
+      class="col-55"
+      style="
+        position: relative;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          width: 340px;
+          height: 340px;
+          background: radial-gradient(
+            circle,
+            rgba(16, 185, 129, 0.12) 0%,
+            rgba(16, 185, 129, 0) 70%
+          );
+          filter: blur(55px);
+          pointer-events: none;
+          z-index: -1;
+        "
+      ></div>
+
+      <div style="width: 100%; max-width: 420px; height: auto; transform: scale(1.35)">
+        <svg viewBox="0 0 250 250" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <circle
+            cx="125"
+            cy="125"
+            r="95"
+            fill="none"
+            stroke="rgba(255,255,255,0.03)"
+            stroke-width="1.2"
+          />
+
+          <!-- Rotating scheduler ring -->
+          <circle
+            cx="125"
+            cy="125"
+            r="70"
+            fill="none"
+            stroke="var(--accent-emerald)"
+            stroke-width="2.5"
+            stroke-dasharray="20 40"
+            style="animation: rotate-slow 10s linear infinite; transform-origin: 125px 125px"
+          />
+
+          <g transform="translate(125, 125)">
+            <circle
+              cx="0"
+              cy="0"
+              r="30"
+              fill="#080c14"
+              stroke="var(--accent-emerald)"
+              stroke-width="2"
+              filter="drop-shadow(0 0 10px var(--accent-emerald))"
+            />
+            <!-- 60s text -->
+            <text
+              x="0"
+              y="6"
+              fill="#ffffff"
+              font-family="monospace"
+              font-size="12"
+              font-weight="extrabold"
+              text-anchor="middle"
+            >
+              60s
+            </text>
+          </g>
+
+          <text
+            x="125"
+            y="225"
+            fill="var(--accent-emerald)"
+            font-family="monospace"
+            font-size="8"
+            font-weight="bold"
+            text-anchor="middle"
+          >
+            AUTO SCAN RUNNING
+          </text>
+        </svg>
+      </div>
+    </div>
+
+    <div
+      class="col-40 glass-panel"
+      style="
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+        text-align: center;
+        align-items: center;
+        padding: 30px 30px;
+      "
+    >
+      <h3
+        style="
+          font-size: 1.3vw !important;
+          color: #ffffff !important;
+          margin: 0;
+          border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
+          padding-bottom: 10px;
+          text-align: center;
+          width: 100%;
+        "
+      >
+        ⏰ 수동 명령어 입력 없는 60초 주기 무중단 자동 동기화
+      </h3>
+
+      <div
+        style="
+          font-size: 0.85vw;
+          color: #cbd5e1;
+          line-height: 1.7;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          text-align: center;
+          align-items: center;
+        "
+      >
+        <p style="margin: 0; text-align: center; max-width: 95%">
+          개발자가 의식해서 색인 명령어(ingest/compile)를 매번 실행할 필요가 전혀 없도록,<br />
+          NAtlas Python 백엔드 내부의 데몬 스레드가 60초마다 스마트 자동 컴파일을 가동합니다.
+        </p>
+
+        <ul
+          style="
+            margin: 0;
+            padding-left: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            color: #cbd5e1;
+          "
+        >
+          <li>
+            <strong style="color: var(--accent-emerald)">LLMWiki 디렉토리 무중단 스캔</strong
+            >:<br />
+            백그라운드 스케줄러가 파일 시스템의 위키 수정 사항을 60초 간격으로 조용히 자동 감지.
+          </li>
+          <li>
+            <strong style="color: var(--accent-emerald)">자동 증분 컴파일 기전</strong>:<br />
+            변경점이 확인되는 순간 자동으로 uvicorn 백엔드가 `ingest` + `compile`을 실행하여, 로컬
+            지식 Vault 데이터 베이스를 실시간 최신화.
+          </li>
+          <li>
+            <strong style="color: var(--accent-emerald)">개발자 방해 제로(Frictionless)</strong
+            >:<br />
+            터미널에 명령어를 칠 필요 없이, 코드를 수정한 뒤 1분 이내에 NAtlas에 모든 시맨틱 지식과
+            그래프가 반영 완료되는 고도화된 자동화.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="slide-master-footer">
+    <span>SwarmVault RAG 기반 로컬 지식 색인 아키텍처</span>
+    <span>NSoft America, Inc.</span>
+  </div>
+
+  <aside class="notes">
+    "개발자가 일일이 수동 색인을 명령할 필요가 없습니다. FastAPI 백엔드의 데몬 스케줄러가 60초
+    주기로 변경 사항을 자동 증분 수집 및 컴파일하여 NAtlas UI의 무중단 실시간 동기화를 완수합니다."
+  </aside>
+</section>

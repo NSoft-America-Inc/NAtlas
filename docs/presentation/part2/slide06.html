@@ -1,90 +1,290 @@
 <section>
-                <div class="slide-counter">SLIDE 06 / 12</div>
-                <div class="slide-subtitle">PART 2: NStack이 무엇인가</div>
+  <div class="slide-counter">SLIDE 06 / 12</div>
+  <div class="slide-subtitle">PART 2: NStack이 무엇인가</div>
 
-                <h2 style="align-self: center; width: 100%; margin-top: 40px; margin-bottom: -10px; text-align: center; font-size: 1.3em;">작업지시서 하나 = GitHub 이슈 하나</h2>
-                <p style="text-align:center; color: var(--text-muted); font-size: 0.72em; margin-top: 6px; margin-bottom: 0;">코드 변경 이유를 언제든 역추적합니다</p>
+  <h2
+    style="
+      align-self: center;
+      width: 100%;
+      margin-top: 40px;
+      margin-bottom: -10px;
+      text-align: center;
+      font-size: 1.3em;
+    "
+  >
+    작업지시서 하나 = GitHub 이슈 하나
+  </h2>
+  <p
+    style="
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.72em;
+      margin-top: 6px;
+      margin-bottom: 0;
+    "
+  >
+    코드 변경 이유를 언제든 역추적합니다
+  </p>
 
-                <!-- Traceability chain -->
-                <div style="display: flex; align-items: center; justify-content: center; gap: 0; margin: 28px auto 0; max-width: 900px;">
+  <!-- Traceability chain -->
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 28px auto 0;
+      max-width: 900px;
+    "
+  >
+    <!-- Node 1: Code -->
+    <div
+      style="display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 160px"
+    >
+      <div
+        style="
+          background: rgba(148, 163, 184, 0.08);
+          border: 1px solid rgba(148, 163, 184, 0.25);
+          border-radius: 12px;
+          padding: 14px 18px;
+          text-align: center;
+        "
+      >
+        <div style="font-size: 1.5em; margin-bottom: 4px">📄</div>
+        <div
+          style="
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65em;
+            color: var(--accent-blue);
+            margin-bottom: 3px;
+          "
+        >
+          git blame
+        </div>
+        <div style="font-size: 0.7em; color: var(--text-main); font-weight: 600">코드 한 줄</div>
+        <div style="font-size: 0.58em; color: var(--text-muted); margin-top: 3px">
+          왜 바뀌었을까?
+        </div>
+      </div>
+    </div>
 
-                    <!-- Node 1: Code -->
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px; min-width: 160px;">
-                        <div style="background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.25); border-radius: 12px; padding: 14px 18px; text-align:center;">
-                            <div style="font-size:1.5em; margin-bottom:4px;">📄</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65em; color: var(--accent-blue); margin-bottom:3px;">git blame</div>
-                            <div style="font-size: 0.7em; color: var(--text-main); font-weight: 600;">코드 한 줄</div>
-                            <div style="font-size: 0.58em; color: var(--text-muted); margin-top:3px;">왜 바뀌었을까?</div>
-                        </div>
-                    </div>
+    <!-- Arrow -->
+    <div style="color: var(--accent-blue); font-size: 1.4em; padding: 0 6px; flex-shrink: 0">→</div>
 
-                    <!-- Arrow -->
-                    <div style="color: var(--accent-blue); font-size: 1.4em; padding: 0 6px; flex-shrink:0;">→</div>
+    <!-- Node 2: Commit -->
+    <div
+      style="display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 160px"
+    >
+      <div
+        style="
+          background: rgba(14, 165, 233, 0.08);
+          border: 1px solid rgba(14, 165, 233, 0.3);
+          border-radius: 12px;
+          padding: 14px 18px;
+          text-align: center;
+        "
+      >
+        <div style="font-size: 1.5em; margin-bottom: 4px">🔀</div>
+        <div
+          style="
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65em;
+            color: var(--accent-blue);
+            margin-bottom: 3px;
+          "
+        >
+          #abc1234
+        </div>
+        <div style="font-size: 0.7em; color: var(--text-main); font-weight: 600">git commit</div>
+        <div style="font-size: 0.58em; color: var(--text-muted); margin-top: 3px">
+          커밋 메시지 확인
+        </div>
+      </div>
+    </div>
 
-                    <!-- Node 2: Commit -->
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px; min-width: 160px;">
-                        <div style="background: rgba(14,165,233,0.08); border: 1px solid rgba(14,165,233,0.3); border-radius: 12px; padding: 14px 18px; text-align:center;">
-                            <div style="font-size:1.5em; margin-bottom:4px;">🔀</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65em; color: var(--accent-blue); margin-bottom:3px;">#abc1234</div>
-                            <div style="font-size: 0.7em; color: var(--text-main); font-weight: 600;">git commit</div>
-                            <div style="font-size: 0.58em; color: var(--text-muted); margin-top:3px;">커밋 메시지 확인</div>
-                        </div>
-                    </div>
+    <!-- Arrow -->
+    <div style="color: var(--accent-indigo); font-size: 1.4em; padding: 0 6px; flex-shrink: 0">
+      →
+    </div>
 
-                    <!-- Arrow -->
-                    <div style="color: var(--accent-indigo); font-size: 1.4em; padding: 0 6px; flex-shrink:0;">→</div>
+    <!-- Node 3: GitHub Issue -->
+    <div
+      style="display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 160px"
+    >
+      <div
+        style="
+          background: rgba(99, 102, 241, 0.1);
+          border: 1px solid rgba(99, 102, 241, 0.35);
+          border-radius: 12px;
+          padding: 14px 18px;
+          text-align: center;
+        "
+      >
+        <div style="font-size: 1.5em; margin-bottom: 4px">🎯</div>
+        <div
+          style="
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65em;
+            color: var(--accent-indigo);
+            margin-bottom: 3px;
+          "
+        >
+          Issue #42
+        </div>
+        <div style="font-size: 0.7em; color: var(--text-main); font-weight: 600">GitHub 이슈</div>
+        <div style="font-size: 0.58em; color: var(--text-muted); margin-top: 3px">
+          작업 단위 식별
+        </div>
+      </div>
+    </div>
 
-                    <!-- Node 3: GitHub Issue -->
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px; min-width: 160px;">
-                        <div style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.35); border-radius: 12px; padding: 14px 18px; text-align:center;">
-                            <div style="font-size:1.5em; margin-bottom:4px;">🎯</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65em; color: var(--accent-indigo); margin-bottom:3px;">Issue #42</div>
-                            <div style="font-size: 0.7em; color: var(--text-main); font-weight: 600;">GitHub 이슈</div>
-                            <div style="font-size: 0.58em; color: var(--text-muted); margin-top:3px;">작업 단위 식별</div>
-                        </div>
-                    </div>
+    <!-- Arrow -->
+    <div style="color: var(--accent-emerald); font-size: 1.4em; padding: 0 6px; flex-shrink: 0">
+      →
+    </div>
 
-                    <!-- Arrow -->
-                    <div style="color: var(--accent-emerald); font-size: 1.4em; padding: 0 6px; flex-shrink:0;">→</div>
+    <!-- Node 4: order.md -->
+    <div
+      style="display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 160px"
+    >
+      <div
+        style="
+          background: rgba(16, 185, 129, 0.1);
+          border: 1.5px solid rgba(16, 185, 129, 0.5);
+          border-radius: 12px;
+          padding: 14px 18px;
+          text-align: center;
+          box-shadow: 0 0 18px rgba(16, 185, 129, 0.15);
+        "
+      >
+        <div style="font-size: 1.5em; margin-bottom: 4px">📋</div>
+        <div
+          style="
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65em;
+            color: var(--accent-emerald);
+            margin-bottom: 3px;
+          "
+        >
+          order.md
+        </div>
+        <div style="font-size: 0.7em; color: var(--text-main); font-weight: 600">작업지시서</div>
+        <div
+          style="font-size: 0.58em; color: var(--accent-emerald); margin-top: 3px; font-weight: 600"
+        >
+          왜 만들었는가 ✓
+        </div>
+      </div>
+    </div>
+  </div>
 
-                    <!-- Node 4: order.md -->
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:8px; min-width: 160px;">
-                        <div style="background: rgba(16,185,129,0.1); border: 1.5px solid rgba(16,185,129,0.5); border-radius: 12px; padding: 14px 18px; text-align:center; box-shadow: 0 0 18px rgba(16,185,129,0.15);">
-                            <div style="font-size:1.5em; margin-bottom:4px;">📋</div>
-                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.65em; color: var(--accent-emerald); margin-bottom:3px;">order.md</div>
-                            <div style="font-size: 0.7em; color: var(--text-main); font-weight: 600;">작업지시서</div>
-                            <div style="font-size: 0.58em; color: var(--accent-emerald); margin-top:3px; font-weight:600;">왜 만들었는가 ✓</div>
-                        </div>
-                    </div>
-                </div>
+  <!-- Benefits row -->
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 900px;
+      margin: 20px auto 0;
+    "
+  >
+    <div
+      style="
+        background: rgba(14, 165, 233, 0.07);
+        border: 1px solid rgba(14, 165, 233, 0.2);
+        border-radius: 10px;
+        padding: 12px 14px;
+        text-align: center;
+      "
+    >
+      <div
+        style="font-size: 0.68em; color: var(--accent-blue); font-weight: 700; margin-bottom: 4px"
+      >
+        변경 범위 명확
+      </div>
+      <div style="font-size: 0.6em; color: var(--text-muted)">
+        이슈 하나에 연결된 커밋들이 작업의 전부입니다
+      </div>
+    </div>
 
-                <!-- Benefits row -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 900px; margin: 20px auto 0;">
+    <div
+      style="
+        background: rgba(99, 102, 241, 0.07);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        border-radius: 10px;
+        padding: 12px 14px;
+        text-align: center;
+      "
+    >
+      <div
+        style="font-size: 0.68em; color: var(--accent-indigo); font-weight: 700; margin-bottom: 4px"
+      >
+        이유가 추적됨
+      </div>
+      <div style="font-size: 0.6em; color: var(--text-muted)">
+        6개월 뒤 "왜 이렇게?" 이슈 번호 하나로 답됩니다
+      </div>
+    </div>
 
-                    <div style="background: rgba(14,165,233,0.07); border: 1px solid rgba(14,165,233,0.2); border-radius: 10px; padding: 12px 14px; text-align:center;">
-                        <div style="font-size: 0.68em; color: var(--accent-blue); font-weight: 700; margin-bottom: 4px;">변경 범위 명확</div>
-                        <div style="font-size: 0.6em; color: var(--text-muted);">이슈 하나에 연결된 커밋들이 작업의 전부입니다</div>
-                    </div>
+    <div
+      style="
+        background: rgba(16, 185, 129, 0.07);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 10px;
+        padding: 12px 14px;
+        text-align: center;
+      "
+    >
+      <div
+        style="
+          font-size: 0.68em;
+          color: var(--accent-emerald);
+          font-weight: 700;
+          margin-bottom: 4px;
+        "
+      >
+        코드 리뷰 강화
+      </div>
+      <div style="font-size: 0.6em; color: var(--text-muted)">
+        리뷰어가 코드 + 배경 맥락을 함께 봅니다
+      </div>
+    </div>
 
-                    <div style="background: rgba(99,102,241,0.07); border: 1px solid rgba(99,102,241,0.2); border-radius: 10px; padding: 12px 14px; text-align:center;">
-                        <div style="font-size: 0.68em; color: var(--accent-indigo); font-weight: 700; margin-bottom: 4px;">이유가 추적됨</div>
-                        <div style="font-size: 0.6em; color: var(--text-muted);">6개월 뒤 "왜 이렇게?" 이슈 번호 하나로 답됩니다</div>
-                    </div>
+    <div
+      style="
+        background: rgba(245, 158, 11, 0.07);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        border-radius: 10px;
+        padding: 12px 14px;
+        text-align: center;
+      "
+    >
+      <div
+        style="font-size: 0.68em; color: var(--accent-amber); font-weight: 700; margin-bottom: 4px"
+      >
+        장애 대응 가속
+      </div>
+      <div style="font-size: 0.6em; color: var(--text-muted)">
+        변경 의도와 주의사항이 즉시 확인됩니다
+      </div>
+    </div>
+  </div>
 
-                    <div style="background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; padding: 12px 14px; text-align:center;">
-                        <div style="font-size: 0.68em; color: var(--accent-emerald); font-weight: 700; margin-bottom: 4px;">코드 리뷰 강화</div>
-                        <div style="font-size: 0.6em; color: var(--text-muted);">리뷰어가 코드 + 배경 맥락을 함께 봅니다</div>
-                    </div>
-
-                    <div style="background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2); border-radius: 10px; padding: 12px 14px; text-align:center;">
-                        <div style="font-size: 0.68em; color: var(--accent-amber); font-weight: 700; margin-bottom: 4px;">장애 대응 가속</div>
-                        <div style="font-size: 0.6em; color: var(--text-muted);">변경 의도와 주의사항이 즉시 확인됩니다</div>
-                    </div>
-                </div>
-
-                <!-- Bottom emphasis -->
-                <div style="margin: 16px auto 0; max-width: 860px; background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(99,102,241,0.08)); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; padding: 12px 20px; text-align: center;">
-                    <span style="font-size: 0.72em; color: var(--text-muted);">AI가 짠 코드라도, </span>
-                    <span style="font-size: 0.72em; color: var(--accent-emerald); font-weight: 700;">왜 그렇게 짰는지의 이유가 이슈와 함께 영구적으로 연결됩니다</span>
-                </div>
+  <!-- Bottom emphasis -->
+  <div
+    style="
+      margin: 16px auto 0;
+      max-width: 860px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(99, 102, 241, 0.08));
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 10px;
+      padding: 12px 20px;
+      text-align: center;
+    "
+  >
+    <span style="font-size: 0.72em; color: var(--text-muted)">AI가 짠 코드라도, </span>
+    <span style="font-size: 0.72em; color: var(--accent-emerald); font-weight: 700"
+      >왜 그렇게 짰는지의 이유가 이슈와 함께 영구적으로 연결됩니다</span
+    >
+  </div>
 </section>

@@ -393,3 +393,22 @@ async def get_documents():
         if result is None:
             return JSONResponse(status_code=500, content={"error": "content/ 폴더를 찾을 수 없습니다"})
         return result
+
+async def get_remote_wiki_status(token: str) -> dict:
+    loop = asyncio.get_event_loop()
+    try:
+        # 1회의 깃허브 트리 조회 API로 파일 갯수만 즉각 산출 (최고의 응답 속도 보장)
+        tree_data = await loop.run_in_executor(
+            None, _gh_get,
+            f"/repos/{LLMWIKI_REPO}/git/trees/{LLMWIKI_BRANCH}?recursive=1",
+            token
+        )
+        tree = tree_data.get("tree", [])
+        content_files = [
+            item for item in tree
+            if item["path"].startswith("content/") and item["path"].endswith(".md") and item["type"] == "blob"
+        ]
+        return {"ok": True, "file_count": len(content_files)}
+    except Exception as e:
+        return {"ok": False, "file_count": 0, "error": str(e)}
+

@@ -3,8 +3,8 @@ project: natlas
 type: single
 issue: https://github.com/NSoft-America-Inc/NAtlas/issues/4
 created: 2026-05-19
-completed: "2026-05-19"
-llmwiki: "-"
+completed: '2026-05-19'
+llmwiki: '-'
 ---
 
 **Issue:** [NAtlas#4](https://github.com/NSoft-America-Inc/NAtlas/issues/4)
@@ -42,13 +42,13 @@ git branch -d feat/4-settings-git-source
 
 ## 수정 파일
 
-| 파일 | 변경 내용 |
-|---|---|
-| `src/renderer/src/lib/types.ts` | `Settings` 인터페이스에 `source_mode`, `git_repo_url` 추가 |
-| `src/renderer/src/lib/api.ts` | `cloneLLMWiki()` API 함수 추가 |
-| `src/renderer/src/pages/Settings.tsx` | Git/Local 모드 토글 UI + clone SSE 진행 표시 추가 |
-| `src/python/routers/settings.py` | `SettingsSchema` + `load/save` 함수 확장 |
-| `src/python/routers/swarmvault.py` | `POST /swarmvault/clone` SSE 엔드포인트 추가 |
+| 파일                                  | 변경 내용                                                  |
+| ------------------------------------- | ---------------------------------------------------------- |
+| `src/renderer/src/lib/types.ts`       | `Settings` 인터페이스에 `source_mode`, `git_repo_url` 추가 |
+| `src/renderer/src/lib/api.ts`         | `cloneLLMWiki()` API 함수 추가                             |
+| `src/renderer/src/pages/Settings.tsx` | Git/Local 모드 토글 UI + clone SSE 진행 표시 추가          |
+| `src/python/routers/settings.py`      | `SettingsSchema` + `load/save` 함수 확장                   |
+| `src/python/routers/swarmvault.py`    | `POST /swarmvault/clone` SSE 엔드포인트 추가               |
 
 ---
 
@@ -72,9 +72,9 @@ export interface Settings {
 
 // 변경 후
 export interface Settings {
-  source_mode: 'git' | 'local'   // 기본값: 'git'
-  git_repo_url: string            // Git 모드 전용
-  llmwiki_root: string            // Local 모드 전용 (Git 모드엔 자동 설정됨)
+  source_mode: 'git' | 'local' // 기본값: 'git'
+  git_repo_url: string // Git 모드 전용
+  llmwiki_root: string // Local 모드 전용 (Git 모드엔 자동 설정됨)
 }
 ```
 
@@ -178,6 +178,7 @@ async def put_settings(settings: SettingsSchema):
 기존 함수와 엔드포인트는 **절대 수정하지 말 것**. 아래 함수만 추가.
 
 파일 상단 import에 아래 추가:
+
 ```python
 from routers.settings import GIT_MANAGED_DIR
 ```
@@ -242,6 +243,7 @@ async def post_clone():
 ```
 
 `swarmvault.py` 상단에 이미 `load_settings` import가 없으므로 아래를 import에 추가:
+
 ```python
 from routers.settings import CONFIG_FILE, GIT_MANAGED_DIR, load_settings as load_settings_data
 ```
@@ -256,6 +258,7 @@ from routers.settings import CONFIG_FILE, GIT_MANAGED_DIR, load_settings as load
 `LLMWiki Root 경로` 섹션을 아래로 **교체**한다.
 
 변경 전 (`LLMWiki Root 경로` div 전체):
+
 ```tsx
 <div className="space-y-2.5">
   <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider select-none">
@@ -271,9 +274,12 @@ from routers.settings import CONFIG_FILE, GIT_MANAGED_DIR, load_settings as load
 ```
 
 변경 후:
+
 ```tsx
-{/* Source Mode 토글 */}
-<div className="space-y-2.5">
+{
+  /* Source Mode 토글 */
+}
+;<div className="space-y-2.5">
   <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider select-none">
     LLMWiki 소스
   </label>
@@ -295,64 +301,80 @@ from routers.settings import CONFIG_FILE, GIT_MANAGED_DIR, load_settings as load
   </div>
 </div>
 
-{/* Git 모드 */}
-{sourceMode === 'git' && (
-  <div className="space-y-2.5">
-    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider select-none">
-      Git Repo URL
-    </label>
-    <Input
-      type="text"
-      value={gitRepoUrl}
-      onChange={(e) => setGitRepoUrl(e.target.value)}
-      placeholder="https://github.com/org/NSoft-LLMWiki.git"
-      disabled={isLoading || saveMutation.isPending || isCloning}
-      className="bg-muted/20 border-border focus-visible:ring-indigo-500/50 font-mono text-xs text-slate-200"
-    />
-    <p className="text-xs text-muted-foreground">
-      저장 후 "동기화" 버튼으로 clone/pull을 실행하세요.
-    </p>
-  </div>
-)}
-
-{/* Local 모드 */}
-{sourceMode === 'local' && (
-  <div className="space-y-2.5">
-    <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider select-none">
-      LLMWiki Root 경로
-    </label>
-    <div className="flex items-center gap-2">
+{
+  /* Git 모드 */
+}
+{
+  sourceMode === 'git' && (
+    <div className="space-y-2.5">
+      <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider select-none">
+        Git Repo URL
+      </label>
       <Input
         type="text"
-        value={llmwikiRoot}
-        onChange={(e) => setLlmwikiRoot(e.target.value)}
-        placeholder="/Users/username/workspace/NSoft-LLMWiki"
-        disabled={isLoading || saveMutation.isPending}
-        className="flex-1 bg-muted/20 border-border focus-visible:ring-indigo-500/50 font-mono text-xs text-slate-200"
+        value={gitRepoUrl}
+        onChange={(e) => setGitRepoUrl(e.target.value)}
+        placeholder="https://github.com/org/NSoft-LLMWiki.git"
+        disabled={isLoading || saveMutation.isPending || isCloning}
+        className="bg-muted/20 border-border focus-visible:ring-indigo-500/50 font-mono text-xs text-slate-200"
       />
-      <Button
-        variant="outline"
-        onClick={handleOpenFolder}
-        disabled={isLoading || saveMutation.isPending}
-        className="bg-muted/40 hover:bg-muted text-foreground border-border select-none"
-      >
-        <FolderOpen className="w-4 h-4 mr-1.5 text-indigo-400" />
-        폴더 선택
-      </Button>
-    </div>
-  </div>
-)}
-
-{/* Clone 진행 로그 (Git 모드 전용) */}
-{sourceMode === 'git' && cloneLogs.length > 0 && (
-  <div className="rounded-lg bg-black/40 border border-border p-3 space-y-1 max-h-40 overflow-y-auto">
-    {cloneLogs.map((log, i) => (
-      <p key={i} className={`text-xs font-mono ${log.type === 'error' ? 'text-rose-400' : log.type === 'done' ? 'text-emerald-400' : 'text-slate-400'}`}>
-        {'> '}{log.message}
+      <p className="text-xs text-muted-foreground">
+        저장 후 "동기화" 버튼으로 clone/pull을 실행하세요.
       </p>
-    ))}
-  </div>
-)}
+    </div>
+  )
+}
+
+{
+  /* Local 모드 */
+}
+{
+  sourceMode === 'local' && (
+    <div className="space-y-2.5">
+      <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider select-none">
+        LLMWiki Root 경로
+      </label>
+      <div className="flex items-center gap-2">
+        <Input
+          type="text"
+          value={llmwikiRoot}
+          onChange={(e) => setLlmwikiRoot(e.target.value)}
+          placeholder="/Users/username/workspace/NSoft-LLMWiki"
+          disabled={isLoading || saveMutation.isPending}
+          className="flex-1 bg-muted/20 border-border focus-visible:ring-indigo-500/50 font-mono text-xs text-slate-200"
+        />
+        <Button
+          variant="outline"
+          onClick={handleOpenFolder}
+          disabled={isLoading || saveMutation.isPending}
+          className="bg-muted/40 hover:bg-muted text-foreground border-border select-none"
+        >
+          <FolderOpen className="w-4 h-4 mr-1.5 text-indigo-400" />
+          폴더 선택
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+{
+  /* Clone 진행 로그 (Git 모드 전용) */
+}
+{
+  sourceMode === 'git' && cloneLogs.length > 0 && (
+    <div className="rounded-lg bg-black/40 border border-border p-3 space-y-1 max-h-40 overflow-y-auto">
+      {cloneLogs.map((log, i) => (
+        <p
+          key={i}
+          className={`text-xs font-mono ${log.type === 'error' ? 'text-rose-400' : log.type === 'done' ? 'text-emerald-400' : 'text-slate-400'}`}
+        >
+          {'> '}
+          {log.message}
+        </p>
+      ))}
+    </div>
+  )
+}
 ```
 
 ### 상태 변수 추가 (컴포넌트 상단 useState 영역)
@@ -367,7 +389,7 @@ const [saveError, setSaveError] = useState<string | null>(null)
 const [sourceMode, setSourceMode] = useState<'git' | 'local'>('git')
 const [gitRepoUrl, setGitRepoUrl] = useState('')
 const [isCloning, setIsCloning] = useState(false)
-const [cloneLogs, setCloneLogs] = useState<Array<{type: string; message: string}>>([])
+const [cloneLogs, setCloneLogs] = useState<Array<{ type: string; message: string }>>([])
 ```
 
 ### useEffect 수정 — 로드 시 sourceMode/gitRepoUrl 초기화
@@ -417,7 +439,11 @@ const handleSave = () => {
       setSaveError('LLMWiki 루트 경로를 입력해주세요.')
       return
     }
-    saveMutation.mutate({ source_mode: 'local', git_repo_url: '', llmwiki_root: llmwikiRoot.trim() })
+    saveMutation.mutate({
+      source_mode: 'local',
+      git_repo_url: '',
+      llmwiki_root: llmwikiRoot.trim()
+    })
   }
 }
 ```
@@ -427,8 +453,10 @@ const handleSave = () => {
 액션 버튼 영역(`/* Action buttons */` div) 을 아래로 교체:
 
 ```tsx
-{/* Action buttons */}
-<div className="flex justify-end gap-2 select-none pt-4 border-t border-border/40">
+{
+  /* Action buttons */
+}
+;<div className="flex justify-end gap-2 select-none pt-4 border-t border-border/40">
   {sourceMode === 'git' && (
     <Button
       onClick={handleClone}
@@ -441,7 +469,12 @@ const handleSave = () => {
   )}
   <Button
     onClick={handleSave}
-    disabled={isLoading || saveMutation.isPending || isCloning || (sourceMode === 'git' ? !gitRepoUrl.trim() : !llmwikiRoot.trim())}
+    disabled={
+      isLoading ||
+      saveMutation.isPending ||
+      isCloning ||
+      (sourceMode === 'git' ? !gitRepoUrl.trim() : !llmwikiRoot.trim())
+    }
     className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-muted/40 text-white font-bold h-10 px-5 shadow-sm transition-all duration-300"
   >
     <Save className="w-4 h-4 mr-2" />
@@ -469,7 +502,7 @@ const handleClone = async () => {
     for (const line of text.split('\n')) {
       if (!line.startsWith('data: ')) continue
       const log = JSON.parse(line.slice(6))
-      setCloneLogs(prev => [...prev, log])
+      setCloneLogs((prev) => [...prev, log])
       if (log.type === 'done' || log.type === 'error') {
         setIsCloning(false)
         if (log.type === 'done') {
@@ -507,20 +540,25 @@ const handleClone = async () => {
 # 보고: Settings Git 소스 모드 추가 #4
 
 ## 완료된 작업
+
 - [x] 항목 1
 
 ## 생성/수정된 파일
-| 파일 | 추가/수정 심볼 | 삭제 심볼 | 변경 줄 범위 |
-|---|---|---|---|
-| path/to/file | symbol | - | L1-10 |
+
+| 파일         | 추가/수정 심볼 | 삭제 심볼 | 변경 줄 범위 |
+| ------------ | -------------- | --------- | ------------ |
+| path/to/file | symbol         | -         | L1-10        |
 
 ## 정적 분석 결과
+
 [tsc --noEmit 출력 전체]
 
 ## 발견된 이슈
+
 없음
 
 ## 미완료 항목
+
 없음
 ```
 
@@ -528,11 +566,11 @@ const handleClone = async () => {
 
 ## 검수 결과 (Claude — 2026-05-19)
 
-| 항목 | 결과 | 비고 |
-|---|---|---|
-| 정적 분석 | ✅ 오류 0 | npx tsc --noEmit |
-| 변경 파일 | ✅ 지시서 일치 | 5개 확인 |
-| 심볼 확인 | ✅ 존재 | source_mode, git_repo_url, cloneLLMWiki, GIT_MANAGED_DIR, post_clone, sourceMode, gitRepoUrl, isCloning, cloneLogs, handleClone |
-| 미완료 항목 | 없음 | - |
+| 항목        | 결과           | 비고                                                                                                                            |
+| ----------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| 정적 분석   | ✅ 오류 0      | npx tsc --noEmit                                                                                                                |
+| 변경 파일   | ✅ 지시서 일치 | 5개 확인                                                                                                                        |
+| 심볼 확인   | ✅ 존재        | source_mode, git_repo_url, cloneLLMWiki, GIT_MANAGED_DIR, post_clone, sourceMode, gitRepoUrl, isCloning, cloneLogs, handleClone |
+| 미완료 항목 | 없음           | -                                                                                                                               |
 
 **판정: ✅ 통과 — 사용자 테스트 대기**

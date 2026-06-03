@@ -5,7 +5,15 @@ import { Settings as SettingsType } from '@renderer/lib/types'
 import { useUIStore } from '@renderer/store/ui'
 import { Input } from '@renderer/components/ui/input'
 import { Button } from '@renderer/components/ui/button'
-import { FolderOpen, Save, Settings as SettingsIcon, CheckCircle2, AlertCircle, RefreshCw, Bell } from 'lucide-react'
+import {
+  FolderOpen,
+  Save,
+  Settings as SettingsIcon,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Bell
+} from 'lucide-react'
 
 export function Settings() {
   const queryClient = useQueryClient()
@@ -25,13 +33,13 @@ export function Settings() {
 
   const { data: currentSettings, isLoading } = useQuery<SettingsType>({
     queryKey: ['settings'],
-    queryFn: api.getSettings,
+    queryFn: api.getSettings
   })
 
   const { data: updateInfo } = useQuery({
     queryKey: ['checkUpdate'],
     queryFn: api.checkUpdate,
-    staleTime: 300_000,
+    staleTime: 300_000
   })
 
   useEffect(() => {
@@ -55,7 +63,7 @@ export function Settings() {
         setGlobalSettings({
           source_mode: sourceMode,
           github_token: sourceMode === 'remote' ? githubToken.trim() : '',
-          llmwiki_root: sourceMode === 'local' ? llmwikiRoot.trim() : '',
+          llmwiki_root: sourceMode === 'local' ? llmwikiRoot.trim() : ''
         })
         setTimeout(() => setSaveSuccess(false), 3000)
       }
@@ -63,7 +71,7 @@ export function Settings() {
     onError: (err) => {
       setSaveError(err instanceof Error ? err.message : '설정 저장 중 오류가 발생했습니다.')
       setSaveSuccess(false)
-    },
+    }
   })
 
   const handleOpenFolder = async () => {
@@ -110,7 +118,10 @@ export function Settings() {
       await queryClient.fetchQuery({ queryKey: ['documents'], queryFn: api.getDocuments })
       setSyncResult({ ok: true, message: '문서 목록을 성공적으로 갱신했습니다.' })
     } catch (err) {
-      setSyncResult({ ok: false, message: err instanceof Error ? err.message : '동기화 중 오류가 발생했습니다.' })
+      setSyncResult({
+        ok: false,
+        message: err instanceof Error ? err.message : '동기화 중 오류가 발생했습니다.'
+      })
     } finally {
       setIsSyncing(false)
       setTimeout(() => setSyncResult(null), 3000)
@@ -123,7 +134,7 @@ export function Settings() {
     try {
       const result = await queryClient.fetchQuery({
         queryKey: ['checkUpdate'],
-        queryFn: api.checkUpdate,
+        queryFn: api.checkUpdate
       })
       if (result.has_update) {
         setUpdateCheckMessage({
@@ -148,7 +159,7 @@ export function Settings() {
 
   const handleDownloadUpdate = () => {
     if (updateInfo?.release_url && window.electron && (window.electron as any).openExternal) {
-      (window.electron as any).openExternal(updateInfo.release_url)
+      ;(window.electron as any).openExternal(updateInfo.release_url)
     }
   }
 
@@ -279,8 +290,14 @@ export function Settings() {
               </div>
             )}
             {syncResult && (
-              <div className={`flex items-center gap-2 p-3 border rounded-lg text-xs ${syncResult.ok ? 'border-emerald-800/40 bg-emerald-950/20 text-emerald-400' : 'border-rose-800/40 bg-rose-950/20 text-rose-400'}`}>
-                {syncResult.ok ? <CheckCircle2 className="w-4 h-4 flex-shrink-0" /> : <AlertCircle className="w-4 h-4 flex-shrink-0" />}
+              <div
+                className={`flex items-center gap-2 p-3 border rounded-lg text-xs ${syncResult.ok ? 'border-emerald-800/40 bg-emerald-950/20 text-emerald-400' : 'border-rose-800/40 bg-rose-950/20 text-rose-400'}`}
+              >
+                {syncResult.ok ? (
+                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                )}
                 <span>{syncResult.message}</span>
               </div>
             )}
@@ -315,7 +332,9 @@ export function Settings() {
               <RefreshCw className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-foreground select-none">애플리케이션 업데이트</h3>
+              <h3 className="text-sm font-bold text-foreground select-none">
+                애플리케이션 업데이트
+              </h3>
               <p className="text-xs text-muted-foreground mt-1 select-none">
                 현재 설치된 NAtlas 버전을 확인하고 최신 배포 버전으로 업데이트할 수 있습니다.
               </p>
@@ -324,13 +343,17 @@ export function Settings() {
 
           <div className="grid grid-cols-2 gap-4 border border-border/40 rounded-lg p-4 bg-muted/10">
             <div className="space-y-1">
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider select-none">현재 버전</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider select-none">
+                현재 버전
+              </p>
               <p className="text-sm font-semibold font-mono text-slate-300">
                 v{updateInfo?.current_version || '1.0.0-beta.1'}
               </p>
             </div>
             <div className="space-y-1 text-right">
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider select-none">최신 배포 버전</p>
+              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider select-none">
+                최신 배포 버전
+              </p>
               <p className="text-sm font-semibold font-mono text-indigo-300">
                 {updateInfo?.latest_version ? `v${updateInfo.latest_version}` : '확인 필요'}
               </p>
@@ -338,16 +361,22 @@ export function Settings() {
           </div>
 
           {updateCheckMessage && (
-            <div className={`p-3 border rounded-lg text-xs flex items-start gap-2.5 ${
-              updateCheckMessage.type === 'success' 
-                ? 'border-emerald-800/40 bg-emerald-950/20 text-emerald-400 animate-in fade-in duration-200' 
-                : updateCheckMessage.type === 'info' 
-                  ? 'border-indigo-800/40 bg-indigo-950/20 text-indigo-300 animate-in fade-in duration-200'
-                  : 'border-rose-800/40 bg-rose-950/20 text-rose-400 animate-in fade-in duration-200'
-            }`}>
-              {updateCheckMessage.type === 'success' && <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />}
+            <div
+              className={`p-3 border rounded-lg text-xs flex items-start gap-2.5 ${
+                updateCheckMessage.type === 'success'
+                  ? 'border-emerald-800/40 bg-emerald-950/20 text-emerald-400 animate-in fade-in duration-200'
+                  : updateCheckMessage.type === 'info'
+                    ? 'border-indigo-800/40 bg-indigo-950/20 text-indigo-300 animate-in fade-in duration-200'
+                    : 'border-rose-800/40 bg-rose-950/20 text-rose-400 animate-in fade-in duration-200'
+              }`}
+            >
+              {updateCheckMessage.type === 'success' && (
+                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+              )}
               {updateCheckMessage.type === 'info' && <Bell className="w-4 h-4 shrink-0 mt-0.5" />}
-              {updateCheckMessage.type === 'error' && <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />}
+              {updateCheckMessage.type === 'error' && (
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              )}
               <span className="leading-relaxed">{updateCheckMessage.text}</span>
             </div>
           )}
