@@ -101,7 +101,8 @@ async function startPythonSidecar(): Promise<void> {
     env: {
       ...process.env,
       PYTHONUNBUFFERED: '1',
-      NATLAS_VERSION: app.getVersion()
+      NATLAS_VERSION: app.getVersion(),
+      NATLAS_RESOURCES_DIR: resourcesDir
     }
   })
 
@@ -123,7 +124,8 @@ async function startPythonSidecar(): Promise<void> {
         env: {
           ...process.env,
           PYTHONUNBUFFERED: '1',
-          NATLAS_VERSION: app.getVersion()
+          NATLAS_VERSION: app.getVersion(),
+          NATLAS_RESOURCES_DIR: resourcesDir
         }
       })
     }
