@@ -108,18 +108,18 @@ def prepare_runtimes():
             shutil.rmtree(npm_modules)
             print(f"Removed unused npm modules to prevent builder scan: {npm_modules}")
         
-        # Also clean up npm binaries/scripts
+        # Also clean up npm and corepack binaries/scripts
         npm_bins = []
         if is_win:
-            npm_bins = ["npm", "npm.cmd", "npx", "npx.cmd"]
+            npm_bins = ["npm", "npm.cmd", "npx", "npx.cmd", "corepack", "corepack.cmd"]
         else:
-            npm_bins = ["bin/npm", "bin/npx"]
+            npm_bins = ["bin/npm", "bin/npx", "bin/corepack"]
             
         for b in npm_bins:
             b_path = node_dir / b
             if b_path.is_symlink() or b_path.exists():
                 b_path.unlink()
-                print(f"Removed npm helper binary: {b_path}")
+                print(f"Removed npm/corepack helper binary: {b_path}")
                     
         print("Node runtime ready.")
 
