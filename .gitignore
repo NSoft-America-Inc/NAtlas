@@ -17,6 +17,5 @@ venv/
 resources/node/
 resources/python/
 resources/git/
-pnpm-workspace.yaml
 scratch_debug_git.py
 
