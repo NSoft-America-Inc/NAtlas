@@ -21,14 +21,19 @@ jobs:
       - name: Configure Git Safe Directory
         run: git config --global --add safe.directory "*"
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Resolve Best GitHub Token
         id: resolve_token
@@ -74,14 +79,19 @@ jobs:
       - name: Configure Git Safe Directory
         run: git config --global --add safe.directory "*"
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Resolve Best GitHub Token
         id: resolve_token

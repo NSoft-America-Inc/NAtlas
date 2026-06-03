@@ -1,4 +1,4 @@
-﻿# ==============================================================================
+# ==============================================================================
 # NStack & NAtlas Windows Unified Visual Installer
 # - Extreme Developer Onboarding & Visual PowerShell Experience -
 # - Antigravity Single Agent Environment Optimization -
@@ -112,8 +112,13 @@ function install_natlas {
     ok "기본 개발 런타임 진단 완료"
 
     log "[SETUP-STEP] 단계 2: Node.js 의존성 복원"
-    log "  npm install 실행 중..."
-    npm install --quiet 2>&1 | Out-Null
+    if (Get-Command pnpm -ErrorAction SilentlyContinue) {
+        log "  pnpm install 실행 중..."
+        pnpm install --quiet 2>&1 | Out-Null
+    } else {
+        log "  npm install 실행 중..."
+        npm install --quiet 2>&1 | Out-Null
+    }
     ok "Node.js 의존성 복원 완수!"
 
     log "[SETUP-STEP] 단계 3: Python 격리 가상환경 및 pip 설치"
@@ -246,7 +251,7 @@ if ($INSTALL_MODE -eq 0 -or $INSTALL_MODE -eq 2) {
 br
 
 log "$Bold  [Windows 실행 가이드]$Reset"
-log "  로컬 앱 기동   : npm run dev"
+log "  로컬 앱 기동   : pnpm run dev (또는 npm run dev)"
 log "  E2E 지식 린터 : python verify_nstack_pipeline.py"
 br
 log "  $Green$Bold[OK] 모든 설치 시퀀스가 성공적으로 마스터링되었습니다!$Reset"

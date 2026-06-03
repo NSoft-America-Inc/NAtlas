@@ -76,17 +76,31 @@ def main():
     # 배포판 앱 내부(app.asar)이거나 쓰기 권한이 없는 경우를 식별
     is_packaged = "app.asar" in str(project_root) or not os.access(str(project_root), os.W_OK)
 
-    # 3. Node.js 패키지 의존성 복원 (npm install)
-    print_step("단계 2/6: Node.js 패키지 의존성 복원 (npm install) 트리거")
+    # 3. Node.js 패키지 의존성 복원
+    print_step("단계 2/6: Node.js 패키지 의존성 복원 트리거")
+    
+    # Check if pnpm is available, else fallback to npm
+    pnpm_cmd = "pnpm.cmd" if is_windows else "pnpm"
     npm_cmd = "npm.cmd" if is_windows else "npm"
     
+    has_pnpm = False
+    try:
+        subprocess.run([pnpm_cmd, "--version"], capture_output=True, text=True, check=True, shell=is_windows)
+        has_pnpm = True
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        has_pnpm = False
+        
+    pkg_cmd = pnpm_cmd if has_pnpm else npm_cmd
+    pkg_name = "pnpm" if has_pnpm else "npm"
+    print_warn(f"사용 가능한 패키지 매니저 감지: {COLOR_GREEN}{pkg_name}{COLOR_YELLOW}")
+    
     if is_packaged or not (project_root / "package.json").exists():
-        print_warn("현재 환경에 package.json이 존재하지 않거나 배포판 런타임입니다. npm install 단계를 건너뜁니다.")
+        print_warn(f"현재 환경에 package.json이 존재하지 않거나 배포판 런타임입니다. {pkg_name} install 단계를 건너뜁니다.")
     else:
         try:
             print_warn("의존성 다운로드 및 빌드 중... (이 작업은 시스템 사양에 따라 수분이 소요될 수 있습니다)")
-            subprocess.run([npm_cmd, "install"], cwd=project_root, check=True, shell=is_windows)
-            print_success("Node.js 의존성 복원 (npm install) 완수!")
+            subprocess.run([pkg_cmd, "install"], cwd=project_root, check=True, shell=is_windows)
+            print_success(f"Node.js 의존성 복원 ({pkg_name} install) 완수!")
         except subprocess.CalledProcessError as e:
             print_error(f"Node.js 의존성 설치 중 치명적 에러 발생: {e}")
             sys.exit(1)
@@ -144,18 +158,22 @@ def main():
     print_step("단계 4/6: SwarmVault CLI 글로벌 설치 및 Fail-Safe 예외 분기 검증")
     # 1차 시도: 글로벌 설치
     try:
-        print_warn("글로벌 영역 설치 시도: npm install -g @swarmvaultai/cli")
-        subprocess.run([npm_cmd, "install", "-g", "@swarmvaultai/cli"], cwd=project_root, check=True, shell=is_windows)
+        # pnpm uses 'pnpm add -g', npm uses 'npm install -g'
+        global_args = ["add", "-g"] if has_pnpm else ["install", "-g"]
+        print_warn(f"글로벌 영역 설치 시도: {pkg_cmd} {' '.join(global_args)} @swarmvaultai/cli")
+        subprocess.run([pkg_cmd] + global_args + ["@swarmvaultai/cli"], cwd=project_root, check=True, shell=is_windows)
         print_success("SwarmVault CLI 글로벌 설치 성공!")
     except subprocess.CalledProcessError:
         print_warn("⚠️ 글로벌 영역 설치 권한 부족(Permission Denied) 감지!")
         if is_packaged:
             print_warn("배포판 실행 환경에서는 로컬 패키지 영역 백업 설치를 스킵합니다.")
-            print_warn("SwarmVault CLI가 필요하다면 터미널에서 수동으로 'npm install -g @swarmvaultai/cli'를 실행해 주십시오.")
+            print_warn(f"SwarmVault CLI가 필요하다면 터미널에서 수동으로 '{pkg_name} install -g @swarmvaultai/cli'를 실행해 주십시오.")
         else:
             print_warn("👉 로컬 프로젝트 영역(devDependencies)으로 백업 설치를 트리거하여 우회 복구를 수행합니다.")
             try:
-                subprocess.run([npm_cmd, "install", "-D", "@swarmvaultai/cli"], cwd=project_root, check=True, shell=is_windows)
+                # pnpm uses 'add -D', npm uses 'install -D'
+                install_args = ["add", "-D"] if has_pnpm else ["install", "-D"]
+                subprocess.run([pkg_cmd] + install_args + ["@swarmvaultai/cli"], cwd=project_root, check=True, shell=is_windows)
                 print_success("로컬 개발 패키지 영역에 SwarmVault CLI 백업 설치(Fail-Safe) 성공!")
             except subprocess.CalledProcessError as e:
                 print_error(f"로컬 의존성 백업 설치마저 실패했습니다: {e}")

@@ -305,6 +305,6 @@ log "  ${MAGENTA}xattr -cr /Applications/NAtlas.app${RESET}"
 br
 log "  ${GREEN}${BOLD}✓ 모든 설치 시퀀스가 성공적으로 마스터링되었습니다!${RESET}"
 br
-log "  - 로컬 앱 기동   : npm run dev"
+log "  - 로컬 앱 기동   : pnpm run dev (또는 npm run dev)"
 log "  - E2E 지식 린터 : python3 verify_nstack_pipeline.py"
 br
