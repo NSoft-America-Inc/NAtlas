@@ -56,15 +56,29 @@ jobs:
 
       - name: Dereference pnpm symlinks for bundled packages (macOS)
         run: |
-          # pnpm creates symlinks in node_modules → .pnpm store
-          # electron-builder globs don't follow symlinks → files missing from bundle
-          # cp -rL dereferences symlinks to real files
+          # Dereference @swarmvaultai symlinks (pnpm -> .pnpm store) to real files
           cp -rL node_modules/@swarmvaultai ./swarmvaultai_real
           rm -rf node_modules/@swarmvaultai
           mv ./swarmvaultai_real node_modules/@swarmvaultai
-          cp -rL node_modules/commander ./commander_real
-          rm -rf node_modules/commander
-          mv ./commander_real node_modules/commander
+
+          # Ensure commander is findable by @swarmvaultai/cli at runtime
+          if [ -d "node_modules/commander" ]; then
+            echo "commander found at top-level, dereferencing..."
+            cp -rL node_modules/commander ./commander_real
+            rm -rf node_modules/commander
+            mv ./commander_real node_modules/commander
+          else
+            echo "commander not at top-level (pnpm strict). Searching .pnpm store..."
+            COMMANDER_STORE=$(find node_modules/.pnpm -path "*/node_modules/commander" -type d 2>/dev/null | head -1)
+            if [ -n "$COMMANDER_STORE" ]; then
+              echo "Found commander at: $COMMANDER_STORE"
+              mkdir -p node_modules/@swarmvaultai/cli/node_modules
+              cp -rL "$COMMANDER_STORE" node_modules/@swarmvaultai/cli/node_modules/commander
+              echo "Installed commander into @swarmvaultai/cli/node_modules/"
+            else
+              echo "Warning: commander not found in pnpm store!"
+            fi
+          fi
 
       - name: Build macOS Assets
         run: npm run build:mac
@@ -128,13 +142,29 @@ jobs:
       - name: Dereference pnpm symlinks for bundled packages (Windows)
         shell: pwsh
         run: |
-          # pnpm creates symlinks - robocopy /E /SL dereferences them
+          # Dereference @swarmvaultai symlinks to real files
           robocopy node_modules/@swarmvaultai swarmvaultai_real /E /SL | Out-Null
           Remove-Item -Recurse -Force node_modules/@swarmvaultai
           Move-Item swarmvaultai_real node_modules/@swarmvaultai
-          robocopy node_modules/commander commander_real /E /SL | Out-Null
-          Remove-Item -Recurse -Force node_modules/commander
-          Move-Item commander_real node_modules/commander
+
+          # Ensure commander is available to @swarmvaultai/cli
+          if (Test-Path node_modules/commander) {
+            Write-Host "commander found at top-level, dereferencing..."
+            robocopy node_modules/commander commander_real /E /SL | Out-Null
+            Remove-Item -Recurse -Force node_modules/commander
+            Move-Item commander_real node_modules/commander
+          } else {
+            Write-Host "commander not at top-level. Searching .pnpm store..."
+            $store = Get-ChildItem -Path node_modules/.pnpm -Recurse -Filter commander -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($store) {
+              Write-Host "Found commander at: $($store.FullName)"
+              New-Item -ItemType Directory -Force -Path node_modules/@swarmvaultai/cli/node_modules | Out-Null
+              robocopy $store.FullName node_modules/@swarmvaultai/cli/node_modules/commander /E /SL | Out-Null
+              Write-Host "Installed commander into @swarmvaultai/cli/node_modules/"
+            } else {
+              Write-Host "Warning: commander not found!"
+            }
+          }
 
       - name: Build Windows Assets
         run: npm run build:win
