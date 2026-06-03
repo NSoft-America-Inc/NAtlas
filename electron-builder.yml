@@ -76,3 +76,7 @@ extraResources:
     to: git
     filter:
       - '**/*'
+  - from: resources/swarmvault-cli-portable
+    to: swarmvault-cli-portable
+    filter:
+      - '**/*'
