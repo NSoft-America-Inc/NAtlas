@@ -101,11 +101,17 @@ def prepare_runtimes():
             
             if requirements_file.exists():
                 print("Installing Python requirements into embedded runtime (Windows, system pip --target)...")
-                # Use the CI runner's own Python to install into embedded site-packages
+                # Explicitly target cp311/win_amd64 to match the embedded Python 3.11 binary.
+                # Without this, pip uses the CI runner's Python version tag (e.g. cp312),
+                # producing _pydantic_core.cp312-win_amd64.pyd which embedded Python 3.11 cannot load.
                 subprocess.check_call([
                     sys.executable, "-m", "pip", "install",
                     "-r", str(requirements_file),
                     "--target", str(site_packages),
+                    "--python-version", "3.11",
+                    "--platform", "win_amd64",
+                    "--only-binary", ":all:",
+                    "--implementation", "cp",
                     "--quiet"
                 ])
                 print("Python requirements installed.")
