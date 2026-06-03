@@ -59,6 +59,14 @@ async function startPythonSidecar(): Promise<void> {
   const isWin = process.platform === 'win32'
   let pythonCmd = isWin ? 'python' : 'python3'
 
+  // 0. Embedded resources/python (최우선: packaged DMG/EXE 배포 환경)
+  const resourcesDir = app.getAppPath().includes('app.asar')
+    ? join(app.getAppPath(), '..')
+    : join(app.getAppPath(), 'resources')
+  const embeddedPythonBin = isWin
+    ? join(resourcesDir, 'python', 'python.exe')
+    : join(resourcesDir, 'python', 'bin', 'python3')
+
   // 1. Local workspace .venv
   let localVenvDir = join(app.getAppPath(), 'src/python/.venv')
   if (localVenvDir.includes('app.asar')) {
@@ -80,8 +88,11 @@ async function startPythonSidecar(): Promise<void> {
   } else if (fs.existsSync(globalPythonBin)) {
     pythonCmd = globalPythonBin
     console.log(`Using global user home venv python: ${pythonCmd}`)
+  } else if (fs.existsSync(embeddedPythonBin)) {
+    pythonCmd = embeddedPythonBin
+    console.log(`Using embedded resources/python: ${pythonCmd}`)
   } else {
-    console.log(`No venv python found. Falling back to system python: ${pythonCmd}`)
+    console.log(`No venv/embedded python found. Falling back to system python: ${pythonCmd}`)
   }
 
   console.log(`Spawning Python sidecar: ${pythonCmd} ${pythonScript} --port ${PORT}`)

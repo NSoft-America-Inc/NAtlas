@@ -139,10 +139,10 @@ def load_current_version() -> str:
         if package_json_path.exists():
             with open(package_json_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                return data.get("version", "1.0.0-beta.1")
+                return data.get("version", "unknown")
     except Exception:
         pass
-    return "1.0.0-beta.1"
+    return "unknown"
 
 @router.get("/check-update")
 async def get_check_update():
