@@ -17,5 +17,6 @@ venv/
 resources/node/
 resources/python/
 resources/git/
+resources/swarmvault-cli-portable/
 scratch_debug_git.py
 

@@ -189,5 +189,36 @@ def prepare_runtimes():
         shutil.rmtree(temp_dir)
         print("Temporary download files cleaned up.")
 
+    # 4. Prepare SwarmVault CLI isolated portable setup
+    prepare_swarmvault_cli(project_root, resources_dir)
+
+def prepare_swarmvault_cli(project_root, resources_dir):
+    portable_dir = resources_dir / "swarmvault-cli-portable"
+    portable_dir.mkdir(parents=True, exist_ok=True)
+    
+    package_json_content = """{
+  "name": "swarmvault-cli-portable",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@swarmvaultai/cli": "3.16.0"
+  }
+}
+"""
+    package_json_path = portable_dir / "package.json"
+    package_json_path.write_text(package_json_content, encoding="utf-8")
+    print(f"Created package.json at {package_json_path}")
+    
+    import subprocess
+    print("Installing SwarmVault CLI and dependencies into isolated folder...")
+    
+    is_win = sys.platform == "win32"
+    subprocess.check_call(
+        ["npm", "install", "--omit=dev", "--no-audit", "--no-fund"],
+        cwd=str(portable_dir),
+        shell=is_win
+    )
+    print("SwarmVault CLI portable installation complete.")
+
 if __name__ == "__main__":
     prepare_runtimes()

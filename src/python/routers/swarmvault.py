@@ -67,12 +67,13 @@ def get_swarmvault_cmd() -> list:
     is_win = sys.platform == "win32"
 
     # CLI 경로 후보:
-    # 1. dev mode:       project_root/node_modules/@swarmvaultai/cli/dist/index.js
-    # 2. packaged DMG:   Contents/Resources/node_modules/@swarmvaultai/cli/dist/index.js
-    #    (extraResources로 복사됨, project_root.parent = Contents/Resources/)
+    # 1. dev mode:                     project_root/node_modules/@swarmvaultai/cli/dist/index.js
+    # 2. isolated portable packaged:   project_root.parent/swarmvault-cli-portable/node_modules/@swarmvaultai/cli/dist/index.js
+    # 3. isolated portable local:      project_root/resources/swarmvault-cli-portable/node_modules/@swarmvaultai/cli/dist/index.js
     cli_path_candidates = [
         project_root / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
-        project_root.parent / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
+        project_root.parent / "swarmvault-cli-portable" / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
+        project_root / "resources" / "swarmvault-cli-portable" / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
     ]
     cli_path = next((p for p in cli_path_candidates if p.exists()), cli_path_candidates[0])
 
