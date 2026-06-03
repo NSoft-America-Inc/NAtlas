@@ -23,6 +23,7 @@ import {
   Sparkles,
   RefreshCw,
   FolderOpen,
+  AlertTriangle,
 } from 'lucide-react'
 
 interface InstallStep {
@@ -97,7 +98,7 @@ export function Update() {
     queryFn: api.getSettings,
   })
 
-  const { data: status, isLoading: isStatusLoading, refetch: refetchStatus, isFetching: isStatusFetching } = useQuery<SwarmVaultStatus>({
+  const { data: status, isLoading: isStatusLoading, refetch: refetchStatus, isFetching: isStatusFetching, isError: isStatusError } = useQuery<SwarmVaultStatus>({
     queryKey: ['swarmvaultStatus'],
     queryFn: api.getSwarmVaultStatus,
     refetchInterval: 10_000,
@@ -561,6 +562,34 @@ export function Update() {
             /* 1. VISUAL INSTALLER SECTION                                                    */
             /* ============================================================================== */
             <div className="flex flex-col gap-5">
+              {/* Backend offline warning banner */}
+              {(!status || isStatusError) && (
+                <div className="flex items-start gap-4 p-4 border border-rose-950/40 rounded-xl bg-rose-950/20 text-rose-400 text-xs animate-in fade-in duration-300">
+                  <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500 mt-0.5" />
+                  <div className="space-y-1.5 flex-1 select-text">
+                    <p className="font-bold text-sm text-rose-300">FastAPI 백엔드 서비스 연결 실패 (사이드카 비활성)</p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      현재 로컬 백엔드 서버(포트 18420)와 통신할 수 없습니다. 신규 PC 혹은 개발 환경이 구축되지 않은 컴퓨터에서는 먼저 <strong>코어 개발 환경 구축</strong>이 선행되어야 합니다.
+                    </p>
+                    <p className="text-muted-foreground leading-relaxed">
+                      아래 단일 시각화 통합 설치 명령어를 터미널에서 실행하여 로컬 Node/Python 및 가상환경(.venv) 빌드 오케스트레이션을 먼저 완수해 주십시오:
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <code className="px-2 py-1 bg-black/40 text-[10px] font-mono text-slate-300 rounded border border-slate-850">
+                        ./install_unified.sh
+                      </code>
+                      <button
+                        onClick={() => handleCopyCmd('./install_unified.sh')}
+                        className="px-2 py-1 rounded bg-rose-900/20 border border-rose-800/30 hover:bg-rose-800/20 text-rose-300 transition-all text-[10px] font-bold flex items-center gap-1"
+                      >
+                        {copiedCmd ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        명령어 복사
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Option Selector Cards */}
               <div className="flex flex-col gap-3 select-none">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">설치 시나리오 옵션 선택</h3>
