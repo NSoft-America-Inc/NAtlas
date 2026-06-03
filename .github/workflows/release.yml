@@ -54,6 +54,18 @@ jobs:
       - name: Prepare Embedded Portable Runtimes
         run: python3 prepare_embedded_runtimes.py
 
+      - name: Dereference pnpm symlinks for bundled packages (macOS)
+        run: |
+          # pnpm creates symlinks in node_modules → .pnpm store
+          # electron-builder globs don't follow symlinks → files missing from bundle
+          # cp -rL dereferences symlinks to real files
+          cp -rL node_modules/@swarmvaultai ./swarmvaultai_real
+          rm -rf node_modules/@swarmvaultai
+          mv ./swarmvaultai_real node_modules/@swarmvaultai
+          cp -rL node_modules/commander ./commander_real
+          rm -rf node_modules/commander
+          mv ./commander_real node_modules/commander
+
       - name: Build macOS Assets
         run: npm run build:mac
         env:
@@ -112,6 +124,17 @@ jobs:
 
       - name: Prepare Embedded Portable Runtimes
         run: python prepare_embedded_runtimes.py
+
+      - name: Dereference pnpm symlinks for bundled packages (Windows)
+        shell: pwsh
+        run: |
+          # pnpm creates symlinks - robocopy /E /SL dereferences them
+          robocopy node_modules/@swarmvaultai swarmvaultai_real /E /SL | Out-Null
+          Remove-Item -Recurse -Force node_modules/@swarmvaultai
+          Move-Item swarmvaultai_real node_modules/@swarmvaultai
+          robocopy node_modules/commander commander_real /E /SL | Out-Null
+          Remove-Item -Recurse -Force node_modules/commander
+          Move-Item commander_real node_modules/commander
 
       - name: Build Windows Assets
         run: npm run build:win
