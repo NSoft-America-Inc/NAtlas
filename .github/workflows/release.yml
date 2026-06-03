@@ -143,14 +143,29 @@ jobs:
         shell: pwsh
         run: |
           # Dereference @swarmvaultai symlinks to real files
-          robocopy node_modules/@swarmvaultai swarmvaultai_real /E /SL | Out-Null
+          New-Item -ItemType Directory -Force -Path swarmvaultai_real | Out-Null
+          Get-ChildItem -Path node_modules/@swarmvaultai | ForEach-Object {
+            $dest = "swarmvaultai_real/$($_.Name)"
+            if ($_.Attributes -match "ReparsePoint") {
+              $resolved = [System.IO.Directory]::ResolveLinkTarget($_.FullName, $true)
+              Copy-Item -Path $resolved.FullName -Destination $dest -Recurse -Force
+            } else {
+              Copy-Item -Path $_.FullName -Destination $dest -Recurse -Force
+            }
+          }
           Remove-Item -Recurse -Force node_modules/@swarmvaultai
           Move-Item swarmvaultai_real node_modules/@swarmvaultai
 
           # Ensure commander is available to @swarmvaultai/cli
           if (Test-Path node_modules/commander) {
             Write-Host "commander found at top-level, dereferencing..."
-            robocopy node_modules/commander commander_real /E /SL | Out-Null
+            $cmdItem = Get-Item node_modules/commander
+            if ($cmdItem.Attributes -match "ReparsePoint") {
+              $resolved = [System.IO.Directory]::ResolveLinkTarget($cmdItem.FullName, $true)
+              Copy-Item -Path $resolved.FullName -Destination commander_real -Recurse -Force
+            } else {
+              Copy-Item -Path node_modules/commander -Destination commander_real -Recurse -Force
+            }
             Remove-Item -Recurse -Force node_modules/commander
             Move-Item commander_real node_modules/commander
           } else {
@@ -158,8 +173,9 @@ jobs:
             $store = Get-ChildItem -Path node_modules/.pnpm -Recurse -Filter commander -Directory -ErrorAction SilentlyContinue | Select-Object -First 1
             if ($store) {
               Write-Host "Found commander at: $($store.FullName)"
-              New-Item -ItemType Directory -Force -Path node_modules/@swarmvaultai/cli/node_modules | Out-Null
-              robocopy $store.FullName node_modules/@swarmvaultai/cli/node_modules/commander /E /SL | Out-Null
+              $cliNodeModules = "node_modules/@swarmvaultai/cli/node_modules"
+              New-Item -ItemType Directory -Force -Path $cliNodeModules | Out-Null
+              Copy-Item -Path $store.FullName -Destination "$cliNodeModules/commander" -Recurse -Force
               Write-Host "Installed commander into @swarmvaultai/cli/node_modules/"
             } else {
               Write-Host "Warning: commander not found!"
