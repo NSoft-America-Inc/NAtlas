@@ -326,7 +326,7 @@ export function Settings() {
             <div className="space-y-1">
               <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider select-none">현재 버전</p>
               <p className="text-sm font-semibold font-mono text-slate-300">
-                v{updateInfo?.current_version || '1.0.0-beta.9'}
+                v{updateInfo?.current_version || '1.0.0-beta.10'}
               </p>
             </div>
             <div className="space-y-1 text-right">
