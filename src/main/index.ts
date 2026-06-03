@@ -21,10 +21,35 @@ function startPythonSidecar(): void {
     pythonScript = pythonScript.replace('app.asar', 'app.asar.unpacked')
   }
 
-  let pythonCmd = 'python3'
+  const fs = require('fs')
+  const os = require('os')
   
-  if (process.platform === 'win32') {
-    pythonCmd = 'python'
+  const isWin = process.platform === 'win32'
+  let pythonCmd = isWin ? 'python' : 'python3'
+  
+  // 1. Local workspace .venv
+  let localVenvDir = join(app.getAppPath(), 'src/python/.venv')
+  if (localVenvDir.includes('app.asar')) {
+    localVenvDir = localVenvDir.replace('app.asar', 'app.asar.unpacked')
+  }
+  const localPythonBin = isWin 
+    ? join(localVenvDir, 'Scripts/python.exe')
+    : join(localVenvDir, 'bin/python')
+    
+  // 2. Global user home .natlas/venv
+  const globalVenvDir = join(os.homedir(), '.natlas/venv')
+  const globalPythonBin = isWin
+    ? join(globalVenvDir, 'Scripts/python.exe')
+    : join(globalVenvDir, 'bin/python')
+
+  if (fs.existsSync(localPythonBin)) {
+    pythonCmd = localPythonBin
+    console.log(`Using local workspace venv python: ${pythonCmd}`)
+  } else if (fs.existsSync(globalPythonBin)) {
+    pythonCmd = globalPythonBin
+    console.log(`Using global user home venv python: ${pythonCmd}`)
+  } else {
+    console.log(`No venv python found. Falling back to system python: ${pythonCmd}`)
   }
 
   console.log(`Spawning Python sidecar: ${pythonCmd} ${pythonScript} --port ${PORT}`)

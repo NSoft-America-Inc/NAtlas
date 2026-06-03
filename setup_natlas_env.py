@@ -73,28 +73,42 @@ def main():
     project_root = Path(__file__).parent.resolve()
     print_success(f"프로젝트 루트 감지 완료: {project_root}")
 
+    # 배포판 앱 내부(app.asar)이거나 쓰기 권한이 없는 경우를 식별
+    is_packaged = "app.asar" in str(project_root) or not os.access(str(project_root), os.W_OK)
+
     # 3. Node.js 패키지 의존성 복원 (npm install)
     print_step("단계 2/6: Node.js 패키지 의존성 복원 (npm install) 트리거")
     npm_cmd = "npm.cmd" if is_windows else "npm"
-    try:
-        print_warn("의존성 다운로드 및 빌드 중... (이 작업은 시스템 사양에 따라 수분이 소요될 수 있습니다)")
-        # shell=True는 Windows에서의 npm.cmd 프로세스 스폰 충돌을 원천 차단하기 위한 필수 사양입니다.
-        subprocess.run([npm_cmd, "install"], cwd=project_root, check=True, shell=is_windows)
-        print_success("Node.js 의존성 복원 (npm install) 완수!")
-    except subprocess.CalledProcessError as e:
-        print_error(f"Node.js 의존성 설치 중 치명적 에러 발생: {e}")
-        sys.exit(1)
+    
+    if is_packaged or not (project_root / "package.json").exists():
+        print_warn("현재 환경에 package.json이 존재하지 않거나 배포판 런타임입니다. npm install 단계를 건너뜁니다.")
+    else:
+        try:
+            print_warn("의존성 다운로드 및 빌드 중... (이 작업은 시스템 사양에 따라 수분이 소요될 수 있습니다)")
+            subprocess.run([npm_cmd, "install"], cwd=project_root, check=True, shell=is_windows)
+            print_success("Node.js 의존성 복원 (npm install) 완수!")
+        except subprocess.CalledProcessError as e:
+            print_error(f"Node.js 의존성 설치 중 치명적 에러 발생: {e}")
+            sys.exit(1)
 
     # 4. Python 가상환경(venv) 구성 및 FastAPI 사이드카 dependencies 설치
     print_step("단계 3/6: Python Sidecar 격리 가상환경(.venv) 구축 및 pip 설치")
     python_dir = project_root / "src" / "python"
-    venv_dir = python_dir / ".venv"
+    
+    if is_packaged:
+        global_natlas_dir = Path.home() / ".natlas"
+        global_natlas_dir.mkdir(parents=True, exist_ok=True)
+        venv_dir = global_natlas_dir / "venv"
+        print_warn(f"배포판 실행 환경(또는 권한 제한)이 감지되어 가상환경을 사용자 홈 디렉토리에 구축합니다: {venv_dir}")
+    else:
+        venv_dir = python_dir / ".venv"
 
     # 가상환경 생성
     if not venv_dir.exists():
         print_warn(f"가상환경 폴더가 존재하지 않아 신규 생성합니다: {venv_dir}")
         try:
-            subprocess.run([python_cmd, "-m", "venv", ".venv"], cwd=python_dir, check=True)
+            cwd_to_run = Path.home() if is_packaged else python_dir
+            subprocess.run([python_cmd, "-m", "venv", str(venv_dir)], cwd=cwd_to_run, check=True)
             print_success("Python 격리 가상환경(.venv) 생성 완수!")
         except subprocess.CalledProcessError as e:
             print_error(f"가상환경(.venv) 생성 중 오류 발생: {e}")
@@ -135,29 +149,33 @@ def main():
         print_success("SwarmVault CLI 글로벌 설치 성공!")
     except subprocess.CalledProcessError:
         print_warn("⚠️ 글로벌 영역 설치 권한 부족(Permission Denied) 감지!")
-        print_warn("👉 로컬 프로젝트 영역(devDependencies)으로 백업 설치를 트리거하여 우회 복구를 수행합니다.")
-        try:
-            subprocess.run([npm_cmd, "install", "-D", "@swarmvaultai/cli"], cwd=project_root, check=True, shell=is_windows)
-            print_success("로컬 개발 패키지 영역에 SwarmVault CLI 백업 설치(Fail-Safe) 성공!")
-        except subprocess.CalledProcessError as e:
-            print_error(f"로컬 의존성 백업 설치마저 실패했습니다: {e}")
-            sys.exit(1)
+        if is_packaged:
+            print_warn("배포판 실행 환경에서는 로컬 패키지 영역 백업 설치를 스킵합니다.")
+            print_warn("SwarmVault CLI가 필요하다면 터미널에서 수동으로 'npm install -g @swarmvaultai/cli'를 실행해 주십시오.")
+        else:
+            print_warn("👉 로컬 프로젝트 영역(devDependencies)으로 백업 설치를 트리거하여 우회 복구를 수행합니다.")
+            try:
+                subprocess.run([npm_cmd, "install", "-D", "@swarmvaultai/cli"], cwd=project_root, check=True, shell=is_windows)
+                print_success("로컬 개발 패키지 영역에 SwarmVault CLI 백업 설치(Fail-Safe) 성공!")
+            except subprocess.CalledProcessError as e:
+                print_error(f"로컬 의존성 백업 설치마저 실패했습니다: {e}")
+                sys.exit(1)
 
     # 6. Git Hook 연동 설치
     print_step("단계 5/6: Git Hook 자동 연동 및 pre-commit 커밋 차단 통제 벽 바인딩")
     hook_installer = project_root / "setup_nstack_hooks.py"
-    if hook_installer.exists():
+    if hook_installer.exists() and not is_packaged:
         try:
             subprocess.run([python_cmd, str(hook_installer)], cwd=project_root, check=True)
         except subprocess.CalledProcessError as e:
             print_warn(f"Git Hook 바인딩 중 경고가 발생했으나 설치를 계속 진행합니다: {e}")
     else:
-        print_warn("setup_nstack_hooks.py 파일이 프로젝트 루트에 존재하지 않아 스킵합니다.")
+        print_warn("setup_nstack_hooks.py 파일이 프로젝트 루트에 존재하지 않거나 배포판 환경이므로 스킵합니다.")
 
     # 7. Diagnostic verification
     print_step("단계 6/6: NStack 지식 파이프라인 무결성 자가 검사(Diagnostic Verification)")
     validator_script = project_root / "verify_nstack_pipeline.py"
-    if validator_script.exists():
+    if validator_script.exists() and not is_packaged:
         try:
             # 린터 실행
             subprocess.run([python_cmd, str(validator_script)], cwd=project_root, check=True)
@@ -167,7 +185,7 @@ def main():
             print_warn("💡 이는 과거 레거시 문서 양식 오류로 인한 것이며, 신규 설치 프로세스 빌드는 안전합니다.")
             print_warn("👉 정합성을 교정하려면 'python3 verify_nstack_pipeline.py --heal'을 실행하십시오.")
     else:
-        print_warn("verify_nstack_pipeline.py 파일이 존재하지 않아 자가 검사를 건너뜁니다.")
+        print_warn("verify_nstack_pipeline.py 파일이 존재하지 않거나 배포판 환경이므로 자가 검사를 건너뜁니다.")
 
     print("=" * 80)
     print(f"{COLOR_GREEN} 🎉 축하합니다! Windows & macOS 공용 NStack + NAtlas 개발자 온보딩 환경 구축이 완수되었습니다!{COLOR_RESET}")
