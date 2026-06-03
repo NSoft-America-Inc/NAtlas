@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # NStack & NAtlas Windows Unified Visual Installer
 # - Extreme Developer Onboarding & Visual PowerShell Experience -
 # - Antigravity Single Agent Environment Optimization -
@@ -17,31 +17,31 @@ $Red = [char]27 + "[31m"
 $Reset = [char]27 + "[0m"
 
 # 헬퍼 함수
-function ok($msg)   { Write-Host "  $Green✓$Reset $msg" }
-function warn($msg) { Write-Host "  $Yellow⚠$Reset $msg" -ForegroundColor Yellow }
-function fail($msg) { Write-Error "  $Red✗$Reset $msg"; exit 1 }
+function ok($msg)   { Write-Host "  $Green[OK]$Reset $msg" }
+function warn($msg) { Write-Host "  $Yellow[WARN]$Reset $msg" -ForegroundColor Yellow }
+function fail($msg) { Write-Error "  $Red[FAIL]$Reset $msg"; exit 1 }
 function log($msg)  { Write-Host $msg }
 function br         { Write-Host "" }
 
 # ─── ASCII Art 및 헤더 ─────────────────────────────────────────────
 Clear-Host
 br
-log "$Cyan$Bold  ╔══════════════════════════════════════════════════════════╗$Reset"
-log "$Cyan$Bold  ║                                                          ║$Reset"
-log "$Cyan$Bold  ║      _   _ ____  _             _                         ║$Reset"
-log "$Cyan$Bold  ║     | \ | / ___|| |_ __ _  ___| | __                     ║$Reset"
-log "$Cyan$Bold  ║     |  \| \___ \| __/ _\` |/ __| |/ /                     ║$Reset"
-log "$Cyan$Bold  ║     | |\  |___) | || (_| | (__|   <                      ║$Reset"
-log "$Cyan$Bold  ║     |_| \_|____/ \__\__,_|\___|_|\_\\                     ║$Reset"
-log "$Cyan$Bold  ║      _   _  _   _   _            _                       ║$Reset"
-log "$Cyan$Bold  ║     | \ | |/ \ | |_| | __ _  ___| |__                    ║$Reset"
-log "$Cyan$Bold  ║     |  \| / _ \ __| |/ _\` |/ __| '_ \\                   ║$Reset"
-log "$Cyan$Bold  ║     | |\  / ___ \ |_| | (_| | (__| | | |                 ║$Reset"
-log "$Cyan$Bold  ║     |_| \_/_/   \_\__|_\__,_|\___|_| |_|                 ║$Reset"
-log "$Cyan$Bold  ║                                                          ║$Reset"
-log "$Cyan$Bold  ║             - Unified PowerShell Installer -             ║$Reset"
-log "$Cyan$Bold  ║          - Antigravity Single Agent Edition -            ║$Reset"
-log "$Cyan$Bold  ╚══════════════════════════════════════════════════════════╝$Reset"
+log "$Cyan$Bold  +----------------------------------------------------------+$Reset"
+log "$Cyan$Bold  |                                                          |$Reset"
+log "$Cyan$Bold  |      _   _ ____  _             _                         |$Reset"
+log "$Cyan$Bold  |     | \ | / ___|| |_ __ _  ___| | __                     |$Reset"
+log "$Cyan$Bold  |     |  \| \___ \| __/ _` |/ __| |/ /                     |$Reset"
+log "$Cyan$Bold  |     | |\  |___) | || (_| | (__|   <                      |$Reset"
+log "$Cyan$Bold  |     |_| \_|____/ \__\__,_|\___|_|\_\\                     |$Reset"
+log "$Cyan$Bold  |      _   _  _   _   _            _                       |$Reset"
+log "$Cyan$Bold  |     | \ | |/ \ | |_| | __ _  ___| |__                    |$Reset"
+log "$Cyan$Bold  |     |  \| / _ \ __| |/ _` |/ __| '_ \\                   |$Reset"
+log "$Cyan$Bold  |     | |\  / ___ \ |_| | (_| | (__| | | |                 |$Reset"
+log "$Cyan$Bold  |     |_| \_/_/   \_\__|_\__,_|\___|_| |_|                 |$Reset"
+log "$Cyan$Bold  |                                                          |$Reset"
+log "$Cyan$Bold  |             - Unified PowerShell Installer -             |"
+log "$Cyan$Bold  |          - Antigravity Single Agent Edition -            |"
+log "$Cyan$Bold  +----------------------------------------------------------+$Reset"
 br
 log "$Bold  [시스템 감지]$Reset Windows NT (Platform OS detected)"
 br
@@ -228,10 +228,10 @@ if ($env:RUN_PROJECT_CREATE -eq "1") {
 
 # ─── 7. 최종 성공 리포트 테이블 출력 ───────────────────────────────
 br
-log "$Cyan$Bold  ╔══════════════════════════════════════════════════════════╗$Reset"
-log "$Cyan$Bold  ║               온보딩 통합 설치 완료 리포트               ║$Reset"
-log "$Cyan$Bold  ║          - Antigravity Single Agent Edition -            ║$Reset"
-log "$Cyan$Bold  ╚══════════════════════════════════════════════════════════╝$Reset"
+log "$Cyan$Bold  +----------------------------------------------------------+$Reset"
+log "$Cyan$Bold  |               온보딩 통합 설치 완료 리포트               |"
+log "$Cyan$Bold  |          - Antigravity Single Agent Edition -            |"
+log "$Cyan$Bold  +----------------------------------------------------------+$Reset"
 br
 
 if ($INSTALL_MODE -eq 0 -or $INSTALL_MODE -eq 1) {
@@ -249,5 +249,5 @@ log "$Bold  [Windows 실행 가이드]$Reset"
 log "  로컬 앱 기동   : npm run dev"
 log "  E2E 지식 린터 : python verify_nstack_pipeline.py"
 br
-log "  $Green$Bold✓ 모든 설치 시퀀스가 성공적으로 마스터링되었습니다!$Reset"
+log "  $Green$Bold[OK] 모든 설치 시퀀스가 성공적으로 마스터링되었습니다!$Reset"
 br
