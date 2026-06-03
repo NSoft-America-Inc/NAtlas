@@ -12,6 +12,8 @@ jobs:
   build-mac:
     name: Build macOS Application
     runs-on: macos-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -62,6 +64,8 @@ jobs:
   build-win:
     name: Build Windows Application
     runs-on: windows-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

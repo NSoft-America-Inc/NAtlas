@@ -16,8 +16,8 @@ files:
   - '!src/python/venv/**/*'
   - '!**/__pycache__/*'
   - '!**/*.pyc'
+  - '!resources/**/*'
 asarUnpack:
-  - resources/**
   - src/python/**
   - install_unified.sh
   - install_unified.ps1
