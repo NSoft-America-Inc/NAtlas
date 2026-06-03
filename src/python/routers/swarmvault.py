@@ -76,9 +76,16 @@ def get_swarmvault_cmd() -> list:
         return ["swarmvault"]
     
     # 2. 내장 포터블 node 바이너리 절대 경로 해석 시도 (크로스 플랫폼)
-    embedded_node = project_root / "resources" / "node" / ("node.exe" if is_win else "bin/node")
+    # packaged app: node는 app.asar.unpacked 한 단계 위(Contents/Resources/node/)에 위치
+    # dev mode:     node는 project_root/resources/node/에 위치
+    node_subpath = "node.exe" if is_win else "bin/node"
+    embedded_node_candidates = [
+        project_root / "resources" / "node" / node_subpath,          # dev mode
+        project_root.parent / "node" / node_subpath,                  # packaged DMG/EXE
+    ]
+    embedded_node = next((p for p in embedded_node_candidates if p.exists()), None)
     
-    if embedded_node.exists():
+    if embedded_node:
         # 내장 노드 v22.x의 ESM require 호환 지원 및 node:sqlite 지원을 위해 플래그 삽입
         return [str(embedded_node), "--experimental-require-module", "--experimental-sqlite", str(cli_path)]
     
