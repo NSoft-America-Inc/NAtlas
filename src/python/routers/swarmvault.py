@@ -53,22 +53,43 @@ async def get_status():
     py_status = await get_python_status()
     sv_status = await get_swarmvault_status()
     
-    llmwiki_root = get_llmwiki_root()
-    if not llmwiki_root:
-        wiki_status = {"ok": False, "file_count": 0, "error": "LLMWiki 루트 경로를 재설정하세요"}
-    else:
-        content_dir = Path(llmwiki_root) / "content"
-        if not content_dir.exists() or not content_dir.is_dir():
-            wiki_status = {"ok": False, "file_count": 0, "error": "content/ 폴더를 찾을 수 없습니다"}
-        else:
-            md_files = list(content_dir.glob("**/*.md"))
-            md_files_count = len([f for f in md_files if not f.name.startswith('.')])
-            
-            config_json = Path(llmwiki_root) / "swarmvault.config.json"
-            if not config_json.exists():
-                wiki_status = {"ok": False, "file_count": md_files_count, "error": "swarmvault.config.json을 찾을 수 없습니다"}
+    cfg = load_settings_data()
+    source_mode = cfg.get("source_mode", "remote")
+    
+    if source_mode == "remote":
+        try:
+            docs_res = await get_documents()
+            if isinstance(docs_res, JSONResponse):
+                import json
+                try:
+                    body = json.loads(docs_res.body.decode('utf-8'))
+                    err_msg = body.get("error", "GitHub API 오류")
+                except Exception:
+                    err_msg = "GitHub API 오류"
+                wiki_status = {"ok": False, "file_count": 0, "error": err_msg}
+            elif isinstance(docs_res, dict) and "files" in docs_res:
+                wiki_status = {"ok": True, "file_count": len(docs_res["files"])}
             else:
-                wiki_status = {"ok": True, "file_count": md_files_count}
+                wiki_status = {"ok": False, "file_count": 0, "error": "원격 문서 목록 로드 실패"}
+        except Exception as e:
+            wiki_status = {"ok": False, "file_count": 0, "error": f"원격 연결 실패: {str(e)}"}
+    else:
+        llmwiki_root = get_llmwiki_root()
+        if not llmwiki_root:
+            wiki_status = {"ok": False, "file_count": 0, "error": "LLMWiki 루트 경로를 재설정하세요"}
+        else:
+            content_dir = Path(llmwiki_root) / "content"
+            if not content_dir.exists() or not content_dir.is_dir():
+                wiki_status = {"ok": False, "file_count": 0, "error": "content/ 폴더를 찾을 수 없습니다"}
+            else:
+                md_files = list(content_dir.glob("**/*.md"))
+                md_files_count = len([f for f in md_files if not f.name.startswith('.')])
+                
+                config_json = Path(llmwiki_root) / "swarmvault.config.json"
+                if not config_json.exists():
+                    wiki_status = {"ok": False, "file_count": md_files_count, "error": "swarmvault.config.json을 찾을 수 없습니다"}
+                else:
+                    wiki_status = {"ok": True, "file_count": md_files_count}
 
     # 마지막 동기화 성공(Compile done) 시각 조회
     last_sync_time = None
