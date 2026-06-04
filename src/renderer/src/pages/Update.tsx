@@ -118,33 +118,6 @@ export function Update(): React.JSX.Element {
     setTimeout(() => setCopiedCmd(false), 2000)
   }
 
-  // Listen for Electron Main installer log stream
-  useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (window.electron && (window.electron as any).onInstallerLog) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(window.electron as any).onInstallerLog((logStr: string) => {
-        const cleaned = logStr.replace(/\r/g, '\n')
-        const lines = cleaned.split('\n').filter(Boolean)
-        lines.forEach((line) => {
-          const cleanLine = line.replace(
-            /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, // eslint-disable-line no-control-regex
-            ''
-          )
-          if (cleanLine.trim()) {
-            addLog({ type: 'log', message: cleanLine })
-          }
-        })
-      })
-    }
-    return () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (window.electron && (window.electron as any).offInstallerLog) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(window.electron as any).offInstallerLog()
-      }
-    }
-  }, [addLog])
 
   // Dynamically resolve workspace parent path from settings
   useEffect(() => {
