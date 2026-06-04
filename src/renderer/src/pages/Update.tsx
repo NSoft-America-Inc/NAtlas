@@ -670,12 +670,29 @@ export function Update(): React.JSX.Element {
                 </div>
               )}
 
-              {/* 안내 문구 */}
+              {/* 업데이트 동작 안내 */}
               <div className="text-xs text-muted-foreground space-y-1 p-3 rounded-lg bg-muted/5 border border-border/30">
                 <p className="font-medium text-foreground/70">업데이트 시 동작:</p>
                 <p>① NStack 소스(~/.natlas/NStack)를 최신 버전으로 강제 동기화</p>
                 <p>② 심링크 스킬(.agents/skills/nsoft)은 자동 반영됩니다</p>
                 <p>③ .antigravity/rules 등 복사본은 프로젝트 재설치가 필요합니다</p>
+              </div>
+
+              {/* 스킬 정책 안내 */}
+              <div className="text-xs space-y-2 p-3 rounded-lg bg-purple-500/5 border border-purple-500/20">
+                <p className="font-medium text-purple-300">📦 스킬 구조 정책</p>
+                <div className="space-y-1 text-muted-foreground">
+                  <p>
+                    <span className="text-slate-300 font-medium">공식 스킬</span>{' '}
+                    <span className="font-mono text-[10px] bg-muted/30 px-1 rounded">.agents/skills/nsoft/</span>{' '}
+                    — NStack이 관리하는 심링크. 수정 시 업데이트로 초기화됩니다.
+                  </p>
+                  <p>
+                    <span className="text-slate-300 font-medium">개인 스킬</span>{' '}
+                    <span className="font-mono text-[10px] bg-muted/30 px-1 rounded">.agents/skills/내스킬명/</span>{' '}
+                    — 직접 추가한 폴더. NStack 업데이트에 영향받지 않습니다.
+                  </p>
+                </div>
               </div>
 
               {/* 업데이트 버튼 */}
@@ -785,6 +802,10 @@ export function Update(): React.JSX.Element {
                     <div className="text-[11px] text-muted-foreground leading-normal mt-1">
                       지정 폴더 하위에 격리된 신규 NStack 지식 에이전트 스캐폴딩과 룰 규격 설정을
                       완료합니다.
+                    </div>
+                    <div className="text-[10px] text-purple-400/70 mt-1.5">
+                      💡 공식 스킬(.agents/skills/nsoft)은 심링크로 자동 관리됩니다.
+                      개인 스킬은 .agents/skills/ 아래에 직접 추가하세요.
                     </div>
                   </button>
 
