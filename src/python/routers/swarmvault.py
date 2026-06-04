@@ -512,7 +512,7 @@ async def post_install(payload: InstallSchema):
                         if current_step:
                             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
                     
-                    elif "NStack 개발 규격 및 린터 파이프라인 연동 개시" in clean_text:
+                    elif "NStack 개발 규격 및 지식 아카이브 연동 개시" in clean_text or "NStack 에이전트 룰 규격 및 지식 아카이브 연동 중" in clean_text:
                         if current_step and current_step != "general":
                             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
                         current_step = "nstack_onboarding"
