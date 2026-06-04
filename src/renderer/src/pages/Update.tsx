@@ -108,6 +108,7 @@ export function Update(): React.JSX.Element {
     { id: 'rag_verify', name: 'E2E RAG 자가 검증', status: 'idle' },
   ])
   const [nstackUpdateResult, setNstackUpdateResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [selectedNstackProjects, setSelectedNstackProjects] = useState<string[]>([])
 
   const { data: nstackVersionInfo, refetch: refetchNstackVersion } = useQuery({
     queryKey: ['nstackVersion'],
@@ -124,11 +125,19 @@ export function Update(): React.JSX.Element {
     setNstackUpdateResult(null)
     setNstackUpdateSteps(prev => prev.map(s => ({ ...s, status: 'idle' })))
 
+    // 선택된 프로젝트가 있으면 첫 번째 프로젝트로 재설치+E2E
+    const firstProject = selectedNstackProjects[0] || ''
+    const projectName = firstProject ? firstProject.split(/[/\\]/).pop() || '' : ''
+
     try {
       const response = await fetch('http://127.0.0.1:18420/swarmvault/nstack-update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ project_path: '', project_name: '', run_e2e: false }),
+        body: JSON.stringify({
+          project_path: firstProject,
+          project_name: projectName,
+          run_e2e: selectedNstackProjects.length > 0,
+        }),
       })
 
       const reader = response.body!.getReader()
@@ -542,17 +551,6 @@ export function Update(): React.JSX.Element {
             NStack 프로젝트 관리
           </button>
           <button
-            onClick={(): void => setActiveSection('sync')}
-            className={`px-3 py-2 text-xs font-bold rounded-lg transition-all duration-300 ${
-              activeSection === 'sync'
-                ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <RefreshCw className="w-3.5 h-3.5 inline mr-1.5" />
-            SwarmVault 지식 동기화
-          </button>
-          <button
             onClick={(): void => setActiveSection('nstack_update')}
             className={`px-3 py-2 text-xs font-bold rounded-lg transition-all duration-300 ${
               activeSection === 'nstack_update'
@@ -565,6 +563,17 @@ export function Update(): React.JSX.Element {
             {nstackVersionInfo?.has_update && (
               <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px]">NEW</span>
             )}
+          </button>
+          <button
+            onClick={(): void => setActiveSection('sync')}
+            className={`px-3 py-2 text-xs font-bold rounded-lg transition-all duration-300 ${
+              activeSection === 'sync'
+                ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <RefreshCw className="w-3.5 h-3.5 inline mr-1.5" />
+            SwarmVault 지식 동기화
           </button>
         </div>
 
@@ -695,6 +704,30 @@ export function Update(): React.JSX.Element {
                 </div>
               </div>
 
+              {/* 설치된 프로젝트 목록 */}
+              {!isNstackUpdating && !nstackUpdateResult && nstackVersionInfo?.projects?.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    재설치할 프로젝트 선택 <span className="text-purple-400">(선택 시 재설치 + E2E 자동 실행)</span>
+                  </p>
+                  {nstackVersionInfo.projects.map((p: string) => (
+                    <label key={p} className="flex items-center gap-3 p-2.5 rounded-lg border border-border/30 bg-muted/5 cursor-pointer hover:bg-muted/10 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={selectedNstackProjects.includes(p)}
+                        onChange={(e) => {
+                          setSelectedNstackProjects(prev =>
+                            e.target.checked ? [...prev, p] : prev.filter(x => x !== p)
+                          )
+                        }}
+                        className="accent-purple-500"
+                      />
+                      <span className="text-xs font-mono text-slate-300">{p}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+
               {/* 업데이트 버튼 */}
               {!isNstackUpdating && !nstackUpdateResult && (
                 <button
@@ -702,7 +735,7 @@ export function Update(): React.JSX.Element {
                   className="w-full py-2.5 px-4 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
                 >
                   <RotateCw className="w-4 h-4" />
-                  지금 업데이트
+                  {selectedNstackProjects.length > 0 ? '소스 업데이트 + 재설치 + E2E' : '소스만 업데이트'}
                 </button>
               )}
 

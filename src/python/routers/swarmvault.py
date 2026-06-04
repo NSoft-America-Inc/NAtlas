@@ -639,20 +639,24 @@ async def post_install(payload: InstallSchema):
                 if mcp_ok:
                     yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ [MCP 검증 통과] SwarmVault MCP 서버 설정 및 바이너리 유효성 검증 성공!'})}\n\n"
                     yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
-                    # 설치 완료 후 llmwiki_root 자동 저장
+                    # 설치 완료 후 llmwiki_root 및 nstack_projects 자동 저장
                     llmwiki_candidate = os.path.join(project_path, "llmwiki")
-                    if os.path.exists(llmwiki_candidate):
-                        try:
-                            from routers.settings import load_settings as _load, CONFIG_FILE as _cfg, CONFIG_DIR as _dir
-                            import json as _json
-                            _dir.mkdir(parents=True, exist_ok=True)
-                            _data = _load() if Path(_cfg).exists() else {}
-                            if not _data.get("llmwiki_root"):
-                                _data["llmwiki_root"] = llmwiki_candidate
-                                _cfg.write_text(_json.dumps(_data, ensure_ascii=False, indent=2), encoding="utf-8")
-                                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'✓ LLMWiki 경로 자동 저장: {llmwiki_candidate}'})}\n\n"
-                        except Exception:
-                            pass
+                    try:
+                        from routers.settings import load_settings as _load, CONFIG_FILE as _cfg, CONFIG_DIR as _dir
+                        import json as _json
+                        _dir.mkdir(parents=True, exist_ok=True)
+                        _data = _load() if Path(_cfg).exists() else {}
+                        if not _data.get("llmwiki_root") and os.path.exists(llmwiki_candidate):
+                            _data["llmwiki_root"] = llmwiki_candidate
+                            yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'✓ LLMWiki 경로 자동 저장: {llmwiki_candidate}'})}\n\n"
+                        # nstack_projects 목록에 현재 프로젝트 추가
+                        projects = _data.get("nstack_projects", [])
+                        if project_path not in projects:
+                            projects.append(project_path)
+                            _data["nstack_projects"] = projects
+                        _cfg.write_text(_json.dumps(_data, ensure_ascii=False, indent=2), encoding="utf-8")
+                    except Exception:
+                        pass
                 else:
                     yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '⚠ [MCP 검증 실패] MCP 서버 설정을 탐색하지 못했거나 일부 구성 파일이 유효하지 않습니다.'})}\n\n"
                     yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': '검증 실패'})}\n\n"
@@ -1055,12 +1059,18 @@ async def get_nstack_version():
     if latest_version and current_version != "unknown":
         has_update = current_version != latest_version
 
+    # 설치된 프로젝트 목록
+    projects = load_settings_data().get("nstack_projects", [])
+    # 실제 존재하는 경로만 필터링
+    projects = [p for p in projects if os.path.exists(p)]
+
     return {
         "current_version": current_version,
         "latest_version": latest_version,
         "has_update": has_update,
         "nstack_dir": str(nstack_dir),
         "installed": nstack_dir.exists(),
+        "projects": projects,
     }
 
 
