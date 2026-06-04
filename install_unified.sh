@@ -274,9 +274,9 @@ install_nstack() {
     log "지정된 부모 디렉토리로 이동: $parent_dir"
     mkdir -p "$parent_dir"
     cd "$parent_dir"
-    bash -x "$nstack_setup_abs" --project "$PROJECT_NAME" --quiet > /tmp/nstack_install.log 2>&1 &
+    bash -x "$nstack_setup_abs" --host antigravity --project "$PROJECT_NAME" --quiet > /tmp/nstack_install.log 2>&1 &
   else
-    bash -x "$nstack_setup_abs" --quiet > /tmp/nstack_install.log 2>&1 &
+    bash -x "$nstack_setup_abs" --host antigravity --quiet > /tmp/nstack_install.log 2>&1 &
   fi
   local nstack_pid=$!
 

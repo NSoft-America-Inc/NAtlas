@@ -455,7 +455,8 @@ async def post_install(payload: InstallSchema):
             try:
                 if is_windows:
                     proc = await asyncio.create_subprocess_exec(
-                        "powershell.exe", "-ExecutionPolicy", "Bypass", "-File", "install_unified.ps1",
+                        "powershell.exe", "-ExecutionPolicy", "Bypass",
+                        "-Command", f"$OutputEncoding = [Console]::OutputEncoding = [Text.Encoding]::UTF8; & '{project_root}\\install_unified.ps1'",
                         cwd=project_root,
                         env=env,
                         stdout=asyncio.subprocess.PIPE,
