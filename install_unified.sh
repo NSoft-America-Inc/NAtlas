@@ -224,6 +224,30 @@ install_nstack() {
   # Fixed clone target: ~/.natlas/NStack (avoids app bundle read-only path issues)
   local nstack_home_dir="$HOME/.natlas/NStack"
   local nstack_setup_abs=""
+
+  # Resolve GitHub token: env var > ~/.natlas/config.json
+  local clone_token="${NSTACK_GITHUB_TOKEN:-${GITHUB_TOKEN:-}}"
+  if [ -z "$clone_token" ]; then
+    local config_file="$HOME/.natlas/config.json"
+    if [ -f "$config_file" ]; then
+      clone_token=$(python3 -c "import json,sys; d=json.load(open('$config_file')); print(d.get('github_token',''))" 2>/dev/null || true)
+    fi
+  fi
+
+  local clone_url="https://github.com/NSoft-America-Inc/NStack.git"
+  if [ -n "$clone_token" ]; then
+    clone_url="https://${clone_token}@github.com/NSoft-America-Inc/NStack.git"
+  fi
+
+  # Always update ~/.natlas/NStack: clone if missing, pull if exists
+  mkdir -p "$HOME/.natlas"
+  if [ -d "$nstack_home_dir/.git" ]; then
+    GIT_TERMINAL_PROMPT=0 git -C "$nstack_home_dir" remote set-url origin "$clone_url" 2>/dev/null || true
+    GIT_TERMINAL_PROMPT=0 git -C "$nstack_home_dir" pull --quiet 2>/dev/null || true
+  else
+    GIT_TERMINAL_PROMPT=0 git clone "$clone_url" "$nstack_home_dir" --quiet --depth 1 2>&1 | tail -1 || true
+  fi
+
   if [ -f "$nstack_home_dir/setup" ]; then
     nstack_setup_abs="$nstack_home_dir/setup"
   elif [ -f "$PROJECT_ROOT/../NStack/setup" ]; then
@@ -232,35 +256,6 @@ install_nstack() {
     nstack_setup_abs="$(cd "$PROJECT_ROOT/NStack" && pwd)/setup"
   elif [ -f "$PROJECT_ROOT/setup" ] && grep -q "NStack Setup" "$PROJECT_ROOT/setup"; then
     nstack_setup_abs="$PROJECT_ROOT/setup"
-  fi
-
-  # Auto clone if missing
-  if [ -z "$nstack_setup_abs" ]; then
-    warn "이웃 디렉토리에 NStack이 감지되지 않았습니다. GitHub에서 자동으로 복제(Clone)합니다..."
-
-    # Resolve GitHub token: env var > ~/.natlas/config.json
-    local clone_token="${NSTACK_GITHUB_TOKEN:-${GITHUB_TOKEN:-}}"
-    if [ -z "$clone_token" ]; then
-      local config_file="$HOME/.natlas/config.json"
-      if [ -f "$config_file" ]; then
-        clone_token=$(python3 -c "import json,sys; d=json.load(open('$config_file')); print(d.get('github_token',''))" 2>/dev/null || true)
-      fi
-    fi
-
-    # Build clone URL with token if available
-    local clone_url="https://github.com/NSoft-America-Inc/NStack.git"
-    if [ -n "$clone_token" ]; then
-      clone_url="https://${clone_token}@github.com/NSoft-America-Inc/NStack.git"
-    fi
-
-    # Clone into ~/.natlas/NStack (stable path, works in both dev and packaged app)
-    # macOS does not have 'timeout' by default, use GIT_TERMINAL_PROMPT=0 to prevent hang
-    mkdir -p "$HOME/.natlas"
-    GIT_TERMINAL_PROMPT=0 git clone "$clone_url" "$nstack_home_dir" --quiet --depth 1 2>&1 | tail -1 || true
-
-    if [ -f "$nstack_home_dir/setup" ]; then
-      nstack_setup_abs="$nstack_home_dir/setup"
-    fi
   fi
 
   if [ -z "$nstack_setup_abs" ] || [ ! -f "$nstack_setup_abs" ]; then

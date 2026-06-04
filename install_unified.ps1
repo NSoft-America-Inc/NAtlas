@@ -136,41 +136,32 @@ function install_natlas {
 function install_nstack {
     log "$Bold  NStack 개발 규격 및 린터 파이프라인 연동 개시...$Reset"
     
-    # NStack 디렉토리 자동 탐색 - stable 경로 우선 ($HOME\.natlas\NStack)
+    # NStack 디렉토리 - ~/.natlas/NStack 고정 경로 사용 (clone/pull 자동 관리)
     $nstack_home_dir = Join-Path $HOME ".natlas\NStack"
+
+    # Resolve token: env var > ~/.natlas/config.json
+    $clone_token = if ($env:NSTACK_GITHUB_TOKEN) { $env:NSTACK_GITHUB_TOKEN } elseif ($env:GITHUB_TOKEN) { $env:GITHUB_TOKEN } else { "" }
+    if (-not $clone_token) {
+        $config_file = Join-Path $HOME ".natlas\config.json"
+        if (Test-Path $config_file) {
+            try { $clone_token = (Get-Content $config_file | ConvertFrom-Json).github_token } catch {}
+        }
+    }
+    $clone_url = if ($clone_token) { "https://${clone_token}@github.com/NSoft-America-Inc/NStack.git" } else { "https://github.com/NSoft-America-Inc/NStack.git" }
+
+    New-Item -ItemType Directory -Force -Path (Join-Path $HOME ".natlas") | Out-Null
+    $env:GIT_TERMINAL_PROMPT = "0"
+
+    # Always update: pull if exists, clone if missing
+    if (Test-Path (Join-Path $nstack_home_dir ".git")) {
+        git -C $nstack_home_dir remote set-url origin $clone_url 2>$null
+        git -C $nstack_home_dir pull --quiet 2>$null
+    } else {
+        git clone $clone_url $nstack_home_dir --quiet --depth 1 2>$null
+    }
+
     $nstack_dir = $nstack_home_dir
     $nstack_setup = Join-Path $nstack_dir "setup.ps1"
-
-    if (-not (Test-Path $nstack_setup)) {
-        $nstack_dir = Join-Path (Split-Path $PROJECT_ROOT -Parent) "NStack"
-        $nstack_setup = Join-Path $nstack_dir "setup.ps1"
-    }
-
-    if (-not (Test-Path $nstack_setup)) {
-        $nstack_dir = Join-Path $PROJECT_ROOT "NStack"
-        $nstack_setup = Join-Path $nstack_dir "setup.ps1"
-    }
-
-    if (-not (Test-Path $nstack_setup)) {
-        warn "이웃 디렉토리에 NStack이 감지되지 않았습니다. GitHub에서 자동으로 복제(Clone)합니다..."
-
-        # Resolve token: env var > ~/.natlas/config.json
-        $clone_token = if ($env:NSTACK_GITHUB_TOKEN) { $env:NSTACK_GITHUB_TOKEN } elseif ($env:GITHUB_TOKEN) { $env:GITHUB_TOKEN } else { "" }
-        if (-not $clone_token) {
-            $config_file = Join-Path $HOME ".natlas\config.json"
-            if (Test-Path $config_file) {
-                try { $clone_token = (Get-Content $config_file | ConvertFrom-Json).github_token } catch {}
-            }
-        }
-
-        $clone_url = if ($clone_token) { "https://${clone_token}@github.com/NSoft-America-Inc/NStack.git" } else { "https://github.com/NSoft-America-Inc/NStack.git" }
-
-        New-Item -ItemType Directory -Force -Path (Join-Path $HOME ".natlas") | Out-Null
-        $env:GIT_TERMINAL_PROMPT = "0"
-        git clone $clone_url $nstack_home_dir --quiet --depth 1 2>$null
-        $nstack_dir = $nstack_home_dir
-        $nstack_setup = Join-Path $nstack_dir "setup.ps1"
-    }
 
     if (-not (Test-Path $nstack_setup)) {
         fail "NStack setup 스크립트를 탐색할 수 없습니다. NStack 디렉토리가 필요합니다."
