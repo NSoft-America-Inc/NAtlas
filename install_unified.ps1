@@ -260,7 +260,8 @@ if ($INSTALL_MODE -eq 0 -or $INSTALL_MODE -eq 1) {
 
 if ($INSTALL_MODE -eq 0 -or $INSTALL_MODE -eq 2) {
     ok "NStack 에이전트 룰: $Dim.antigravity\rules$Reset"
-    ok "LLMWiki 로컬경로  : $Dim$(Join-Path $PROJECT_ROOT "llmwiki\content")$Reset"
+    $llmwiki_display = if ($env:PROJECT_PATH) { Join-Path $env:PROJECT_PATH "llmwiki\content" } else { Join-Path $PROJECT_ROOT "llmwiki\content" }
+    ok "LLMWiki 로컬경로  : $Dim$llmwiki_display$Reset"
 }
 br
 

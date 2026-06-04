@@ -607,26 +607,32 @@ async def post_install(payload: InstallSchema):
                 await asyncio.sleep(0.5)
                 
                 project_root_path = Path(__file__).resolve().parent.parent.parent.parent
-                cli_path = project_root_path / "node_modules" / "@swarmvaultai" / "cli" / "bin" / "swarmvault"
-                
+                resources_dir = os.environ.get("NATLAS_RESOURCES_DIR")
+
                 mcp_detected = False
-                if cli_path.exists():
+
+                # 1. NAtlas 내장 swarmvault-cli-portable 우선 확인
+                cli_js_candidates = []
+                if resources_dir:
+                    cli_js_candidates.append(Path(resources_dir) / "swarmvault-cli-portable" / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js")
+                cli_js_candidates += [
+                    project_root_path.parent / "swarmvault-cli-portable" / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
+                    project_root_path / "node_modules" / "@swarmvaultai" / "cli" / "dist" / "index.js",
+                ]
+                embedded_cli = next((p for p in cli_js_candidates if p.exists()), None)
+                if embedded_cli:
                     mcp_detected = True
-                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ 내장 SwarmVault CLI 확인 완료 ({cli_path})'})}\n\n"
+                    yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ NAtlas 내장 SwarmVault CLI 확인 완료'})}\n\n"
                 else:
-                    command = "/opt/homebrew/bin/swarmvault"
-                    if not os.path.exists(command):
-                        import shutil as sh_util
-                        resolved_cmd = sh_util.which("swarmvault")
-                        if resolved_cmd:
-                            command = resolved_cmd
-                    
-                    if os.path.exists(command):
+                    # 2. 시스템 swarmvault 명령 확인
+                    import shutil as sh_util
+                    resolved_cmd = sh_util.which("swarmvault") or "/opt/homebrew/bin/swarmvault"
+                    if os.path.exists(resolved_cmd):
                         mcp_detected = True
-                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ 시스템 SwarmVault 실행 바이너리 존재 확인 완료 ({command})'})}\n\n"
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'    └─ ✓ 시스템 SwarmVault 실행 바이너리 존재 확인 완료 ({resolved_cmd})'})}\n\n"
                     else:
                         yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '    └─ ✗ SwarmVault 바이너리(내장/시스템)를 찾을 수 없습니다.'})}\n\n"
-                
+
                 if not mcp_detected:
                     mcp_ok = False
 
