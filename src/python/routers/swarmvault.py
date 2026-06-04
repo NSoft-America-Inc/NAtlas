@@ -552,6 +552,7 @@ async def post_install(payload: InstallSchema):
                 return
 
         # 4. 8단계: Antigravity 표준 가이드 룰 및 스킬 검증 (mcp_verify)
+        mcp_verify_success = True
         if payload.project_create:
             current_step = "mcp_verify"
             yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
@@ -635,10 +636,12 @@ async def post_install(payload: InstallSchema):
                 else:
                     yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '⚠ [MCP 검증 실패] MCP 서버 설정을 탐색하지 못했거나 일부 구성 파일이 유효하지 않습니다.'})}\n\n"
                     yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': '검증 실패'})}\n\n"
+                    mcp_verify_success = False
 
             except Exception as e:
                 yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'[룰 검증] 검증 중 예외 오류 발생: {str(e)}'})}\n\n"
                 yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': f'오류: {str(e)}'})}\n\n"
+                mcp_verify_success = False
 
         # 5. 9단계: E2E 의미론적 RAG 검색 자가 검증 (rag_verify)
         validation_success = False
@@ -790,7 +793,10 @@ It should be successfully indexed into SwarmVault and searchable using semantic 
             else:
                 yield f"data: {json.dumps({'type': 'done', 'success': False, 'verified_count': verified_count, 'total_count': len(queries), 'message': '⚠ 설치는 완료되었으나 일부 RAG 검증 스텝에 에러가 존재합니다.'})}\n\n"
         else:
-            yield f"data: {json.dumps({'type': 'done', 'success': True, 'message': '🎉 선택된 설치 시퀀스가 성공적으로 완료되었습니다!'})}\n\n"
+            if mcp_verify_success:
+                yield f"data: {json.dumps({'type': 'done', 'success': True, 'message': '🎉 선택된 설치 시퀀스가 성공적으로 완료되었습니다!'})}\n\n"
+            else:
+                yield f"data: {json.dumps({'type': 'done', 'success': False, 'message': '⚠ 설치는 완료되었으나 MCP/룰 검증에 실패했습니다. SwarmVault 설치 여부를 확인해주세요.'})}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
