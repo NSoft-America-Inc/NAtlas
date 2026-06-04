@@ -313,8 +313,7 @@ fi
 
 if [ "$INSTALL_MODE" = "0" ] || [ "$INSTALL_MODE" = "2" ] || [ "$RUN_PROJECT_CREATE" = "1" ]; then
   ok "NStack 에이전트 룰: ${DIM}.antigravity/rules${RESET}"
-  local llmwiki_display="${PROJECT_PATH:-$PROJECT_ROOT}/llmwiki/content"
-  ok "LLMWiki 로컬경로  : ${DIM}$llmwiki_display${RESET}"
+  ok "LLMWiki 로컬경로  : ${DIM}${PROJECT_PATH:-$PROJECT_ROOT}/llmwiki/content${RESET}"
 fi
 br
 
