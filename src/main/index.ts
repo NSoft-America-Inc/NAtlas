@@ -6,7 +6,6 @@ import { spawn, ChildProcess } from 'child_process'
 import http from 'http'
 
 let pythonProcess: ChildProcess | null = null
-let mainWindow: BrowserWindow | null = null
 let restartCount = 0
 const MAX_RESTARTS = 3
 const PORT = 18420
@@ -205,8 +204,6 @@ function createWindow(): void {
       sandbox: false
     }
   })
-
-  mainWindow = win
 
   win.on('ready-to-show', () => {
     win.show()
