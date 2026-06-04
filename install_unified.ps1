@@ -180,11 +180,11 @@ function install_nstack {
         log "지정된 부모 디렉토리로 이동: $parent_dir"
         if (-not (Test-Path $parent_dir)) { New-Item -ItemType Directory -Force -Path $parent_dir | Out-Null }
         Push-Location $parent_dir
-        & $ps_exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project $env:PROJECT_NAME --quiet
+        & $ps_exe -NoProfile -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project $env:PROJECT_NAME --quiet
         Pop-Location
     } else {
         Push-Location $nstack_dir
-        & $ps_exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project (Split-Path $PROJECT_ROOT -Leaf) --quiet
+        & $ps_exe -NoProfile -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project (Split-Path $PROJECT_ROOT -Leaf) --quiet
         Pop-Location
     }
     ok "SwarmVault CLI 및 디렉토리 구조 초기화 완수!"
