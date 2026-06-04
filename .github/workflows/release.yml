@@ -32,6 +32,12 @@ jobs:
           node-version: 22
           cache: 'pnpm'
 
+      - name: Cache Embedded Runtimes (macOS)
+        uses: actions/cache@v4
+        with:
+          path: resources/
+          key: runtimes-mac-${{ hashFiles('prepare_embedded_runtimes.py') }}
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
@@ -89,6 +95,12 @@ jobs:
         with:
           node-version: 22
           cache: 'pnpm'
+
+      - name: Cache Embedded Runtimes (Windows)
+        uses: actions/cache@v4
+        with:
+          path: resources/
+          key: runtimes-win-${{ hashFiles('prepare_embedded_runtimes.py') }}
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
