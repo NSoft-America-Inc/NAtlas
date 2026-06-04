@@ -171,17 +171,20 @@ function install_nstack {
     # CLI 셋업 스크립트 실행 (NStack/setup.ps1 위임)
     log "  NStack Antigravity 온보딩 시작..."
     
+    # pwsh.exe(PS 7+) 우선 사용, 없으면 powershell.exe(5.1) fallback
+    $ps_exe = if (Get-Command pwsh -ErrorAction SilentlyContinue) { "pwsh.exe" } else { "powershell.exe" }
+
     # quiet 및 host 인자 주입하여 대화식 프롬프트 우회
     if ($null -ne $env:PROJECT_PATH -and $null -ne $env:PROJECT_NAME -and $env:PROJECT_PATH -ne "" -and $env:PROJECT_NAME -ne "") {
         $parent_dir = Split-Path $env:PROJECT_PATH -Parent
         log "지정된 부모 디렉토리로 이동: $parent_dir"
         if (-not (Test-Path $parent_dir)) { New-Item -ItemType Directory -Force -Path $parent_dir | Out-Null }
         Push-Location $parent_dir
-        & powershell.exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project $env:PROJECT_NAME --quiet
+        & $ps_exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project $env:PROJECT_NAME --quiet
         Pop-Location
     } else {
         Push-Location $nstack_dir
-        & powershell.exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project (Split-Path $PROJECT_ROOT -Leaf) --quiet
+        & $ps_exe -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project (Split-Path $PROJECT_ROOT -Leaf) --quiet
         Pop-Location
     }
     ok "SwarmVault CLI 및 디렉토리 구조 초기화 완수!"
