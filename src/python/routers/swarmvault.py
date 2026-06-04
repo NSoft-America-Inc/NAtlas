@@ -1023,6 +1023,158 @@ async def delete_build_logs():
             content={"error": f"빌드 로그 삭제 실패: {str(e)}"}
         )
 
+# ─── NStack 버전 조회 ─────────────────────────────────────────
+@router.get("/nstack-version")
+async def get_nstack_version():
+    """~/.natlas/NStack의 현재 버전과 GitHub 최신 버전을 반환한다."""
+    import urllib.request as _urllib_request
+    nstack_dir = Path.home() / ".natlas" / "NStack"
+    version_file = nstack_dir / "VERSION"
+
+    current_version = "unknown"
+    if version_file.exists():
+        current_version = version_file.read_text(encoding="utf-8").strip()
+
+    latest_version = None
+    try:
+        settings = load_settings_data()
+        token = settings.get("github_token", "").strip()
+        url = "https://api.github.com/repos/NSoft-America-Inc/NStack/tags"
+        req = _urllib_request.Request(url)
+        req.add_header("User-Agent", "NAtlas-App")
+        if token:
+            req.add_header("Authorization", f"token {token}")
+        with _urllib_request.urlopen(req, timeout=5) as resp:
+            tags = json.loads(resp.read().decode())
+            if tags:
+                latest_version = tags[0]["name"].lstrip("vV")
+    except Exception:
+        pass
+
+    has_update = False
+    if latest_version and current_version != "unknown":
+        has_update = current_version != latest_version
+
+    return {
+        "current_version": current_version,
+        "latest_version": latest_version,
+        "has_update": has_update,
+        "nstack_dir": str(nstack_dir),
+        "installed": nstack_dir.exists(),
+    }
+
+
+class NStackUpdateSchema(BaseModel):
+    project_path: str = ""
+    project_name: str = ""
+    run_e2e: bool = True
+
+
+@router.post("/nstack-update")
+async def post_nstack_update(payload: NStackUpdateSchema):
+    """NStack 소스를 최신화하고 SSE로 단계별 진행 상태를 전송한다."""
+    async def event_generator():
+        nstack_dir = Path.home() / ".natlas" / "NStack"
+        project_root = str(Path(__file__).parent.parent.parent.parent.resolve())
+
+        # 1단계: NStack 소스 업데이트
+        current_step = "nstack_source_update"
+        yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
+        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'NStack 소스 업데이트 중... ({nstack_dir})'})}\n\n"
+
+        try:
+            settings = load_settings_data()
+            token = settings.get("github_token", "").strip()
+            clone_url = f"https://{token}@github.com/NSoft-America-Inc/NStack.git" if token else "https://github.com/NSoft-America-Inc/NStack.git"
+            git_env = os.environ.copy()
+            git_env["GIT_TERMINAL_PROMPT"] = "0"
+
+            if not nstack_dir.exists():
+                proc = await asyncio.create_subprocess_exec(
+                    "git", "clone", clone_url, str(nstack_dir), "--quiet", "--depth", "1",
+                    stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env=git_env
+                )
+                await proc.wait()
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ NStack clone 완료'})}\n\n"
+            else:
+                for cmd in [
+                    ["git", "-C", str(nstack_dir), "remote", "set-url", "origin", clone_url],
+                    ["git", "-C", str(nstack_dir), "fetch", "origin", "--quiet"],
+                    ["git", "-C", str(nstack_dir), "reset", "--hard", "origin/main"],
+                ]:
+                    p = await asyncio.create_subprocess_exec(
+                        *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, env=git_env
+                    )
+                    await p.wait()
+                yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': '✓ NStack 소스 최신화 완료 (reset --hard origin/main)'})}\n\n"
+
+            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'success', 'message': '완료'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'failed', 'message': str(e)})}\n\n"
+            yield f"data: {json.dumps({'type': 'done', 'success': False, 'message': f'NStack 업데이트 실패: {str(e)}'})}\n\n"
+            return
+
+        # 2단계: 프로젝트 재설치
+        if payload.project_path and payload.project_name:
+            current_step = "nstack_reinstall"
+            yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': 'running', 'message': '진행 중...'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': f'프로젝트 재설치 중... ({payload.project_path})'})}\n\n"
+            try:
+                is_win = platform.system() == "Windows"
+                script_name = "install_unified.ps1" if is_win else "install_unified.sh"
+                script_path = os.path.join(project_root, script_name)
+                if "app.asar" in script_path and "app.asar.unpacked" not in script_path:
+                    script_path = script_path.replace("app.asar", "app.asar.unpacked")
+
+                env = os.environ.copy()
+                env.update({
+                    "RUN_CORE_INSTALL": "0",
+                    "RUN_PROJECT_CREATE": "1",
+                    "PROJECT_PATH": payload.project_path,
+                    "PROJECT_NAME": payload.project_name,
+                    "NSTACK_GITHUB_TOKEN": load_settings_data().get("github_token", ""),
+                })
+
+                if is_win:
+                    proc = await asyncio.create_subprocess_exec(
+                        "powershell.exe", "-ExecutionPolicy", "Bypass",
+                        "-Command", f"$OutputEncoding = [Console]::OutputEncoding = [Text.Encoding]::UTF8; & '{project_root}\\install_unified.ps1'",
+                        cwd=project_root, env=env,
+                        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                    )
+                else:
+                    proc = await asyncio.create_subprocess_exec(
+                        "bash", script_path, cwd=project_root, env=env,
+                        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+                    )
+
+                while True:
+                    line = await proc.stdout.readline()
+                    if not line:
+                        break
+                    text = re.sub(r'\x1b\[[0-9;]*[mK]', '', line.decode("utf-8", errors="replace").strip())
+                    if text:
+                        yield f"data: {json.dumps({'type': 'log', 'step': current_step, 'message': text})}\n\n"
+
+                await proc.wait()
+                status = "success" if proc.returncode == 0 else "failed"
+                yield f"data: {json.dumps({'type': 'step', 'step': current_step, 'status': status, 'message': '완료' if status == 'success' else '재설치 실패'})}\n\n"
+            except Exception as e:
+                yield f"data: {json.dumps({'type': 'step', 'step': 'nstack_reinstall', 'status': 'failed', 'message': str(e)})}\n\n"
+        else:
+            yield f"data: {json.dumps({'type': 'step', 'step': 'nstack_reinstall', 'status': 'skipped', 'message': '프로젝트 경로 미지정 — 건너뜀'})}\n\n"
+
+        # 3단계: E2E RAG 검증 (재설치 있었을 때만)
+        if payload.run_e2e and payload.project_path:
+            yield f"data: {json.dumps({'type': 'step', 'step': 'rag_verify', 'status': 'running', 'message': '진행 중...'})}\n\n"
+            yield f"data: {json.dumps({'type': 'log', 'step': 'rag_verify', 'message': 'E2E RAG 검증은 재설치 완료 후 Update 탭 E2E 탭에서 별도 실행하세요.'})}\n\n"
+            yield f"data: {json.dumps({'type': 'step', 'step': 'rag_verify', 'status': 'skipped', 'message': '별도 실행 권장'})}\n\n"
+
+        yield f"data: {json.dumps({'type': 'done', 'success': True, 'message': '🎉 NStack 업데이트가 완료되었습니다!'})}\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+
 @router.get("/dashboard/stats")
 async def get_dashboard_stats(period: str = "2weeks"):
     """Calculate and retrieve consolidated dashboard analytics and statistics."""

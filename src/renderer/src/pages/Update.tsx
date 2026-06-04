@@ -28,7 +28,7 @@ import {
 interface InstallStep {
   id: string
   name: string
-  status: 'idle' | 'running' | 'success' | 'failed'
+  status: 'idle' | 'running' | 'success' | 'failed' | 'skipped'
   message?: string
 }
 
@@ -37,7 +37,7 @@ export function Update(): React.JSX.Element {
   const { logs, addLog, clearLogs, isUpdating, setIsUpdating } = useUIStore()
 
   // Tab state: 'project' for NStack project manager, 'sync' for standard sync update
-  const [activeSection, setActiveSection] = useState<'project' | 'sync'>('project')
+  const [activeSection, setActiveSection] = useState<'project' | 'sync' | 'nstack_update'>('project')
 
   // Project manager specific state
   const [selectedScenario, setSelectedScenario] = useState<'project' | 'e2e'>('project')
@@ -99,6 +99,66 @@ export function Update(): React.JSX.Element {
     queryKey: ['settings'],
     queryFn: api.getSettings
   })
+
+  // NStack 업데이트 상태
+  const [isNstackUpdating, setIsNstackUpdating] = useState<boolean>(false)
+  const [nstackUpdateSteps, setNstackUpdateSteps] = useState<InstallStep[]>([
+    { id: 'nstack_source_update', name: 'NStack 소스 업데이트', status: 'idle' },
+    { id: 'nstack_reinstall', name: '프로젝트 재설치', status: 'idle' },
+    { id: 'rag_verify', name: 'E2E RAG 자가 검증', status: 'idle' },
+  ])
+  const [nstackUpdateResult, setNstackUpdateResult] = useState<{ success: boolean; message: string } | null>(null)
+
+  const { data: nstackVersionInfo, refetch: refetchNstackVersion } = useQuery({
+    queryKey: ['nstackVersion'],
+    queryFn: async () => {
+      const res = await fetch('http://127.0.0.1:18420/swarmvault/nstack-version')
+      return res.json()
+    },
+    staleTime: 60_000,
+  })
+
+  const handleNstackUpdate = async () => {
+    if (isNstackUpdating) return
+    setIsNstackUpdating(true)
+    setNstackUpdateResult(null)
+    setNstackUpdateSteps(prev => prev.map(s => ({ ...s, status: 'idle' })))
+
+    try {
+      const response = await fetch('http://127.0.0.1:18420/swarmvault/nstack-update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_path: '', project_name: '', run_e2e: false }),
+      })
+
+      const reader = response.body!.getReader()
+      const decoder = new TextDecoder()
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        const chunk = decoder.decode(value)
+        const lines = chunk.split('\n').filter(l => l.startsWith('data: '))
+        for (const line of lines) {
+          try {
+            const data = JSON.parse(line.slice(6))
+            if (data.type === 'step') {
+              setNstackUpdateSteps(prev =>
+                prev.map(s => s.id === data.step ? { ...s, status: data.status, message: data.message } : s)
+              )
+            } else if (data.type === 'done') {
+              setNstackUpdateResult({ success: data.success, message: data.message })
+              refetchNstackVersion()
+            }
+          } catch {}
+        }
+      }
+    } catch (e) {
+      setNstackUpdateResult({ success: false, message: `업데이트 실패: ${e}` })
+    } finally {
+      setIsNstackUpdating(false)
+    }
+  }
 
   const {
     data: status,
@@ -492,6 +552,20 @@ export function Update(): React.JSX.Element {
             <RefreshCw className="w-3.5 h-3.5 inline mr-1.5" />
             SwarmVault 지식 동기화
           </button>
+          <button
+            onClick={(): void => setActiveSection('nstack_update')}
+            className={`px-3 py-2 text-xs font-bold rounded-lg transition-all duration-300 ${
+              activeSection === 'nstack_update'
+                ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <RotateCw className="w-3.5 h-3.5 inline mr-1.5" />
+            NStack 업데이트
+            {nstackVersionInfo?.has_update && (
+              <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px]">NEW</span>
+            )}
+          </button>
         </div>
 
         <Button
@@ -567,7 +641,99 @@ export function Update(): React.JSX.Element {
 
         {/* Dynamic Action Section */}
         <div className="flex-1 px-6 py-6 flex flex-col gap-6">
-          {activeSection === 'project' ? (
+          {activeSection === 'nstack_update' ? (
+            /* ============================================================================== */
+            /* 3. NSTACK UPDATE SECTION                                                        */
+            /* ============================================================================== */
+            <div className="flex flex-col gap-5">
+              {/* 버전 정보 카드 */}
+              <div className="grid grid-cols-2 gap-4 border border-border/40 rounded-xl p-4 bg-muted/10">
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">현재 버전</p>
+                  <p className="text-sm font-semibold font-mono text-slate-300">
+                    {nstackVersionInfo?.current_version || (nstackVersionInfo?.installed === false ? '미설치' : '...')}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">최신 버전</p>
+                  <p className="text-sm font-semibold font-mono text-slate-300">
+                    {nstackVersionInfo?.latest_version || '확인 필요'}
+                  </p>
+                </div>
+              </div>
+
+              {/* 업데이트 알림 */}
+              {nstackVersionInfo?.has_update && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-xs text-yellow-400">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  새로운 NStack 버전({nstackVersionInfo.latest_version})이 있습니다.
+                </div>
+              )}
+
+              {/* 안내 문구 */}
+              <div className="text-xs text-muted-foreground space-y-1 p-3 rounded-lg bg-muted/5 border border-border/30">
+                <p className="font-medium text-foreground/70">업데이트 시 동작:</p>
+                <p>① NStack 소스(~/.natlas/NStack)를 최신 버전으로 강제 동기화</p>
+                <p>② 심링크 스킬(.agents/skills/nsoft)은 자동 반영됩니다</p>
+                <p>③ .antigravity/rules 등 복사본은 프로젝트 재설치가 필요합니다</p>
+              </div>
+
+              {/* 업데이트 버튼 */}
+              {!isNstackUpdating && !nstackUpdateResult && (
+                <button
+                  onClick={handleNstackUpdate}
+                  className="w-full py-2.5 px-4 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  <RotateCw className="w-4 h-4" />
+                  지금 업데이트
+                </button>
+              )}
+
+              {/* 진행 중 단계 카드 */}
+              {(isNstackUpdating || nstackUpdateResult) && (
+                <div className="space-y-2">
+                  {nstackUpdateSteps.map(step => (
+                    <div key={step.id} className={`flex items-center gap-3 p-3 rounded-lg border text-xs transition-all
+                      ${step.status === 'running' ? 'border-blue-500/40 bg-blue-500/5 text-blue-300' :
+                        step.status === 'success' ? 'border-green-500/40 bg-green-500/5 text-green-300' :
+                        step.status === 'failed' ? 'border-red-500/40 bg-red-500/5 text-red-300' :
+                        step.status === 'skipped' ? 'border-border/20 bg-muted/5 text-muted-foreground' :
+                        'border-border/40 bg-muted/5 text-muted-foreground'}`}>
+                      <span className="text-base leading-none">
+                        {step.status === 'success' ? '✓' :
+                         step.status === 'failed' ? '✗' :
+                         step.status === 'running' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> :
+                         step.status === 'skipped' ? '–' : '○'}
+                      </span>
+                      <span>{step.name}</span>
+                      {step.message && <span className="ml-auto text-[10px] opacity-70">{step.message}</span>}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* 완료 결과 */}
+              {nstackUpdateResult && (
+                <div className={`p-3 rounded-lg text-xs border ${
+                  nstackUpdateResult.success
+                    ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                    : 'bg-red-500/10 text-red-400 border-red-500/20'
+                }`}>
+                  {nstackUpdateResult.message}
+                </div>
+              )}
+
+              {/* 다시 업데이트 버튼 */}
+              {nstackUpdateResult && (
+                <button
+                  onClick={() => { setNstackUpdateResult(null); setNstackUpdateSteps(prev => prev.map(s => ({ ...s, status: 'idle' }))); }}
+                  className="w-full py-2 px-4 rounded-lg border border-border/40 text-muted-foreground hover:text-foreground text-xs transition-colors"
+                >
+                  다시 업데이트
+                </button>
+              )}
+            </div>
+          ) : activeSection === 'project' ? (
             /* ============================================================================== */
             /* 1. NSTACK PROJECT MANAGER SECTION                                              */
             /* ============================================================================== */
