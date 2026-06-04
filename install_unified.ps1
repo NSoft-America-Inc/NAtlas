@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # NStack & NAtlas Windows Unified Visual Installer
 # - Extreme Developer Onboarding & Visual PowerShell Experience -
 # - Antigravity Single Agent Environment Optimization -
