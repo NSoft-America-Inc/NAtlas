@@ -221,8 +221,12 @@ install_nstack() {
 
   
   # Resolve nstack_setup absolute path BEFORE changing directory
+  # Fixed clone target: ~/.natlas/NStack (avoids app bundle read-only path issues)
+  local nstack_home_dir="$HOME/.natlas/NStack"
   local nstack_setup_abs=""
-  if [ -f "$PROJECT_ROOT/../NStack/setup" ]; then
+  if [ -f "$nstack_home_dir/setup" ]; then
+    nstack_setup_abs="$nstack_home_dir/setup"
+  elif [ -f "$PROJECT_ROOT/../NStack/setup" ]; then
     nstack_setup_abs="$(cd "$PROJECT_ROOT/../NStack" && pwd)/setup"
   elif [ -f "$PROJECT_ROOT/NStack/setup" ]; then
     nstack_setup_abs="$(cd "$PROJECT_ROOT/NStack" && pwd)/setup"
@@ -249,11 +253,13 @@ install_nstack() {
       clone_url="https://${clone_token}@github.com/NSoft-America-Inc/NStack.git"
     fi
 
-    # Clone with timeout to prevent infinite hang on credential prompt
-    GIT_TERMINAL_PROMPT=0 timeout 30 git clone "$clone_url" "$PROJECT_ROOT/../NStack" --quiet 2>/dev/null || true
+    # Clone into ~/.natlas/NStack (stable path, works in both dev and packaged app)
+    # macOS does not have 'timeout' by default, use GIT_TERMINAL_PROMPT=0 to prevent hang
+    mkdir -p "$HOME/.natlas"
+    GIT_TERMINAL_PROMPT=0 git clone "$clone_url" "$nstack_home_dir" --quiet --depth 1 2>&1 | tail -1 || true
 
-    if [ -f "$PROJECT_ROOT/../NStack/setup" ]; then
-      nstack_setup_abs="$(cd "$PROJECT_ROOT/../NStack" && pwd)/setup"
+    if [ -f "$nstack_home_dir/setup" ]; then
+      nstack_setup_abs="$nstack_home_dir/setup"
     fi
   fi
 

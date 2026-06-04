@@ -136,9 +136,15 @@ function install_natlas {
 function install_nstack {
     log "$Bold  NStack 개발 규격 및 린터 파이프라인 연동 개시...$Reset"
     
-    # NStack 디렉토리 자동 탐색
-    $nstack_dir = Join-Path (Split-Path $PROJECT_ROOT -Parent) "NStack"
+    # NStack 디렉토리 자동 탐색 - stable 경로 우선 ($HOME\.natlas\NStack)
+    $nstack_home_dir = Join-Path $HOME ".natlas\NStack"
+    $nstack_dir = $nstack_home_dir
     $nstack_setup = Join-Path $nstack_dir "setup.ps1"
+
+    if (-not (Test-Path $nstack_setup)) {
+        $nstack_dir = Join-Path (Split-Path $PROJECT_ROOT -Parent) "NStack"
+        $nstack_setup = Join-Path $nstack_dir "setup.ps1"
+    }
 
     if (-not (Test-Path $nstack_setup)) {
         $nstack_dir = Join-Path $PROJECT_ROOT "NStack"
@@ -147,8 +153,22 @@ function install_nstack {
 
     if (-not (Test-Path $nstack_setup)) {
         warn "이웃 디렉토리에 NStack이 감지되지 않았습니다. GitHub에서 자동으로 복제(Clone)합니다..."
-        git clone https://github.com/NSoft-America-Inc/NStack.git (Join-Path (Split-Path $PROJECT_ROOT -Parent) "NStack") --quiet 2>$null
-        $nstack_dir = Join-Path (Split-Path $PROJECT_ROOT -Parent) "NStack"
+
+        # Resolve token: env var > ~/.natlas/config.json
+        $clone_token = if ($env:NSTACK_GITHUB_TOKEN) { $env:NSTACK_GITHUB_TOKEN } elseif ($env:GITHUB_TOKEN) { $env:GITHUB_TOKEN } else { "" }
+        if (-not $clone_token) {
+            $config_file = Join-Path $HOME ".natlas\config.json"
+            if (Test-Path $config_file) {
+                try { $clone_token = (Get-Content $config_file | ConvertFrom-Json).github_token } catch {}
+            }
+        }
+
+        $clone_url = if ($clone_token) { "https://${clone_token}@github.com/NSoft-America-Inc/NStack.git" } else { "https://github.com/NSoft-America-Inc/NStack.git" }
+
+        New-Item -ItemType Directory -Force -Path (Join-Path $HOME ".natlas") | Out-Null
+        $env:GIT_TERMINAL_PROMPT = "0"
+        git clone $clone_url $nstack_home_dir --quiet --depth 1 2>$null
+        $nstack_dir = $nstack_home_dir
         $nstack_setup = Join-Path $nstack_dir "setup.ps1"
     }
 
