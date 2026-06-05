@@ -1,10 +1,15 @@
-﻿# ==============================================================================
+# ==============================================================================
 # NStack & NAtlas Windows Unified Visual Installer
 # - Extreme Developer Onboarding & Visual PowerShell Experience -
 # - Antigravity Single Agent Environment Optimization -
 # ==============================================================================
 
 $ErrorActionPreference = "Stop"
+
+# GITHUB_TOKEN 단일 파이프라인 매핑 전파
+if ($env:NSTACK_GITHUB_TOKEN) {
+    $env:GITHUB_TOKEN = $env:NSTACK_GITHUB_TOKEN
+}
 
 # 기본 색상 정의
 $Bold = [char]27 + "[1m"
@@ -155,7 +160,8 @@ function install_nstack {
     # Always update: pull if exists, clone if missing
     if (Test-Path (Join-Path $nstack_home_dir ".git")) {
         git -C $nstack_home_dir remote set-url origin $clone_url 2>$null
-        git -C $nstack_home_dir pull --quiet 2>$null
+        git -C $nstack_home_dir fetch --all --quiet 2>$null
+        git -C $nstack_home_dir reset --hard origin/main --quiet 2>$null
     } else {
         git clone $clone_url $nstack_home_dir --quiet --depth 1 2>$null
     }
@@ -181,11 +187,16 @@ function install_nstack {
         if (-not (Test-Path $parent_dir)) { New-Item -ItemType Directory -Force -Path $parent_dir | Out-Null }
         Push-Location $parent_dir
         & $ps_exe -NoProfile -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project $env:PROJECT_NAME --quiet
+        $exit_code = $LASTEXITCODE
         Pop-Location
     } else {
         Push-Location $nstack_dir
         & $ps_exe -NoProfile -ExecutionPolicy Bypass -File $nstack_setup --host antigravity --project (Split-Path $PROJECT_ROOT -Leaf) --quiet
+        $exit_code = $LASTEXITCODE
         Pop-Location
+    }
+    if ($exit_code -ne 0) {
+        fail "NStack 셋업 스크립트 실행이 실패했습니다. (Exit Code: $exit_code)"
     }
     ok "SwarmVault CLI 및 디렉토리 구조 초기화 완수!"
 
